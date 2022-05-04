@@ -12,6 +12,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "fraction.js": "^4.2.0",
     "vue": "^3.2.33",
     "vue-router": "^4.0.14"
   },
