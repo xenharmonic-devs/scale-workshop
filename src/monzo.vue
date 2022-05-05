@@ -77,7 +77,8 @@ function gcd(a: number, b: number): number {
   if (!a) return b;
   if (!b) return a;
 
-  while (true) {  // eslint-disable-line
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
     a %= b;
     if (!a) return b;
     b %= a;
