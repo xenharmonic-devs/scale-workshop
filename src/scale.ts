@@ -2,6 +2,7 @@ import Fraction from "fraction.js";
 
 import ExtendedMonzo from "@/monzo";
 import { kCombinations } from "@/combinations";
+import { mos } from "@/mos";
 
 function mmod(a: number, b: number) {
   return ((a % b) + b) % b;
@@ -291,6 +292,29 @@ export default class Scale {
     intervals = intervals.map((interval) => interval.mmod(equave));
     intervals.sort((a, b) => a.compare(b));
     return new Scale(intervals, equave, baseFrequency);
+  }
+
+  static fromMos(
+    numberOfLargeSteps: number,
+    numberOfSmallSteps: number,
+    sizeOfLargeStep: number,
+    sizeOfSmallStep: number,
+    brightGeneratorsUp: number,
+    equave: ExtendedMonzo,
+    baseFrequency = 440
+  ) {
+    const steps = mos(
+      numberOfLargeSteps,
+      numberOfSmallSteps,
+      sizeOfLargeStep,
+      sizeOfSmallStep,
+      brightGeneratorsUp
+    );
+    const equaveSteps = steps[steps.length - 1];
+    return Scale.fromIntervalArray(
+      steps.map((step) => equave.mul(new Fraction(step, equaveSteps))),
+      baseFrequency
+    );
   }
 
   get size() {
