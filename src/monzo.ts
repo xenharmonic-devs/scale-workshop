@@ -1,5 +1,6 @@
 import Fraction from "fraction.js";
 import { PRIMES, LOG_PRIMES } from "@/constants";
+import { gcd, lcm, getSemiConvergents } from "@/utils";
 
 type Monzo = Fraction[];
 
@@ -71,23 +72,6 @@ function natsToCents(nats: number) {
   return (nats / Math.LN2) * 1200;
 }
 
-// Stolen from fraction.js, because it's not exported.
-function gcd(a: number, b: number): number {
-  if (!a) return b;
-  if (!b) return a;
-
-  while (true) {  // eslint-disable-line
-    a %= b;
-    if (!a) return b;
-    b %= a;
-    if (!b) return a;
-  }
-}
-
-function lcm(a: number, b: number): number {
-  return (Math.abs(a) / gcd(a, b)) * Math.abs(b);
-}
-
 export default class ExtendedMonzo {
   vector: Monzo;
   residual: Fraction;
@@ -139,6 +123,14 @@ export default class ExtendedMonzo {
       component.mul(fractionOfEquave)
     );
     return new ExtendedMonzo(vector);
+  }
+
+  static fromValue(value: number, numberOfComponents: number) {
+    const vector: Monzo = [];
+    while (vector.length < numberOfComponents) {
+      vector.push(new Fraction(0));
+    }
+    return new ExtendedMonzo(vector, undefined, Math.log(value));
   }
 
   get numberOfComponents() {
@@ -403,15 +395,23 @@ export default class ExtendedMonzo {
     return ExtendedMonzo.fromFraction(fraction, this.numberOfComponents);
   }
 
-  getConvergent(order: number) {
-    if (order < 1) {
-      throw new Error("Minimum convergent order is 1");
-    }
-    const continuedFraction = this.toContinued().slice(0, order);
+  getConvergent(depth: number) {
+    const continuedFraction = this.toContinued().slice(0, depth + 1);
     let result = new Fraction(continuedFraction[continuedFraction.length - 1]);
     for (let i = continuedFraction.length - 2; i >= 0; i--) {
       result = result.inverse().add(continuedFraction[i]);
     }
     return ExtendedMonzo.fromFraction(result, this.numberOfComponents);
+  }
+
+  getSemiConvergent(depth: number) {
+    let x;
+    if (this.isFractional()) {
+      x = this.toFraction();
+    } else {
+      x = new Fraction(this.valueOf());
+    }
+    const semiConvergents = getSemiConvergents(x, undefined, depth + 1);
+    return semiConvergents[Math.min(depth, semiConvergents.length - 1)];
   }
 }

@@ -237,17 +237,26 @@ describe("Extended Monzo", () => {
       1
     );
     expect(
-      tritone.getConvergent(1).toFraction().equals(new Fraction(1))
+      tritone.getConvergent(0).toFraction().equals(new Fraction(1))
     ).toBeTruthy();
     expect(
-      tritone.getConvergent(2).toFraction().equals(new Fraction(3, 2))
+      tritone.getConvergent(1).toFraction().equals(new Fraction(3, 2))
     ).toBeTruthy();
     expect(
-      tritone.getConvergent(3).toFraction().equals(new Fraction(7, 5))
+      tritone.getConvergent(2).toFraction().equals(new Fraction(7, 5))
     ).toBeTruthy();
     expect(
-      tritone.getConvergent(4).toFraction().equals(new Fraction(17, 12))
+      tritone.getConvergent(3).toFraction().equals(new Fraction(17, 12))
     ).toBeTruthy();
+  });
+  it("can be approximated by its semi-convergents", () => {
+    const pi = ExtendedMonzo.fromValue(Math.PI, 0);
+    expect(pi.getSemiConvergent(0).equals(new Fraction(3))).toBeTruthy();
+    expect(pi.getSemiConvergent(1).equals(new Fraction(13, 4))).toBeTruthy();
+    expect(pi.getSemiConvergent(2).equals(new Fraction(16, 5))).toBeTruthy();
+    expect(pi.getSemiConvergent(3).equals(new Fraction(19, 6))).toBeTruthy();
+    expect(pi.getSemiConvergent(4).equals(new Fraction(22, 7))).toBeTruthy();
+    expect(pi.getSemiConvergent(5).equals(new Fraction(179, 57))).toBeTruthy();
   });
 
   it("can represent huge numbers", () => {
