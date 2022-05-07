@@ -1,8 +1,7 @@
-<script lang="ts">
 import Fraction from "fraction.js";
 
-import ExtendedMonzo from "@/monzo.vue";
-import { kCombinations } from "@/combinations.vue";
+import ExtendedMonzo from "@/monzo";
+import { kCombinations } from "@/combinations";
 
 function mmod(a: number, b: number) {
   return ((a % b) + b) % b;
@@ -479,4 +478,3 @@ export default class Scale {
     return new Scale(intervals, equave, this.baseFrequency);
   }
 }
-</script>

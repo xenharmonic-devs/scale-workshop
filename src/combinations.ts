@@ -1,4 +1,3 @@
-<script lang="ts">
 /**
  * https://gist.github.com/axelpale/3118596
  *
@@ -157,4 +156,3 @@ export function combinations(set: any[]): any[][] {
   }
   return combs;
 }
-</script>

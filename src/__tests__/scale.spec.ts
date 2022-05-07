@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 import Fraction from "fraction.js";
 
-import ExtendedMonzo from "../monzo.vue";
-import Scale from "../scale.vue";
+import ExtendedMonzo from "../monzo";
+import Scale from "../scale";
 
 describe("Scale", () => {
   it("supports just intonation", () => {
