@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import Fraction from "fraction.js";
 
-import ExtendedMonzo from "../monzo.vue";
+import ExtendedMonzo from "../monzo";
 
 describe("Extended Monzo", () => {
   it("can be constructed from an integer", () => {

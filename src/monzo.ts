@@ -1,6 +1,5 @@
-<script lang="ts">
 import Fraction from "fraction.js";
-import { PRIMES, LOG_PRIMES } from "@/constants.vue";
+import { PRIMES, LOG_PRIMES } from "@/constants";
 
 type Monzo = Fraction[];
 
@@ -416,4 +415,3 @@ export default class ExtendedMonzo {
     return ExtendedMonzo.fromFraction(result, this.numberOfComponents);
   }
 }
-</script>
