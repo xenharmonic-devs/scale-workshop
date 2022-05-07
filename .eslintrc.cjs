@@ -18,4 +18,8 @@ module.exports = {
       extends: ["plugin:cypress/recommended"],
     },
   ],
+  rules: {
+    "@typescript-eslint/no-non-null-assertion": 0,
+    "@typescript-eslint/no-explicit-any": 0,
+  },
 };
