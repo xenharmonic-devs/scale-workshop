@@ -150,6 +150,22 @@ export function debounce(func: (...args: any[]) => void, timeout = 300) {
   };
 }
 
+export function valueToCents(value: number) {
+  return (Math.log(value) / Math.LN2) * 1200;
+}
+
+export function mtof(index: number) {
+  return 440 * Math.pow(2, (index - 69) / 12);
+}
+
+export function ratioToCents(ratio: number) {
+  return 1200 * Math.log2(ratio);
+}
+
+export function frequencyToCentOffset(frequency: number) {
+  return ratioToCents(frequency / 440);
+}
+
 const MIDI_NOTE_NUMBER_OF_A4 = 69;
 // convert a frequency to a midi note number and cents offset
 // assuming 12-edo at 440Hz
@@ -161,6 +177,34 @@ export function ftom(frequency: number) {
   return [midiNoteNumber, centsOffset];
 }
 
-export function mtof(index: number) {
-  return 440 * Math.pow(2, (index - 69) / 12);
+const MIDI_NOTE_NAMES = [
+  "C",
+  "C#",
+  "D",
+  "D#",
+  "E",
+  "F",
+  "F#",
+  "G",
+  "G#",
+  "A",
+  "A#",
+  "B",
+];
+
+// Find MIDI note name from MIDI note number
+export function midiNoteNumberToName(noteNumber: number) {
+  const remainder = mmod(noteNumber, 12);
+  const quotient = (noteNumber - remainder) / 12;
+  return MIDI_NOTE_NAMES[remainder] + quotient.toString();
+}
+
+export function clamp(minValue: number, maxValue: number, value: number) {
+  if (value < minValue) {
+    return minValue;
+  }
+  if (value > maxValue) {
+    return maxValue;
+  }
+  return value;
 }
