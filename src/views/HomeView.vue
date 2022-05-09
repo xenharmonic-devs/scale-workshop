@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import TheWelcome from "@/components/TheWelcome.vue";
+import ScaleBuilder from "@/components/ScaleBuilder.vue";
 </script>
 
 <template>
-  <main>
-    <TheWelcome />
+  <main class="app-content-container">
+    <ScaleBuilder :lines="['5/4', '3/2', '1200.']" />
   </main>
 </template>
