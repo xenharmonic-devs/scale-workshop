@@ -528,6 +528,34 @@ describe("Scale", () => {
     const scale = Scale.fromOctaplex([three, five, seven, eleven], false, two);
     expect(scale.size).toBe(24);
   });
+  it("can generate Euler-Fokker genera", () => {
+    const marveldene = Scale.fromEulerGenus(675, 2, 0).rotate(-1);
+    [
+      "1",
+      "16/15",
+      "9/8",
+      "6/5",
+      "5/4",
+      "4/3",
+      "45/32",
+      "3/2",
+      "8/5",
+      "5/3",
+      "9/5",
+      "15/8",
+      "2",
+    ].forEach((ratio, i) => {
+      expect(marveldene.getMonzo(i).toFraction().toFraction()).toBe(ratio);
+    });
+  });
+  it("can generate Dwarf scales", () => {
+    const scale = Scale.fromDwarf(7, 2, 0);
+    ["1", "9/8", "5/4", "11/8", "3/2", "13/8", "7/4", "2"].forEach(
+      (ratio, i) => {
+        expect(scale.getMonzo(i).toFraction().toFraction()).toBe(ratio);
+      }
+    );
+  });
   it("can tile", () => {
     const two = ExtendedMonzo.fromNumber(2, 3);
     const three = ExtendedMonzo.fromNumber(3, 3);
