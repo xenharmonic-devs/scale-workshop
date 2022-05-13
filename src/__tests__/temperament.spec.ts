@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import Fraction from "fraction.js";
 
 import ExtendedMonzo from "../monzo";
-import Mapping from "../temperament";
+import { Mapping, inverseLogMetric } from "../temperament";
 import Scale from "../scale";
 
 function error(mapping: Mapping, target: ExtendedMonzo) {
@@ -141,6 +141,31 @@ describe("Temperament Mapping", () => {
     expect(
       edo18b.columns[1].toEqualTemperament()[0].equals(new Fraction(28, 18))
     ).toBeTruthy();
+  });
+
+  it("can combine vals Tenney-Euclid optimally", () => {
+    const meantone = Mapping.fromTenneyEuclid([12, 19], 2, inverseLogMetric(3));
+    const syntonicComma = ExtendedMonzo.fromFraction(new Fraction(81, 80), 3);
+    const octave = ExtendedMonzo.fromNumber(2, 3);
+    expect(meantone.apply(syntonicComma).toCents()).toBeCloseTo(0);
+    expect(meantone.apply(octave).toCents()).toBeGreaterThan(1200);
+    expect(meantone.apply(octave).toCents()).toBeLessThan(1202);
+  });
+
+  it("can calculate POTE tunings", () => {
+    const marvel = Mapping.fromTenneyEuclid(
+      [9, 10, 12],
+      2,
+      inverseLogMetric(4)
+    ).pureOctaves();
+    const marvelComma = ExtendedMonzo.fromFraction(new Fraction(225, 224), 4);
+    const octave = ExtendedMonzo.fromNumber(2, 4);
+    const fifth = ExtendedMonzo.fromFraction(new Fraction(3, 2), 4);
+    const majorThird = ExtendedMonzo.fromFraction(new Fraction(5, 4), 4);
+    expect(marvel.apply(marvelComma).toCents()).toBeCloseTo(0);
+    expect(marvel.apply(octave).toCents()).toBeCloseTo(1200);
+    expect(marvel.apply(fifth).toCents()).toBeCloseTo(700.4075);
+    expect(marvel.apply(majorThird).toCents()).toBeCloseTo(383.6376);
   });
 
   it("can be applied to scales", () => {

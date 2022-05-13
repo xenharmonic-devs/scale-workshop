@@ -1,3 +1,4 @@
+import { transpose, multiply, inv } from "mathjs";
 import Fraction from "fraction.js";
 import { LOG_PRIMES } from "@/constants";
 import ExtendedMonzo from "@/monzo";
@@ -116,7 +117,29 @@ function minimax(mapping: MappingVector, justIntonation: MappingVector) {
   return bestMapping;
 }
 
-export default class Mapping {
+export function inverseLogMetric(numberOfComponents: number): Metric {
+  return LOG_PRIMES.slice(0, numberOfComponents).map(
+    (logPrime) => 1 / logPrime
+  );
+}
+
+function pseudoInverse(mat: MappingVector[]) {
+  const transposed = transpose(mat);
+  return multiply(transposed, inv(multiply(mat, transposed)));
+}
+
+function natssToColumns(natss: number[]) {
+  const zero = new Fraction(0);
+  const unison = Array(natss.length).fill(zero);
+  const one = new Fraction(1);
+  const columns: ExtendedMonzo[] = [];
+  natss.forEach((nats) => {
+    columns.push(new ExtendedMonzo(unison, one, nats));
+  });
+  return columns;
+}
+
+export class Mapping {
   columns: ExtendedMonzo[];
 
   constructor(columns: ExtendedMonzo[]) {
@@ -202,6 +225,32 @@ export default class Mapping {
         )
       );
     });
+    return new Mapping(columns);
+  }
+
+  static fromTenneyEuclid(
+    patentVals: number[],
+    equave: number,
+    metric: Metric
+  ) {
+    const logEquave = Math.log(equave.valueOf());
+    const subspaceBasis: number[][] = [];
+    patentVals.forEach((val) => {
+      const basis: number[] = [];
+      for (let i = 0; i < metric.length; ++i) {
+        basis.push(Math.round((LOG_PRIMES[i] * val) / logEquave) * metric[i]);
+      }
+      subspaceBasis.push(basis);
+    });
+
+    const jip = LOG_PRIMES.slice(0, metric.length);
+    mulComponentwiseInPlace(jip, metric);
+    const natss = multiply(
+      jip,
+      multiply(pseudoInverse(subspaceBasis), subspaceBasis)
+    );
+    divComponentwiseInPlace(natss, metric);
+    const columns = natssToColumns(natss);
     return new Mapping(columns);
   }
 
