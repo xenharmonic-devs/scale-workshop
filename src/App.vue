@@ -7,23 +7,15 @@ import { RouterLink, RouterView } from "vue-router";
     <ul>
       <li>
         <RouterLink to="/about">
-          <img
-            alt="Vue logo"
-            class="logo"
-            src="@/assets/logo.svg"
-            width="25"
-            height="25"
-          />
-
-          Scale Workshop
-        </RouterLink>
+          <!--<img alt="Scale Workshop logo" class="logo" src="@/assets/logo.svg" width="25" height="25" />-->Scale
+          Workshop</RouterLink>
       </li>
       <li><RouterLink to="/">Build Scale</RouterLink></li>
-      <li><a href="#">Analysis</a></li>
-      <li><a href="#">Virtual Keyboard</a></li>
-      <li><a href="#">Synth</a></li>
-      <li><a href="#">MIDI I/O</a></li>
-      <li><a href="#">Preferences</a></li>
+      <li><RouterLink to="/analysis">Analysis</RouterLink></li>
+      <li><RouterLink to="/vk">Virtual Keyboard</RouterLink></li>
+      <li><RouterLink to="/synth">Synth</RouterLink></li>
+      <li><RouterLink to="/midi">MIDI I/O</RouterLink></li>
+      <li><RouterLink to="/prefs">Preferences</RouterLink></li>
       <li><RouterLink to="/guide">User Guide</RouterLink></li>
     </ul>
   </nav>
@@ -73,13 +65,13 @@ nav#app-navigation ul li a {
   cursor: default;
 }
 
-nav#app-navigation ul li a.router-link-exact-active {
-  background-color: white;
-  color: black;
-}
-
 nav#app-navigation ul li a:hover {
   background-color: #888;
+}
+
+nav#app-navigation ul li a.router-link-exact-active, nav#app-navigation ul li a.router-link-exact-active:hover {
+  background-color: white;
+  color: black;
 }
 
 .logo {
@@ -117,5 +109,16 @@ nav a {
 
 nav a:first-of-type {
   border: 0;
+}
+
+/* UI elements */
+.btn {
+  display: inline-block;
+  border-radius: 3px;
+  border: #000 1px solid;
+  padding: 0.25rem 0.5rem;
+}
+.btn + .btn {
+  margin-left: 0.25rem;
 }
 </style>
