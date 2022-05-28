@@ -1,54 +1,40 @@
-/* color palette from <https://github.com/vuejs/theme> */
-:root {
-  --vt-c-white: #ffffff;
-  --vt-c-white-soft: #f8f8f8;
-  --vt-c-white-mute: #f2f2f2;
-
-  --vt-c-black: #181818;
-  --vt-c-black-soft: #222222;
-  --vt-c-black-mute: #282828;
-
-  --vt-c-indigo: #2c3e50;
-
-  --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
-  --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
-  --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
-  --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
-
-  --vt-c-text-light-1: var(--vt-c-indigo);
-  --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
-  --vt-c-text-dark-1: var(--vt-c-white);
-  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
-}
-
 /* semantic color variables for this project */
 :root {
-  --color-background: var(--vt-c-white);
-  --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
+  --color-background: #fff;
+  --color-background-soft: #eee;
+  --color-background-mute: #ddd;
 
-  --color-border: var(--vt-c-divider-light-2);
-  --color-border-hover: var(--vt-c-divider-light-1);
+  --color-border: #ccc;
+  --color-border-hover: #eee;
 
-  --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-1);
+  --color-heading: #000;
+  --color-text: #000;
+
+  --color-accent: #008080;
+  --color-accent-deeper: #006060;
+  --color-accent-background: #f5ffff;
 
   --section-gap: 160px;
 }
 
+/* TODO dark scheme */
+/*
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
+    --color-background: #000;
+    --color-background-soft: #080808;
+    --color-background-mute: #111;
 
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
+    --color-border: #333;
+    --color-border-hover: #111;
 
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
+    --color-heading: #fff;
+    --color-text: #fff;
+
+    --color-accent: green;
   }
 }
+*/
 
 *,
 *::before,
@@ -66,10 +52,63 @@ body {
   color: var(--color-text);
   background: var(--color-background);
   transition: color 0.5s, background-color 0.5s;
-  line-height: 1.6;
+  line-height: 2;
   font-family: sans-serif;
   font-size: 15px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* Text */
+p {
+  line-height: 1.5;
+}
+a {
+  color: var(--color-accent);
+  transition: 0.3s;
+}
+strong {
+  font-weight: bold;
+}
+
+/* UI elements (e.g. buttons, controls, groups) */
+.btn {
+  display: inline-block;
+  border-radius: 3px;
+  border: var(--color-accent) 1px solid;
+  background-color: var(--color-accent-background);
+  padding: 0.25rem 0.5rem;
+  text-decoration: none;
+}
+.btn:hover {
+  color: white;
+  background-color: var(--color-accent);
+}
+.btn + .btn {
+  margin-left: 0.25rem;
+}
+.control,
+input[type=text],
+textarea,
+select {
+  width: 100%;
+  padding: 0.4rem;
+}
+.control-group {
+  display: block;
+  background-color: #fff;
+  padding: 0.5rem 0;
+  margin: 1rem 0rem 2rem;
+}
+.control-group-heading {
+  margin: auto 0.5em;
+  background-color: white;
+  border-bottom: 1px solid black;
+  text-align: center;
+  font-weight: bold;
+}
+label {
+  font-weight: bold;
 }

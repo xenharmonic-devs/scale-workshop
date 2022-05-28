@@ -8,7 +8,8 @@ import { RouterLink, RouterView } from "vue-router";
       <li>
         <RouterLink to="/about">
           <!--<img alt="Scale Workshop logo" class="logo" src="@/assets/logo.svg" width="25" height="25" />-->Scale
-          Workshop</RouterLink>
+          Workshop</RouterLink
+        >
       </li>
       <li><RouterLink to="/">Build Scale</RouterLink></li>
       <li><RouterLink to="/analysis">Analysis</RouterLink></li>
@@ -43,7 +44,7 @@ nav#app-navigation {
 
 /* Navigation tabs */
 nav#app-navigation {
-  background-color: #555;
+  background-color: var(--color-accent);
   color: white;
   max-width: 100%;
   overflow-x: auto;
@@ -59,38 +60,25 @@ nav#app-navigation ul li {
 }
 nav#app-navigation ul li a {
   display: inline-block;
-  padding: 1rem;
+  padding: 0.75rem 1rem;
   color: white;
   text-decoration: none;
   cursor: default;
 }
 
 nav#app-navigation ul li a:hover {
-  background-color: #888;
+  background-color: var(--color-accent-deeper);
 }
 
-nav#app-navigation ul li a.router-link-exact-active, nav#app-navigation ul li a.router-link-exact-active:hover {
+nav#app-navigation ul li a.router-link-exact-active,
+nav#app-navigation ul li a.router-link-exact-active:hover {
   background-color: white;
   color: black;
 }
 
 .logo {
-  display: inline-block;
   float: left;
   margin: 0;
-}
-
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
 }
 
 nav a.router-link-exact-active {
@@ -109,16 +97,5 @@ nav a {
 
 nav a:first-of-type {
   border: 0;
-}
-
-/* UI elements */
-.btn {
-  display: inline-block;
-  border-radius: 3px;
-  border: #000 1px solid;
-  padding: 0.25rem 0.5rem;
-}
-.btn + .btn {
-  margin-left: 0.25rem;
 }
 </style>

@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+import HomeView from "../views/scale.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,7 +15,7 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import("../views/AnalysisView.vue"),
+      component: () => import("../views/analysis.vue"),
     },
     {
       path: "/vk",
@@ -23,7 +23,7 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import("../views/VirtualKeyboardView.vue"),
+      component: () => import("../views/virtualkeyboard.vue"),
     },
     {
       path: "/synth",
@@ -31,7 +31,7 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import("../views/SynthView.vue"),
+      component: () => import("../views/synth.vue"),
     },
     {
       path: "/midi",
@@ -39,7 +39,7 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import("../views/MidiView.vue"),
+      component: () => import("../views/midi.vue"),
     },
     {
       path: "/prefs",
@@ -47,7 +47,7 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import("../views/PrefsView.vue"),
+      component: () => import("../views/preferences.vue"),
     },
     {
       path: "/about",
@@ -55,7 +55,7 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import("../views/AboutView.vue"),
+      component: () => import("../views/scaleworkshop.vue"),
     },
     {
       path: "/guide",
@@ -63,7 +63,7 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (Guide.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import("../views/GuideView.vue"),
+      component: () => import("../views/userguide.vue"),
     },
   ],
 });
