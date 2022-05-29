@@ -5,34 +5,32 @@ defineProps<{
 </script>
 
 <template>
-  <div id="tab-build-scale" class="grid-container">
+  <div id="tab-build-scale" class="columns-container">
     <div class="column scale-builder">
       <input id="scale-name" type="text" placeholder="Untitled scale" />
-      <a class="btn" href="#">New scale ▼</a>
-      <a class="btn" href="#">Modify scale ▼</a>
-      <a class="btn" href="#">Save .scl</a>
+      <div class="btn-group">
+        <a class="btn" href="#">New scale ▼</a>
+        <a class="btn" href="#">Modify scale ▼</a>
+      </div>
 
       <div class="control-group">
         <p class="control-group-heading">Scale data</p>
         <p v-for="(line, index) of lines" :key="index">{{ line }}</p>
+        <p>Placeholder for scale graphic</p>
       </div>
 
       <div class="control-group">
-        <p class="control-group-heading">Base tuning</p>
+        <p class="control-group-heading">Keyboard mapping</p>
         <label>Base frequency (note 1/1)</label>
-        <input type="text" value="440" />
+        <input type="number" value="440" min="0.1" max="1000000"/>
         <label>Base MIDI note (note 1/1)</label>
-        <input type="text" value="69" />
+        <input type="number" value="69" min="0" max="127" step="1" />
       </div>
 
-      <a class="btn" href="#">Save .kbm</a>
-
       <div class="control-group">
-        <p class="control-group-heading">Key colours</p>
         <label>Key colours</label>
         <p>
-          A list of key colours, ascending from 1/1. Key colours are purely
-          cosmetic and do not affect mapping.
+          A list of key colours, ascending from 1/1. Key colours are cosmetic only; they do not affect mapping.
         </p>
         <textarea>
 white black white white black white black white white black white black</textarea
@@ -392,40 +390,49 @@ white black white white black white black white white black white black</textare
       </table>
     </div>
     <div class="column exporters">
+      <p class="control-group-heading">Export current settings</p>
       <a href="#" class="btn">
-        <p><strong>Download AnaMark v1 tuning (.tun)</strong></p>
-        <p>For various softsynths</p>
+        <p><strong>AnaMark v1 tuning (.tun)</strong></p>
+        <p>Tuning file for various softsynths</p>
       </a>
       <a href="#" class="btn">
-        <p><strong>Download AnaMark v2 tuning (.tun)</strong></p>
-        <p>For various softsynths</p>
+        <p><strong>AnaMark v2 tuning (.tun)</strong></p>
+        <p>Tuning file for various softsynths</p>
       </a>
       <a href="#" class="btn">
-        <p><strong>Download Max/MSP coll tuning (.txt)</strong></p>
+        <p><strong>Scala scale (.scl)</strong></p>
+        <p>Scale file for various softsynths. Note that this contains only intervals, and most synths will assume middle C ~261Hz unless a kbm file is also exported.</p>
+      </a>
+      <a href="#" class="btn">
+        <p><strong>Scala keyboard mapping (.kbm)</strong></p>
+        <p>Keyboard mapping to accompany a .scl file. Maps the scale to a specific frequency.</p>
+      </a>
+      <a href="#" class="btn">
+        <p><strong>Max/MSP coll tuning (.txt)</strong></p>
         <p>For Max/MSP coll object</p>
       </a>
       <a href="#" class="btn">
-        <p><strong>Download PureData text tuning (.txt)</strong></p>
+        <p><strong>PureData text tuning (.txt)</strong></p>
         <p>For PureData text object</p>
       </a>
       <a href="#" class="btn">
-        <p><strong>Download Kontakt tuning script (.txt)</strong></p>
+        <p><strong>Kontakt tuning script (.txt)</strong></p>
         <p>For Native Instruments Kontakt</p>
       </a>
       <a href="#" class="btn">
-        <p><strong>Download Soniccouture tuning file (.nka)</strong></p>
+        <p><strong>Soniccouture tuning file (.nka)</strong></p>
         <p>For Soniccouture sample libraries</p>
       </a>
       <a href="#" class="btn">
-        <p><strong>Download Harmor pitch map (.fnv)</strong></p>
+        <p><strong>Harmor pitch map (.fnv)</strong></p>
         <p>For Image-Line Harmor</p>
       </a>
       <a href="#" class="btn">
-        <p><strong>Download Sytrus pitch map (.fnv)</strong></p>
+        <p><strong>Sytrus pitch map (.fnv)</strong></p>
         <p>For Image-Line Sytrus</p>
       </a>
       <a href="#" class="btn">
-        <p><strong>Download bla bla bla (.etc)</strong></p>
+        <p><strong>bla bla bla (.etc)</strong></p>
         <p>This list of exporters has more stuff to add</p>
       </a>
     </div>
@@ -433,22 +440,61 @@ white black white white black white black white white black white black</textare
 </template>
 
 <style scoped>
-/* Content layout */
-div.grid-container {
-  display: grid;
+/* Content layout (small) */
+div.columns-container {
   height: 100%;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1px;
+  overflow-y: auto;
   background-color: var(--color-border);
 }
 div.column {
-  max-height: 100%;
-  overflow-y: auto;
-  padding: 1rem;
   background-color: var(--color-background);
+}
+div.scale-builder {
+  padding: 1rem;
 }
 div.tuning-table {
   padding: 0rem;
+}
+div.exporters {
+  padding: 1rem;
+}
+
+/* Content layout (medium) */
+@media screen and (min-width: 600px) {
+  div.columns-container {
+    column-count: 2;
+    column-gap: 1px;
+    overflow: hidden;
+  }
+  div.column {
+    overflow-y: auto;
+  }
+  div.scale-builder {
+    width: 100%;
+    height: 100%;
+  }
+  div.tuning-table {
+    width: 100%;
+    height: 66%;
+  }
+  div.exporters {
+    width: 100%;
+    height: 34%;
+    border-top: 1px solid var(--color-border);
+  }
+}
+
+/* Content layout (large) */
+@media screen and (min-width: 1100px) {
+  div.columns-container {
+    column-count: 3;
+  }
+  div.column {
+    height: 100%;
+  }
+  div.exporters {
+    border: none;
+  }
 }
 
 /* UI elements */

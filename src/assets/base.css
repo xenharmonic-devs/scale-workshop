@@ -15,6 +15,7 @@
   --color-accent-background: #f5ffff;
 
   --section-gap: 160px;
+
 }
 
 /* TODO dark scheme */
@@ -73,7 +74,7 @@ strong {
   font-weight: bold;
 }
 
-/* UI elements (e.g. buttons, controls, groups) */
+/* UI elements - button, button group */
 .btn {
   display: inline-block;
   border-radius: 3px;
@@ -86,11 +87,16 @@ strong {
   color: white;
   background-color: var(--color-accent);
 }
-.btn + .btn {
-  margin-left: 0.25rem;
+.btn-group {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 0.25rem;
 }
+
+/* UI elements - control, control group */
 .control,
 input[type=text],
+input[type=number],
 textarea,
 select {
   width: 100%;
@@ -103,11 +109,10 @@ select {
   margin: 1rem 0rem 2rem;
 }
 .control-group-heading {
-  margin: auto 0.5em;
-  background-color: white;
-  border-bottom: 1px solid black;
-  text-align: center;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 1.1em;
   font-weight: bold;
+  margin: auto auto 0.5rem;
 }
 label {
   font-weight: bold;
