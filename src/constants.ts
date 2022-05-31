@@ -7,6 +7,7 @@ export const DEFAULT_NUMBER_OF_COMPONENTS = 25; // Enough to represent all prime
 
 export const NEWLINE_TEST = /\r?\n/;
 export const UNIX_NEWLINE = "\n";
+export const WINDOWS_NEWLINE = "\r\n";
 
 export const NUMBER_OF_NOTES = 128;
 
