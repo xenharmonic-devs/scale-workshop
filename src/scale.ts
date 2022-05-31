@@ -26,6 +26,7 @@ export default class Scale {
     if (intervals.length < 1) {
       throw new Error("At least one interval is required");
     }
+    intervals = [...intervals];
     const equave = intervals.pop()!;
     intervals.unshift(equave.mul(0));
     return new Scale(intervals, equave, baseFrequency);
