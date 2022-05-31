@@ -1,5 +1,10 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import { RouterLink, RouterView } from "vue-router";
+
+const scaleLines = ref(["5/4", "7\\12", "1101.1", "2,0"]);
+const baseFrequency = ref(440);
+const baseMidiNote = ref(69);
 </script>
 
 <template>
@@ -15,7 +20,14 @@ import { RouterLink, RouterView } from "vue-router";
       <li><RouterLink to="/guide">User Guide</RouterLink></li>
     </ul>
   </nav>
-  <RouterView />
+  <RouterView
+    :scaleLines="scaleLines"
+    :baseFrequency="baseFrequency"
+    :baseMidiNote="baseMidiNote"
+    @update:scaleLines="scaleLines = $event"
+    @update:baseMidiNote="baseMidiNote = $event"
+    @update:baseFrequency="baseFrequency = $event"
+  />
 </template>
 
 <style>
