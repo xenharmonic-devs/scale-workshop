@@ -14,6 +14,7 @@
   "dependencies": {
     "fraction.js": "^4.2.0",
     "jszip": "^3.10.0",
+    "moment-of-symmetry": "github:xenharmonic-devs/moment-of-symmetry",
     "vue": "^3.2.33",
     "vue-router": "^4.0.14",
     "webmidi": "^3.0.20"

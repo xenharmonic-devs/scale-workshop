@@ -1,9 +1,9 @@
 import Fraction from "fraction.js";
+import { getSemiConvergents } from "moment-of-symmetry";
 import { PRIMES, LOG_PRIMES } from "@/constants";
 import {
   gcd,
   lcm,
-  getSemiConvergents,
   isSafeFraction,
   natsToCents,
   centsToNats,

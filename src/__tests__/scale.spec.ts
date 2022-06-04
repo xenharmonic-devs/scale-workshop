@@ -556,6 +556,18 @@ describe("Scale", () => {
       }
     );
   });
+  it("can generate a MOS scale", () => {
+    const octave = ExtendedMonzo.fromNumber(2, 1);
+    const bish = Scale.fromMos(3, 4, 2, 1, 3, octave);
+    expect(bish.getMonzo(0).toCents()).toBeCloseTo(0);
+    expect(bish.getMonzo(1).toCents()).toBeCloseTo(120);
+    expect(bish.getMonzo(2).toCents()).toBeCloseTo(360);
+    expect(bish.getMonzo(3).toCents()).toBeCloseTo(480);
+    expect(bish.getMonzo(4).toCents()).toBeCloseTo(720);
+    expect(bish.getMonzo(5).toCents()).toBeCloseTo(840);
+    expect(bish.getMonzo(6).toCents()).toBeCloseTo(1080);
+    expect(bish.getMonzo(7).toCents()).toBeCloseTo(1200);
+  });
   it("can tile", () => {
     const two = ExtendedMonzo.fromNumber(2, 3);
     const three = ExtendedMonzo.fromNumber(3, 3);
