@@ -1,6 +1,7 @@
 import { getLineType, LINE_TYPE } from "@/parser";
-import { fractionToString, mmod } from "@/utils";
+import { fractionToString } from "@/utils";
 import { BaseExporter, type ExporterParams } from "@/exporters/base";
+import { mmod } from "temperaments";
 
 export default class ReaperExporter extends BaseExporter {
   static tuningMaxSize = 128;

@@ -3,9 +3,10 @@ import { mos } from "moment-of-symmetry";
 
 import ExtendedMonzo from "@/monzo";
 import { kCombinations } from "@/combinations";
-import { PRIME_CENTS, PRIMES } from "@/constants";
+import { PRIME_CENTS } from "@/constants";
 import { ScaleLine, type ScaleLineOptions } from "@/scale-line";
-import { mmod, valueToCents } from "@/utils";
+import { valueToCents } from "@/utils";
+import { mmod, PRIMES } from "temperaments";
 
 // TODO: Convert methods relevant for non-destructive editing #33
 export default class Scale {

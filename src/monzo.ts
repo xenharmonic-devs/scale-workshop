@@ -1,7 +1,12 @@
 import Fraction from "fraction.js";
 import { getSemiConvergents } from "moment-of-symmetry";
-import { PRIMES, PRIME_CENTS } from "@/constants";
-import { gcd, lcm, centsToNats, valueToCents, centsToValue } from "@/utils";
+import { PRIME_CENTS } from "@/constants";
+import {
+  PRIMES,
+  gcd,
+  lcm,
+  centsToNats,
+} from "temperaments";
 
 type Monzo = Fraction[];
 
@@ -191,6 +196,23 @@ export default class ExtendedMonzo {
     }
 
     return [fractionOfEquave, equave];
+  }
+
+  toIntegerMonzo(): number[] {
+    if (!this.residual.equals(1)) {
+      throw new Error("Cannot convert monzo with residual to integers");
+    }
+    if (this.nats) {
+      throw new Error("Cannot convert monzo with offset to integers");
+    }
+    const result: number[] = [];
+    this.vector.forEach((component) => {
+      if (component.d !== 1) {
+        throw new Error("Cannot convert fractional monzo to integers");
+      }
+      result.push(component.valueOf());
+    });
+    return result;
   }
 
   isFractional() {

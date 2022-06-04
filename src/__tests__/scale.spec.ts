@@ -3,8 +3,8 @@ import Fraction from "fraction.js";
 
 import ExtendedMonzo from "../monzo";
 import Scale from "../scale";
-import { arraysEqual } from "../utils";
 import { ScaleLine, ScaleLineOptions } from "../scale-line";
+import { arraysEqual } from "temperaments";
 
 // TODO: Convert tests relevant for non-destructive editing #33
 describe("Scale", () => {

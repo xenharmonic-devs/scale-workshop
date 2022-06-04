@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type Scale from "@/scale";
-import { mmod } from "@/utils";
+import { mmod } from "temperaments";
 import { computed } from "vue";
 
 const props = defineProps<{

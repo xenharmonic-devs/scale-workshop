@@ -1,40 +1,6 @@
 import Fraction from "fraction.js";
+import { gcd, mmod } from "temperaments";
 import { computed, type ComputedRef } from "vue";
-
-export function arraysEqual(a: any[], b: any[]) {
-  if (a === b) {
-    return true;
-  }
-  if (a.length !== b.length) {
-    return false;
-  }
-  for (let i = 0; i < a.length; ++i) {
-    if (a[i] !== b[i]) {
-      return false;
-    }
-  }
-  return true;
-}
-
-// Stolen from fraction.js, because it's not exported.
-export function gcd(a: number, b: number): number {
-  if (!a) return b;
-  if (!b) return a;
-  while (true) {
-    a %= b;
-    if (!a) return b;
-    b %= a;
-    if (!b) return a;
-  }
-}
-
-export function lcm(a: number, b: number): number {
-  return (Math.abs(a) / gcd(a, b)) * Math.abs(b);
-}
-
-export function mmod(a: number, b: number) {
-  return ((a % b) + b) % b;
-}
 
 export function isSafeFraction(fraction: Fraction) {
   return (
@@ -90,14 +56,6 @@ export function stringToFraction(input: string) {
     return new Fraction(`${numerator}/${denominator}`);
   }
   return new Fraction(input);
-}
-
-export function centsToNats(cents: number) {
-  return (cents / 1200) * Math.LN2;
-}
-
-export function natsToCents(nats: number) {
-  return (nats / Math.LN2) * 1200;
 }
 
 export function debounce(func: (...args: any[]) => void, timeout = 300) {
