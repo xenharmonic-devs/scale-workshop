@@ -3,7 +3,7 @@ import Fraction from "fraction.js";
 
 import ExtendedMonzo from "../monzo";
 import Scale from "../scale";
-import { arraysEqual, centsToNats } from "@/utils";
+import { arraysEqual, centsToNats } from "temperaments";
 
 describe("Scale", () => {
   it("supports just intonation", () => {

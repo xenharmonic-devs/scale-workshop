@@ -1,5 +1,6 @@
 import { getLineType, LINE_TYPE } from "@/parser";
-import { fractionToString, mmod } from "@/utils";
+import { fractionToString } from "@/utils";
+import { mmod } from "temperaments";
 import { BaseExporter, type ExporterParams } from "./base";
 
 export default class ReaperExporter extends BaseExporter {

@@ -1,14 +1,14 @@
 import Fraction from "fraction.js";
 import { getSemiConvergents } from "moment-of-symmetry";
-import { PRIMES, LOG_PRIMES } from "@/constants";
+import { isSafeFraction, fractionToString } from "@/utils";
 import {
+  PRIMES,
+  LOG_PRIMES,
   gcd,
   lcm,
-  isSafeFraction,
   natsToCents,
   centsToNats,
-  fractionToString,
-} from "@/utils";
+} from "temperaments";
 
 type Monzo = Fraction[];
 
@@ -207,6 +207,23 @@ export default class ExtendedMonzo {
     }
 
     return [fractionOfEquave, equave];
+  }
+
+  toIntegerMonzo(): number[] {
+    if (!this.residual.equals(1)) {
+      throw new Error("Cannot convert monzo with residual to integers");
+    }
+    if (this.nats) {
+      throw new Error("Cannot convert monzo with offset to integers");
+    }
+    const result: number[] = [];
+    this.vector.forEach((component) => {
+      if (component.d !== 1) {
+        throw new Error("Cannot convert fractional monzo to integers");
+      }
+      result.push(component.valueOf());
+    });
+    return result;
   }
 
   isFractional() {

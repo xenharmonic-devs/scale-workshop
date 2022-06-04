@@ -1,4 +1,4 @@
-import { arraysEqual } from "@/utils";
+import { arraysEqual } from "temperaments";
 import { describe, it, expect } from "vitest";
 
 import {

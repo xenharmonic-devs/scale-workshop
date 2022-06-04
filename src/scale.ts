@@ -3,7 +3,7 @@ import { mos } from "moment-of-symmetry";
 
 import ExtendedMonzo, { type ScaleLineOptions } from "@/monzo";
 import { kCombinations } from "@/combinations";
-import { LOG_PRIMES, PRIMES } from "@/constants";
+import { LOG_PRIMES, PRIMES } from "temperaments";
 
 function mmod(a: number, b: number) {
   return ((a % b) + b) % b;

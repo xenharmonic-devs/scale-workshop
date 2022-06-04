@@ -1,39 +1,5 @@
 import type Fraction from "fraction.js";
-
-export function arraysEqual(a: any[], b: any[]) {
-  if (a === b) {
-    return true;
-  }
-  if (a.length !== b.length) {
-    return false;
-  }
-  for (let i = 0; i < a.length; ++i) {
-    if (a[i] !== b[i]) {
-      return false;
-    }
-  }
-  return true;
-}
-
-// Stolen from fraction.js, because it's not exported.
-export function gcd(a: number, b: number): number {
-  if (!a) return b;
-  if (!b) return a;
-  while (true) {
-    a %= b;
-    if (!a) return b;
-    b %= a;
-    if (!b) return a;
-  }
-}
-
-export function lcm(a: number, b: number): number {
-  return (Math.abs(a) / gcd(a, b)) * Math.abs(b);
-}
-
-export function mmod(a: number, b: number) {
-  return ((a % b) + b) % b;
-}
+import { gcd, mmod } from "temperaments";
 
 export function isSafeFraction(fraction: Fraction) {
   return (
@@ -69,14 +35,6 @@ export function fractionToString(
     return `${sign}${fraction.n * multiplier}/${fraction.d * multiplier}`;
   }
   return `${sign}${fraction.n}/${fraction.d}`;
-}
-
-export function centsToNats(cents: number) {
-  return (cents / 1200) * Math.LN2;
-}
-
-export function natsToCents(nats: number) {
-  return (nats / Math.LN2) * 1200;
 }
 
 export function debounce(func: (...args: any[]) => void, timeout = 300) {

@@ -1,5 +1,6 @@
 import { KORG } from "@/constants";
-import { clamp, frequencyToCentOffset, mmod, ratioToCents } from "@/utils";
+import { clamp, frequencyToCentOffset, ratioToCents } from "@/utils";
+import { mmod } from "temperaments";
 import JSZip from "jszip";
 import { BaseExporter, type ExporterParams } from "./base";
 
