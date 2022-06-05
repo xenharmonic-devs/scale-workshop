@@ -32,7 +32,7 @@ nav#app-navigation {
   flex: 0 0 auto;
 }
 
-.app-content-container {
+#app > main {
   flex: 1 1 auto;
   overflow-y: hidden;
 }
