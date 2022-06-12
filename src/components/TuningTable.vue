@@ -83,8 +83,12 @@ const rows = computed(() => {
   border-spacing: 0px;
 }
 .tuning-table table th {
-  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: var(--color-background);
   border-bottom: 1px solid var(--color-border);
+  font-weight: bold;
 }
 .tuning-table table tr:nth-of-type(2n) {
   background-color: var(--color-background-soft);
