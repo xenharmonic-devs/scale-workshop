@@ -28,47 +28,97 @@ const joinedLines = computed({
   <div id="tab-build-scale" class="columns-container">
     <div class="column scale-builder">
       <input id="scale-name" type="text" placeholder="Untitled scale" />
-      <div class="btn-group">
-        <a class="btn" href="#">New scale ▼</a>
-        <a class="btn" href="#">Modify scale ▼</a>
-      </div>
+
+      <ul class="btn-group">
+        <li class="btn-dropdown-group">
+          <a class="btn" href="#">New scale ▼</a>
+          <ul>
+            <a href="#"><li>Equal temperament</li></a>
+            <a href="#"><li>Rank-2 temperament</li></a>
+            <a href="#"><li>Harmonic series segment</li></a>
+            <a href="#"><li>Subharmonic series segment</li></a>
+            <a href="#"><li>Enumerate chord</li></a>
+            <a href="#"><li>Combination product set</li></a>
+            <li class="divider"></li>
+            <a href="#"><li>Import .scl</li></a>
+            <a href="#"><li>Import .tun</li></a>
+            <a href="#"><li>Import .mnlgtuns / .mnltuno</li></a>
+            <li class="divider"></li>
+            <a href="#"><li>Clear scale</li></a>
+            <a href="#"><li>Load preset scale</li></a>
+          </ul>
+        </li>
+        <li class="btn-dropdown-group">
+          <a class="btn" href="#">Modify scale ▼</a>
+          <ul>
+            <a href="#"><li>Sort ascending</li></a>
+            <a href="#"><li>Reduce</li></a>
+            <a href="#"><li>Rotate</li></a>
+            <a href="#"><li>Subset</li></a>
+            <a href="#"><li>Stretch/compress</li></a>
+            <a href="#"><li>Random variance</li></a>
+            <a href="#"><li>Approximate by ratios</li></a>
+            <a href="#"><li>Approximate by harmonics</li></a>
+            <a href="#"><li>Approximate by subharmonics</li></a>
+            <a href="#"><li>Equalize</li></a>
+          </ul>
+        </li>
+      </ul>
 
       <div class="control-group">
         <p class="control-group-heading">Scale data</p>
-        <textarea rows="12" v-model="joinedLines"></textarea>
-        <p>Placeholder for scale graphic</p>
+        <div class="control">
+          <textarea rows="12" v-model="joinedLines"></textarea>
+        </div>
       </div>
 
       <div class="control-group">
-        <p class="control-group-heading">Keyboard mapping</p>
-        <label>Base frequency (note 1/1)</label>
-        <input
-          type="number"
-          :value="baseFrequency"
-          min="0.1"
-          max="1000000"
-          @input="$emit('update:baseFrequency', $event)"
-        />
-        <label>Base MIDI note (note 1/1)</label>
-        <input
-          type="number"
-          :value="baseMidiNote"
-          min="0"
-          max="127"
-          step="1"
-          @input="$emit('update:baseMidiNote', $event)"
-        />
+        <p class="control-group-heading">Tuning</p>
+
+        <div class="control">
+          <label>Interval</label>
+          <select>
+            <option>1/1</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label>Frequency</label>
+          <input
+            type="number"
+            :value="baseFrequency"
+            min="0.1"
+            max="1000000"
+            @input="$emit('update:baseFrequency', $event)"
+          />
+          <span>Hz</span>
+        </div>
+
+        <div class="control">
+          <label>MIDI note number</label>
+          <input
+            type="number"
+            :value="baseMidiNote"
+            min="0"
+            max="127"
+            step="1"
+            @input="$emit('update:baseMidiNote', $event)"
+          />
+          <span>A5</span>
+        </div>
       </div>
 
       <div class="control-group">
-        <label>Key colours</label>
-        <p>
-          A list of key colours, ascending from 1/1. Key colours are cosmetic
-          only; they do not affect mapping.
-        </p>
-        <textarea>
-white black white white black white black white white black white black</textarea
-        >
+        <p class="control-group-heading">Key colours</p>
+        <div class="control">
+          <p>
+            A list of key colours, ascending from 1/1. Key colours are cosmetic
+            only; they do not affect mapping.
+          </p>
+          <!-- prettier-ignore -->
+          <textarea>white black white white black white black white white black white black</textarea
+          >
+        </div>
       </div>
     </div>
     <TuningTable
