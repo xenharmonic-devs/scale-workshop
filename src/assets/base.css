@@ -13,6 +13,7 @@
   --color-accent: #008080;
   --color-accent-deeper: #006060;
   --color-accent-background: #f5ffff;
+  --color-accent-dimmed: rgba(0,20,20,0.7);
 
   --section-gap: 160px;
 
@@ -191,4 +192,27 @@ ul.btn-group, .btn-dropdown-group ul {
 .control textarea,
 .control select {
   flex-grow: 1;
+}
+
+/* UI elements - modals */
+.modal-container {
+  position: fixed;
+  z-index: 20;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-accent-dimmed);
+}
+.modal {
+  padding: 1rem;
+  background-color: var(--color-background);
+  box-shadow: black 0px 0px 200px;
+  max-height: 100vh;
+  max-width: 100vw;
+  width: 20rem;
+  overflow-y: auto;
 }
