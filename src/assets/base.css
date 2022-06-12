@@ -83,6 +83,11 @@ select {
 }
 
 /* UI elements - button, button group */
+.btn-group {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 0.25rem;
+}
 .btn {
   display: inline-block;
   border-radius: 3px;
@@ -95,10 +100,36 @@ select {
   color: white;
   background-color: var(--color-accent);
 }
-.btn-group {
-  display: flex;
-  flex-flow: row wrap;
-  gap: 0.25rem;
+ul.btn-group, .btn-dropdown-group ul {
+  list-style: none;
+  padding-left: unset;
+}
+.btn-dropdown-group ul {
+  visibility: hidden;
+  position: absolute;
+  width: 16rem;
+  margin-top: -1px;
+  z-index: 10;
+  background-color: var(--color-accent-background);
+  border: 1px solid var(--color-accent);
+}
+.btn-dropdown-group li {
+  padding: 0rem 0.5rem;
+}
+.btn-dropdown-group li.divider {
+  border-bottom: 1px solid var(--color-accent);
+}
+
+.btn-dropdown-group:hover ul,
+.btn-dropdown-group:focus-within ul {
+  visibility: visible;
+}
+.btn-dropdown-group a {
+  text-decoration: none;
+}
+.btn-dropdown-group a:hover li {
+  color: white;
+  background-color: var(--color-accent);
 }
 ul.btn-group, .btn-dropdown-group ul {
   list-style: none;

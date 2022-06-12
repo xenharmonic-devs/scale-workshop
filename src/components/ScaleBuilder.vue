@@ -109,10 +109,10 @@ const joinedLines = computed({
       </div>
 
       <div class="control-group">
-        <p class="control-group-heading">Key colours</p>
+        <p class="control-group-heading">Key colors</p>
         <div class="control">
           <p>
-            A list of key colours, ascending from 1/1. Key colours are cosmetic
+            A list of key colors, ascending from 1/1. Key colors are cosmetic
             only; they do not affect mapping.
           </p>
           <!-- prettier-ignore -->
@@ -192,6 +192,7 @@ div.columns-container {
 }
 div.column {
   background-color: var(--color-background);
+  overflow-x: hidden;
 }
 div.scale-builder {
   padding: 1rem;
