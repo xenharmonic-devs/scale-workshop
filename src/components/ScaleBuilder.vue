@@ -66,14 +66,14 @@ const joinedLines = computed({
       </ul>
 
       <div class="control-group">
-        <p class="control-group-heading">Scale data</p>
+        <h2>Scale data</h2>
         <div class="control">
           <textarea rows="12" v-model="joinedLines"></textarea>
         </div>
       </div>
 
       <div class="control-group">
-        <p class="control-group-heading">Tuning</p>
+        <h2>Tuning</h2>
 
         <div class="control">
           <label>Interval</label>
@@ -109,7 +109,7 @@ const joinedLines = computed({
       </div>
 
       <div class="control-group">
-        <p class="control-group-heading">Key colors</p>
+        <h2>Key colors</h2>
         <div class="control">
           <p>
             A list of key colors, ascending from 1/1. Key colors are cosmetic
@@ -127,7 +127,7 @@ const joinedLines = computed({
       :baseMidiNote="props.baseMidiNote"
     />
     <div class="column exporters">
-      <p class="control-group-heading">Export current settings</p>
+      <h2>Export current settings</h2>
       <a href="#" class="btn">
         <p><strong>AnaMark v1 tuning (.tun)</strong></p>
         <p>Tuning file for various softsynths</p>
