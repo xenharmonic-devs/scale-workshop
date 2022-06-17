@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import Fraction from "fraction.js";
 
 import ExtendedMonzo from "../monzo";
+import { centsToNats } from "@/utils";
 
 describe("Extended Monzo", () => {
   it("can be constructed from an integer", () => {
@@ -283,5 +284,104 @@ describe("Extended Monzo", () => {
     const tritaveNats = new ExtendedMonzo([], undefined, Math.log(3));
     expect(tritaveJI.strictEquals(tritaveNats)).toBeFalsy();
     expect(tritaveJI.equals(tritaveNats)).toBeTruthy();
+  });
+});
+
+describe("Extended Monzo reverse parsing", () => {
+  it("includes a denominator with integers", () => {
+    const monzo = ExtendedMonzo.fromNumber(3, 2);
+    expect(monzo.toScaleLine()).toBe("3/1");
+  });
+
+  it("can represent fractions", () => {
+    const monzo = ExtendedMonzo.fromFraction(new Fraction(2347868, 1238973), 3);
+    expect(monzo.toScaleLine()).toBe("2347868/1238973");
+  });
+
+  it("can represent unsafe fractions", () => {
+    const monzo = new ExtendedMonzo([
+      new Fraction(9999999999),
+      new Fraction(-77777777777777),
+    ]);
+    expect(monzo.toScaleLine()).toBe("[9999999999, -77777777777777>");
+  });
+
+  it("can represent equal temperament", () => {
+    const monzo = ExtendedMonzo.fromEqualTemperament(
+      new Fraction(1, 5),
+      new Fraction(4),
+      1
+    );
+    expect(monzo.toScaleLine()).toBe("2\\5");
+  });
+
+  it("can represent generalized N-of-EDO (EDT)", () => {
+    const monzo = ExtendedMonzo.fromEqualTemperament(
+      new Fraction(7, 11),
+      new Fraction(3),
+      2
+    );
+    expect(monzo.toScaleLine()).toBe("7\\11<3>");
+  });
+
+  it("can represent generalized N-of-EDO (EDF)", () => {
+    const monzo = ExtendedMonzo.fromEqualTemperament(
+      new Fraction(7, 11),
+      new Fraction(3, 2),
+      2
+    );
+    expect(monzo.toScaleLine()).toBe("7\\11<3/2>");
+  });
+
+  it("can represent integer cents", () => {
+    const monzo = ExtendedMonzo.fromCents(1234, 1);
+    expect(monzo.toScaleLine()).toBe("1234.");
+  });
+
+  it("can represent fractional cents", () => {
+    const monzo = ExtendedMonzo.fromCents(1234.5671, 1);
+    expect(monzo.toScaleLine({ centsFractionDigits: 4 })).toBe("1234.5671");
+  });
+
+  it("can represent composite intervals (equal temperament)", () => {
+    const monzo = new ExtendedMonzo(
+      [new Fraction(3, 5)],
+      undefined,
+      centsToNats(777.7)
+    );
+    expect(monzo.toScaleLine()).toBe("3\\5 + 777.7");
+  });
+
+  it("can represent composite intervals (fractions)", () => {
+    const monzo = new ExtendedMonzo(
+      [new Fraction(0)],
+      new Fraction(5, 3),
+      centsToNats(3.14)
+    );
+    expect(monzo.toScaleLine()).toBe("5/3 + 3.14");
+  });
+
+  it("supports numerator preferences", () => {
+    const monzo = ExtendedMonzo.fromFraction(new Fraction(5, 3), 3);
+    expect(monzo.toScaleLine({ preferredNumerator: 10 })).toBe("10/6");
+  });
+
+  it("supports denominator preferences", () => {
+    const monzo = ExtendedMonzo.fromFraction(new Fraction(5, 3), 3);
+    expect(monzo.toScaleLine({ preferredDenominator: 9 })).toBe("15/9");
+  });
+
+  it("supports edo preferences (octaves)", () => {
+    const monzo = ExtendedMonzo.fromFraction(new Fraction(1, 4), 3);
+    expect(monzo.toScaleLine({ preferredEdo: 11 })).toBe("-22\\11");
+  });
+
+  it("supports edo preferences (generic)", () => {
+    const monzo = ExtendedMonzo.fromEqualTemperament(
+      new Fraction(1, 4),
+      new Fraction(2),
+      1
+    );
+    expect(monzo.toScaleLine({ preferredEdo: 12 })).toBe("3\\12");
   });
 });
