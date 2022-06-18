@@ -1,5 +1,6 @@
 import Fraction from "fraction.js";
 import ExtendedMonzo from "@/monzo";
+import { DEFAULT_NUMBER_OF_COMPONENTS } from "./constants";
 
 export enum LINE_TYPE {
   CENTS = "cents",
@@ -82,7 +83,7 @@ function parseNOfEdo(input: string, numberOfComponents: number): ExtendedMonzo {
 
 export function parseLine(
   input: string,
-  numberOfComponents: number
+  numberOfComponents = DEFAULT_NUMBER_OF_COMPONENTS
 ): ExtendedMonzo {
   switch (getLineType(input)) {
     case LINE_TYPE.CENTS:

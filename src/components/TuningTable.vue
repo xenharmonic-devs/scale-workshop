@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import ExtendedMonzo from "@/monzo";
+import type ExtendedMonzo from "@/monzo";
+import { parseLine } from "@/parser";
 import Scale from "@/scale";
 import { mmod } from "@/utils";
-import Fraction from "fraction.js";
 import { computed } from "vue";
 import TuningTableRow from "./TuningTableRow.vue";
 
@@ -12,36 +12,35 @@ const props = defineProps<{
   baseFrequency: number;
 }>();
 
-// Placeholder for dynamically parsed intervals in the future
-const DEFAULT_NUMBER_OF_COMPONENTS = 25;
-const dummyIntervals = [
-  ExtendedMonzo.fromFraction(new Fraction("5/4"), DEFAULT_NUMBER_OF_COMPONENTS),
-  ExtendedMonzo.fromEqualTemperament(
-    new Fraction("7/12"),
-    new Fraction(2),
-    DEFAULT_NUMBER_OF_COMPONENTS
-  ),
-  ExtendedMonzo.fromCents(1101.1, DEFAULT_NUMBER_OF_COMPONENTS),
-  ExtendedMonzo.fromValue(2.0, DEFAULT_NUMBER_OF_COMPONENTS),
-];
-
-const scale = computed(() => {
-  return Scale.fromIntervalArray(dummyIntervals, props.baseFrequency);
+const scaleAndNames = computed<[Scale, string[]]>(() => {
+  const intervals: ExtendedMonzo[] = [];
+  const names: string[] = [];
+  props.lines.forEach((line) => {
+    try {
+      intervals.push(parseLine(line));
+      names.push(line);
+    } catch {}
+  });
+  if (!intervals.length) {
+    intervals.push(parseLine("1/1"));
+    names.push("1/1");
+  }
+  return [Scale.fromIntervalArray(intervals, props.baseFrequency), names];
 });
 
 const rows = computed(() => {
-  const scl = scale.value;
+  const [scale, names] = scaleAndNames.value;
   return Array(128)
     .fill(null)
     .map((_, index) => {
       const i = index - props.baseMidiNote;
-      const monzo = scl.getMonzo(i);
+      const monzo = scale.getMonzo(i);
       return {
         index,
-        frequency: scl.getFrequency(i),
+        frequency: scale.getFrequency(i),
         cents: monzo.toCents(),
         ratio: monzo.valueOf(),
-        name: props.lines[mmod(i - 1, props.lines.length)],
+        name: names[mmod(i - 1, names.length)],
       };
     });
 });
