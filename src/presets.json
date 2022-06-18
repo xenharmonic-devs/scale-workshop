@@ -1167,5 +1167,104 @@
             "non-octave",
             "equal temperament"
         ]
+    },
+    "blackdye":
+    {
+        "title": "Blackdye GO",
+        "name": "Blackdye",
+        "lines":
+        [
+            "1\\27",
+            "5\\27",
+            "7\\27",
+            "11\\27",
+            "12\\27",
+            "16\\27",
+            "18\\27",
+            "22\\27",
+            "23\\27",
+            "27\\27"
+        ],
+        "categories":
+        [
+            "GO",
+            "MV4",
+            "equal temperament"
+        ]
+    },
+    "diasem":
+    {
+        "title": "Diasem MV3 GO",
+        "name": "Diasem",
+        "lines":
+        [
+            "2\\31",
+            "7\\31",
+            "8\\31",
+            "13\\31",
+            "15\\31",
+            "20\\31",
+            "21\\31",
+            "26\\31",
+            "31\\31"
+        ],
+        "categories":
+        [
+            "MV3",
+            "GO",
+            "equal temperament"
+        ]
+    },
+    "zarlino":
+    {
+        "title": "Zarlino MV3 GO",
+        "name": "Zarlino",
+        "lines":
+        [
+            "5\\29",
+            "9\\29",
+            "14\\29",
+            "17\\29",
+            "22\\29",
+            "26\\29",
+            "29\\29"
+        ],
+        "categories":
+        [
+            "MV3",
+            "GO",
+            "equal temperament"
+        ]
+    },
+    "superzarlino":
+    {
+        "title": "Superzarlino MV3 GO",
+        "name": "Superzarlino",
+        "lines":
+        [
+            "3\\34",
+            "4\\34",
+            "6\\34",
+            "9\\34",
+            "11\\34",
+            "12\\34",
+            "15\\34",
+            "17\\34",
+            "18\\34",
+            "20\\34",
+            "23\\34",
+            "24\\34",
+            "26\\34",
+            "29\\34",
+            "31\\34",
+            "32\\34",
+            "34\\34"
+        ],
+        "categories":
+        [
+            "MV3",
+            "GO",
+            "equal temperament"
+        ]
     }
 }
