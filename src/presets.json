@@ -1266,5 +1266,77 @@
             "GO",
             "equal temperament"
         ]
+    },
+    "marveldene":
+    {
+        "title": "Marveldene TE",
+        "name": "The Marveldene, a 2.3.5.7 classic. Septimal Aeolian minor oriented.",
+        "lines":
+        [
+            "116.01264",
+            "232.02527",
+            "316.92766",
+            "432.94029",
+            "499.84142",
+            "615.85405",
+            "700.75644",
+            "816.76907",
+            "932.78170",
+            "999.68282",
+            "1133.69672",
+            "1200.59784"
+        ],
+        "categories":
+        [
+            "TE",
+            "rank 3"
+        ]
+    },
+    "meantone":
+    {
+        "title": "Meantone CTE",
+        "name": "Meantone[12], TE optimized with a 2/1 constraint.",
+        "lines":
+        [
+            "113.9284",
+            "194.4286",
+            "308.3571",
+            "388.8573",
+            "502.7857",
+            "583.2859",
+            "697.2143",
+            "811.1427",
+            "891.6429",
+            "1005.5713",
+            "1086.0716",
+            "1200.0000"
+        ],
+        "categories":
+        [
+            "MOS",
+            "CTE",
+            "rank 2"
+        ]
+    },
+    "orgone":
+    {
+        "title": "Orgone POTE",
+        "name": "Orgone[7], a 2.7.11 classic. POTE optimized.",
+        "lines":
+        [
+            "229.8849",
+            "323.3717",
+            "553.2566",
+            "646.7434",
+            "876.6283",
+            "970.1151",
+            "1200.0000"
+        ],
+        "categories":
+        [
+            "MOS",
+            "POTE",
+            "rank 2"
+        ]
     }
 }
