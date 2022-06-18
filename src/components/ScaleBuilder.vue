@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import TuningTable from "./TuningTable.vue";
-import type Scale from "@/scale";
 import { debounce, mtof } from "@/utils";
 import ScaleRule from "./ScaleRule.vue";
 import { APP_TITLE, UNIX_NEWLINE } from "@/constants";
 import { sanitizeFilename } from "@/utils";
 import { exportFile, type ExporterKey } from "@/exporters";
+import Modal from "./ModalDialog.vue";
+import { presets, presetsByGroup } from "@/presets";
+import Scale from "@/scale";
+import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
 
 const props = defineProps<{
   scaleName: string;
@@ -92,6 +95,45 @@ function doExport(exporter: ExporterKey) {
 
   exportFile(exporter, params);
 }
+
+const presetGroups = presetsByGroup();
+const presetSelect = ref<HTMLSelectElement | null>(null);
+const showPresetModal = ref(false);
+function selectPreset() {
+  const preset = presets[presetSelect.value!.value];
+  emit("update:scaleName", preset.name);
+  emit("update:scaleLines", preset.lines);
+  emit("update:baseFrequency", preset.baseFrequency);
+  emit("update:baseMidiNote", preset.baseMidiNote);
+}
+
+const lowestHarmonic = ref<HTMLInputElement | null>(null);
+const highestHarmonic = ref<HTMLInputElement | null>(null);
+const showHarmonicSeriesModal = ref(false);
+function generateHarmonicSeries() {
+  const denominator = parseInt(lowestHarmonic.value!.value);
+  const scale = Scale.fromHarmonicSeries(
+    denominator,
+    parseInt(highestHarmonic.value!.value),
+    DEFAULT_NUMBER_OF_COMPONENTS
+  );
+  emit(
+    "update:scaleLines",
+    scale.toScaleLines({ preferredDenominator: denominator })
+  );
+}
+
+const approximateHarmonicsDenominator = ref<HTMLInputElement | null>(null);
+const showApproximateByHarmonicsModal = ref(false);
+function approximateByHarmonics() {
+  const denominator = parseInt(approximateHarmonicsDenominator.value!.value);
+  emit(
+    "update:scaleLines",
+    props.scale
+      .approximateHarmonics(denominator)
+      .toScaleLines({ preferredDenominator: denominator })
+  );
+}
 </script>
 
 <template>
@@ -111,7 +153,9 @@ function doExport(exporter: ExporterKey) {
           <ul>
             <a href="#"><li>Equal temperament</li></a>
             <a href="#"><li>Rank-2 temperament</li></a>
-            <a href="#"><li>Harmonic series segment</li></a>
+            <a href="#" @click="showHarmonicSeriesModal = true"
+              ><li>Harmonic series segment</li></a
+            >
             <a href="#"><li>Subharmonic series segment</li></a>
             <a href="#"><li>Enumerate chord</li></a>
             <a href="#"><li>Combination product set</li></a>
@@ -123,7 +167,9 @@ function doExport(exporter: ExporterKey) {
             <a href="#" @click="$emit('update:scaleLines', [])"
               ><li>Clear scale</li></a
             >
-            <a href="#"><li>Load preset scale</li></a>
+            <a href="#" @click="showPresetModal = true"
+              ><li>Load preset scale</li></a
+            >
           </ul>
         </li>
         <li class="btn-dropdown-group">
@@ -136,7 +182,9 @@ function doExport(exporter: ExporterKey) {
             <a href="#"><li>Stretch/compress</li></a>
             <a href="#"><li>Random variance</li></a>
             <a href="#"><li>Approximate by ratios</li></a>
-            <a href="#"><li>Approximate by harmonics</li></a>
+            <a href="#" @click="showApproximateByHarmonicsModal = true"
+              ><li>Approximate by harmonics</li></a
+            >
             <a href="#"><li>Approximate by subharmonics</li></a>
             <a href="#"><li>Equalize</li></a>
           </ul>
@@ -278,6 +326,101 @@ function doExport(exporter: ExporterKey) {
       </a>
     </div>
   </div>
+
+  <Teleport to="body">
+    <Modal
+      :show="showHarmonicSeriesModal"
+      @confirm="
+        showHarmonicSeriesModal = false;
+        generateHarmonicSeries();
+      "
+      @cancel="showHarmonicSeriesModal = false"
+    >
+      <template #header>
+        <h2>Generate harmonic series segment</h2>
+      </template>
+      <template #body>
+        <div class="control-group">
+          <label for="lowest-harmonic">Lowest harmonic</label>
+          <input
+            ref="lowestHarmonic"
+            id="lowest-harmonic"
+            type="number"
+            value="8"
+            min="1"
+            class="control"
+          />
+          <label for="highest-harmonic">Highest harmonic</label>
+          <input
+            ref="highestHarmonic"
+            id="highest-harmonic"
+            type="number"
+            value="16"
+            min="1"
+            class="control"
+          />
+        </div>
+      </template>
+    </Modal>
+
+    <Modal
+      :show="showPresetModal"
+      @confirm="
+        showPresetModal = false;
+        selectPreset();
+      "
+      @cancel="showPresetModal = false"
+    >
+      <template #header>
+        <h2>Load preset scale</h2>
+      </template>
+      <template #body>
+        <div class="control-group">
+          <select ref="presetSelect" size="10" class="control">
+            <optgroup
+              v-for="group of presetGroups"
+              :key="group.name"
+              :label="group.name"
+            >
+              <option
+                v-for="preset of group.members"
+                :key="preset.id"
+                :value="preset.id"
+              >
+                {{ preset.title }}
+              </option>
+            </optgroup>
+          </select>
+        </div>
+      </template>
+    </Modal>
+
+    <Modal
+      :show="showApproximateByHarmonicsModal"
+      @confirm="
+        showApproximateByHarmonicsModal = false;
+        approximateByHarmonics();
+      "
+      @cancel="showApproximateByHarmonicsModal = false"
+    >
+      <template #header>
+        <h2>Approximate by harmonics</h2>
+      </template>
+      <template #body>
+        <div class="control-group">
+          <label for="approximate-harmonics-denominator">Denominator</label>
+          <input
+            ref="approximateHarmonicsDenominator"
+            id="approximate-harmonics-denominator"
+            type="number"
+            value="128"
+            min="1"
+            class="control"
+          />
+        </div>
+      </template>
+    </Modal>
+  </Teleport>
 </template>
 
 <style scoped>
@@ -351,5 +494,9 @@ div.exporters .btn {
   display: block;
   margin-bottom: 1rem;
   margin-left: 0;
+}
+
+select optgroup + optgroup {
+  margin-top: 1em;
 }
 </style>
