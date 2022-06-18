@@ -1,6 +1,6 @@
 import Fraction from "fraction.js";
 
-import ExtendedMonzo from "@/monzo";
+import ExtendedMonzo, { type ScaleLineOptions } from "@/monzo";
 import { kCombinations } from "@/combinations";
 
 function mmod(a: number, b: number) {
@@ -477,5 +477,14 @@ export default class Scale {
       interval.approximateOddLimit(limit)
     );
     return new Scale(intervals, equave, this.baseFrequency);
+  }
+
+  // Reverse parsing
+  toScaleLines(options?: ScaleLineOptions): string[] {
+    const result = this.intervals
+      .slice(1)
+      .map((interval) => interval.toScaleLine(options));
+    result.push(this.equave.toScaleLine(options));
+    return result;
   }
 }
