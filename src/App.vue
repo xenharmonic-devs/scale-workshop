@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { RouterLink, RouterView } from "vue-router";
+import { NEWLINE_TEST } from "./constants";
 import { ScaleWorkshopOneData } from "./scaleWorkshopOne";
 
 // Application state
@@ -34,14 +35,10 @@ try {
   }
 
   if (scaleWorkshopOneData.data !== undefined) {
-    const scale = scaleWorkshopOneData.parseTuningData()[0];
-    // TODO: Replace with Scale.toScaleLines when available
-    const lines = [];
-    scale.intervals.slice(1).forEach((interval) => {
-      lines.push(interval.toCents().toFixed(4));
-    });
-    lines.push(scale.equave.toCents().toFixed(4));
-    scaleLines.value = lines;
+    // Check that the scale is valid by attempting a parse
+    scaleWorkshopOneData.parseTuningData();
+    // Store raw text lines
+    scaleLines.value = scaleWorkshopOneData.data.split(NEWLINE_TEST);
   }
 } catch (error) {
   console.error("Error parsing URL", error);
