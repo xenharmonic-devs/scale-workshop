@@ -19,6 +19,7 @@ module.exports = {
     },
   ],
   rules: {
+    "no-empty": 0,
     "no-constant-condition": 0,
     "@typescript-eslint/no-explicit-any": 0,
     "@typescript-eslint/no-non-null-assertion": 0,

@@ -1,10 +1,27 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { RouterLink, RouterView } from "vue-router";
+import { ScaleWorkshopOneData } from "./scaleWorkshopOne";
 
-const scaleLines = ref(["5/4", "7\\12", "1101.1", "2,0"]);
+const scaleLines = ref<string[]>([]);
 const baseFrequency = ref(440);
 const baseMidiNote = ref(69);
+
+try {
+  const scaleWorkshopOneData = new ScaleWorkshopOneData();
+  if (scaleWorkshopOneData.data !== undefined) {
+    const scale = scaleWorkshopOneData.parseTuningData()[0];
+    // TODO: Replace with Scale.toScaleLines when available
+    const lines = [];
+    scale.intervals.slice(1).forEach((interval) => {
+      lines.push(interval.toCents().toFixed(4));
+    });
+    lines.push(scale.equave.toCents().toFixed(4));
+    scaleLines.value = lines;
+  }
+} catch (error) {
+  console.error("Error parsing URL", error);
+}
 </script>
 
 <template>
