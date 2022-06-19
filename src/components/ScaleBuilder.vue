@@ -3,15 +3,19 @@ import { computed } from "vue";
 import TuningTable from "./TuningTable.vue";
 
 const props = defineProps<{
+  scaleName: string;
   scaleLines: string[];
   baseFrequency: number;
   baseMidiNote: number;
+  keyColors: string[];
 }>();
 
 const emit = defineEmits([
+  "update:scaleName",
   "update:scaleLines",
   "update:baseFrequency",
   "update:baseMidiNote",
+  "update:keyColors",
 ]);
 
 const joinedLines = computed({
@@ -22,12 +26,27 @@ const joinedLines = computed({
     emit("update:scaleLines", newValue.split("\n"));
   },
 });
+
+const joinedKeyColors = computed({
+  get() {
+    return props.keyColors.join(" ");
+  },
+  set(newValue: string) {
+    emit("update:keyColors", newValue.split(" "));
+  },
+});
 </script>
 
 <template>
   <div id="tab-build-scale" class="columns-container">
     <div class="column scale-builder">
-      <input id="scale-name" type="text" placeholder="Untitled scale" />
+      <input
+        id="scale-name"
+        type="text"
+        placeholder="Untitled scale"
+        :value="scaleName"
+        @input="$emit('update:scaleName', $event)"
+      />
 
       <ul class="btn-group">
         <li class="btn-dropdown-group">
@@ -115,9 +134,7 @@ const joinedLines = computed({
             A list of key colors, ascending from 1/1. Key colors are cosmetic
             only; they do not affect mapping.
           </p>
-          <!-- prettier-ignore -->
-          <textarea>white black white white black white black white white black white black</textarea
-          >
+          <textarea v-model="joinedKeyColors"></textarea>
         </div>
       </div>
     </div>
