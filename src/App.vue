@@ -3,12 +3,36 @@ import { ref } from "vue";
 import { RouterLink, RouterView } from "vue-router";
 import { ScaleWorkshopOneData } from "./scaleWorkshopOne";
 
+// Application state
+const scaleName = ref("");
 const scaleLines = ref<string[]>([]);
 const baseFrequency = ref(440);
 const baseMidiNote = ref(69);
+const keyColors = ref([
+  "white",
+  "black",
+  "white",
+  "white",
+  "black",
+  "white",
+  "black",
+  "white",
+  "white",
+  "black",
+  "white",
+  "black",
+]);
 
 try {
   const scaleWorkshopOneData = new ScaleWorkshopOneData();
+
+  scaleName.value = scaleWorkshopOneData.name;
+  baseFrequency.value = scaleWorkshopOneData.freq;
+  baseMidiNote.value = scaleWorkshopOneData.midi;
+  if (scaleWorkshopOneData.colors !== undefined) {
+    keyColors.value = scaleWorkshopOneData.colors.split(" ");
+  }
+
   if (scaleWorkshopOneData.data !== undefined) {
     const scale = scaleWorkshopOneData.parseTuningData()[0];
     // TODO: Replace with Scale.toScaleLines when available
@@ -38,12 +62,16 @@ try {
     </ul>
   </nav>
   <RouterView
+    :scaleName="scaleName"
     :scaleLines="scaleLines"
     :baseFrequency="baseFrequency"
     :baseMidiNote="baseMidiNote"
+    :keyColors="keyColors"
+    @update:scaleName="scaleName = $event"
     @update:scaleLines="scaleLines = $event"
     @update:baseMidiNote="baseMidiNote = $event"
     @update:baseFrequency="baseFrequency = $event"
+    @update:keyColors="keyColors = $event"
   />
 </template>
 
