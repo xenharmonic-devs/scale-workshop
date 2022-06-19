@@ -1,8 +1,25 @@
 import Fraction from "fraction.js";
 import { PRIMES, LOG_PRIMES } from "@/constants";
-import { gcd, lcm, getSemiConvergents } from "@/utils";
+import {
+  gcd,
+  lcm,
+  getSemiConvergents,
+  isSafeFraction,
+  natsToCents,
+  centsToNats,
+  fractionToString,
+} from "@/utils";
 
 type Monzo = Fraction[];
+
+export type ScaleLineOptions = {
+  forbidMonzo?: boolean;
+  forbidComposite?: boolean;
+  centsFractionDigits?: number;
+  preferredNumerator?: number;
+  preferredDenominator?: number;
+  preferredEdo?: number;
+};
 
 function monzosEqual(a: Monzo, b: Monzo) {
   if (a === b) {
@@ -62,14 +79,6 @@ function fractionToMonzoAndResidual(
     d: denominator,
   });
   return [result, residual];
-}
-
-function centsToNats(cents: number) {
-  return (cents / 1200) * Math.LN2;
-}
-
-function natsToCents(nats: number) {
-  return (nats / Math.LN2) * 1200;
 }
 
 export default class ExtendedMonzo {
@@ -135,6 +144,14 @@ export default class ExtendedMonzo {
 
   get numberOfComponents() {
     return this.vector.length;
+  }
+
+  clone() {
+    const vector: Monzo = [];
+    this.vector.forEach((component) => {
+      vector.push(new Fraction(component));
+    });
+    return new ExtendedMonzo(vector, new Fraction(this.residual), this.nats);
   }
 
   toFraction() {
@@ -208,6 +225,143 @@ export default class ExtendedMonzo {
       return false;
     }
     return true;
+  }
+
+  isPowerOfTwo() {
+    if (this.nats !== 0) {
+      return false;
+    }
+    if (!this.residual.equals(1)) {
+      return false;
+    }
+    if (!this.vector.length) {
+      return false;
+    }
+    for (let i = 1; i < this.vector.length; ++i) {
+      if (!this.vector[i].equals(0)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  monzoString() {
+    let result = "[";
+    for (let i = 0; i < this.vector.length; ++i) {
+      result += this.vector[i].toFraction();
+      if (i < this.vector.length - 1) {
+        result += ", ";
+      }
+    }
+    return result + ">";
+  }
+
+  centsString(total = true, fractionDigits?: number) {
+    let cents;
+    if (total) {
+      cents = this.toCents();
+    } else {
+      cents = natsToCents(this.nats);
+    }
+    if (cents === Math.round(cents)) {
+      fractionDigits = undefined;
+    }
+    let result;
+    if (fractionDigits === undefined) {
+      result = cents.toString();
+    } else {
+      result = cents.toFixed(fractionDigits);
+    }
+    if (!result.includes(".")) {
+      return (result += ".");
+    }
+    while (result[result.length - 1] === "0") {
+      result = result.slice(0, -1);
+    }
+    return result;
+  }
+
+  // Reverse parsing
+  toScaleLine(options?: ScaleLineOptions): string {
+    options = options || {};
+    const centsFractionDigits = options.centsFractionDigits;
+    const cents = () => this.centsString(true, centsFractionDigits);
+
+    if (this.isFractional()) {
+      if (options.preferredEdo !== undefined && this.isPowerOfTwo()) {
+        return `${this.vector[0].valueOf() * options.preferredEdo}\\${
+          options.preferredEdo
+        }`;
+      }
+      const fraction = this.toFraction();
+      if (isSafeFraction(fraction)) {
+        return fractionToString(
+          fraction,
+          options.preferredNumerator,
+          options.preferredDenominator
+        );
+      }
+      if (options.forbidMonzo) {
+        return cents();
+      }
+      if (this.residual.equals(1)) {
+        return this.monzoString();
+      }
+      if (!options.forbidComposite || !isSafeFraction(this.residual)) {
+        return cents();
+      }
+      return this.monzoString() + " + " + this.residual.toFraction();
+    }
+
+    if (this.isEqualTemperament()) {
+      const [fractionOfEquave_, equave] = this.toEqualTemperament();
+      let fractionOfEquave = fractionOfEquave_;
+      if (equave.mod(2).equals(0)) {
+        fractionOfEquave = fractionOfEquave.mul(equave.div(2));
+        if (isSafeFraction(fractionOfEquave)) {
+          return fractionToString(
+            fractionOfEquave,
+            undefined,
+            options.preferredEdo
+          ).replace("/", "\\");
+        }
+      }
+      if (isSafeFraction(fractionOfEquave) && isSafeFraction(equave)) {
+        return (
+          fractionToString(
+            fractionOfEquave,
+            undefined,
+            options.preferredEdo
+          ).replace("/", "\\") +
+          "<" +
+          equave.toFraction() +
+          ">"
+        );
+      }
+      if (options.forbidMonzo) {
+        return cents();
+      }
+      return this.monzoString();
+    }
+
+    if (options.forbidComposite || this.totalNats() === this.nats) {
+      return cents();
+    }
+
+    const maybeFractionalPart = this.clone();
+    maybeFractionalPart.nats = 0;
+    if (
+      maybeFractionalPart.isFractional() ||
+      maybeFractionalPart.isEqualTemperament()
+    ) {
+      return (
+        maybeFractionalPart.toScaleLine(options) +
+        " + " +
+        this.centsString(false, options.centsFractionDigits)
+      );
+    }
+
+    return cents();
   }
 
   neg() {

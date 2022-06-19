@@ -95,3 +95,47 @@ export function getSemiConvergents(
   }
   return result;
 }
+
+export function isSafeFraction(fraction: Fraction) {
+  return (
+    fraction.n <= Number.MAX_SAFE_INTEGER &&
+    fraction.d <= Number.MAX_SAFE_INTEGER
+  );
+}
+
+export function fractionToString(
+  fraction: Fraction,
+  preferredNumerator?: number,
+  preferredDenominator?: number
+) {
+  const sign = fraction.s < 0 ? "-" : "";
+  if (preferredNumerator === undefined) {
+    if (
+      preferredDenominator === undefined ||
+      fraction.d === preferredDenominator
+    ) {
+      return `${sign}${fraction.n}/${fraction.d}`;
+    }
+    if (preferredDenominator % fraction.d === 0) {
+      const multiplier = preferredDenominator / fraction.d;
+      return `${sign}${fraction.n * multiplier}/${fraction.d * multiplier}`;
+    }
+    return `${sign}${fraction.n}/${fraction.d}`;
+  }
+  if (fraction.n === preferredNumerator) {
+    return `${sign}${fraction.n}/${fraction.d}`;
+  }
+  if (preferredNumerator % fraction.n === 0) {
+    const multiplier = preferredNumerator / fraction.n;
+    return `${sign}${fraction.n * multiplier}/${fraction.d * multiplier}`;
+  }
+  return `${sign}${fraction.n}/${fraction.d}`;
+}
+
+export function centsToNats(cents: number) {
+  return (cents / 1200) * Math.LN2;
+}
+
+export function natsToCents(nats: number) {
+  return (nats / Math.LN2) * 1200;
+}

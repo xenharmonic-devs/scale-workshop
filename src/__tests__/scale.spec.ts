@@ -3,6 +3,7 @@ import Fraction from "fraction.js";
 
 import ExtendedMonzo from "../monzo";
 import Scale from "../scale";
+import { arraysEqual, centsToNats } from "@/utils";
 
 describe("Scale", () => {
   it("supports just intonation", () => {
@@ -570,5 +571,121 @@ describe("Scale", () => {
           .equals(1)
       ).toBeTruthy();
     }
+  });
+
+  it("can be reverse parsed", () => {
+    const scale = Scale.fromIntervalArray([
+      ExtendedMonzo.fromFraction(new Fraction(2347868, 1238973), 3),
+      new ExtendedMonzo([
+        new Fraction(9999999999),
+        new Fraction(-77777777777777),
+        new Fraction(1234567890),
+      ]),
+      ExtendedMonzo.fromEqualTemperament(
+        new Fraction(7, 10),
+        new Fraction(2),
+        3
+      ),
+      ExtendedMonzo.fromEqualTemperament(
+        new Fraction(9, 13),
+        new Fraction(5),
+        3
+      ),
+      ExtendedMonzo.fromEqualTemperament(
+        new Fraction(4, 9),
+        new Fraction(4, 3),
+        3
+      ),
+      ExtendedMonzo.fromCents(1234, 3),
+      ExtendedMonzo.fromCents(1234.5671, 3),
+      new ExtendedMonzo(
+        [new Fraction(5, 7), new Fraction(0), new Fraction(0)],
+        undefined,
+        centsToNats(444.4)
+      ),
+      new ExtendedMonzo(
+        [new Fraction(0), new Fraction(2), new Fraction(-1)],
+        new Fraction(7, 11),
+        centsToNats(2.72)
+      ),
+      ExtendedMonzo.fromValue(2, 3),
+    ]);
+
+    const expected = [
+      "2347868/1238973",
+      "[9999999999, -77777777777777, 1234567890>",
+      "7\\10",
+      "9\\13<5>",
+      "4\\9<4/3>",
+      "1234.",
+      "1234.5671",
+      "5\\7 + 444.4",
+      "63/55 + 2.72",
+      "1200.",
+    ];
+
+    expect(
+      arraysEqual(scale.toScaleLines({ centsFractionDigits: 4 }), expected)
+    ).toBeTruthy();
+  });
+
+  it("can reverse parse a harmonic segment", () => {
+    const scale = Scale.fromHarmonicSeries(8, 16, 10);
+    const expected = [
+      "9/8",
+      "10/8",
+      "11/8",
+      "12/8",
+      "13/8",
+      "14/8",
+      "15/8",
+      "16/8",
+    ];
+    expect(
+      arraysEqual(scale.toScaleLines({ preferredDenominator: 8 }), expected)
+    ).toBeTruthy();
+  });
+
+  it("can reverse parse a subharmonic segment", () => {
+    const scale = Scale.fromSubharmonicSeries(14, 7, 8);
+    const expected = [
+      "14/13",
+      "14/12",
+      "14/11",
+      "14/10",
+      "14/9",
+      "14/8",
+      "14/7",
+    ];
+
+    expect(
+      arraysEqual(scale.toScaleLines({ preferredNumerator: 14 }), expected)
+    ).toBeTruthy();
+  });
+
+  it("can reverse parse equal temperament", () => {
+    const scale = Scale.fromEqualTemperament(15, new Fraction(2), 1);
+
+    const expected = [
+      "1\\15",
+      "2\\15",
+      "3\\15",
+      "4\\15",
+      "5\\15",
+      "6\\15",
+      "7\\15",
+      "8\\15",
+      "9\\15",
+      "10\\15",
+      "11\\15",
+      "12\\15",
+      "13\\15",
+      "14\\15",
+      "15\\15",
+    ];
+
+    expect(
+      arraysEqual(scale.toScaleLines({ preferredEdo: 15 }), expected)
+    ).toBeTruthy();
   });
 });
