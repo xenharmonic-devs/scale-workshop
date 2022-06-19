@@ -26,14 +26,10 @@ defineEmits([
       :baseFrequency="baseFrequency"
       :baseMidiNote="baseMidiNote"
       :keyColors="keyColors"
-      @update:scaleName="$emit('update:scaleName', $event.target.value)"
+      @update:scaleName="$emit('update:scaleName', $event)"
       @update:scaleLines="$emit('update:scaleLines', $event)"
-      @update:baseFrequency="
-        $emit('update:baseFrequency', parseInt($event.target.value))
-      "
-      @update:baseMidiNote="
-        $emit('update:baseMidiNote', parseFloat($event.target.value))
-      "
+      @update:baseFrequency="$emit('update:baseFrequency', $event)"
+      @update:baseMidiNote="$emit('update:baseMidiNote', $event)"
       @update:keyColors="$emit('update:keyColors', $event)"
     />
   </main>

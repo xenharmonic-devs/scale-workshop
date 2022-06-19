@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import TuningTable from "./TuningTable.vue";
+import Scale from "@/scale";
+import type ExtendedMonzo from "@/monzo";
+import { parseLine } from "@/parser";
 
 const props = defineProps<{
   scaleName: string;
@@ -35,6 +38,40 @@ const joinedKeyColors = computed({
     emit("update:keyColors", newValue.split(" "));
   },
 });
+
+const scaleAndNames = computed<[Scale, string[]]>(() => {
+  const intervals: ExtendedMonzo[] = [];
+  const names: string[] = [];
+  props.scaleLines.forEach((line) => {
+    try {
+      intervals.push(parseLine(line));
+      names.push(line);
+    } catch {}
+  });
+  if (!intervals.length) {
+    intervals.push(parseLine("1/1"));
+    names.push("1/1");
+  }
+  return [Scale.fromIntervalArray(intervals, props.baseFrequency), names];
+});
+
+function updateScaleName(event: Event) {
+  emit("update:scaleName", (event!.target as HTMLInputElement).value);
+}
+
+function updateBaseFrequency(event: Event) {
+  emit(
+    "update:baseFrequency",
+    parseFloat((event!.target as HTMLInputElement).value)
+  );
+}
+
+function updatebaseMidiNote(event: Event) {
+  emit(
+    "update:baseMidiNote",
+    parseInt((event!.target as HTMLInputElement).value)
+  );
+}
 </script>
 
 <template>
@@ -45,7 +82,7 @@ const joinedKeyColors = computed({
         type="text"
         placeholder="Untitled scale"
         :value="scaleName"
-        @input="$emit('update:scaleName', $event)"
+        @input="updateScaleName"
       />
 
       <ul class="btn-group">
@@ -108,7 +145,7 @@ const joinedKeyColors = computed({
             :value="baseFrequency"
             min="0.1"
             max="1000000"
-            @input="$emit('update:baseFrequency', $event)"
+            @input="updateBaseFrequency"
           />
           <span>Hz</span>
         </div>
@@ -121,7 +158,7 @@ const joinedKeyColors = computed({
             min="0"
             max="127"
             step="1"
-            @input="$emit('update:baseMidiNote', $event)"
+            @input="updatebaseMidiNote"
           />
           <span>A5</span>
         </div>
@@ -139,6 +176,8 @@ const joinedKeyColors = computed({
       </div>
     </div>
     <TuningTable
+      :scale="scaleAndNames[0]"
+      :names="scaleAndNames[1]"
       :lines="props.scaleLines"
       :baseFrequency="props.baseFrequency"
       :baseMidiNote="props.baseMidiNote"

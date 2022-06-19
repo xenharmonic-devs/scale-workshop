@@ -1,46 +1,28 @@
 <script setup lang="ts">
-import type ExtendedMonzo from "@/monzo";
-import { parseLine } from "@/parser";
-import Scale from "@/scale";
+import type Scale from "@/scale";
 import { mmod } from "@/utils";
 import { computed } from "vue";
 import TuningTableRow from "./TuningTableRow.vue";
 
 const props = defineProps<{
-  lines: string[];
+  scale: Scale;
+  names: string[];
   baseMidiNote: number;
   baseFrequency: number;
 }>();
 
-const scaleAndNames = computed<[Scale, string[]]>(() => {
-  const intervals: ExtendedMonzo[] = [];
-  const names: string[] = [];
-  props.lines.forEach((line) => {
-    try {
-      intervals.push(parseLine(line));
-      names.push(line);
-    } catch {}
-  });
-  if (!intervals.length) {
-    intervals.push(parseLine("1/1"));
-    names.push("1/1");
-  }
-  return [Scale.fromIntervalArray(intervals, props.baseFrequency), names];
-});
-
 const rows = computed(() => {
-  const [scale, names] = scaleAndNames.value;
   return Array(128)
     .fill(null)
     .map((_, index) => {
       const i = index - props.baseMidiNote;
-      const monzo = scale.getMonzo(i);
+      const monzo = props.scale.getMonzo(i);
       return {
         index,
-        frequency: scale.getFrequency(i),
+        frequency: props.scale.getFrequency(i),
         cents: monzo.toCents(),
         ratio: monzo.valueOf(),
-        name: names[mmod(i - 1, names.length)],
+        name: props.names[mmod(i - 1, props.names.length)],
       };
     });
 });
