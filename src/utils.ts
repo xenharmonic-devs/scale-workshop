@@ -208,3 +208,14 @@ export function clamp(minValue: number, maxValue: number, value: number) {
   }
   return value;
 }
+
+export function sanitizeFilename(input: string) {
+  input = input.trim();
+  if (!input.length) {
+    return "untitled scale";
+  }
+  return input
+    .replace(/[|&;$%@"<>()+,?]/g, "")
+    .replace(/\//g, "_")
+    .replace(/\\/g, "_");
+}

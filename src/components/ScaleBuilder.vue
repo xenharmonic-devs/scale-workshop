@@ -4,6 +4,9 @@ import TuningTable from "./TuningTable.vue";
 import type Scale from "@/scale";
 import { debounce, mtof } from "@/utils";
 import ScaleRule from "./ScaleRule.vue";
+import { APP_TITLE, UNIX_NEWLINE } from "@/constants";
+import { sanitizeFilename } from "@/utils";
+import { exportFile, type ExporterKey } from "@/exporters";
 
 const props = defineProps<{
   scaleName: string;
@@ -70,6 +73,24 @@ function autoFrequency() {
     baseMidiNote = parseInt(midiNoteNumber.value.value);
   }
   emit("update:baseFrequency", mtof(baseMidiNote));
+}
+
+function doExport(exporter: ExporterKey) {
+  // TODO: Fetch newline from user preferences
+  const params = {
+    newline: UNIX_NEWLINE,
+    name: props.scaleName,
+    scaleUrl: window.location.href,
+    scale: props.scale,
+    filename: sanitizeFilename(props.scaleName),
+    baseMidiNote: props.baseMidiNote,
+    description: props.scaleName,
+    lines: props.scaleLines,
+    appTitle: APP_TITLE,
+    date: new Date(),
+  };
+
+  exportFile(exporter, params);
 }
 </script>
 
@@ -196,15 +217,15 @@ function autoFrequency() {
     />
     <div class="column exporters">
       <h2>Export current settings</h2>
-      <a href="#" class="btn">
+      <a href="#" class="btn" @click="doExport('anamarkv1')">
         <p><strong>AnaMark v1 tuning (.tun)</strong></p>
         <p>Tuning file for various softsynths</p>
       </a>
-      <a href="#" class="btn">
+      <a href="#" class="btn" @click="doExport('anamarkv2')">
         <p><strong>AnaMark v2 tuning (.tun)</strong></p>
         <p>Tuning file for various softsynths</p>
       </a>
-      <a href="#" class="btn">
+      <a href="#" class="btn" @click="doExport('scalascl')">
         <p><strong>Scala scale (.scl)</strong></p>
         <p>
           Scale file for various softsynths. Note that this contains only
@@ -212,40 +233,48 @@ function autoFrequency() {
           file is also exported.
         </p>
       </a>
-      <a href="#" class="btn">
+      <a href="#" class="btn" @click="doExport('scalakbm')">
         <p><strong>Scala keyboard mapping (.kbm)</strong></p>
         <p>
           Keyboard mapping to accompany a .scl file. Maps the scale to a
           specific frequency.
         </p>
       </a>
-      <a href="#" class="btn">
+      <a href="#" class="btn" @click="doExport('maxmsp')">
         <p><strong>Max/MSP coll tuning (.txt)</strong></p>
         <p>For Max/MSP coll object</p>
       </a>
-      <a href="#" class="btn">
+      <a href="#" class="btn" @click="doExport('puredata')">
         <p><strong>PureData text tuning (.txt)</strong></p>
         <p>For PureData text object</p>
       </a>
-      <a href="#" class="btn">
+      <a href="#" class="btn" @click="doExport('kontakt')">
         <p><strong>Kontakt tuning script (.txt)</strong></p>
         <p>For Native Instruments Kontakt</p>
       </a>
-      <a href="#" class="btn">
+      <a href="#" class="btn" @click="doExport('soniccouture')">
         <p><strong>Soniccouture tuning file (.nka)</strong></p>
         <p>For Soniccouture sample libraries</p>
       </a>
-      <a href="#" class="btn">
+      <a href="#" class="btn" @click="doExport('harmor')">
         <p><strong>Harmor pitch map (.fnv)</strong></p>
         <p>For Image-Line Harmor</p>
       </a>
-      <a href="#" class="btn">
+      <a href="#" class="btn" @click="doExport('sytrus')">
         <p><strong>Sytrus pitch map (.fnv)</strong></p>
         <p>For Image-Line Sytrus</p>
       </a>
-      <a href="#" class="btn">
-        <p><strong>bla bla bla (.etc)</strong></p>
-        <p>This list of exporters has more stuff to add</p>
+      <a href="#" class="btn" @click="doExport('mnlgtuns')">
+        <p><strong>Korg 'logue tuning (.mnlgtuns)</strong></p>
+        <p>For Korg 'logue Sound Librarian Scale</p>
+      </a>
+      <a href="#" class="btn" @click="doExport('mnlgtuno')">
+        <p><strong>Korg 'logue octave map (.mnlgtuno)</strong></p>
+        <p>For Korg 'logue Sound Librarian Octave</p>
+      </a>
+      <a href="#" class="btn" @click="doExport('deflemask')">
+        <p><strong>Deflemask reference (.txt)</strong></p>
+        <p>Deflemask 'fine tune' reference</p>
       </a>
     </div>
   </div>
