@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ScaleBuilder from "@/components/ScaleBuilder.vue";
+import type Scale from "@/scale";
 
 defineProps<{
   scaleName: string;
@@ -7,6 +8,10 @@ defineProps<{
   baseFrequency: number;
   baseMidiNote: number;
   keyColors: string[];
+
+  scale: Scale;
+  names: string[];
+  frequencies: number[];
 }>();
 
 defineEmits([
@@ -26,6 +31,9 @@ defineEmits([
       :baseFrequency="baseFrequency"
       :baseMidiNote="baseMidiNote"
       :keyColors="keyColors"
+      :scale="scale"
+      :names="names"
+      :frequencies="frequencies"
       @update:scaleName="$emit('update:scaleName', $event)"
       @update:scaleLines="$emit('update:scaleLines', $event)"
       @update:baseFrequency="$emit('update:baseFrequency', $event)"

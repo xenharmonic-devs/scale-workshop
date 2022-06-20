@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { RouterLink, RouterView } from "vue-router";
-import { NEWLINE_TEST } from "./constants";
+import { NEWLINE_TEST, NUMBER_OF_NOTES } from "./constants";
 import { ScaleWorkshopOneData } from "./scaleWorkshopOne";
+import Scale from "./scale";
+import type ExtendedMonzo from "./monzo";
+import { parseLine } from "./parser";
 
 // Application state
 const scaleName = ref("");
@@ -23,6 +26,29 @@ const keyColors = ref([
   "white",
   "black",
 ]);
+
+// Computed state
+const scaleAndNames = computed<[Scale, string[]]>(() => {
+  const intervals: ExtendedMonzo[] = [];
+  const names: string[] = [];
+  scaleLines.value.forEach((line) => {
+    try {
+      intervals.push(parseLine(line));
+      names.push(line);
+    } catch {}
+  });
+  if (!intervals.length) {
+    intervals.push(parseLine("1/1"));
+    names.push("1/1");
+  }
+  return [Scale.fromIntervalArray(intervals, baseFrequency.value), names];
+});
+
+const frequencies = computed(() =>
+  [...Array(NUMBER_OF_NOTES).keys()].map((i) =>
+    scaleAndNames.value[0].getFrequency(i - baseMidiNote.value)
+  )
+);
 
 try {
   const scaleWorkshopOneData = new ScaleWorkshopOneData();
@@ -64,6 +90,9 @@ try {
     :baseFrequency="baseFrequency"
     :baseMidiNote="baseMidiNote"
     :keyColors="keyColors"
+    :scale="scaleAndNames[0]"
+    :names="scaleAndNames[1]"
+    :frequencies="frequencies"
     @update:scaleName="scaleName = $event"
     @update:scaleLines="scaleLines = $event"
     @update:baseMidiNote="baseMidiNote = $event"
