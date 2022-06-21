@@ -100,7 +100,9 @@ function updatebaseMidiNote(event: Event) {
             <a href="#"><li>Import .tun</li></a>
             <a href="#"><li>Import .mnlgtuns / .mnltuno</li></a>
             <li class="divider"></li>
-            <a href="#"><li>Clear scale</li></a>
+            <a href="#" @click="$emit('update:scaleLines', [])"
+              ><li>Clear scale</li></a
+            >
             <a href="#"><li>Load preset scale</li></a>
           </ul>
         </li>
