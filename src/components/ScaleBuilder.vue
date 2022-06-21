@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import TuningTable from "./TuningTable.vue";
-import { debounce } from "@/utils";
 import type Scale from "@/scale";
+import { debounce, mtof } from "@/utils";
 
 const props = defineProps<{
   scaleName: string;
@@ -59,6 +59,17 @@ const updatebaseMidiNote = debounce((event: Event) => {
     parseInt((event!.target as HTMLInputElement).value)
   );
 });
+
+const midiNoteNumber = ref<HTMLInputElement | null>(null);
+
+function autoFrequency() {
+  let baseMidiNote = props.baseMidiNote;
+  if (midiNoteNumber.value !== null) {
+    // Circumvent debouncing for this simple click
+    baseMidiNote = parseInt(midiNoteNumber.value.value);
+  }
+  emit("update:baseFrequency", mtof(baseMidiNote));
+}
 </script>
 
 <template>
@@ -140,9 +151,17 @@ const updatebaseMidiNote = debounce((event: Event) => {
         </div>
 
         <div class="control">
+          <button
+            @click="autoFrequency"
+            style="position: absolute; right: 1.4rem; z-index: 9001"
+            class="btn"
+          >
+            Auto ↑
+          </button>
           <label>MIDI note number</label>
           <input
             type="number"
+            ref="midiNoteNumber"
             :value="baseMidiNote"
             min="0"
             max="127"
