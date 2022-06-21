@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory, type RouteLocationNormalized } from "vue-router";
 import ScaleView from "../views/ScaleView.vue";
 
 const router = createRouter({
@@ -49,4 +49,22 @@ const router = createRouter({
     },
   ],
 });
+
+// Preserve query parameters on router navigation
+// https://stackoverflow.com/a/47195471
+
+function hasQueryParams(route: RouteLocationNormalized) {
+  return !!Object.keys(route.query).length;
+}
+
+router.beforeEach((to, from, next) => {
+  if (to.name == null) {
+    next();
+  } else if (!hasQueryParams(to) && hasQueryParams(from)) {
+    next({ name: to.name, query: from.query });
+  } else {
+    next();
+  }
+});
+
 export default router;
