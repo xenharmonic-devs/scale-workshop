@@ -1,4 +1,8 @@
-import { createRouter, createWebHistory, type RouteLocationNormalized } from "vue-router";
+import {
+  createRouter,
+  createWebHistory,
+  type RouteLocationNormalized,
+} from "vue-router";
 import ScaleView from "../views/ScaleView.vue";
 
 const router = createRouter({
