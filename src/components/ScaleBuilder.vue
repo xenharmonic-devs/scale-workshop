@@ -3,6 +3,7 @@ import { computed, ref } from "vue";
 import TuningTable from "./TuningTable.vue";
 import type Scale from "@/scale";
 import { debounce, mtof } from "@/utils";
+import ScaleRule from "./ScaleRule.vue";
 
 const props = defineProps<{
   scaleName: string;
@@ -127,6 +128,8 @@ function autoFrequency() {
           <textarea rows="12" v-model="joinedLines"></textarea>
         </div>
       </div>
+
+      <ScaleRule :scale="props.scale" />
 
       <div class="control-group">
         <h2>Tuning</h2>
