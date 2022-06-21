@@ -4,6 +4,11 @@ const FRACTION = "F";
 const COMMA = "C";
 const BACKSLASH = "B";
 
+// Color shorhands
+const BLACK = "-";
+const WHITE = "~";
+const SEPARATOR = "_";
+
 function isDigit(character: string) {
   return /\d/.test(character);
 }
@@ -97,4 +102,51 @@ export function encodeLines(scaleLines: string[]) {
 
 export function decodeLines(encoded: string) {
   return encoded.split(NEWLINE).map(decodeLine);
+}
+
+export function encodeKeyColors(keyColors: string[]) {
+  let result = "";
+  keyColors.forEach((color) => {
+    if (color === "black") {
+      result += BLACK;
+    } else if (color === "white") {
+      result += WHITE;
+    } else if (
+      result.length &&
+      !(result.endsWith(BLACK) || result.endsWith(WHITE))
+    ) {
+      result += SEPARATOR + color;
+    } else {
+      result += color;
+    }
+  });
+  return result;
+}
+
+export function decodeKeyColors(encoded: string) {
+  const result: string[] = [];
+  let color = "";
+
+  function pushColor() {
+    if (color.length) {
+      result.push(color);
+    }
+    color = "";
+  }
+
+  [...encoded].forEach((character) => {
+    if (character === BLACK) {
+      pushColor();
+      result.push("black");
+    } else if (character === WHITE) {
+      pushColor();
+      result.push("white");
+    } else if (character === SEPARATOR) {
+      pushColor();
+    } else {
+      color += character;
+    }
+  });
+  pushColor();
+  return result;
 }
