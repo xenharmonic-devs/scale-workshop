@@ -9,7 +9,8 @@
     />
     <h1>Scale Workshop 2</h1>
     <p><em>Because there are more than 12 notes</em></p>
-    <p>Contributors list</p>
+    <strong>Contributors</strong>
+    <p>Sevish, Lumi Pakkanen, Lajos Mészáros, Vincenzo Sicurella</p>
     <hr />
     <ul>
       <li>
