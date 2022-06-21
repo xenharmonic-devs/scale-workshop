@@ -139,3 +139,13 @@ export function centsToNats(cents: number) {
 export function natsToCents(nats: number) {
   return (nats / Math.LN2) * 1200;
 }
+
+export function debounce(func: (...args: any[]) => void, timeout = 300) {
+  let timer: number;
+  return (...args: any[]) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func(...args);
+    }, timeout);
+  };
+}

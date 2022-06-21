@@ -4,6 +4,7 @@ import TuningTable from "./TuningTable.vue";
 import Scale from "@/scale";
 import type ExtendedMonzo from "@/monzo";
 import { parseLine } from "@/parser";
+import { debounce } from "@/utils";
 
 const props = defineProps<{
   scaleName: string;
@@ -25,18 +26,18 @@ const joinedLines = computed({
   get() {
     return props.scaleLines.join("\n");
   },
-  set(newValue: string) {
+  set: debounce((newValue: string) => {
     emit("update:scaleLines", newValue.split("\n"));
-  },
+  }),
 });
 
 const joinedKeyColors = computed({
   get() {
     return props.keyColors.join(" ");
   },
-  set(newValue: string) {
+  set: debounce((newValue: string) => {
     emit("update:keyColors", newValue.split(" "));
-  },
+  }),
 });
 
 const scaleAndNames = computed<[Scale, string[]]>(() => {
@@ -59,19 +60,19 @@ function updateScaleName(event: Event) {
   emit("update:scaleName", (event!.target as HTMLInputElement).value);
 }
 
-function updateBaseFrequency(event: Event) {
+const updateBaseFrequency = debounce((event: Event) => {
   emit(
     "update:baseFrequency",
     parseFloat((event!.target as HTMLInputElement).value)
   );
-}
+});
 
-function updatebaseMidiNote(event: Event) {
+const updatebaseMidiNote = debounce((event: Event) => {
   emit(
     "update:baseMidiNote",
     parseInt((event!.target as HTMLInputElement).value)
   );
-}
+});
 </script>
 
 <template>
