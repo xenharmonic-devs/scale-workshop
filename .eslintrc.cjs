@@ -22,6 +22,7 @@ module.exports = {
     "no-empty": 0,
     "no-constant-condition": 0,
     "@typescript-eslint/no-empty-function": 0,
+    "no-case-declarations": 0,
     "@typescript-eslint/no-explicit-any": 0,
     "@typescript-eslint/no-non-null-assertion": 0,
   },
