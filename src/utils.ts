@@ -232,3 +232,40 @@ export function formatHertz(frequency: number, fractionDigits = 3) {
   }
   return (frequency * 1e-3).toFixed(fractionDigits) + "kHz";
 }
+
+export function autoKeyColors(size: number) {
+  if (size < 2) {
+    return ["white"];
+  }
+  if (size === 3) {
+    return ["white", "black", "white"];
+  }
+  if (size === 5) {
+    return ["white", "black", "white", "black", "white"];
+  }
+  if (size === 6) {
+    return ["white", "black", "white", "black", "white", "black"];
+  }
+
+  let generator = Math.round(Math.log2(4/3) * size);
+  while (gcd(generator, size) > 1) {
+    generator--;
+  }
+
+  const result: string[] = Array(size).fill("black");
+  let index = mmod(-2 * generator, size);
+  let hasBlackClusters = true;
+  do {
+    result[index] = "white";
+    hasBlackClusters = false;
+    for (let i = 0; i < size - 1; ++i) {
+      if (result[i] === "black" && result[i + 1] === "black") {
+        hasBlackClusters = true;
+        break;
+      }
+    }
+    index = mmod(index + generator, size);
+  } while (hasBlackClusters);
+
+  return result;
+}
