@@ -263,9 +263,7 @@ async function doImport(importerKey: ImporterKey, event: Event) {
         </div>
         <div class="control">
           <button
-            @click="
-              $emit('update:keyColors', autoKeyColors(props.scale.size))
-            "
+            @click="$emit('update:keyColors', autoKeyColors(props.scale.size))"
           >
             Auto
           </button>
@@ -279,6 +277,7 @@ async function doImport(importerKey: ImporterKey, event: Event) {
       :lines="props.scaleLines"
       :baseFrequency="props.baseFrequency"
       :baseMidiNote="props.baseMidiNote"
+      :keyColors="props.keyColors"
     />
     <div class="column exporters">
       <h2>Export current settings</h2>

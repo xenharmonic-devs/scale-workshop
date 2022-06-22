@@ -10,6 +10,7 @@ const props = defineProps<{
   frequencies: number[];
   baseMidiNote: number;
   baseFrequency: number;
+  keyColors: string[];
 }>();
 
 const rows = computed(() => {
@@ -21,6 +22,8 @@ const rows = computed(() => {
       cents: monzo.toCents(),
       ratio: monzo.valueOf(),
       name: props.names[mmod(i - 1 - props.baseMidiNote, props.names.length)],
+      keyColor:
+        props.keyColors[mmod(i - props.baseMidiNote, props.keyColors.length)],
     };
   });
 });
@@ -48,6 +51,7 @@ const rows = computed(() => {
           :cents="row.cents"
           :ratio="row.ratio"
           :name="row.name"
+          :keyColor="row.keyColor"
         />
       </tbody>
     </table>
