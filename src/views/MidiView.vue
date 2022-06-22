@@ -30,10 +30,28 @@ function selectMidiOutput(event: Event) {
   }
 }
 
+function refreshMidi() {
+  while (inputs.length) {
+    inputs.pop();
+  }
+  WebMidi.inputs.forEach((input) => inputs.push(input));
+
+  while (outputs.length) {
+    outputs.pop();
+  }
+  WebMidi.outputs.forEach((output) => outputs.push(output));
+}
+
 onMounted(async () => {
   await WebMidi.enable();
-  WebMidi.inputs.forEach((input) => inputs.push(input));
-  WebMidi.outputs.forEach((output) => outputs.push(output));
+  refreshMidi();
+
+  const existingOnStateChange = WebMidi.interface.onstatechange;
+  WebMidi.interface.onstatechange = (e) => {
+    existingOnStateChange(e);
+    // XXX: Webmidi doesn't expose this state change correctly so we'll have to use a time out hack.
+    setTimeout(refreshMidi, 500);
+  };
 });
 </script>
 
