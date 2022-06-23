@@ -23,6 +23,7 @@ import {
   mapWhiteAsdfBlackQwerty,
   mapWhiteQweZxcBlack123Asd,
 } from "./keyboard-mapping";
+import { VirtualSynth } from "./virtual-synth";
 
 // === Root props and audio ===
 const rootProps = defineProps<{
@@ -77,6 +78,7 @@ const midiInputChannels = reactive(new Set([1]));
 const midiOutputChannels = ref(
   new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16])
 );
+const virtualSynth = reactive(new VirtualSynth(rootProps.audioContext));
 
 // === Computed state ===
 const frequencies = computed(() =>
@@ -239,7 +241,6 @@ const midiOut = computed(() => {
   return new MidiOut(midiOutput.value as Output, midiOutputChannels.value);
 });
 
-// TODO: Incorporate synth here when available #30
 function sendNoteOn(frequency: number, rawAttack: number) {
   const midiOff = midiOut.value.sendNoteOn(frequency, rawAttack);
 
@@ -259,9 +260,13 @@ function sendNoteOn(frequency: number, rawAttack: number) {
       oscillator.disconnect();
     };
 
+    // Trigger virtual synth for per-voice visualization.
+    const virtualOff = virtualSynth.voiceOn(frequency);
+
     const off = (rawRelease: number) => {
       midiOff(rawRelease);
       oscillatorOff();
+      virtualOff();
     };
 
     return off;
@@ -566,6 +571,7 @@ function unpanic() {
     :noteOn="keyboardNoteOn"
     :midiInputChannels="midiInputChannels"
     :midiOutputChannels="midiOutputChannels"
+    :virtualSynth="virtualSynth"
     @update:mainVolume="mainVolume = $event"
     @update:scaleName="scaleName = $event"
     @update:scaleLines="updateFromScaleLines"

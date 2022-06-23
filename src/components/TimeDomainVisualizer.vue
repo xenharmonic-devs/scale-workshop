@@ -18,6 +18,7 @@ let buffer: Float32Array;
 function draw() {
   const ctx = canvas.value!.getContext("2d");
   if (ctx === null) {
+    animationFrame = window.requestAnimationFrame(draw);
     return;
   }
   const offsetWidth = canvas.value!.offsetWidth;

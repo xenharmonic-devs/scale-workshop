@@ -249,6 +249,31 @@ export default class ExtendedMonzo {
     return true;
   }
 
+  isCents() {
+    for (let i = 0; i < this.numberOfComponents; ++i) {
+      if (!this.vector[i].equals(0)) {
+        return false;
+      }
+    }
+    if (!this.residual.equals(1)) {
+      return false;
+    }
+    return true;
+  }
+
+  isComposite() {
+    if (this.isFractional()) {
+      return false;
+    }
+    if (this.isEqualTemperament()) {
+      return false;
+    }
+    if (this.isCents()) {
+      return false;
+    }
+    return true;
+  }
+
   isPowerOfTwo() {
     if (this.cents !== 0) {
       return false;
