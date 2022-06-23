@@ -1,8 +1,13 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, onUnmounted, ref, watch } from "vue";
 import { RouterLink, RouterView } from "vue-router";
-import { NEWLINE_TEST } from "./constants";
+import { NEWLINE_TEST, NUMBER_OF_NOTES } from "./constants";
 import { ScaleWorkshopOneData } from "./scaleWorkshopOne";
+import type { Input, Output } from "webmidi";
+import Scale from "./scale";
+import type ExtendedMonzo from "./monzo";
+import { parseLine } from "./parser";
+import { bendRangeInSemitones, MidiIn, MidiOut } from "./midi";
 
 // Application state
 const scaleName = ref("");
@@ -23,6 +28,38 @@ const keyColors = ref([
   "white",
   "black",
 ]);
+const midiInput = ref<Input | null>(null);
+const midiOutput = ref<Output | null>(null);
+
+// Computed state
+const scaleAndNames = computed<[Scale, string[]]>(() => {
+  const intervals: ExtendedMonzo[] = [];
+  const names: string[] = [];
+  scaleLines.value.forEach((line) => {
+    try {
+      intervals.push(parseLine(line));
+      names.push(line);
+    } catch {}
+  });
+  if (!intervals.length) {
+    intervals.push(parseLine("1/1"));
+    names.push("1/1");
+  }
+  return [Scale.fromIntervalArray(intervals, baseFrequency.value), names];
+});
+
+const frequencies = computed(() =>
+  [...Array(NUMBER_OF_NOTES).keys()].map((i) =>
+    scaleAndNames.value[0].getFrequency(i - baseMidiNote.value)
+  )
+);
+
+// Lifecycle
+onUnmounted(() => {
+  if (midiInput.value !== null) {
+    midiInput.value.removeListener();
+  }
+});
 
 try {
   const scaleWorkshopOneData = new ScaleWorkshopOneData();
@@ -43,6 +80,32 @@ try {
 } catch (error) {
   console.error("Error parsing URL", error);
 }
+
+const midiOut = computed(() => {
+  return new MidiOut(midiOutput.value as Output);
+});
+
+function sendNoteOn(frequency: number, rawAttack: number) {
+  return midiOut.value.sendNoteOn(frequency, rawAttack);
+}
+
+const midiIn = new MidiIn((i) => frequencies.value[i], sendNoteOn);
+
+watch(midiInput, (newValue, oldValue) => {
+  if (oldValue !== null) {
+    oldValue.removeListener();
+  }
+  if (newValue !== null) {
+    newValue.addListener("noteon", midiIn.noteOn.bind(midiIn));
+    newValue.addListener("noteoff", midiIn.noteOff.bind(midiIn));
+  }
+});
+
+watch(midiOutput, (newValue) => {
+  if (newValue !== null) {
+    newValue.channels[1].sendPitchBendRange(bendRangeInSemitones, 0);
+  }
+});
 </script>
 
 <template>
@@ -64,11 +127,18 @@ try {
     :baseFrequency="baseFrequency"
     :baseMidiNote="baseMidiNote"
     :keyColors="keyColors"
+    :scale="scaleAndNames[0]"
+    :names="scaleAndNames[1]"
+    :frequencies="frequencies"
+    :midiInput="midiInput"
+    :midiOutput="midiOutput"
     @update:scaleName="scaleName = $event"
     @update:scaleLines="scaleLines = $event"
     @update:baseMidiNote="baseMidiNote = $event"
     @update:baseFrequency="baseFrequency = $event"
     @update:keyColors="keyColors = $event"
+    @update:midiInput="midiInput = $event"
+    @update:midiOutput="midiOutput = $event"
   />
 </template>
 

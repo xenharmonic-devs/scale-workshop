@@ -14,7 +14,8 @@
   "dependencies": {
     "fraction.js": "^4.2.0",
     "vue": "^3.2.33",
-    "vue-router": "^4.0.14"
+    "vue-router": "^4.0.14",
+    "webmidi": "^3.0.20"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.0",

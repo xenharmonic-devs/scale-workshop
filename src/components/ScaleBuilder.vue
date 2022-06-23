@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import TuningTable from "./TuningTable.vue";
-import Scale from "@/scale";
-import type ExtendedMonzo from "@/monzo";
-import { parseLine } from "@/parser";
 import { debounce } from "@/utils";
+import type Scale from "@/scale";
 
 const props = defineProps<{
   scaleName: string;
@@ -12,6 +10,10 @@ const props = defineProps<{
   baseFrequency: number;
   baseMidiNote: number;
   keyColors: string[];
+
+  scale: Scale;
+  names: string[];
+  frequencies: number[];
 }>();
 
 const emit = defineEmits([
@@ -38,22 +40,6 @@ const joinedKeyColors = computed({
   set: debounce((newValue: string) => {
     emit("update:keyColors", newValue.split(" "));
   }),
-});
-
-const scaleAndNames = computed<[Scale, string[]]>(() => {
-  const intervals: ExtendedMonzo[] = [];
-  const names: string[] = [];
-  props.scaleLines.forEach((line) => {
-    try {
-      intervals.push(parseLine(line));
-      names.push(line);
-    } catch {}
-  });
-  if (!intervals.length) {
-    intervals.push(parseLine("1/1"));
-    names.push("1/1");
-  }
-  return [Scale.fromIntervalArray(intervals, props.baseFrequency), names];
 });
 
 function updateScaleName(event: Event) {
@@ -179,8 +165,9 @@ const updatebaseMidiNote = debounce((event: Event) => {
       </div>
     </div>
     <TuningTable
-      :scale="scaleAndNames[0]"
-      :names="scaleAndNames[1]"
+      :scale="scale"
+      :names="names"
+      :frequencies="frequencies"
       :lines="props.scaleLines"
       :baseFrequency="props.baseFrequency"
       :baseMidiNote="props.baseMidiNote"

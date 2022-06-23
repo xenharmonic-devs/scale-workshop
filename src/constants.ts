@@ -87,3 +87,5 @@ export const LOG_PRIMES = PRIMES.map(Math.log);
 export const DEFAULT_NUMBER_OF_COMPONENTS = 25; // Enough to represent all primes < 100
 export const NEWLINE_TEST = /\r?\n/;
 export const UNIX_NEWLINE = "\n";
+
+export const NUMBER_OF_NOTES = 128;

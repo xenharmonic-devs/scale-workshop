@@ -7,24 +7,22 @@ import TuningTableRow from "./TuningTableRow.vue";
 const props = defineProps<{
   scale: Scale;
   names: string[];
+  frequencies: number[];
   baseMidiNote: number;
   baseFrequency: number;
 }>();
 
 const rows = computed(() => {
-  return Array(128)
-    .fill(null)
-    .map((_, index) => {
-      const i = index - props.baseMidiNote;
-      const monzo = props.scale.getMonzo(i);
-      return {
-        index,
-        frequency: props.scale.getFrequency(i),
-        cents: monzo.toCents(),
-        ratio: monzo.valueOf(),
-        name: props.names[mmod(i - 1, props.names.length)],
-      };
-    });
+  return props.frequencies.map((frequency, i) => {
+    const monzo = props.scale.getMonzo(i - props.baseMidiNote);
+    return {
+      index: i,
+      frequency: frequency,
+      cents: monzo.toCents(),
+      ratio: monzo.valueOf(),
+      name: props.names[mmod(i - 1 - props.baseMidiNote, props.names.length)],
+    };
+  });
 });
 </script>
 

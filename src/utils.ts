@@ -149,3 +149,14 @@ export function debounce(func: (...args: any[]) => void, timeout = 300) {
     }, timeout);
   };
 }
+
+const MIDI_NOTE_NUMBER_OF_A4 = 69;
+// convert a frequency to a midi note number and cents offset
+// assuming 12-edo at 440Hz
+// returns an array [midiNoteNumber, centsOffset]
+export function ftom(frequency: number) {
+  const semitones = MIDI_NOTE_NUMBER_OF_A4 + 12 * Math.log2(frequency / 440);
+  const midiNoteNumber = Math.round(semitones);
+  const centsOffset = (semitones - midiNoteNumber) * 100;
+  return [midiNoteNumber, centsOffset];
+}
