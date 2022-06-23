@@ -160,3 +160,7 @@ export function ftom(frequency: number) {
   const centsOffset = (semitones - midiNoteNumber) * 100;
   return [midiNoteNumber, centsOffset];
 }
+
+export function mtof(index: number) {
+  return 440 * Math.pow(2, (index - 69) / 12);
+}
