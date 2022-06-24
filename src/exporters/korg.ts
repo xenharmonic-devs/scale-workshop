@@ -31,15 +31,13 @@ class KorgExporter extends BaseExporter {
       // restrict to valid values
       const cents = clamp(0, KORG.mnlg.maxCents, c);
 
-      const semitones = cents / 100.0;
-      const microtones = Math.trunc(semitones);
+      const semitones = Math.floor(cents / 100.0);
+      const microtones = cents / 100.0 - semitones;
 
-      const u16a = new Uint16Array([
-        Math.round(0x8000 * (semitones - microtones)),
-      ]);
+      const u16a = new Uint16Array([Math.round(0x8000 * microtones)]);
       const u8a = new Uint8Array(u16a.buffer);
 
-      data[dataIndex] = microtones;
+      data[dataIndex] = semitones;
       data[dataIndex + 1] = u8a[1];
       data[dataIndex + 2] = u8a[0];
       dataIndex += 3;
