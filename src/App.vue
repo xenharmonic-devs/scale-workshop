@@ -8,8 +8,9 @@ import Scale from "./scale";
 import type ExtendedMonzo from "./monzo";
 import { parseLine } from "./parser";
 import { bendRangeInSemitones, MidiIn, MidiOut } from "./midi";
+import { Keyboard } from "./keyboard";
 
-// Application state
+// === Application state ===
 const scaleName = ref("");
 const scaleLines = ref<string[]>([]);
 const baseFrequency = ref(440);
@@ -28,10 +29,13 @@ const keyColors = ref([
   "white",
   "black",
 ]);
+const isomorphicVertical = ref(5);
+const isomorphicHorizontal = ref(1);
+const typingEquave = ref(0);
 const midiInput = ref<Input | null>(null);
 const midiOutput = ref<Output | null>(null);
 
-// Computed state
+// === Computed state ===
 const scaleAndNames = computed<[Scale, string[]]>(() => {
   const intervals: ExtendedMonzo[] = [];
   const names: string[] = [];
@@ -54,19 +58,23 @@ const frequencies = computed(() =>
   )
 );
 
-// Lifecycle
+// === Lifecycle ===
 onUnmounted(() => {
   if (midiInput.value !== null) {
     midiInput.value.removeListener();
   }
 });
 
+// ===  Version 1 backwards compatibility ===
 try {
   const scaleWorkshopOneData = new ScaleWorkshopOneData();
 
   scaleName.value = scaleWorkshopOneData.name;
   baseFrequency.value = scaleWorkshopOneData.freq;
   baseMidiNote.value = scaleWorkshopOneData.midi;
+  isomorphicHorizontal.value = scaleWorkshopOneData.horizontal;
+  isomorphicVertical.value = scaleWorkshopOneData.vertical;
+
   if (scaleWorkshopOneData.colors !== undefined) {
     keyColors.value = scaleWorkshopOneData.colors.split(" ");
   }
@@ -81,6 +89,7 @@ try {
   console.error("Error parsing URL", error);
 }
 
+// === MIDI input / output ===
 const midiOut = computed(() => {
   return new MidiOut(midiOutput.value as Output);
 });
@@ -106,6 +115,61 @@ watch(midiOutput, (newValue) => {
     newValue.channels[1].sendPitchBendRange(bendRangeInSemitones, 0);
   }
 });
+
+// === Typing keyboard input ===
+const typingKeyboad = new Keyboard();
+
+function emptyKeyup() {}
+
+typingKeyboad.addKeydownListener((event) => {
+  // The key left of Digit1 releases sustained keys
+  if (event.code === "Backquote") {
+    typingKeyboad.deactivate();
+    return emptyKeyup;
+  }
+
+  // "Octave" keys
+  if (event.code === "NumpadMultiply") {
+    typingEquave.value++;
+    return emptyKeyup;
+  }
+  if (event.code === "NumpadDivide") {
+    typingEquave.value--;
+    return emptyKeyup;
+  }
+
+  // Key not mapped to layers, bail out
+  if (event.coordinates === undefined) {
+    return emptyKeyup;
+  }
+
+  const [x, y, z] = event.coordinates;
+
+  // Key not in the layer with digits and letters, bail out
+  if (z !== 1) {
+    return emptyKeyup;
+  }
+
+  const scale = scaleAndNames.value[0];
+  const index =
+    baseMidiNote.value +
+    scale.size * typingEquave.value +
+    x * isomorphicHorizontal.value +
+    (4 - y) * isomorphicVertical.value;
+  let frequency;
+  if (index >= 0 && index < frequencies.value.length) {
+    frequency = frequencies.value[index];
+  } else {
+    // Support more than 128 notes with some additional computational cost
+    frequency = scale.getFrequency(index - baseMidiNote.value);
+  }
+  const noteOff = sendNoteOn(frequency, 80);
+  function keyoff() {
+    noteOff(80);
+  }
+
+  return keyoff;
+});
 </script>
 
 <template>
@@ -130,6 +194,9 @@ watch(midiOutput, (newValue) => {
     :scale="scaleAndNames[0]"
     :names="scaleAndNames[1]"
     :frequencies="frequencies"
+    :isomorphicHorizontal="isomorphicHorizontal"
+    :isomorphicVertical="isomorphicVertical"
+    :typingEquave="typingEquave"
     :midiInput="midiInput"
     :midiOutput="midiOutput"
     @update:scaleName="scaleName = $event"
@@ -137,6 +204,9 @@ watch(midiOutput, (newValue) => {
     @update:baseMidiNote="baseMidiNote = $event"
     @update:baseFrequency="baseFrequency = $event"
     @update:keyColors="keyColors = $event"
+    @update:isomorphicVertical="isomorphicVertical = $event"
+    @update:isomorphicHorizontal="isomorphicHorizontal = $event"
+    @update:typingEquave="typingEquave = $event"
     @update:midiInput="midiInput = $event"
     @update:midiOutput="midiOutput = $event"
   />
