@@ -93,6 +93,7 @@ export class MidiIn {
     this.log(`Midi note off ${noteNumber} at velocity ${release}`);
     const noteOff = this.noteOffMap.get(noteNumber);
     if (noteOff !== undefined) {
+      this.noteOffMap.delete(noteNumber);
       noteOff(rawRelease);
     }
   }
