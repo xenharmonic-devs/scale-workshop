@@ -177,7 +177,7 @@ function doExport(exporter: ExporterKey) {
         <div class="control">
           <button
             @click="autoFrequency"
-            style="position: absolute; right: 1.4rem; z-index: 9001"
+            style="position: absolute; right: 1.4rem; z-index: 1"
             class="btn"
           >
             Auto ↑
