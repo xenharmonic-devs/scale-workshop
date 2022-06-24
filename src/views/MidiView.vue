@@ -5,9 +5,16 @@ import { Input, Output, WebMidi } from "webmidi";
 const props = defineProps<{
   midiInput: Input | null;
   midiOutput: Output | null;
+  midiInputChannels: Set<number>;
+  midiOutputChannels: Set<number>;
 }>();
 
-const emit = defineEmits(["update:midiInput", "update:midiOutput"]);
+const emit = defineEmits([
+  "update:midiInput",
+  "update:midiOutput",
+  "update:midiInputChannels",
+  "update:midiOutputChannels",
+]);
 
 const inputs = reactive<Input[]>([]);
 const outputs = reactive<Output[]>([]);
@@ -42,6 +49,28 @@ function refreshMidi() {
   WebMidi.outputs.forEach((output) => outputs.push(output));
 }
 
+function toggleChannel(
+  event: Event,
+  prop: Set<number>,
+  eventStr: "update:midiInputChannels" | "update:midiOutputChannels"
+) {
+  const checkbox = event.target as HTMLInputElement;
+  const channel = parseInt(checkbox.value);
+
+  const result = new Set(prop);
+  if (checkbox.checked) {
+    result.add(channel);
+  } else {
+    result.delete(channel);
+  }
+  emit(eventStr, result);
+}
+
+const toggleInputChannel = (event: Event) =>
+  toggleChannel(event, props.midiInputChannels, "update:midiInputChannels");
+const toggleOutputChannel = (event: Event) =>
+  toggleChannel(event, props.midiOutputChannels, "update:midiOutputChannels");
+
 onMounted(async () => {
   await WebMidi.enable();
   refreshMidi();
@@ -75,6 +104,18 @@ onMounted(async () => {
               {{ (input.manufacturer || "(Generic)") + ": " + input.name }}
             </option>
           </select>
+          <div class="control channels-wrapper">
+            <label>Input channels</label>
+            <span v-for="channel in 16" :key="channel">
+              <label>{{ " " + channel + " " }}</label>
+              <input
+                type="checkbox"
+                :value="channel"
+                :checked="midiInputChannels.has(channel)"
+                @input="toggleInputChannel"
+              />
+            </span>
+          </div>
           <label for="output">Output</label>
           <select id="output" @change="selectMidiOutput" class="control">
             <option value="no-midi-output" :selected="midiOutput === null">
@@ -89,6 +130,18 @@ onMounted(async () => {
               {{ (output.manufacturer || "(Generic)") + ": " + output.name }}
             </option>
           </select>
+          <div class="control channels-wrapper">
+            <label>Output channels</label>
+            <span v-for="channel in 16" :key="channel">
+              <label>{{ " " + channel + " " }}</label>
+              <input
+                type="checkbox"
+                :value="channel"
+                :checked="midiOutputChannels.has(channel)"
+                @input="toggleOutputChannel"
+              />
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -109,5 +162,15 @@ div.column {
 }
 div.midi-controls {
   padding: 1rem;
+}
+
+div.channels-wrapper {
+  column-gap: 1rem;
+}
+
+div.channels-wrapper span {
+  display: flex;
+  flex-flow: column;
+  text-align: center;
 }
 </style>

@@ -3,48 +3,111 @@ import { ftom } from "@/utils";
 
 export const bendRangeInSemitones = 2;
 
+// Large but finite number to signify voices that are off
+const EXPIRED = 10000;
+
+// Abstraction for a pitch-bent midi channel. Polyphonic in pure octaves and 12edo in general.
+type Voice = {
+  age: number;
+  channel: number;
+  centsOffset: number;
+};
+
+const EPSILON = 1e-6;
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function emptyNoteOff(rawRelease: number) {}
 
 export type NoteOff = typeof emptyNoteOff;
 
-// TODO: Juggle multiple channels and pitch bends.
 export class MidiOut {
   output: Output | null;
+  channels: Set<number>;
   log: (msg: string) => void;
+  private voices: Voice[];
 
-  constructor(output: Output | null, log?: (msg: string) => void) {
+  constructor(
+    output: Output | null,
+    channels: Set<number>,
+    log?: (msg: string) => void
+  ) {
     this.output = output;
+    this.channels = channels;
     if (log === undefined) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       this.log = (msg) => {};
     } else {
       this.log = log;
     }
+
+    this.voices = [];
+    this.channels.forEach((channel) => {
+      this.voices.push({
+        age: EXPIRED,
+        centsOffset: NaN,
+        channel,
+      });
+    });
+  }
+
+  selectVoice(noteNumber: number, centsOffset: number) {
+    // Age signifies how many note ons have occured after voice intialization
+    this.voices.forEach((voice) => voice.age++);
+
+    // Re-use a channel that already has the correct pitch bend
+    for (let i = 0; i < this.voices.length; ++i) {
+      if (Math.abs(this.voices[i].centsOffset - centsOffset) < EPSILON) {
+        this.log(`Re-using channel ${this.voices[i].channel}`);
+        this.voices[i].age = 0;
+        return this.voices[i];
+      }
+    }
+
+    // Nothing re-usable found. Use the oldest voice.
+    let oldestVoice = this.voices[0];
+    this.voices.forEach((voice) => {
+      if (voice.age > oldestVoice.age) {
+        oldestVoice = voice;
+      }
+    });
+    oldestVoice.age = 0;
+    oldestVoice.centsOffset = centsOffset;
+    return oldestVoice;
   }
 
   sendNoteOn(frequency: number, rawAttack: number) {
     if (this.output === null) {
       return emptyNoteOff;
     }
+    if (!this.channels.size) {
+      return emptyNoteOff;
+    }
     const [noteNumber, centsOffset] = ftom(frequency);
     if (noteNumber < 0 || noteNumber >= 128) {
       return emptyNoteOff;
     }
+    const voice = this.selectVoice(noteNumber, centsOffset);
     this.log(
       `Sending note on ${noteNumber} at velocity ${
         rawAttack / 127
+      } on channel ${
+        voice.channel
       } with bend ${centsOffset} resulting from frequency ${frequency}`
     );
     const bendRange = bendRangeInSemitones * 100;
-    this.output.channels[1].sendPitchBend(centsOffset / bendRange);
-    this.output.channels[1].sendNoteOn(noteNumber, { rawAttack });
+    this.output.channels[voice.channel].sendPitchBend(centsOffset / bendRange);
+    this.output.channels[voice.channel].sendNoteOn(noteNumber, { rawAttack });
 
     const noteOff = (rawRelease: number) => {
       this.log(
-        `Sending note off ${noteNumber} at velocity ${rawRelease / 127}`
+        `Sending note off ${noteNumber} at velocity ${
+          rawRelease / 127
+        } on channel ${voice.channel}`
       );
-      this.output!.channels[1].sendNoteOff(noteNumber, { rawRelease });
+      voice.age = EXPIRED;
+      this.output!.channels[voice.channel].sendNoteOff(noteNumber, {
+        rawRelease,
+      });
     };
     return noteOff;
   }
@@ -55,16 +118,19 @@ export type NoteOnCallback = (frequency: number, rawAttack: number) => NoteOff;
 export class MidiIn {
   noteNumberToFrequency: (noteNumber: number) => number;
   callback: NoteOnCallback;
+  channels: Set<number>;
   noteOffMap: Map<number, (rawRelease: number) => void>;
   log: (msg: string) => void;
 
   constructor(
     noteNumberToFrequency: (noteNumber: number) => number,
     callback: NoteOnCallback,
+    channels: Set<number>,
     log?: (msg: string) => void
   ) {
     this.noteNumberToFrequency = noteNumberToFrequency;
     this.callback = callback;
+    this.channels = channels;
     this.noteOffMap = new Map();
     if (log === undefined) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -75,6 +141,9 @@ export class MidiIn {
   }
 
   noteOn(event: NoteMessageEvent) {
+    if (!this.channels.has(event.message.channel)) {
+      return;
+    }
     const noteNumber = event.note.number;
     const attack = event.note.attack;
     const rawAttack = event.note.rawAttack;
@@ -87,6 +156,9 @@ export class MidiIn {
   }
 
   noteOff(event: NoteMessageEvent) {
+    if (!this.channels.has(event.message.channel)) {
+      return;
+    }
     const noteNumber = event.note.number;
     const release = event.note.release;
     const rawRelease = event.note.rawRelease;
