@@ -2,6 +2,7 @@ import Fraction from "fraction.js";
 
 import ExtendedMonzo, { type ScaleLineOptions } from "@/monzo";
 import { kCombinations } from "@/combinations";
+import { LOG_PRIMES, PRIMES } from "@/constants";
 
 function mmod(a: number, b: number) {
   return ((a % b) + b) % b;
@@ -292,6 +293,70 @@ export default class Scale {
     intervals = intervals.map((interval) => interval.mmod(equave));
     intervals.sort((a, b) => a.compare(b));
     return new Scale(intervals, equave, baseFrequency);
+  }
+
+  // All Euler-Fokker genera can be generated using Scale.fromLattice,
+  // but a single-parameter generator is conceptually simpler.
+  static fromEulerGenus(
+    guideTone: number,
+    equave: number,
+    numberOfComponents: number,
+    baseFrequency = 440
+  ) {
+    const factors = [];
+    for (let remainder = 1; remainder < equave; ++remainder) {
+      for (let n = remainder; n <= guideTone; n += equave) {
+        if (guideTone % n === 0) {
+          factors.push(n);
+        }
+      }
+    }
+    const equaveMonzo = ExtendedMonzo.fromNumber(equave, numberOfComponents);
+    const intervals = factors.map((factor) =>
+      ExtendedMonzo.fromNumber(factor, numberOfComponents).mmod(equaveMonzo)
+    );
+    intervals.sort((a, b) => a.compare(b));
+    return new Scale(intervals, equaveMonzo, baseFrequency);
+  }
+
+  static fromDwarf(
+    val: number,
+    equave: number,
+    numberOfComponents: number,
+    baseFrequency = 440
+  ) {
+    const valPerLogEquave = val / Math.log(equave);
+    const degrees = new Set();
+    const members = [];
+    let n = 1;
+    while (members.length < val) {
+      let degree = 0;
+      let m = n;
+      let i = 0;
+      while (m > 1) {
+        let component = 0;
+        while (m % PRIMES[i] === 0) {
+          m /= PRIMES[i];
+          component++;
+        }
+        if (component !== 0) {
+          degree += component * Math.round(LOG_PRIMES[i] * valPerLogEquave);
+        }
+        i++;
+      }
+      degree = degree % val;
+      if (!degrees.has(degree)) {
+        degrees.add(degree);
+        members.push(n);
+      }
+      n++;
+    }
+    const equaveMonzo = ExtendedMonzo.fromNumber(equave, numberOfComponents);
+    const intervals = members.map((member) =>
+      ExtendedMonzo.fromNumber(member, numberOfComponents).mmod(equaveMonzo)
+    );
+    intervals.sort((a, b) => a.compare(b));
+    return new Scale(intervals, equaveMonzo, baseFrequency);
   }
 
   get size() {
