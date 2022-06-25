@@ -55,17 +55,15 @@ function updateScaleName(event: Event) {
 }
 
 const updateBaseFrequency = debounce((event: Event) => {
-  emit(
-    "update:baseFrequency",
-    parseFloat((event!.target as HTMLInputElement).value)
-  );
+  const value = parseFloat((event!.target as HTMLInputElement).value);
+  if (!isNaN(value) && isFinite(value)) emit("update:baseFrequency", value);
 });
 
 const updatebaseMidiNote = debounce((event: Event) => {
-  emit(
-    "update:baseMidiNote",
-    parseInt((event!.target as HTMLInputElement).value)
-  );
+  const value = parseInt((event!.target as HTMLInputElement).value);
+  if (!isNaN(value)) {
+    emit("update:baseMidiNote", value);
+  }
 });
 
 const midiNoteNumber = ref<HTMLInputElement | null>(null);
