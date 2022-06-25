@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import TuningTable from "./TuningTable.vue";
-import { debounce, mtof } from "@/utils";
+import { debounce, mtof, autoKeyColors } from "@/utils";
 import ScaleRule from "./ScaleRule.vue";
 import { APP_TITLE, UNIX_NEWLINE } from "@/constants";
 import { sanitizeFilename } from "@/utils";
@@ -260,6 +260,15 @@ async function doImport(importerKey: ImporterKey, event: Event) {
             only; they do not affect mapping.
           </p>
           <textarea v-model="joinedKeyColors"></textarea>
+        </div>
+        <div class="control">
+          <button
+            @click="
+              $emit('update:keyColors', autoKeyColors(props.scale.size))
+            "
+          >
+            Auto
+          </button>
         </div>
       </div>
     </div>
