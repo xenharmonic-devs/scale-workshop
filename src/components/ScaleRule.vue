@@ -20,7 +20,9 @@ const ticksAndColors = computed(() => {
     } else if (tick > 1) {
       color = "red";
     }
-    result.push([`${0.5 + 99 * mmod(tick, 1)}%`, color]);
+    if (!isNaN(tick) && isFinite(tick)) {
+      result.push([`${0.5 + 99 * mmod(tick, 1)}%`, color]);
+    }
   }
   // mmod(1, 1) === 0, so we have to manually push the equave tick
   result.push(["99.5%", "black"]);
