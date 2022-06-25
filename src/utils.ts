@@ -219,3 +219,77 @@ export function sanitizeFilename(input: string) {
     .replace(/\//g, "_")
     .replace(/\\/g, "_");
 }
+
+export function formatExponential(x: number, fractionDigits = 3) {
+  if (Math.abs(x) < 10000) {
+    return x.toFixed(fractionDigits);
+  }
+  const e = Math.floor(Math.log10(Math.abs(x)));
+  const f = 10 ** (fractionDigits - e);
+  const d = 0.1 ** fractionDigits;
+  return (d * Math.round(x * f)).toFixed(fractionDigits) + "e+" + e.toString();
+}
+
+export function formatHertz(frequency: number, fractionDigits = 3) {
+  const magnitude = Math.abs(frequency);
+
+  // Use regular formatting for magnitudes within human limits
+  if (1 <= magnitude && magnitude < 100000) {
+    return frequency.toFixed(fractionDigits) + "Hz";
+  }
+
+  // Submultiples
+  if (magnitude < 1e-21) {
+    return (frequency * 1e24).toFixed(fractionDigits) + "yHz";
+  }
+  if (magnitude < 1e-18) {
+    return (frequency * 1e21).toFixed(fractionDigits) + "zHz";
+  }
+  if (magnitude < 1e-15) {
+    return (frequency * 1e18).toFixed(fractionDigits) + "aHz";
+  }
+  if (magnitude < 1e-12) {
+    return (frequency * 1e15).toFixed(fractionDigits) + "fHz";
+  }
+  if (magnitude < 1e-9) {
+    return (frequency * 1e12).toFixed(fractionDigits) + "pHz";
+  }
+  if (magnitude < 1e-6) {
+    return (frequency * 1e9).toFixed(fractionDigits) + "nHz";
+  }
+  if (magnitude < 1e-3) {
+    return (frequency * 1e6).toFixed(fractionDigits) + "µHz";
+  }
+  if (magnitude < 1) {
+    return (frequency * 1e3).toFixed(fractionDigits) + "mHz";
+  }
+
+  // Too large. Use scientific notation.
+  if (magnitude > 1e28) {
+    return formatExponential(frequency) + "Hz";
+  }
+
+  // Multiples
+  if (magnitude > 1e24) {
+    return (frequency * 1e-24).toFixed(fractionDigits) + "YHz";
+  }
+  if (magnitude > 1e21) {
+    return (frequency * 1e-21).toFixed(fractionDigits) + "ZHz";
+  }
+  if (magnitude > 1e18) {
+    return (frequency * 1e-18).toFixed(fractionDigits) + "EHz";
+  }
+  if (magnitude > 1e15) {
+    return (frequency * 1e-15).toFixed(fractionDigits) + "PHz";
+  }
+  if (magnitude > 1e12) {
+    return (frequency * 1e-12).toFixed(fractionDigits) + "THz";
+  }
+  if (magnitude > 1e9) {
+    return (frequency * 1e-9).toFixed(fractionDigits) + "GHz";
+  }
+  if (magnitude > 1e6) {
+    return (frequency * 1e-6).toFixed(fractionDigits) + "MHz";
+  }
+  return (frequency * 1e-3).toFixed(fractionDigits) + "kHz";
+}
