@@ -315,6 +315,15 @@ describe("Extended Monzo reverse parsing", () => {
     expect(monzo.toScaleLine()).toBe("2\\5");
   });
 
+  it("can represent equal temperament (negative)", () => {
+    const monzo = ExtendedMonzo.fromEqualTemperament(
+      new Fraction(-3, 5),
+      new Fraction(2),
+      1
+    );
+    expect(monzo.toScaleLine()).toBe("-3\\5");
+  });
+
   it("can represent generalized N-of-EDO (EDT)", () => {
     const monzo = ExtendedMonzo.fromEqualTemperament(
       new Fraction(7, 11),
