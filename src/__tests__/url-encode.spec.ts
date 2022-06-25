@@ -6,7 +6,7 @@ import {
   decodeLines,
   encodeKeyColors,
   encodeLines,
-} from "../urlEncode";
+} from "../url-encode";
 
 describe("URL encoder", () => {
   it("can encode all line types", () => {
