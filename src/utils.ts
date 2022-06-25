@@ -247,7 +247,7 @@ export function autoKeyColors(size: number) {
     return ["white", "black", "white", "black", "white", "black"];
   }
 
-  let generator = Math.round(Math.log2(4/3) * size);
+  let generator = Math.round(Math.log2(4 / 3) * size);
   while (gcd(generator, size) > 1) {
     generator--;
   }

@@ -59,11 +59,15 @@ describe("Hertz formatter", () => {
 describe("Auto key color algorithm", () => {
   it("produces the chromatic scale starting from A with 12 notes", () => {
     const colors = autoKeyColors(12);
-    expect(colors.join(" ")).toBe("white black white white black white black white white black white black");
+    expect(colors.join(" ")).toBe(
+      "white black white white black white black white white black white black"
+    );
   });
 
   it("produces something resonable with 17 notes", () => {
     const colors = autoKeyColors(17);
-    expect(colors.join(" ")).toBe("white white black white white white black white white black white white white black white white black");
+    expect(colors.join(" ")).toBe(
+      "white white black white white white black white white black white white white black white white black"
+    );
   });
 });
