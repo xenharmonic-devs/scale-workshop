@@ -88,6 +88,7 @@ function doExport(exporter: ExporterKey) {
     baseMidiNote: props.baseMidiNote,
     description: props.scaleName,
     lines: props.scaleLines,
+    names: props.names,
     appTitle: APP_TITLE,
     date: new Date(),
   };

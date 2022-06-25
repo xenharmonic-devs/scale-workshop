@@ -202,6 +202,10 @@ export default class ExtendedMonzo {
     const fractionOfEquave = new Fraction(numerator, denominator);
     const equave = this.div(fractionOfEquave).toFraction();
 
+    if (equave.valueOf() < 1) {
+      return [fractionOfEquave.neg(), equave.inverse()];
+    }
+
     return [fractionOfEquave, equave];
   }
 
@@ -281,6 +285,28 @@ export default class ExtendedMonzo {
     return result;
   }
 
+  equalTemperamentString(preferredEdo?: number) {
+    const [fractionOfEquave_, equave] = this.toEqualTemperament();
+    let fractionOfEquave = fractionOfEquave_;
+    if (equave.mod(2).equals(0)) {
+      fractionOfEquave = fractionOfEquave.mul(equave.div(2));
+      return fractionToString(
+        fractionOfEquave,
+        undefined,
+        preferredEdo
+      ).replace("/", "\\");
+    }
+    return (
+      fractionToString(fractionOfEquave, undefined, preferredEdo).replace(
+        "/",
+        "\\"
+      ) +
+      "<" +
+      equave.toFraction() +
+      ">"
+    );
+  }
+
   // Reverse parsing
   toScaleLine(options?: ScaleLineOptions): string {
     options = options || {};
@@ -314,29 +340,9 @@ export default class ExtendedMonzo {
     }
 
     if (this.isEqualTemperament()) {
-      const [fractionOfEquave_, equave] = this.toEqualTemperament();
-      let fractionOfEquave = fractionOfEquave_;
-      if (equave.mod(2).equals(0)) {
-        fractionOfEquave = fractionOfEquave.mul(equave.div(2));
-        if (isSafeFraction(fractionOfEquave)) {
-          return fractionToString(
-            fractionOfEquave,
-            undefined,
-            options.preferredEdo
-          ).replace("/", "\\");
-        }
-      }
+      const [fractionOfEquave, equave] = this.toEqualTemperament();
       if (isSafeFraction(fractionOfEquave) && isSafeFraction(equave)) {
-        return (
-          fractionToString(
-            fractionOfEquave,
-            undefined,
-            options.preferredEdo
-          ).replace("/", "\\") +
-          "<" +
-          equave.toFraction() +
-          ">"
-        );
+        return this.equalTemperamentString(options.preferredEdo);
       }
       if (options.forbidMonzo) {
         return cents();
