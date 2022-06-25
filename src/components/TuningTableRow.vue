@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { formatHertz, formatExponential } from "@/utils";
+
 defineProps<{
   index: number;
   frequency: number;
@@ -12,9 +14,9 @@ defineProps<{
   <tr>
     <td></td>
     <td>{{ index }}</td>
-    <td>{{ frequency.toFixed(3) }}Hz</td>
-    <td>{{ cents.toFixed(3) }}</td>
-    <td>{{ ratio.toFixed(3) }}</td>
+    <td>{{ formatHertz(frequency) }}</td>
+    <td>{{ formatExponential(cents) }}</td>
+    <td>{{ formatExponential(ratio) }}</td>
     <td>{{ name }}</td>
   </tr>
 </template>
