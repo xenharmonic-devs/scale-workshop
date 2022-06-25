@@ -8,9 +8,15 @@ export type ExporterParams = {
   filename: string;
   baseMidiNote: number;
   description?: string;
-  lines?: string[];
+  lines?: string[]; // May contain invalid lines
+  names?: string[]; // Should always match scale
   appTitle?: string;
   date?: Date;
+  format?: "name" | "cents" | "frequency" | "decimal" | "degree";
+  basePeriod?: number;
+  baseDegree?: number;
+  displayPeriod?: boolean;
+  integratePeriod?: boolean;
 };
 
 export class BaseExporter {
@@ -30,8 +36,9 @@ export class BaseExporter {
       link.href = "data:" + mimeType + encodeURIComponent(contents);
     }
 
+    // Open save dialog
     link.dispatchEvent(
       new MouseEvent("click", { bubbles: true, cancelable: true, view: window })
-    ); // opens save dialog
+    );
   }
 }

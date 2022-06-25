@@ -7,6 +7,7 @@ export enum LINE_TYPE {
   DECIMAL = "decimal",
   RATIO = "ratio",
   N_OF_EDO = "n of edo",
+  FREQUENCY = "frequency", // TODO: Implement parsing #107
   INVALID = "invalid",
   UNISON = "unison",
 }
