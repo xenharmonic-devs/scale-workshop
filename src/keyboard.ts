@@ -125,24 +125,25 @@ type CoordinateKeyboardEvent = {
   coordinates?: number[];
 };
 
-type EventCallback = (event: CoordinateKeyboardEvent) => void;
+type KeyupCallback = () => void;
+type KeydownCallback = (event: CoordinateKeyboardEvent) => KeyupCallback;
 
 /*
 Keyboard that filters out repeated keydown events and normalizes keycodes
 to coordinates. The Shift keys toggle 'sustain'.
 */
 export class Keyboard {
-  keydownCallbacks: EventCallback[];
-  keyupCallbacks: EventCallback[];
+  keydownCallbacks: KeydownCallback[];
+  keyupCallbacks: Map<string, KeyupCallback>;
   activeKeys: Set<string>;
   pendingKeys: Set<string>;
   stickyKeys: Set<string>;
-  _keydown: (event: KeyboardEvent) => void;
-  _keyup: (event: KeyboardEvent) => void;
+  private _keydown: (event: KeyboardEvent) => void;
+  private _keyup: (event: KeyboardEvent) => void;
 
   constructor() {
     this.keydownCallbacks = [];
-    this.keyupCallbacks = [];
+    this.keyupCallbacks = new Map();
     this.activeKeys = new Set();
     this.pendingKeys = new Set();
     this.stickyKeys = new Set();
@@ -158,34 +159,32 @@ export class Keyboard {
     window.removeEventListener("keyup", this._keyup);
   }
 
-  addEventListener(type: string, listener: EventCallback) {
-    if (type === "keydown") {
-      this.keydownCallbacks.push(listener);
-    } else if (type === "keyup") {
-      this.keyupCallbacks.push(listener);
-    } else {
-      throw new Error(`Unrecognized event type '${type}'`);
-    }
+  addKeydownListener(listener: KeydownCallback) {
+    this.keydownCallbacks.push(listener);
   }
 
-  removeEventListener(type: string, listener: EventCallback) {
-    if (type === "keydown") {
-      this.keydownCallbacks.splice(this.keydownCallbacks.indexOf(listener), 1);
-    } else if (type === "keyup") {
-      this.keyupCallbacks.splice(this.keyupCallbacks.indexOf(listener), 1);
-    } else {
-      throw new Error(`Unrecognized event type '${type}'`);
-    }
+  removeEventListener(listener: KeydownCallback) {
+    this.keydownCallbacks.splice(this.keydownCallbacks.indexOf(listener), 1);
   }
 
   fireKeydown(event: CoordinateKeyboardEvent) {
     event.coordinates = COORDS_BY_CODE.get(event.code);
-    this.keydownCallbacks.forEach((callback) => callback(event));
+    const unresolvedKeyupCallback = this.keyupCallbacks.get(event.code);
+    if (unresolvedKeyupCallback !== undefined) {
+      console.warn("Unresolved keyup detected");
+      unresolvedKeyupCallback();
+    }
+    this.keydownCallbacks.forEach((callback) =>
+      this.keyupCallbacks.set(event.code, callback(event))
+    );
   }
 
   fireKeyup(event: CoordinateKeyboardEvent) {
-    event.coordinates = COORDS_BY_CODE.get(event.code);
-    this.keyupCallbacks.forEach((callback) => callback(event));
+    const callback = this.keyupCallbacks.get(event.code);
+    this.keyupCallbacks.delete(event.code);
+    if (callback !== undefined) {
+      callback();
+    }
   }
 
   keydown(event: KeyboardEvent) {

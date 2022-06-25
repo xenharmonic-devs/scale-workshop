@@ -64,8 +64,8 @@ export class ScaleWorkshopOneData {
   freq: number;
   midi: number;
   source: string;
-  vertical: number | undefined;
-  horizontal: number | undefined;
+  vertical: number;
+  horizontal: number;
   colors: string | undefined;
   waveform: string | undefined;
   ampenv: string | undefined;
@@ -84,8 +84,8 @@ export class ScaleWorkshopOneData {
     this.source = searchParams.get("source", "");
 
     // get isomorphic keyboard mapping
-    this.vertical = searchParams.getNumber("vert");
-    this.horizontal = searchParams.getNumber("horiz");
+    this.vertical = searchParams.getNumber("vert", 5);
+    this.horizontal = searchParams.getNumber("horiz", 1);
 
     // get key colours
     this.colors = searchParams.get("colors");
