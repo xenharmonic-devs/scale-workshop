@@ -2,11 +2,13 @@
 defineProps({
   show: Boolean,
 });
+
+defineEmits(["confirm", "cancel"]);
 </script>
 
 <template>
   <Transition name="modal">
-    <div v-if="show" class="modal-mask">
+    <div v-if="show" class="modal-mask" @click.self="$emit('cancel')">
       <div class="modal-wrapper">
         <div class="modal-container">
           <div class="modal-header">
@@ -20,8 +22,8 @@ defineProps({
           <div class="modal-footer">
             <slot name="footer">
               <div class="btn-group">
-                <button class="btn" @click="$emit('confirm')">OK</button>
-                <button class="btn" @click="$emit('cancel')">Cancel</button>
+                <button @click="$emit('confirm')">OK</button>
+                <button @click="$emit('cancel')">Cancel</button>
               </div>
             </slot>
           </div>
@@ -46,27 +48,28 @@ defineProps({
   transition: opacity 0.3s ease;
 }
 .modal-wrapper {
-  display: table-cell;
   vertical-align: middle;
 }
 .modal-container {
   padding: 1rem;
   background-color: var(--color-background);
-  box-shadow: black 0px 0px 200px;
+  box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 200px;
   max-height: 100vh;
   max-width: 100vw;
   width: 20rem;
-  overflow-y: auto;
   transition: all 0.3s ease;
+  display: flex;
+  flex-flow: column;
 }
-
-.modal-header h3 {
-  margin-top: 0;
-  color: #42b983;
+.modal-header h2 {
+  margin-bottom: 0;
 }
-
 .modal-body {
-  margin: 20px 0;
+  overflow-y: auto;
+}
+.modal-footer {
+  border-top: 1px solid var(--color-border);
+  padding-top: 1rem;
 }
 
 /*

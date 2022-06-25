@@ -16,7 +16,8 @@
   --color-accent-dimmed: rgba(0,20,20,0.7);
 
   --section-gap: 160px;
-
+  --base-font-size: 15px;
+  --base-line-height: 1.5;
 }
 
 /* TODO dark scheme */
@@ -56,7 +57,7 @@ body {
   transition: color 0.5s, background-color 0.5s;
   line-height: 2;
   font-family: sans-serif;
-  font-size: 15px;
+  font-size: var(--base-font-size);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -72,7 +73,7 @@ h2 {
   margin-bottom: 1rem;
 }
 p {
-  line-height: 1.5;
+  line-height: var(--base-line-height);
 }
 a {
   color: var(--color-accent);
@@ -80,6 +81,10 @@ a {
 }
 strong {
   font-weight: bold;
+}
+button {
+  font-size: var(--base-font-size);
+  line-height: var(--base-line-height);
 }
 
 /* UI elements */
@@ -99,7 +104,7 @@ optgroup {
   flex-flow: row wrap;
   gap: 0.25rem;
 }
-.btn {
+button, .btn {
   cursor: pointer;
   display: inline-block;
   border-radius: 3px;
@@ -107,8 +112,9 @@ optgroup {
   background-color: var(--color-accent-background);
   padding: 0.25rem 0.5rem;
   text-decoration: none;
+  color: var(--color-accent);
 }
-.btn:hover {
+button:hover, .btn:hover {
   color: white;
   background-color: var(--color-accent);
 }

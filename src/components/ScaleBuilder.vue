@@ -219,17 +219,11 @@ function approximateByHarmonics() {
             max="1000000"
             @input="updateBaseFrequency"
           />
+          <button @click="autoFrequency">Auto</button>
           <span>Hz</span>
         </div>
 
         <div class="control">
-          <button
-            @click="autoFrequency"
-            style="position: absolute; right: 1.4rem; z-index: 1"
-            class="btn"
-          >
-            Auto ↑
-          </button>
           <label>MIDI note number</label>
           <input
             type="number"
