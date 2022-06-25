@@ -2,7 +2,7 @@ import Fraction from "fraction.js";
 import { describe, it, expect } from "vitest";
 
 import { LINE_TYPE } from "../parser";
-import { ScaleWorkshopOneData } from "../scaleWorkshopOne";
+import { ScaleWorkshopOneData } from "../scale-workshop-one";
 
 describe("Scale Workshop 1 compatibility layer", () => {
   it("can parse old query strings", () => {

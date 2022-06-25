@@ -2,7 +2,7 @@
 import { computed, onUnmounted, ref, watch } from "vue";
 import { RouterLink, RouterView } from "vue-router";
 import { NEWLINE_TEST, NUMBER_OF_NOTES } from "./constants";
-import { ScaleWorkshopOneData } from "./scaleWorkshopOne";
+import { ScaleWorkshopOneData } from "./scale-workshop-one";
 import type { Input, Output } from "webmidi";
 import Scale from "./scale";
 import type ExtendedMonzo from "./monzo";
