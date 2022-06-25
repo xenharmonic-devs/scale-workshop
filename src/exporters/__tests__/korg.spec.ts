@@ -32,7 +32,7 @@ describe("Korg exporters", () => {
         const content = await file.async("string");
         if (path === "TunS_000.TunS_info") {
           expect(content).toBe(
-            "<minilogue_TuneScaleInformation><Programmer>ScaleWorkshop</Programmer><Comment>test</Comment></minilogue_TuneScaleInformation>"
+            "<minilogue_TuneScaleInformation><Programmer>ScaleWorkshop</Programmer><Comment>Test Scale</Comment></minilogue_TuneScaleInformation>"
           );
         } else {
           expect(content).toBe(
@@ -70,7 +70,7 @@ describe("Korg exporters", () => {
         const content = await file.async("string");
         if (path === "TunO_000.TunO_info") {
           expect(content).toBe(
-            "<minilogue_TuneOctInformation><Programmer>ScaleWorkshop</Programmer><Comment>test</Comment></minilogue_TuneOctInformation>"
+            "<minilogue_TuneOctInformation><Programmer>ScaleWorkshop</Programmer><Comment>Test Scale</Comment></minilogue_TuneOctInformation>"
           );
         } else {
           expect(content).toBe(

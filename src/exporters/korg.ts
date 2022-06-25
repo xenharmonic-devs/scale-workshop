@@ -1,3 +1,4 @@
+import { KORG } from "@/constants";
 import { clamp, frequencyToCentOffset, mmod, ratioToCents } from "@/utils";
 import JSZip from "jszip";
 import { BaseExporter, type ExporterParams } from "./base";
@@ -8,13 +9,6 @@ import { BaseExporter, type ExporterParams } from "./base";
 // unforunately truncates cent values to 1 cent precision. It's unknown whether the tuning accuracy
 // from this exporter is written to the synthesizer and used in the synthesis.
 class KorgExporter extends BaseExporter {
-  static mnlgOctaveSize = 12;
-  static mnlgScaleSize = 128;
-  static mnlgMaxCents = 128000;
-  static mnlgRefA = { val: 6900, ind: 69, freq: 440.0 };
-  static mnlgRefC = { val: 6000, ind: 60, freq: 261.6255653 };
-  static programmer = "ScaleWorkshop";
-
   params: ExporterParams;
   useScaleFormat: boolean;
 
@@ -30,7 +24,7 @@ class KorgExporter extends BaseExporter {
     let dataIndex = 0;
     centsTableIn.forEach((c) => {
       // restrict to valid values
-      const cents = clamp(0, KorgExporter.mnlgMaxCents, c);
+      const cents = clamp(0, KORG.mnlg.maxCents, c);
 
       const semitones = cents / 100.0;
       const microtones = Math.trunc(semitones);
@@ -107,13 +101,13 @@ class KorgExporter extends BaseExporter {
 
     // the index of the table that's equal to the baseNote should have the following value
     const refOffsetCents =
-      KorgExporter.mnlgRefA.val +
-      ratioToCents(scale.baseFrequency / KorgExporter.mnlgRefA.freq);
+      KORG.mnlg.refA.val +
+      ratioToCents(scale.baseFrequency / KORG.mnlg.refA.freq);
 
     // offset cents array for binary conversion
     let centsTable = [];
 
-    for (let i = 0; i < KorgExporter.mnlgScaleSize; ++i) {
+    for (let i = 0; i < KORG.mnlg.scaleSize; ++i) {
       const cents =
         frequencyToCentOffset(scale.getFrequency(i - baseMidiNote)) +
         refOffsetCents;
@@ -123,13 +117,10 @@ class KorgExporter extends BaseExporter {
     if (!this.useScaleFormat) {
       // normalize around root, truncate to 12 notes, and wrap flattened Cs
       const cNote =
-        Math.floor(baseMidiNote / KorgExporter.mnlgOctaveSize) *
-        KorgExporter.mnlgOctaveSize;
+        Math.floor(baseMidiNote / KORG.mnlg.octaveSize) * KORG.mnlg.octaveSize;
       centsTable = centsTable
-        .slice(cNote, cNote + KorgExporter.mnlgOctaveSize)
-        .map((cents) =>
-          mmod(cents - KorgExporter.mnlgRefC.val, KorgExporter.mnlgMaxCents)
-        );
+        .slice(cNote, cNote + KORG.mnlg.octaveSize)
+        .map((cents) => mmod(cents - KORG.mnlg.refC.val, KORG.mnlg.maxCents));
     }
 
     // convert to binary
@@ -138,7 +129,7 @@ class KorgExporter extends BaseExporter {
     // prepare files for zipping
     const tuningInfo = this.getMnlgtunTuningInfoXML(
       "ScaleWorkshop",
-      this.params.filename
+      this.params.name
     );
     const fileInfo = this.getMnlgtunFileInfoXML();
     const [fileNameHeader, fileType] = this.useScaleFormat
