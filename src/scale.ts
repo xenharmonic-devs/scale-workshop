@@ -1,4 +1,5 @@
 import Fraction from "fraction.js";
+import { mos } from "moment-of-symmetry";
 
 import ExtendedMonzo, { type ScaleLineOptions } from "@/monzo";
 import { kCombinations } from "@/combinations";
@@ -357,6 +358,29 @@ export default class Scale {
     );
     intervals.sort((a, b) => a.compare(b));
     return new Scale(intervals, equaveMonzo, baseFrequency);
+  }
+
+  static fromMos(
+    numberOfLargeSteps: number,
+    numberOfSmallSteps: number,
+    sizeOfLargeStep: number,
+    sizeOfSmallStep: number,
+    brightGeneratorsUp: number,
+    equave: ExtendedMonzo,
+    baseFrequency = 440
+  ) {
+    const steps = mos(
+      numberOfLargeSteps,
+      numberOfSmallSteps,
+      sizeOfLargeStep,
+      sizeOfSmallStep,
+      brightGeneratorsUp
+    );
+    const equaveSteps = steps[steps.length - 1];
+    return Scale.fromIntervalArray(
+      steps.map((step) => equave.mul(new Fraction(step, equaveSteps))),
+      baseFrequency
+    );
   }
 
   get size() {
