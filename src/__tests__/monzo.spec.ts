@@ -370,6 +370,15 @@ describe("Extended Monzo reverse parsing", () => {
     expect(monzo.toScaleLine()).toBe("5/3 + 3.14");
   });
 
+  it("can represent composite intervals (negative offset)", () => {
+    const monzo = new ExtendedMonzo(
+      [new Fraction(0)],
+      new Fraction(5, 3),
+      centsToNats(-3.14)
+    );
+    expect(monzo.toScaleLine()).toBe("5/3 - 3.14");
+  });
+
   it("supports numerator preferences", () => {
     const monzo = ExtendedMonzo.fromFraction(new Fraction(5, 3), 3);
     expect(monzo.toScaleLine({ preferredNumerator: 10 })).toBe("10/6");

@@ -360,11 +360,13 @@ export default class ExtendedMonzo {
       maybeFractionalPart.isFractional() ||
       maybeFractionalPart.isEqualTemperament()
     ) {
-      return (
-        maybeFractionalPart.toScaleLine(options) +
-        " + " +
-        this.centsString(false, options.centsFractionDigits)
-      );
+      let centsPart = this.centsString(false, options.centsFractionDigits);
+      let operation = " + ";
+      if (this.nats < 0) {
+        centsPart = centsPart.slice(1);
+        operation = " - ";
+      }
+      return maybeFractionalPart.toScaleLine(options) + operation + centsPart;
     }
 
     return cents();
