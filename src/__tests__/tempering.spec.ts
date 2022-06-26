@@ -1,15 +1,24 @@
 import { describe, it, expect } from "vitest";
 import Fraction from "fraction.js";
+import { arraysEqual } from "temperaments";
 
 import ExtendedMonzo from "../monzo";
-import Mapping from "../tempering";
+import {
+  Mapping,
+  makeRank1,
+  makeRank2FromCommas,
+  makeRank2FromVals,
+  mosSizesRank2FromCommas,
+  mosSizesRank2FromVals,
+} from "../tempering";
 import Scale from "../scale";
+import { ratioToCents } from "../utils";
 
 describe("Temperament Mapping", () => {
   it("calculates POTE meantone", () => {
     const syntonicComma = ExtendedMonzo.fromFraction(new Fraction(81, 80), 3);
     const octave = ExtendedMonzo.fromNumber(2, 3);
-    const mapping = Mapping.fromCommaList([syntonicComma]);
+    const mapping = Mapping.fromCommas([syntonicComma]);
 
     const fifth = ExtendedMonzo.fromFraction(new Fraction(3, 2), 3);
     expect(mapping.apply(syntonicComma).toCents()).toBeCloseTo(0);
@@ -19,7 +28,7 @@ describe("Temperament Mapping", () => {
 
   it("supports purifying octaves after tempering", () => {
     const syntonicComma = ExtendedMonzo.fromFraction(new Fraction(81, 80), 3);
-    const impureMapping = Mapping.fromCommaList([syntonicComma], "2.3.5", 3, {
+    const impureMapping = Mapping.fromCommas([syntonicComma], "2.3.5", 3, {
       temperEquaves: true,
     });
     const octave = ExtendedMonzo.fromNumber(2, 3);
@@ -37,7 +46,7 @@ describe("Temperament Mapping", () => {
   it("can temper out multiple commas", () => {
     const marvelComma = ExtendedMonzo.fromFraction(new Fraction(225, 224), 4);
     const gamelisma = ExtendedMonzo.fromFraction(new Fraction(1029, 1024), 4);
-    const miracle = Mapping.fromCommaList([marvelComma, gamelisma]);
+    const miracle = Mapping.fromCommas([marvelComma, gamelisma]);
 
     const octave = ExtendedMonzo.fromNumber(2, 4);
     expect(miracle.apply(octave).toCents()).toBeCloseTo(1200);
@@ -55,7 +64,7 @@ describe("Temperament Mapping", () => {
   it("can temper to rank 1", () => {
     const syntonicComma = ExtendedMonzo.fromFraction(new Fraction(81, 80), 3);
     const diesis = ExtendedMonzo.fromFraction(new Fraction(128, 125), 3);
-    const tet12 = Mapping.fromCommaList(
+    const tet12 = Mapping.fromCommas(
       [syntonicComma, diesis],
       undefined,
       undefined,
@@ -74,7 +83,7 @@ describe("Temperament Mapping", () => {
 
   it("can temper to rank 3", () => {
     const breedsma = ExtendedMonzo.fromFraction(new Fraction(2401, 2400), 4);
-    const breed = Mapping.fromCommaList([breedsma], 7, 4, {
+    const breed = Mapping.fromCommas([breedsma], 7, 4, {
       temperEquaves: true,
     });
     const octave = ExtendedMonzo.fromNumber(2, 4);
@@ -85,7 +94,7 @@ describe("Temperament Mapping", () => {
 
   it("leaves primes outside of the subgroup alone", () => {
     const largeLimma = ExtendedMonzo.fromFraction(new Fraction(27, 25), 5);
-    const bug = Mapping.fromCommaList([largeLimma]);
+    const bug = Mapping.fromCommas([largeLimma]);
     const minorSixth = ExtendedMonzo.fromFraction(new Fraction(11, 7), 5);
     expect(bug.apply(largeLimma).toCents()).toBeCloseTo(0);
     expect(
@@ -94,7 +103,7 @@ describe("Temperament Mapping", () => {
   });
 
   it("can construct POTE mavila from a list of vals", () => {
-    const mavila = Mapping.fromValList([9, 16], "2.3.5", 4);
+    const mavila = Mapping.fromVals([9, 16], "2.3.5", 4);
     const octave = ExtendedMonzo.fromNumber(2, 4);
     const pelogicComma = ExtendedMonzo.fromFraction(new Fraction(135, 128), 4);
     const fifth = ExtendedMonzo.fromFraction(new Fraction(3, 2), 4);
@@ -108,7 +117,7 @@ describe("Temperament Mapping", () => {
   });
 
   it("can construct CTE septimal meantone from a list of vals", () => {
-    const meantone = Mapping.fromValList([12, 19], 7, 4, {
+    const meantone = Mapping.fromVals([12, 19], 7, 4, {
       constraints: ["2/1"],
     });
     const syntonicComma = ExtendedMonzo.fromFraction(new Fraction(81, 80), 4);
@@ -157,7 +166,7 @@ describe("Temperament Mapping", () => {
     const telepathma = ExtendedMonzo.fromFraction(new Fraction(55, 54), 5);
     const ptolemisma = ExtendedMonzo.fromFraction(new Fraction(100, 99), 5);
 
-    const porkypine = Mapping.fromCommaList(
+    const porkypine = Mapping.fromCommas(
       [telepathma, ptolemisma],
       "2.3.5.11"
     );
@@ -178,5 +187,76 @@ describe("Temperament Mapping", () => {
       porkypine8.getMonzo(6).toCents()
     );
     expect(porkypine8.getMonzo(8).toCents()).toBeCloseTo(1200);
+  });
+});
+
+describe("Tempered scale generation", () => {
+  it("generates TE optimal 12", () => {
+    const scale = makeRank1(12, 5);
+    expect(scale.size).toBe(12);
+    expect(scale.equave.toCents()).toBeCloseTo(1198.44);
+  });
+
+  it("generates TE optimal 12c (mavila | superpyth)", () => {
+    const scale = makeRank1("12c", "2.3.5");
+    expect(scale.size).toBe(12);
+    expect(scale.equave.toCents()).toBeCloseTo(1212.68);
+  });
+
+  it("generates TE optimal equalized Bohlen-Pierce", () => {
+    const scale = makeRank1(13, "3.5.7");
+    expect(scale.size).toBe(13);
+    expect(scale.equave.toCents()).toBeCloseTo(1904.16);
+  });
+
+  it("generates CTE augmented from vals", () => {
+    const vals = [3, 12];
+    const limit = 5;
+    const options = {
+      constraints: ["2/1"],
+    };
+    const [divisions, sizes] = mosSizesRank2FromVals(
+      vals,
+      limit,
+      undefined,
+      3,
+      options
+    );
+    expect(divisions).toBe(3);
+    expect(arraysEqual(sizes, [12, 87, 99])).toBeTruthy();
+
+    const scale = makeRank2FromVals(vals, sizes[0], 0, limit, options);
+
+    expect(scale.size).toBe(12);
+
+    const third = scale.getMonzo(4);
+    const fifth = scale.getMonzo(7);
+    const octave = scale.getMonzo(12);
+
+    expect(third.toCents()).toBeCloseTo(400.0);
+    expect(fifth.toCents()).toBeCloseTo(ratioToCents(3 / 2));
+    expect(octave.toCents()).toBeCloseTo(1200.0);
+  });
+
+  it("generates POTE meantone from a comma", () => {
+    const commas = ["81/80"];
+    const [divisions, sizes] = mosSizesRank2FromCommas(
+      commas,
+      undefined,
+      undefined,
+      3
+    );
+    expect(divisions).toBe(1);
+    expect(arraysEqual(sizes, [5, 7, 12])).toBeTruthy();
+
+    const scale = makeRank2FromCommas(commas, sizes[1], 0);
+
+    expect(scale.size).toBe(7);
+
+    const fifth = scale.getMonzo(4);
+    const octave = scale.getMonzo(7);
+
+    expect(fifth.toCents()).toBeCloseTo(696.239);
+    expect(octave.toCents()).toBeCloseTo(1200.0);
   });
 });
