@@ -207,3 +207,10 @@ ul.btn-group, .btn-dropdown-group ul {
 .control select {
   flex-grow: 1;
 }
+
+/* Responding to screen size */
+@media (max-width: 991px) {
+  .hidden-sm {
+    display: none !important;
+  }
+}
