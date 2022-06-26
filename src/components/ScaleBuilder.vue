@@ -7,9 +7,10 @@ import { APP_TITLE, UNIX_NEWLINE } from "@/constants";
 import { sanitizeFilename } from "@/utils";
 import { exportFile, type ExporterKey } from "@/exporters";
 import Modal from "./ModalDialog.vue";
+import HarmonicSeriesModal from "./modals/generation/HarmonicSeries.vue";
+import ApproximateByHarmonicsModal from "./modals/modification/ApproximateByHarmonics.vue";
 import { presets, presetsByGroup } from "@/presets";
-import Scale from "@/scale";
-import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
+import type Scale from "@/scale";
 import { importFile, type ImporterKey } from "@/importers";
 
 const props = defineProps<{
@@ -107,33 +108,8 @@ function selectPreset() {
   emit("update:baseMidiNote", preset.baseMidiNote);
 }
 
-const lowestHarmonic = ref<HTMLInputElement | null>(null);
-const highestHarmonic = ref<HTMLInputElement | null>(null);
 const showHarmonicSeriesModal = ref(false);
-function generateHarmonicSeries() {
-  const denominator = parseInt(lowestHarmonic.value!.value);
-  const scale = Scale.fromHarmonicSeries(
-    denominator,
-    parseInt(highestHarmonic.value!.value),
-    DEFAULT_NUMBER_OF_COMPONENTS
-  );
-  emit(
-    "update:scaleLines",
-    scale.toScaleLines({ preferredDenominator: denominator })
-  );
-}
-
-const approximateHarmonicsDenominator = ref<HTMLInputElement | null>(null);
 const showApproximateByHarmonicsModal = ref(false);
-function approximateByHarmonics() {
-  const denominator = parseInt(approximateHarmonicsDenominator.value!.value);
-  emit(
-    "update:scaleLines",
-    props.scale
-      .approximateHarmonics(denominator)
-      .toScaleLines({ preferredDenominator: denominator })
-  );
-}
 
 const scalaFile = ref<HTMLInputElement | null>(null);
 const anamarkFile = ref<HTMLInputElement | null>(null);
@@ -360,40 +336,14 @@ async function doImport(importerKey: ImporterKey, event: Event) {
   />
 
   <Teleport to="body">
-    <Modal
+    <HarmonicSeriesModal
       :show="showHarmonicSeriesModal"
-      @confirm="
+      @update:scaleLines="
         showHarmonicSeriesModal = false;
-        generateHarmonicSeries();
+        emit('update:scaleLines', $event);
       "
       @cancel="showHarmonicSeriesModal = false"
-    >
-      <template #header>
-        <h2>Generate harmonic series segment</h2>
-      </template>
-      <template #body>
-        <div class="control-group">
-          <label for="lowest-harmonic">Lowest harmonic</label>
-          <input
-            ref="lowestHarmonic"
-            id="lowest-harmonic"
-            type="number"
-            value="8"
-            min="1"
-            class="control"
-          />
-          <label for="highest-harmonic">Highest harmonic</label>
-          <input
-            ref="highestHarmonic"
-            id="highest-harmonic"
-            type="number"
-            value="16"
-            min="1"
-            class="control"
-          />
-        </div>
-      </template>
-    </Modal>
+    />
 
     <Modal
       :show="showPresetModal"
@@ -427,31 +377,15 @@ async function doImport(importerKey: ImporterKey, event: Event) {
       </template>
     </Modal>
 
-    <Modal
+    <ApproximateByHarmonicsModal
       :show="showApproximateByHarmonicsModal"
-      @confirm="
+      @update:scaleLines="
         showApproximateByHarmonicsModal = false;
-        approximateByHarmonics();
+        emit('update:scaleLines', $event);
       "
       @cancel="showApproximateByHarmonicsModal = false"
-    >
-      <template #header>
-        <h2>Approximate by harmonics</h2>
-      </template>
-      <template #body>
-        <div class="control-group">
-          <label for="approximate-harmonics-denominator">Denominator</label>
-          <input
-            ref="approximateHarmonicsDenominator"
-            id="approximate-harmonics-denominator"
-            type="number"
-            value="128"
-            min="1"
-            class="control"
-          />
-        </div>
-      </template>
-    </Modal>
+      :scale="scale"
+    />
   </Teleport>
 </template>
 
