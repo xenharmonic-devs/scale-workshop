@@ -227,3 +227,32 @@ export function autoKeyColors(size: number) {
 
   return result;
 }
+
+export function toBrightGenerator(
+  generator: number,
+  period: number,
+  size: number
+) {
+  const range = [...Array(size).keys()];
+  const positive = range.map((i) => mmod(generator * i, period));
+  positive.push(period);
+  positive.sort((a, b) => a - b);
+  const negative = range.map((i) => mmod(-generator * i, period));
+  negative.push(period);
+  negative.sort((a, b) => a - b);
+
+  // Check which scale has brighter intervals
+  for (let i = 1; i < positive.length; ++i) {
+    const positiveInterval = positive[i] - positive[0];
+    const negativeInterval = negative[i] - negative[0];
+    if (positiveInterval > negativeInterval) {
+      return generator;
+    }
+    if (negativeInterval > positiveInterval) {
+      return -generator;
+    }
+  }
+
+  // Ambiguous generator
+  return generator;
+}

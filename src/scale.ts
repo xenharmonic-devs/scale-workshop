@@ -423,6 +423,27 @@ export default class Scale {
     return this.variant(intervals);
   }
 
+  repeat(numRepeats = 2) {
+    if (numRepeats === 0) {
+      return new Scale(
+        [this.intervals[0]],
+        this.equave.mul(0),
+        this.baseFrequency
+      );
+    }
+    const intervals = [...this.intervals];
+    for (let i = 1; i < numRepeats; ++i) {
+      this.intervals.forEach((interval) => {
+        intervals.push(interval.add(this.equave.mul(i)));
+      });
+    }
+    return new Scale(
+      intervals,
+      this.equave.mul(numRepeats),
+      this.baseFrequency
+    );
+  }
+
   rotate(numSteps = 1) {
     numSteps = mmod(numSteps, this.size);
     const root = this.intervals[numSteps];

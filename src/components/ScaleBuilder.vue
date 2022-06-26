@@ -8,7 +8,10 @@ import { sanitizeFilename } from "@/utils";
 import { exportFile, type ExporterKey } from "@/exporters";
 import Modal from "./ModalDialog.vue";
 import HarmonicSeriesModal from "./modals/generation/HarmonicSeries.vue";
+import RankOneModal from "./modals/generation/RankOne.vue";
+import RankTwoModal from "./modals/generation/RankTwo.vue";
 import ApproximateByHarmonicsModal from "./modals/modification/ApproximateByHarmonics.vue";
+import TemperModal from "./modals/modification/TemperScale.vue";
 import { presets, presetsByGroup } from "@/presets";
 import type Scale from "@/scale";
 import { importFile, type ImporterKey } from "@/importers";
@@ -109,7 +112,10 @@ function selectPreset() {
 }
 
 const showHarmonicSeriesModal = ref(false);
+const showRankOneModal = ref(false);
+const showRankTwoModal = ref(false);
 const showApproximateByHarmonicsModal = ref(false);
+const showTemperModal = ref(false);
 
 const scalaFile = ref<HTMLInputElement | null>(null);
 const anamarkFile = ref<HTMLInputElement | null>(null);
@@ -142,7 +148,12 @@ async function doImport(importerKey: ImporterKey, event: Event) {
           <a class="btn" href="#">New scale ▼</a>
           <ul>
             <a href="#"><li>Equal temperament</li></a>
-            <a href="#"><li>Rank-2 temperament</li></a>
+            <a href="#" @click="showRankOneModal = true"
+              ><li>Rank-1 temperament</li></a
+            >
+            <a href="#" @click="showRankTwoModal = true"
+              ><li>Rank-2 temperament</li></a
+            >
             <a href="#" @click="showHarmonicSeriesModal = true"
               ><li>Harmonic series segment</li></a
             >
@@ -177,6 +188,7 @@ async function doImport(importerKey: ImporterKey, event: Event) {
             >
             <a href="#"><li>Approximate by subharmonics</li></a>
             <a href="#"><li>Equalize</li></a>
+            <a href="#" @click="showTemperModal = true"><li>Temper</li></a>
           </ul>
         </li>
       </ul>
@@ -345,6 +357,24 @@ async function doImport(importerKey: ImporterKey, event: Event) {
       @cancel="showHarmonicSeriesModal = false"
     />
 
+    <RankOneModal
+      :show="showRankOneModal"
+      @update:scaleLines="
+        showRankOneModal = false;
+        emit('update:scaleLines', $event);
+      "
+      @cancel="showRankOneModal = false"
+    />
+
+    <RankTwoModal
+      :show="showRankTwoModal"
+      @update:scaleLines="
+        showRankTwoModal = false;
+        emit('update:scaleLines', $event);
+      "
+      @cancel="showRankTwoModal = false"
+    />
+
     <Modal
       :show="showPresetModal"
       @confirm="
@@ -384,6 +414,15 @@ async function doImport(importerKey: ImporterKey, event: Event) {
         emit('update:scaleLines', $event);
       "
       @cancel="showApproximateByHarmonicsModal = false"
+      :scale="scale"
+    />
+    <TemperModal
+      :show="showTemperModal"
+      @update:scaleLines="
+        showTemperModal = false;
+        emit('update:scaleLines', $event);
+      "
+      @cancel="showTemperModal = false"
       :scale="scale"
     />
   </Teleport>
