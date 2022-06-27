@@ -8,6 +8,7 @@ import { sanitizeFilename } from "@/utils";
 import { exportFile, type ExporterKey } from "@/exporters";
 import Modal from "./ModalDialog.vue";
 import HarmonicSeriesModal from "./modals/generation/HarmonicSeries.vue";
+import MosModal from "./modals/generation/MosScale.vue";
 import ApproximateByHarmonicsModal from "./modals/modification/ApproximateByHarmonics.vue";
 import { presets, presetsByGroup } from "@/presets";
 import type Scale from "@/scale";
@@ -109,6 +110,7 @@ function selectPreset() {
 }
 
 const showHarmonicSeriesModal = ref(false);
+const showMosModal = ref(false);
 const showApproximateByHarmonicsModal = ref(false);
 
 const scalaFile = ref<HTMLInputElement | null>(null);
@@ -149,6 +151,9 @@ async function doImport(importerKey: ImporterKey, event: Event) {
             <a href="#"><li>Subharmonic series segment</li></a>
             <a href="#"><li>Enumerate chord</li></a>
             <a href="#"><li>Combination product set</li></a>
+            <a href="#" @click="showMosModal = true"
+              ><li>Moment of symmetry scale</li></a
+            >
             <li class="divider"></li>
             <a href="#" @click="scalaFile?.click()"><li>Import .scl</li></a>
             <a href="#" @click="anamarkFile?.click()"><li>Import .tun</li></a>
@@ -206,6 +211,7 @@ async function doImport(importerKey: ImporterKey, event: Event) {
             type="number"
             :value="baseFrequency"
             min="0.1"
+            step="0.1"
             max="1000000"
             @input="updateBaseFrequency"
           />
@@ -343,6 +349,16 @@ async function doImport(importerKey: ImporterKey, event: Event) {
         emit('update:scaleLines', $event);
       "
       @cancel="showHarmonicSeriesModal = false"
+    />
+
+    <MosModal
+      :show="showMosModal"
+      @update:scaleName="emit('update:scaleName', $event)"
+      @update:scaleLines="
+        showMosModal = false;
+        emit('update:scaleLines', $event);
+      "
+      @cancel="showMosModal = false"
     />
 
     <Modal
