@@ -3,6 +3,7 @@
   --color-background: #fff;
   --color-background-soft: #eee;
   --color-background-mute: #ddd;
+  --color-background-invalid: #fee;
 
   --color-border: #ccc;
   --color-border-hover: #eee;
@@ -96,6 +97,9 @@ select {
 }
 optgroup {
   font-weight: bold;
+}
+input:invalid {
+  background-color: var(--color-background-invalid);
 }
 
 /* UI elements - button, button group */
