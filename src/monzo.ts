@@ -202,7 +202,7 @@ export default class ExtendedMonzo {
     const fractionOfEquave = new Fraction(numerator, denominator);
     const equave = this.div(fractionOfEquave).toFraction();
 
-    if (equave.valueOf() < 1) {
+    if (equave.compare(1) < 0) {
       return [fractionOfEquave.neg(), equave.inverse()];
     }
 
