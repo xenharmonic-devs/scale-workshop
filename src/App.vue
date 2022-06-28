@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onUnmounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { RouterLink, RouterView } from "vue-router";
 import { NEWLINE_TEST, NUMBER_OF_NOTES } from "./constants";
 import { ScaleWorkshopOneData } from "./scale-workshop-one";
@@ -8,7 +8,7 @@ import Scale from "./scale";
 import type ExtendedMonzo from "./monzo";
 import { parseLine } from "./parser";
 import { bendRangeInSemitones, MidiIn, MidiOut } from "./midi";
-import { Keyboard } from "./keyboard";
+import { Keyboard, type CoordinateKeyboardEvent } from "./keyboard";
 
 // === Application state ===
 const scaleName = ref("");
@@ -32,6 +32,7 @@ const keyColors = ref([
 const isomorphicVertical = ref(5);
 const isomorphicHorizontal = ref(1);
 const equaveShift = ref(0);
+const typingActive = ref(true);
 const midiInput = ref<Input | null>(null);
 const midiOutput = ref<Output | null>(null);
 
@@ -57,13 +58,6 @@ const frequencies = computed(() =>
     scaleAndNames.value[0].getFrequency(i - baseMidiNote.value)
   )
 );
-
-// === Lifecycle ===
-onUnmounted(() => {
-  if (midiInput.value !== null) {
-    midiInput.value.removeListener();
-  }
-});
 
 // ===  Version 1 backwards compatibility ===
 try {
@@ -134,12 +128,30 @@ function keyboardNoteOn(index: number) {
   return keyOff;
 }
 
+// === Typing keyboard state ===
+function windowKeydownOrUp(event: KeyboardEvent | MouseEvent) {
+  const target = event.target;
+  if (
+    target instanceof HTMLTextAreaElement ||
+    target instanceof HTMLInputElement ||
+    target instanceof HTMLSelectElement
+  ) {
+    typingActive.value = false;
+  } else {
+    typingActive.value = true;
+  }
+}
+
 // === Typing keyboard input ===
 const typingKeyboad = new Keyboard();
 
 function emptyKeyup() {}
 
-typingKeyboad.addKeydownListener((event) => {
+function typingKeydown(event: CoordinateKeyboardEvent) {
+  // Currently editing the scale, bail out
+  if (!typingActive.value) {
+    return emptyKeyup;
+  }
   // The key left of Digit1 releases sustained keys
   if (event.code === "Backquote") {
     typingKeyboad.deactivate();
@@ -176,6 +188,24 @@ typingKeyboad.addKeydownListener((event) => {
     (2 - y) * isomorphicVertical.value;
 
   return keyboardNoteOn(index);
+}
+
+// === Lifecycle ===
+onMounted(() => {
+  window.addEventListener("keydown", windowKeydownOrUp);
+  window.addEventListener("keyup", windowKeydownOrUp);
+  window.addEventListener("mousedown", windowKeydownOrUp);
+  typingKeyboad.addKeydownListener(typingKeydown);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("keydown", windowKeydownOrUp);
+  window.removeEventListener("keyup", windowKeydownOrUp);
+  window.removeEventListener("mousedown", windowKeydownOrUp);
+  typingKeyboad.removeEventListener(typingKeydown);
+  if (midiInput.value !== null) {
+    midiInput.value.removeListener();
+  }
 });
 </script>
 
@@ -190,6 +220,13 @@ typingKeyboad.addKeydownListener((event) => {
       <li><RouterLink to="/midi">MIDI I/O</RouterLink></li>
       <li><RouterLink to="/prefs">Preferences</RouterLink></li>
       <li><RouterLink to="/guide">User Guide</RouterLink></li>
+      <span class="typing-info"
+        >Keyboard
+        <template v-if="typingActive">
+          enabled <i>(press QWERTY keys to play)</i>
+        </template>
+        <template v-else> disabled <i>(click to enable)</i> </template>
+      </span>
     </ul>
   </nav>
   <RouterView
@@ -294,5 +331,9 @@ nav a {
 
 nav a:first-of-type {
   border: 0;
+}
+
+.typing-info {
+  background-color: var(--color-accent-deeper);
 }
 </style>
