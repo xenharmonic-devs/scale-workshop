@@ -1,6 +1,7 @@
 import Fraction from "fraction.js";
 import ExtendedMonzo from "@/monzo";
 import { DEFAULT_NUMBER_OF_COMPONENTS } from "./constants";
+import { stringToFraction } from "./utils";
 
 export enum LINE_TYPE {
   CENTS = "cents",
@@ -30,7 +31,7 @@ function isCommaDecimal(input: string): boolean {
 function isNOfEdo(input: string) {
   // true, when the input has numbers at the beginning and the end, separated by a single backslash
   // for example: 7\12, -7\12
-  return /^-?\d+\\\d+$/.test(input);
+  return /^-?\d+\\-?\d+$/.test(input);
 }
 
 function isRatio(input: string) {
@@ -42,12 +43,12 @@ function isRatio(input: string) {
 function isGeneralizedNOfEdo(input: string) {
   // true, when input looks like N-of-EDO followed by a fraction or a number in angle brackets
   // for example: 7\11<3/2>, -7\13<5>
-  return /^-?\d+\\\d+<\d+(\/\d+)?>$/.test(input);
+  return /^-?\d+\\-?\d+<\d+(\/\d+)?>$/.test(input);
 }
 
 function isMonzo(input: string) {
   // true, when input has a square bracket followed by a comma/space separated list of numbers or fractions followed by and angle bracket
-  return /^\[(-?\d+(\/\d+)?[\s,]*)*>$/.test(input);
+  return /^\[(-?\d+(\/-?\d+)?[\s,]*)*>$/.test(input);
 }
 
 function isNonComposite(input: string) {
@@ -137,7 +138,7 @@ function parseDecimal(
 }
 
 function parseNOfEdo(input: string, numberOfComponents: number): ExtendedMonzo {
-  const fractionOfOctave = new Fraction(input.replace("\\", "/"));
+  const fractionOfOctave = stringToFraction(input.replace("\\", "/"));
   const octave = new Fraction(2);
   return ExtendedMonzo.fromEqualTemperament(
     fractionOfOctave,
@@ -151,10 +152,10 @@ function parseGeneralizeNOfEdo(
   numberOfComponents: number
 ): ExtendedMonzo {
   const [nOfEdo, equavePart] = input.split("<");
-  const fractionOfOctave = new Fraction(nOfEdo.replace("\\", "/"));
+  const fractionOfEquave = stringToFraction(nOfEdo.replace("\\", "/"));
   const equave = new Fraction(equavePart.slice(0, -1));
   return ExtendedMonzo.fromEqualTemperament(
-    fractionOfOctave,
+    fractionOfEquave,
     equave,
     numberOfComponents
   );
@@ -169,7 +170,7 @@ function parseMonzo(input: string, numberOfComponents: number): ExtendedMonzo {
     .forEach((token) => {
       token = token.trim();
       if (token.length) {
-        components.push(new Fraction(token));
+        components.push(stringToFraction(token));
       }
     });
   if (components.length > numberOfComponents) {

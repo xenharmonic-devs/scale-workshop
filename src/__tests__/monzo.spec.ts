@@ -402,4 +402,13 @@ describe("Extended Monzo reverse parsing", () => {
     );
     expect(monzo.toScaleLine({ preferredEdo: 12 })).toBe("3\\12");
   });
+
+  it("supports edo preferences (negative)", () => {
+    const monzo = ExtendedMonzo.fromEqualTemperament(
+      new Fraction(1, 3),
+      new Fraction(1, 2),
+      1
+    );
+    expect(monzo.toScaleLine({ preferredEdo: -3 })).toBe("1\\-3");
+  });
 });
