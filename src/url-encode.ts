@@ -3,6 +3,11 @@ const NEWLINE = "_";
 const FRACTION = "F";
 const COMMA = "C";
 const BACKSLASH = "B";
+const SPACE = "S";
+const LEFT_ANGLE_BRACKET = "L";
+const RIGHT_ANGLE_BRACKET = "R";
+const LEFT_SQUARE_BRACKET = "Q";
+const PLUS = "P";
 
 // Color shorhands
 const BLACK = "-";
@@ -58,7 +63,12 @@ function encodeLine(scaleLine: string) {
   scaleLine = scaleLine
     .replace("/", FRACTION)
     .replace(",", COMMA)
-    .replace("\\", BACKSLASH);
+    .replace("\\", BACKSLASH)
+    .replace(" ", SPACE)
+    .replace("<", LEFT_ANGLE_BRACKET)
+    .replace(">", RIGHT_ANGLE_BRACKET)
+    .replace("[", LEFT_SQUARE_BRACKET)
+    .replace("+", PLUS);
   let lastNondigit = "";
   let result = "";
   let currentNumber = "";
@@ -93,7 +103,12 @@ function decodeLine(encoded: string) {
   return result
     .replace(FRACTION, "/")
     .replace(COMMA, ",")
-    .replace(BACKSLASH, "\\");
+    .replace(BACKSLASH, "\\")
+    .replace(SPACE, " ")
+    .replace(LEFT_ANGLE_BRACKET, "<")
+    .replace(RIGHT_ANGLE_BRACKET, ">")
+    .replace(LEFT_SQUARE_BRACKET, "[")
+    .replace(PLUS, "+");
 }
 
 export function encodeLines(scaleLines: string[]) {
