@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch, reactive } from "vue";
 import { RouterLink, RouterView } from "vue-router";
 import { NEWLINE_TEST, NUMBER_OF_NOTES } from "./constants";
 import { ScaleWorkshopOneData } from "./scale-workshop-one";
@@ -35,6 +35,11 @@ const typingActive = ref(true);
 const typingEquave = ref(0);
 const midiInput = ref<Input | null>(null);
 const midiOutput = ref<Output | null>(null);
+const midiInputChannels = reactive(new Set([1]));
+// Channel 10 is reserved for percussion
+const midiOutputChannels = ref(
+  new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16])
+);
 
 // === Computed state ===
 const scaleAndNames = computed<[Scale, string[]]>(() => {
@@ -85,14 +90,18 @@ try {
 
 // === MIDI input / output ===
 const midiOut = computed(() => {
-  return new MidiOut(midiOutput.value as Output);
+  return new MidiOut(midiOutput.value as Output, midiOutputChannels.value);
 });
 
 function sendNoteOn(frequency: number, rawAttack: number) {
   return midiOut.value.sendNoteOn(frequency, rawAttack);
 }
 
-const midiIn = new MidiIn((i) => frequencies.value[i], sendNoteOn);
+const midiIn = new MidiIn(
+  (i) => frequencies.value[i],
+  sendNoteOn,
+  midiInputChannels
+);
 
 watch(midiInput, (newValue, oldValue) => {
   if (oldValue !== null) {
@@ -104,11 +113,14 @@ watch(midiInput, (newValue, oldValue) => {
   }
 });
 
-watch(midiOutput, (newValue) => {
-  if (newValue !== null) {
-    newValue.channels[1].sendPitchBendRange(bendRangeInSemitones, 0);
+function sendPitchBendRange() {
+  const output = midiOutput.value;
+  if (output !== null) {
+    midiOutputChannels.value.forEach((channel) => {
+      output.channels[channel].sendPitchBendRange(bendRangeInSemitones, 0);
+    });
   }
-});
+}
 
 // === Typing keyboard state ===
 function windowKeydownOrUp(event: KeyboardEvent | MouseEvent) {
@@ -200,6 +212,14 @@ onUnmounted(() => {
     midiInput.value.removeListener();
   }
 });
+
+watch(midiOutput, sendPitchBendRange);
+watch(midiOutputChannels, sendPitchBendRange);
+
+function updateMidiInputChannels(newValue: Set<number>) {
+  midiInputChannels.clear();
+  newValue.forEach((channel) => midiInputChannels.add(channel));
+}
 </script>
 
 <template>
@@ -236,6 +256,8 @@ onUnmounted(() => {
     :typingEquave="typingEquave"
     :midiInput="midiInput"
     :midiOutput="midiOutput"
+    :midiInputChannels="midiInputChannels"
+    :midiOutputChannels="midiOutputChannels"
     @update:scaleName="scaleName = $event"
     @update:scaleLines="scaleLines = $event"
     @update:baseMidiNote="baseMidiNote = $event"
@@ -246,6 +268,8 @@ onUnmounted(() => {
     @update:typingEquave="typingEquave = $event"
     @update:midiInput="midiInput = $event"
     @update:midiOutput="midiOutput = $event"
+    @update:midiInputChannels="updateMidiInputChannels"
+    @update:midiOutputChannels="midiOutputChannels = $event"
   />
 </template>
 
