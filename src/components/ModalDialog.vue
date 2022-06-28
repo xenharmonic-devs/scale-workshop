@@ -12,7 +12,7 @@ defineEmits(["confirm", "cancel"]);
 
 <template>
   <Transition name="modal">
-    <div v-if="show" class="modal-mask" @click.self="$emit('cancel')">
+    <div v-if="show" class="modal-mask" @mousedown.self="$emit('cancel')">
       <div class="modal-wrapper">
         <div class="modal-container" :style="extraStyle">
           <div class="modal-header">
