@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
 import ExtendedMonzo from "@/monzo";
-import { parseLine } from "@/parser";
-import { computedAndError } from "@/utils";
 import Scale from "@/scale";
 import {
   anyForEdo,
@@ -13,9 +11,12 @@ import {
   tamnamsInfo,
 } from "moment-of-symmetry";
 import { computed, ref, watch } from "vue";
-import Modal from "../../ModalDialog.vue";
+import Modal from "@/components/ModalDialog.vue";
+import ScaleLineInput from "@/components/ScaleLineInput.vue";
 
 const emit = defineEmits(["update:scaleLines", "update:scaleName", "cancel"]);
+
+const octave = ExtendedMonzo.fromNumber(2, DEFAULT_NUMBER_OF_COMPONENTS);
 
 // State required to generate MOS
 const numberOfLargeSteps = ref(5);
@@ -23,21 +24,15 @@ const numberOfSmallSteps = ref(2);
 const sizeOfLargeStep = ref(2);
 const sizeOfSmallStep = ref(1);
 const up = ref(5);
-const equaveString = ref("2/1");
-const equaveInput = ref<HTMLInputElement | null>(null);
+const equave = ref(octave);
 
 // State to help select MOS parameters
 const method = ref<"direct" | "pyramid" | "edo">("pyramid");
 const edo = ref(12);
+const equaveString = ref("2/1");
 const previewL = ref(0);
 const previewS = ref(0);
 
-// Computed state
-const octave = ExtendedMonzo.fromNumber(2, DEFAULT_NUMBER_OF_COMPONENTS);
-const [equave, error] = computedAndError(
-  () => parseLine(equaveString.value),
-  octave
-);
 const edoMap = computed(() => makeEdoMap());
 const edoList = computed(
   () => edoMap.value.get(edo.value) || [anyForEdo(edo.value)]
@@ -89,9 +84,6 @@ const previewName = computed(() => {
 });
 
 // Watchers
-watch(error, (newValue) => {
-  equaveInput.value!.setCustomValidity(newValue);
-});
 watch(numberOfPeriods, (newValue) => {
   up.value = Math.floor(up.value / newValue) * newValue;
 });
@@ -203,7 +195,11 @@ function generate() {
         </div>
         <div class="control">
           <label for="equave">Equave</label>
-          <input ref="equaveInput" id="equave" v-model="equaveString" />
+          <ScaleLineInput
+            id="equave"
+            @update:value="equave = $event"
+            v-model="equaveString"
+          />
         </div>
       </div>
 
