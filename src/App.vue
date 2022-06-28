@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch, reactive } from "vue";
-import { RouterLink, RouterView } from "vue-router";
+import {
+  RouterLink,
+  RouterView,
+  useRouter,
+  type LocationQuery,
+} from "vue-router";
 import { NEWLINE_TEST, NUMBER_OF_NOTES } from "./constants";
 import { ScaleWorkshopOneData } from "./scale-workshop-one";
 import type { Input, Output } from "webmidi";
@@ -9,6 +14,8 @@ import type ExtendedMonzo from "./monzo";
 import { parseLine } from "./parser";
 import { bendRangeInSemitones, MidiIn, MidiOut } from "./midi";
 import { Keyboard, type CoordinateKeyboardEvent } from "./keyboard";
+import { decodeQuery, encodeQuery } from "./url-encode";
+import { debounce } from "./utils";
 
 // === Application state ===
 const scaleName = ref("");
@@ -64,29 +71,85 @@ const frequencies = computed(() =>
   )
 );
 
-// ===  Version 1 backwards compatibility ===
-try {
-  const scaleWorkshopOneData = new ScaleWorkshopOneData();
-
-  scaleName.value = scaleWorkshopOneData.name;
-  baseFrequency.value = scaleWorkshopOneData.freq;
-  baseMidiNote.value = scaleWorkshopOneData.midi;
-  isomorphicHorizontal.value = scaleWorkshopOneData.horizontal;
-  isomorphicVertical.value = scaleWorkshopOneData.vertical;
-
-  if (scaleWorkshopOneData.colors !== undefined) {
-    keyColors.value = scaleWorkshopOneData.colors.split(" ");
+// === Lifecycle ===
+onUnmounted(() => {
+  if (midiInput.value !== null) {
+    midiInput.value.removeListener();
   }
+});
 
-  if (scaleWorkshopOneData.data !== undefined) {
-    // Check that the scale is valid by attempting a parse
-    scaleWorkshopOneData.parseTuningData();
-    // Store raw text lines
-    scaleLines.value = scaleWorkshopOneData.data.split(NEWLINE_TEST);
+// == State encoding ==
+const router = useRouter();
+
+// Flag to prevent infinite decode - watch - encode loops
+let justEncodedUrl = false;
+let justDecodedUrl = false;
+
+// Debounced to stagger navigation loops if the flags fail
+const encodeState = debounce(() => {
+  // Navigation loop prevention
+  if (justDecodedUrl) {
+    justDecodedUrl = false;
+    return;
   }
-} catch (error) {
-  console.error("Error parsing URL", error);
-}
+  justEncodedUrl = true;
+
+  const state = {
+    scaleName: scaleName.value,
+    scaleLines: scaleLines.value,
+    baseFrequency: baseFrequency.value,
+    baseMidiNote: baseMidiNote.value,
+    keyColors: keyColors.value,
+    isomorphicHorizontal: isomorphicHorizontal.value,
+    isomorphicVertical: isomorphicVertical.value,
+  };
+
+  const query = encodeQuery(state) as LocationQuery;
+  query.version = "2.0.0";
+
+  // XXX: There are some sporadic issues with useRoute().fullPath
+  // so we use native URL.pathname.
+  const url = new URL(window.location.href);
+  router.push({ path: url.pathname, query });
+}, 200);
+
+watch(scaleName, encodeState);
+watch(scaleLines, encodeState);
+watch(baseFrequency, encodeState);
+watch(baseMidiNote, encodeState);
+watch(keyColors, encodeState);
+watch(isomorphicHorizontal, encodeState);
+watch(isomorphicVertical, encodeState);
+
+// == State decoding ==
+router.afterEach(() => {
+  // Navigation loop prevention
+  if (justEncodedUrl) {
+    justEncodedUrl = false;
+    return;
+  }
+  justDecodedUrl = true;
+
+  // XXX: There are some sporadic issues with useRoute().fullPath
+  // so we use native URL.searchParams.
+  const url = new URL(window.location.href);
+  const query = url.searchParams;
+  if (query.has("version")) {
+    try {
+      const state = decodeQuery(query);
+
+      scaleName.value = state.scaleName;
+      scaleLines.value = state.scaleLines;
+      baseFrequency.value = state.baseFrequency;
+      baseMidiNote.value = state.baseMidiNote;
+      keyColors.value = state.keyColors;
+      isomorphicHorizontal.value = state.isomorphicHorizontal;
+      isomorphicVertical.value = state.isomorphicVertical;
+    } catch (error) {
+      console.error(`Error parsing version ${query.get("version")} URL`, error);
+    }
+  }
+});
 
 // === MIDI input / output ===
 const midiOut = computed(() => {
@@ -197,6 +260,31 @@ function typingKeydown(event: CoordinateKeyboardEvent) {
 
 // === Lifecycle ===
 onMounted(() => {
+  const url = new URL(window.location.href);
+  const query = url.searchParams;
+  // Scale Workshop 1
+  if (!query.has("version")) {
+    try {
+      const scaleWorkshopOneData = new ScaleWorkshopOneData();
+
+      scaleName.value = scaleWorkshopOneData.name;
+      baseFrequency.value = scaleWorkshopOneData.freq;
+      baseMidiNote.value = scaleWorkshopOneData.midi;
+      if (scaleWorkshopOneData.colors !== undefined) {
+        keyColors.value = scaleWorkshopOneData.colors.split(" ");
+      }
+
+      if (scaleWorkshopOneData.data !== undefined) {
+        // Check that the scale is valid by attempting a parse
+        scaleWorkshopOneData.parseTuningData();
+        // Store raw text lines
+        scaleLines.value = scaleWorkshopOneData.data.split(NEWLINE_TEST);
+      }
+    } catch (error) {
+      console.error("Error parsing version 1 URL", error);
+    }
+  }
+
   window.addEventListener("keydown", windowKeydownOrUp);
   window.addEventListener("keyup", windowKeydownOrUp);
   window.addEventListener("mousedown", windowKeydownOrUp);
