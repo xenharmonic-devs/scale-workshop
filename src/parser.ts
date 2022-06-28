@@ -50,24 +50,43 @@ function isMonzo(input: string) {
   return /^\[(-?\d+(\/\d+)?[\s,]*)*>$/.test(input);
 }
 
+function isNonComposite(input: string) {
+  return (
+    isCent(input) ||
+    isCommaDecimal(input) ||
+    isNOfEdo(input) ||
+    isRatio(input) ||
+    isGeneralizedNOfEdo(input) ||
+    isMonzo(input)
+  );
+}
+
+function isSubtractive(input: string) {
+  let prefix: string | undefined;
+  const parts = input.split("-");
+  for (let i = 0; i < parts.length; ++i) {
+    if (prefix === undefined) {
+      prefix = parts[i];
+    } else {
+      prefix += "-" + parts[i];
+    }
+    if (isNonComposite(prefix.trim())) {
+      prefix = undefined;
+    }
+  }
+  return !prefix?.length;
+}
+
 function isComposite(input: string) {
   if (!input.includes("-") && !input.includes("+")) {
     return false;
   }
-  const parts = input.split(/[+-]/g);
+  const parts = input.split("+");
   for (let i = 0; i < parts.length; ++i) {
     const part = parts[i].trim();
-    if (
-      isCent(part) ||
-      isCommaDecimal(part) ||
-      isNOfEdo(part) ||
-      isRatio(part) ||
-      isGeneralizedNOfEdo(part) ||
-      isMonzo(part)
-    ) {
-      continue;
+    if (!isSubtractive(part)) {
+      return false;
     }
-    return false;
   }
   return true;
 }
@@ -162,6 +181,37 @@ function parseMonzo(input: string, numberOfComponents: number): ExtendedMonzo {
   return new ExtendedMonzo(components);
 }
 
+function parseSubtractive(input: string, numberOfComponents: number) {
+  let prefix: string | undefined;
+  const parts = input.split("-");
+  const results = [];
+  for (let i = 0; i < parts.length; ++i) {
+    if (prefix === undefined) {
+      prefix = parts[i];
+    } else {
+      prefix += "-" + parts[i];
+    }
+    if (isNonComposite(prefix.trim())) {
+      results.push(parseLine(prefix.trim(), numberOfComponents));
+      prefix = undefined;
+    }
+  }
+  if (prefix?.length || !results.length) {
+    throw new Error(`Failed to parse composite part ${input}`);
+  }
+  if (results.length === 1) {
+    return results[0];
+  }
+  return results[0].sub(results.slice(1).reduce((a, b) => a.add(b)));
+}
+
+function parseComposite(input: string, numberOfComponents: number) {
+  return input
+    .split("+")
+    .map((part) => parseSubtractive(part, numberOfComponents))
+    .reduce((a, b) => a.add(b));
+}
+
 export function parseLine(
   input: string,
   numberOfComponents = DEFAULT_NUMBER_OF_COMPONENTS
@@ -183,33 +233,7 @@ export function parseLine(
     case LINE_TYPE.MONZO:
       return parseMonzo(input, numberOfComponents);
     case LINE_TYPE.COMPOSITE:
-      const parts = [];
-      let sign = 1;
-      let token = "";
-      [...input].forEach((character) => {
-        if (character === "+") {
-          token = token.trim();
-          if (token.length) {
-            parts.push(parseLine(token).mul(sign));
-            token = "";
-          }
-          sign = 1;
-        } else if (character === "-") {
-          token = token.trim();
-          if (token.length) {
-            parts.push(parseLine(token).mul(sign));
-            token = "";
-          }
-          sign = -1;
-        } else {
-          token += character;
-        }
-      });
-      token = token.trim();
-      if (token.length) {
-        parts.push(parseLine(token).mul(sign));
-      }
-      return parts.reduce((a, b) => a.add(b));
+      return parseComposite(input, numberOfComponents);
     default:
       throw new Error(`Failed to parse ${input}`);
   }
