@@ -1,4 +1,4 @@
-import type Fraction from "fraction.js";
+import Fraction from "fraction.js";
 import { computed, type ComputedRef } from "vue";
 
 export function arraysEqual(a: any[], b: any[]) {
@@ -48,28 +48,48 @@ export function fractionToString(
   preferredNumerator?: number,
   preferredDenominator?: number
 ) {
-  const sign = fraction.s < 0 ? "-" : "";
+  const numerator = fraction.n * fraction.s;
   if (preferredNumerator === undefined) {
     if (
       preferredDenominator === undefined ||
       fraction.d === preferredDenominator
     ) {
-      return `${sign}${fraction.n}/${fraction.d}`;
+      return `${numerator}/${fraction.d}`;
     }
     if (preferredDenominator % fraction.d === 0) {
       const multiplier = preferredDenominator / fraction.d;
-      return `${sign}${fraction.n * multiplier}/${fraction.d * multiplier}`;
+      return `${numerator * multiplier}/${fraction.d * multiplier}`;
     }
-    return `${sign}${fraction.n}/${fraction.d}`;
+    return `${numerator}/${fraction.d}`;
   }
   if (fraction.n === preferredNumerator) {
-    return `${sign}${fraction.n}/${fraction.d}`;
+    return `${numerator}/${fraction.d}`;
   }
   if (preferredNumerator % fraction.n === 0) {
     const multiplier = preferredNumerator / fraction.n;
-    return `${sign}${fraction.n * multiplier}/${fraction.d * multiplier}`;
+    return `${numerator * multiplier}/${fraction.d * multiplier}`;
   }
-  return `${sign}${fraction.n}/${fraction.d}`;
+  return `${numerator}/${fraction.d}`;
+}
+
+// Extra support for negative denominators
+export function stringToFraction(input: string) {
+  // eslint-disable-next-line prefer-const
+  let [numerator, denominator, ...rest] = input.split("/");
+  if (
+    denominator !== undefined &&
+    denominator.startsWith("-") &&
+    !rest.length
+  ) {
+    denominator = denominator.slice(1);
+    if (numerator.startsWith("-")) {
+      numerator = numerator.slice(1);
+    } else {
+      numerator = "-" + numerator;
+    }
+    return new Fraction(`${numerator}/${denominator}`);
+  }
+  return new Fraction(input);
 }
 
 export function centsToNats(cents: number) {

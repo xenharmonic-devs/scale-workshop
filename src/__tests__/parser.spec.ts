@@ -7,6 +7,36 @@ import { DEFAULT_NUMBER_OF_COMPONENTS } from "../constants";
 import { centsToNats } from "../utils";
 
 describe("Line parser", () => {
+  it("doesn't parse negative fractions", () => {
+    expect(() => parseLine("-1/2")).toThrow();
+  });
+
+  it("parses N-of-EDO (negative)", () => {
+    const result = parseLine("-2\\5");
+    expect(
+      result.equals(
+        ExtendedMonzo.fromEqualTemperament(
+          new Fraction(-2, 5),
+          new Fraction(2),
+          DEFAULT_NUMBER_OF_COMPONENTS
+        )
+      )
+    ).toBeTruthy();
+  });
+
+  it("parses N-of-EDO (negative EDO)", () => {
+    const result = parseLine("2\\-5");
+    expect(
+      result.equals(
+        ExtendedMonzo.fromEqualTemperament(
+          new Fraction(2, 5),
+          new Fraction(1, 2),
+          DEFAULT_NUMBER_OF_COMPONENTS
+        )
+      )
+    ).toBeTruthy();
+  });
+
   it("parses generalized N-of-EDO (fraction equave)", () => {
     const result = parseLine("5\\11<7/3>");
     expect(
