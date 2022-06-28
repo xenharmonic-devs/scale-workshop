@@ -8,10 +8,10 @@ defineProps<{
   baseFrequency: number;
   baseMidiNote: number;
   keyColors: string[];
-
   scale: Scale;
   names: string[];
   frequencies: number[];
+  heldKeys: Set<number>;
 }>();
 
 defineEmits([
@@ -34,6 +34,7 @@ defineEmits([
       :scale="scale"
       :names="names"
       :frequencies="frequencies"
+      :heldKeys="heldKeys"
       @update:scaleName="$emit('update:scaleName', $event)"
       @update:scaleLines="$emit('update:scaleLines', $event)"
       @update:baseFrequency="$emit('update:baseFrequency', $event)"

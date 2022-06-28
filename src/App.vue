@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onUnmounted, ref, watch } from "vue";
+import { computed, onUnmounted, reactive, ref, watch } from "vue";
 import { RouterLink, RouterView } from "vue-router";
 import { NEWLINE_TEST, NUMBER_OF_NOTES } from "./constants";
 import { ScaleWorkshopOneData } from "./scale-workshop-one";
@@ -9,6 +9,7 @@ import type ExtendedMonzo from "./monzo";
 import { parseLine } from "./parser";
 import { bendRangeInSemitones, MidiIn, MidiOut } from "./midi";
 import { Keyboard } from "./keyboard";
+import { setUnion } from "./utils";
 
 // === Application state ===
 const scaleName = ref("");
@@ -34,6 +35,8 @@ const isomorphicHorizontal = ref(1);
 const typingEquave = ref(0);
 const midiInput = ref<Input | null>(null);
 const midiOutput = ref<Output | null>(null);
+const heldTypingKeys = reactive<Set<number>>(new Set());
+const heldMidiKeys = reactive<Set<number>>(new Set());
 
 // === Computed state ===
 const scaleAndNames = computed<[Scale, string[]]>(() => {
@@ -57,6 +60,8 @@ const frequencies = computed(() =>
     scaleAndNames.value[0].getFrequency(i - baseMidiNote.value)
   )
 );
+
+const heldKeys = computed(() => setUnion(heldTypingKeys, heldMidiKeys));
 
 // === Lifecycle ===
 onUnmounted(() => {
@@ -94,11 +99,17 @@ const midiOut = computed(() => {
   return new MidiOut(midiOutput.value as Output);
 });
 
-function sendNoteOn(frequency: number, rawAttack: number) {
-  return midiOut.value.sendNoteOn(frequency, rawAttack);
+function sendNoteOn(index: number, rawAttack: number) {
+  const frequency = frequencies.value[index];
+  const noteOff = midiOut.value.sendNoteOn(frequency, rawAttack);
+  heldMidiKeys.add(index);
+  return (rawRelease: number) => {
+    noteOff(rawRelease);
+    heldMidiKeys.delete(index);
+  };
 }
 
-const midiIn = new MidiIn((i) => frequencies.value[i], sendNoteOn);
+const midiIn = new MidiIn(sendNoteOn);
 
 watch(midiInput, (newValue, oldValue) => {
   if (oldValue !== null) {
@@ -164,8 +175,10 @@ typingKeyboad.addKeydownListener((event) => {
     frequency = scale.getFrequency(index - baseMidiNote.value);
   }
   const noteOff = sendNoteOn(frequency, 80);
+  heldTypingKeys.add(index);
   function keyoff() {
     noteOff(80);
+    heldTypingKeys.delete(index);
   }
 
   return keyoff;
@@ -199,6 +212,7 @@ typingKeyboad.addKeydownListener((event) => {
     :typingEquave="typingEquave"
     :midiInput="midiInput"
     :midiOutput="midiOutput"
+    :heldKeys="heldKeys"
     @update:scaleName="scaleName = $event"
     @update:scaleLines="scaleLines = $event"
     @update:baseMidiNote="baseMidiNote = $event"

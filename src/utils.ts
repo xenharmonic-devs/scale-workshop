@@ -269,3 +269,17 @@ export function autoKeyColors(size: number) {
 
   return result;
 }
+
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set#implementing_basic_set_operations
+export function setUnion<T>(...args: Set<T>[]): Set<T> {
+  if (!args.length) {
+    return new Set();
+  }
+  const union = new Set(args[0]);
+  args.slice(1).forEach((arg) => {
+    for (const element of arg) {
+      union.add(element);
+    }
+  });
+  return union;
+}

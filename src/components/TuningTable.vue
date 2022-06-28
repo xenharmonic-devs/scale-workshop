@@ -11,6 +11,7 @@ const props = defineProps<{
   baseMidiNote: number;
   baseFrequency: number;
   keyColors: string[];
+  heldKeys: Set<number>;
 }>();
 
 const rows = computed(() => {
@@ -24,6 +25,7 @@ const rows = computed(() => {
       name: props.names[mmod(i - 1 - props.baseMidiNote, props.names.length)],
       keyColor:
         props.keyColors[mmod(i - props.baseMidiNote, props.keyColors.length)],
+      active: props.heldKeys.has(i),
     };
   });
 });
@@ -43,16 +45,7 @@ const rows = computed(() => {
         </tr>
       </thead>
       <tbody>
-        <TuningTableRow
-          v-for="row of rows"
-          :key="row.index"
-          :index="row.index"
-          :frequency="row.frequency"
-          :cents="row.cents"
-          :ratio="row.ratio"
-          :name="row.name"
-          :keyColor="row.keyColor"
-        />
+        <TuningTableRow v-for="row of rows" :key="row.index" v-bind="row" />
       </tbody>
     </table>
   </div>

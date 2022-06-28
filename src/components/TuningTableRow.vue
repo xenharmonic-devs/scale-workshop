@@ -8,11 +8,12 @@ defineProps<{
   ratio: number;
   name: string;
   keyColor: string;
+  active: boolean;
 }>();
 </script>
 
 <template>
-  <tr>
+  <tr :class="{ active }">
     <td
       class="key-color"
       :style="'background-color:' + keyColor + ' !important;'"
@@ -26,6 +27,9 @@ defineProps<{
 </template>
 
 <style scoped>
+tr.active {
+  background-color: blueviolet !important;
+}
 .key-color {
   border-bottom: 1px solid var(--color-background-mute);
 }

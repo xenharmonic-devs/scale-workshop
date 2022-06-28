@@ -19,10 +19,10 @@ const props = defineProps<{
   baseFrequency: number;
   baseMidiNote: number;
   keyColors: string[];
-
   scale: Scale;
   names: string[];
   frequencies: number[];
+  heldKeys: Set<number>;
 }>();
 
 const emit = defineEmits([
@@ -250,10 +250,11 @@ async function doImport(importerKey: ImporterKey, event: Event) {
       :scale="scale"
       :names="names"
       :frequencies="frequencies"
-      :lines="props.scaleLines"
-      :baseFrequency="props.baseFrequency"
-      :baseMidiNote="props.baseMidiNote"
-      :keyColors="props.keyColors"
+      :lines="scaleLines"
+      :baseFrequency="baseFrequency"
+      :baseMidiNote="baseMidiNote"
+      :keyColors="keyColors"
+      :heldKeys="heldKeys"
     />
     <div class="column exporters">
       <h2>Export current settings</h2>
