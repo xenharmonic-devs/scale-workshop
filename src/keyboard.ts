@@ -120,7 +120,7 @@ CODES_LAYER_3.forEach((row, y) => {
   });
 });
 
-type CoordinateKeyboardEvent = {
+export type CoordinateKeyboardEvent = {
   code: string;
   coordinates?: number[];
 };
