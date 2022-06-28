@@ -175,6 +175,29 @@ router.afterEach((to, from) => {
   }
 });
 
+// === Tuning table highlighting ===
+// We use hacks to bypass Vue state management for real-time gains
+function tuningTableKeyOn(index: number) {
+  if ("TUNING_TABLE_ROWS" in window && index >= 0 && index < 128) {
+    const tuningTableRow = (window as any).TUNING_TABLE_ROWS[index];
+    if (tuningTableRow?._rawValue) {
+      tuningTableRow._rawValue.classList.add("active");
+      tuningTableRow.heldKeys++;
+    }
+  }
+}
+
+function tuningTableKeyOff(index: number) {
+  if ("TUNING_TABLE_ROWS" in window && index >= 0 && index < 128) {
+    const tuningTableRow = (window as any).TUNING_TABLE_ROWS[index];
+    if (tuningTableRow?._rawValue) {
+      if (!--tuningTableRow.heldKeys) {
+        tuningTableRow._rawValue.classList.remove("active");
+      }
+    }
+  }
+}
+
 // === MIDI input / output ===
 function getFrequency(index: number) {
   if (index >= 0 && index < frequencies.value.length) {
@@ -189,6 +212,7 @@ const midiOut = computed(() => {
   return new MidiOut(midiOutput.value as Output, midiOutputChannels.value);
 });
 
+// TODO: Incorporate synth here when available #30
 function sendNoteOn(frequency: number, rawAttack: number) {
   const midiOff = midiOut.value.sendNoteOn(frequency, rawAttack);
 
@@ -219,11 +243,17 @@ function sendNoteOn(frequency: number, rawAttack: number) {
   }
 }
 
-const midiIn = new MidiIn(
-  (i) => frequencies.value[i],
-  sendNoteOn,
-  midiInputChannels
-);
+function midiNoteOn(index: number, rawAttack: number) {
+  tuningTableKeyOn(index);
+  const frequency = frequencies.value[index];
+  const noteOff = sendNoteOn(frequency, rawAttack);
+  return (rawRelease: number) => {
+    tuningTableKeyOff(index);
+    noteOff(rawRelease);
+  };
+}
+
+const midiIn = new MidiIn(midiNoteOn, midiInputChannels);
 
 watch(midiInput, (newValue, oldValue) => {
   if (oldValue !== null) {
@@ -246,8 +276,10 @@ function sendPitchBendRange() {
 
 // === Virtual and typing keyboard ===
 function keyboardNoteOn(index: number) {
+  tuningTableKeyOn(index);
   const noteOff = sendNoteOn(getFrequency(index), 80);
   function keyOff() {
+    tuningTableKeyOff(index);
     return noteOff(80);
   }
   return keyOff;
