@@ -98,10 +98,7 @@ function generate() {
     "update:scaleName",
     `MOS ${numberOfLargeSteps.value}L ${numberOfSmallSteps.value}s`
   );
-  emit(
-    "update:scaleLines",
-    scale.toScaleLines({ preferredEdo: hostEd.value })
-  );
+  emit("update:scaleLines", scale.toScaleLines({ preferredEdo: hostEd.value }));
 }
 </script>
 
