@@ -429,6 +429,10 @@ export default class Scale {
     return this.variant(intervals);
   }
 
+  sorted() {
+    return this.sort();
+  }
+
   reduce() {
     const intervals = this.intervals.map((interval) =>
       interval.mmod(this.equave)
@@ -452,7 +456,10 @@ export default class Scale {
     return this.variant(intervals);
   }
 
-  subset(indices: number[]) {
+  subset(indices: number[] | Set<number>) {
+    if (indices instanceof Set) {
+      indices = [...indices.values()];
+    }
     if (!indices.includes(0)) {
       throw new Error("Subset must include unison");
     }
