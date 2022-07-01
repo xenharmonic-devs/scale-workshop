@@ -9,10 +9,19 @@ import { exportFile, type ExporterKey } from "@/exporters";
 import Modal from "./ModalDialog.vue";
 import HarmonicSeriesModal from "./modals/generation/HarmonicSeries.vue";
 import MosModal from "./modals/generation/MosScale.vue";
+import SubharmonicSeriesModal from "./modals/generation/SubharmonicSeries.vue";
+import EulerGenusModal from "./modals/generation/EulerGenus.vue";
+import DwarfModal from "./modals/generation/DwarfScale.vue";
+import RotateModal from "./modals/modification/RotateScale.vue";
+import SubsetModal from "./modals/modification/TakeSubset.vue";
+import StretchModal from "./modals/modification/StretchScale.vue";
+import RandomVarianceModal from "./modals/modification/RandomVariance.vue";
 import ApproximateByHarmonicsModal from "./modals/modification/ApproximateByHarmonics.vue";
+import ApproximateBySubharmonicsModal from "./modals/modification/ApproximateBySubharmonics.vue";
 import { presets, presetsByGroup } from "@/presets";
 import type Scale from "@/scale";
 import { importFile, type ImporterKey } from "@/importers";
+import { parseLine } from "@/parser";
 
 const props = defineProps<{
   scaleName: string;
@@ -94,6 +103,12 @@ function autoFrequency() {
   emit("update:baseFrequency", mtof(baseMidiNote));
 }
 
+function sortScale() {
+  const lines = [...props.scaleLines];
+  lines.sort((a, b) => parseLine(a).compare(parseLine(b)));
+  emit("update:scaleLines", lines);
+}
+
 function doExport(exporter: ExporterKey) {
   // TODO: Fetch newline from user preferences
   const params = {
@@ -126,7 +141,18 @@ function selectPreset() {
 
 const showHarmonicSeriesModal = ref(false);
 const showMosModal = ref(false);
+const showSubharmonicSeriesModal = ref(false);
+const showEulerGenusModal = ref(false);
+const showDwarfModal = ref(false);
+
+const showRotateModal = ref(false);
+const showSubsetModal = ref(false);
+const showStretchModal = ref(false);
+const showRandomVarianceModal = ref(false);
 const showApproximateByHarmonicsModal = ref(false);
+const showApproximateBySubharmonicsModal = ref(false);
+
+const subsetModal = ref<any>(null);
 
 const scalaFile = ref<HTMLInputElement | null>(null);
 const anamarkFile = ref<HTMLInputElement | null>(null);
@@ -162,12 +188,18 @@ async function doImport(importerKey: ImporterKey, event: Event) {
             <a href="#" @click="showHarmonicSeriesModal = true"
               ><li>Harmonic series segment</li></a
             >
-            <a href="#"><li>Subharmonic series segment</li></a>
+            <a href="#" @click="showSubharmonicSeriesModal = true"
+              ><li>Subharmonic series segment</li></a
+            >
             <a href="#"><li>Enumerate chord</li></a>
             <a href="#"><li>Combination product set</li></a>
             <a href="#" @click="showMosModal = true"
               ><li>Moment of symmetry scale</li></a
             >
+            <a href="#" @click="showEulerGenusModal = true"
+              ><li>Euler-Fokker genus</li></a
+            >
+            <a href="#" @click="showDwarfModal = true"><li>Dwarf scale</li></a>
             <li class="divider"></li>
             <a href="#" @click="scalaFile?.click()"><li>Import .scl</li></a>
             <a href="#" @click="anamarkFile?.click()"><li>Import .tun</li></a>
@@ -184,17 +216,34 @@ async function doImport(importerKey: ImporterKey, event: Event) {
         <li class="btn-dropdown-group">
           <a class="btn" href="#">Modify scale ▼</a>
           <ul>
-            <a href="#"><li>Sort ascending</li></a>
-            <a href="#"><li>Reduce</li></a>
-            <a href="#"><li>Rotate</li></a>
-            <a href="#"><li>Subset</li></a>
-            <a href="#"><li>Stretch/compress</li></a>
-            <a href="#"><li>Random variance</li></a>
+            <a href="#" @click="sortScale"><li>Sort ascending</li></a>
+            <a
+              href="#"
+              @click="$emit('update:scaleLines', scale.reduce().toScaleLines())"
+              ><li>Reduce</li></a
+            >
+            <a href="#" @click="showRotateModal = true"><li>Rotate</li></a>
+            <a
+              href="#"
+              @click="
+                subsetModal.initialize();
+                showSubsetModal = true;
+              "
+              ><li>Subset</li></a
+            >
+            <a href="#" @click="showStretchModal = true"
+              ><li>Stretch/compress</li></a
+            >
+            <a href="#" @click="showRandomVarianceModal = true"
+              ><li>Random variance</li></a
+            >
             <a href="#"><li>Approximate by ratios</li></a>
             <a href="#" @click="showApproximateByHarmonicsModal = true"
               ><li>Approximate by harmonics</li></a
             >
-            <a href="#"><li>Approximate by subharmonics</li></a>
+            <a href="#" @click="showApproximateBySubharmonicsModal = true"
+              ><li>Approximate by subharmonics</li></a
+            >
             <a href="#"><li>Equalize</li></a>
           </ul>
         </li>
@@ -375,6 +424,36 @@ async function doImport(importerKey: ImporterKey, event: Event) {
       @cancel="showMosModal = false"
     />
 
+    <SubharmonicSeriesModal
+      :show="showSubharmonicSeriesModal"
+      @update:scaleName="emit('update:scaleName', $event)"
+      @update:scaleLines="
+        showSubharmonicSeriesModal = false;
+        emit('update:scaleLines', $event);
+      "
+      @cancel="showSubharmonicSeriesModal = false"
+    />
+
+    <EulerGenusModal
+      :show="showEulerGenusModal"
+      @update:scaleName="emit('update:scaleName', $event)"
+      @update:scaleLines="
+        showEulerGenusModal = false;
+        emit('update:scaleLines', $event);
+      "
+      @cancel="showEulerGenusModal = false"
+    />
+
+    <DwarfModal
+      :show="showDwarfModal"
+      @update:scaleName="emit('update:scaleName', $event)"
+      @update:scaleLines="
+        showDwarfModal = false;
+        emit('update:scaleLines', $event);
+      "
+      @cancel="showDwarfModal = false"
+    />
+
     <Modal
       :show="showPresetModal"
       @confirm="
@@ -407,6 +486,50 @@ async function doImport(importerKey: ImporterKey, event: Event) {
       </template>
     </Modal>
 
+    <RotateModal
+      :show="showRotateModal"
+      @update:scaleLines="
+        showRotateModal = false;
+        emit('update:scaleLines', $event);
+      "
+      @cancel="showRotateModal = false"
+      :scaleLines="scaleLines"
+      :scale="scale"
+    />
+
+    <SubsetModal
+      ref="subsetModal"
+      :show="showSubsetModal"
+      @update:scaleLines="
+        showSubsetModal = false;
+        emit('update:scaleLines', $event);
+      "
+      @cancel="showSubsetModal = false"
+      :scaleLines="scaleLines"
+    />
+
+    <StretchModal
+      :show="showStretchModal"
+      @update:scaleLines="
+        showStretchModal = false;
+        emit('update:scaleLines', $event);
+      "
+      @cancel="showStretchModal = false"
+      :scaleLines="scaleLines"
+      :scale="scale"
+    />
+
+    <RandomVarianceModal
+      :show="showRandomVarianceModal"
+      @update:scaleLines="
+        showRandomVarianceModal = false;
+        emit('update:scaleLines', $event);
+      "
+      @cancel="showRandomVarianceModal = false"
+      :scaleLines="scaleLines"
+      :scale="scale"
+    />
+
     <ApproximateByHarmonicsModal
       :show="showApproximateByHarmonicsModal"
       @update:scaleLines="
@@ -414,6 +537,16 @@ async function doImport(importerKey: ImporterKey, event: Event) {
         emit('update:scaleLines', $event);
       "
       @cancel="showApproximateByHarmonicsModal = false"
+      :scale="scale"
+    />
+
+    <ApproximateBySubharmonicsModal
+      :show="showApproximateBySubharmonicsModal"
+      @update:scaleLines="
+        showApproximateBySubharmonicsModal = false;
+        emit('update:scaleLines', $event);
+      "
+      @cancel="showApproximateBySubharmonicsModal = false"
       :scale="scale"
     />
   </Teleport>
