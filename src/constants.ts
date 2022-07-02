@@ -1,5 +1,7 @@
+import { version } from "../package.json";
+
 // GLOBALS
-export const APP_TITLE = "Scale Workshop 2.0.0";
+export const APP_TITLE = `Scale Workshop ${version}`;
 
 // prettier-ignore
 export const PRIMES = [
