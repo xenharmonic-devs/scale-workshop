@@ -1,6 +1,6 @@
 import { getLineType, LINE_TYPE } from "@/parser";
 import { fractionToString, mmod } from "@/utils";
-import { BaseExporter, type ExporterParams } from "./base";
+import { BaseExporter, type ExporterParams } from "@/exporters/base";
 
 export default class ReaperExporter extends BaseExporter {
   static tuningMaxSize = 128;
@@ -15,14 +15,15 @@ export default class ReaperExporter extends BaseExporter {
 
   getFileContentsAndSuffix() {
     const scale = this.params.scale;
-    const names = this.params.names!;
     const format = this.params.format;
     const basePeriod = this.params.basePeriod || 0;
     const baseDegree = this.params.baseDegree || 0;
     let lineTypes: LINE_TYPE[];
     if (format === "name") {
-      lineTypes = names.map((name) => getLineType(name));
-      lineTypes.unshift(lineTypes.pop()!);
+      lineTypes = [];
+      for (let i = 0; i < scale.size; ++i) {
+        lineTypes.push(getLineType(scale.getName(i)));
+      }
     }
     if (format === "cents") {
       lineTypes = Array(scale.size).fill(LINE_TYPE.CENTS);
@@ -48,7 +49,7 @@ export default class ReaperExporter extends BaseExporter {
       }
 
       if (format === "name" && index > 0 && index <= scale.size) {
-        file += names[index - 1];
+        file += scale.getName(index);
       } else if (format === "degree") {
         file += `${index + baseDegree}/${scale.size}`;
       } else {
@@ -56,7 +57,7 @@ export default class ReaperExporter extends BaseExporter {
         const lineType = lineTypes![mmod(index, scale.size)];
         switch (lineType) {
           case LINE_TYPE.CENTS:
-            file += scale.getMonzo(index).centsString();
+            file += scale.getInterval(index).centsString();
             break;
           case LINE_TYPE.DECIMAL:
             file += scale
@@ -69,13 +70,10 @@ export default class ReaperExporter extends BaseExporter {
             file += fractionToString(scale.getMonzo(index).toFraction());
             break;
           case LINE_TYPE.N_OF_EDO:
-            file += scale.getMonzo(index).equalTemperamentString();
+            file += scale.getInterval(index).equalTemperamentString();
             break;
           case LINE_TYPE.FREQUENCY:
             file += scale.getFrequency(index).toFixed(digits);
-            break;
-          case LINE_TYPE.UNISON:
-            file += "1/1";
             break;
           case LINE_TYPE.INVALID:
             throw new Error("Cannot export invalid line");

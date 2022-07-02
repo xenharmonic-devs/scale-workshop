@@ -1,6 +1,6 @@
 import { APP_TITLE } from "@/constants";
 import { mtof, valueToCents } from "@/utils";
-import { BaseExporter, type ExporterParams } from "./base";
+import { BaseExporter, type ExporterParams } from "@/exporters/base";
 
 class AnaMarkExporter extends BaseExporter {
   static tuningMaxSize = 128;

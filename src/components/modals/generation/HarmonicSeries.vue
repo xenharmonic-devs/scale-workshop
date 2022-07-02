@@ -2,9 +2,9 @@
 import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
 import Scale from "@/scale";
 import { ref } from "vue";
-import Modal from "../../ModalDialog.vue";
+import Modal from "@/components/ModalDialog.vue";
 
-const emit = defineEmits(["update:scaleLines", "update:scaleName", "cancel"]);
+const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
 
 const lowestHarmonic = ref(8);
 const highestHarmonic = ref(16);
@@ -17,10 +17,7 @@ function generate() {
     DEFAULT_NUMBER_OF_COMPONENTS
   );
   emit("update:scaleName", `Harmonics ${denominator}-${highestHarmonic.value}`);
-  emit(
-    "update:scaleLines",
-    scale.toScaleLines({ preferredDenominator: denominator })
-  );
+  emit("update:scale", scale);
 }
 </script>
 

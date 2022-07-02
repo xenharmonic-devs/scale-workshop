@@ -1,9 +1,7 @@
-import type { LINE_TYPE } from "@/parser";
 import type Scale from "@/scale";
 
 export type ImportResult = {
   scale: Scale;
-  lineTypes: LINE_TYPE[];
   name?: string;
   baseMidiNote?: number;
 };

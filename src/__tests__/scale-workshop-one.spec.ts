@@ -1,7 +1,6 @@
 import Fraction from "fraction.js";
 import { describe, it, expect } from "vitest";
 
-import { LINE_TYPE } from "../parser";
 import { ScaleWorkshopOneData } from "../scale-workshop-one";
 
 describe("Scale Workshop 1 compatibility layer", () => {
@@ -22,10 +21,8 @@ describe("Scale Workshop 1 compatibility layer", () => {
     expect(data.waveform).toBe("sine");
     expect(data.ampenv).toBe("pad");
 
-    const [scale, lineTypes] = data.parseTuningData();
+    const scale = data.parseTuningData();
 
-    expect(lineTypes[0]).toBe(LINE_TYPE.UNISON);
-    expect(lineTypes[1]).toBe(LINE_TYPE.CENTS);
     expect(scale.getMonzo(0).toCents()).toBeCloseTo(0);
     expect(scale.getMonzo(1).toCents()).toBeCloseTo(75);
     expect(scale.getMonzo(2).toCents()).toBeCloseTo(150);
@@ -51,28 +48,22 @@ describe("Scale Workshop 1 compatibility layer", () => {
     );
     const data = new ScaleWorkshopOneData(url);
 
-    const [scale, lineTypes] = data.parseTuningData();
+    const scale = data.parseTuningData();
 
-    expect(lineTypes[0]).toBe(LINE_TYPE.UNISON);
     expect(scale.getFrequency(0)).toBeCloseTo(440);
 
-    expect(lineTypes[1]).toBe(LINE_TYPE.CENTS);
     expect(scale.getMonzo(1).toCents()).toBeCloseTo(100);
 
-    expect(lineTypes[2]).toBe(LINE_TYPE.DECIMAL);
     expect(scale.getMonzo(2).valueOf()).toBeCloseTo(1.2);
 
-    expect(lineTypes[3]).toBe(LINE_TYPE.RATIO);
     expect(
       scale.getMonzo(3).toFraction().equals(new Fraction(3, 2))
     ).toBeTruthy();
 
-    expect(lineTypes[4]).toBe(LINE_TYPE.N_OF_EDO);
     const [fractionOfEquave, equave] = scale.getMonzo(4).toEqualTemperament();
     expect(fractionOfEquave.equals(new Fraction(4, 5))).toBeTruthy();
     expect(equave.equals(new Fraction(2, 1))).toBeTruthy();
 
-    expect(lineTypes[5]).toBe(LINE_TYPE.RATIO);
     expect(
       scale.getMonzo(5).toFraction().equals(new Fraction(2, 1))
     ).toBeTruthy();

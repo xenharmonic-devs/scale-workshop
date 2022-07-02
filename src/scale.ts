@@ -1,36 +1,31 @@
 import Fraction from "fraction.js";
 import { mos } from "moment-of-symmetry";
 
-import ExtendedMonzo, { type ScaleLineOptions } from "@/monzo";
+import ExtendedMonzo from "@/monzo";
 import { kCombinations } from "@/combinations";
-import { LOG_PRIMES, PRIMES } from "@/constants";
+import { PRIME_CENTS, PRIMES } from "@/constants";
+import { Interval, type IntervalOptions } from "@/interval";
+import { mmod, valueToCents } from "@/utils";
 
-function mmod(a: number, b: number) {
-  return ((a % b) + b) % b;
-}
-
+// TODO: Convert methods relevant for non-destructive editing #33
 export default class Scale {
-  intervals: ExtendedMonzo[];
-  equave: ExtendedMonzo;
+  intervals: Interval[];
+  equave: Interval;
   baseFrequency: number;
 
-  constructor(
-    intervals: ExtendedMonzo[],
-    equave: ExtendedMonzo,
-    baseFrequency: number
-  ) {
+  constructor(intervals: Interval[], equave: Interval, baseFrequency: number) {
     this.intervals = intervals;
     this.equave = equave;
     this.baseFrequency = baseFrequency;
   }
 
-  static fromIntervalArray(intervals: ExtendedMonzo[], baseFrequency = 440) {
+  static fromIntervalArray(intervals: Interval[], baseFrequency = 440) {
     if (intervals.length < 1) {
       throw new Error("At least one interval is required");
     }
     intervals = [...intervals];
     const equave = intervals.pop()!;
-    intervals.unshift(equave.mul(0));
+    intervals.unshift(equave.zeroed());
     return new Scale(intervals, equave, baseFrequency);
   }
 
@@ -50,15 +45,31 @@ export default class Scale {
         )
       );
     }
-    const equaveMonzo = ExtendedMonzo.fromFraction(equave, numberOfComponents);
-    return new Scale(intervals, equaveMonzo, baseFrequency);
+    const options: IntervalOptions = {
+      preferredEtDenominator: divisions,
+      preferredEtEquave: equave,
+    };
+    const equaveInterval = new Interval(
+      ExtendedMonzo.fromFraction(equave, numberOfComponents),
+      "equal temperament",
+      undefined,
+      options
+    );
+    return new Scale(
+      intervals.map(
+        (monzo) => new Interval(monzo, "equal temperament", undefined, options)
+      ),
+      equaveInterval,
+      baseFrequency
+    );
   }
 
   static fromRank2(
-    generator: ExtendedMonzo,
-    period: ExtendedMonzo,
+    generator: Interval,
+    period: Interval,
     size: number,
     down: number,
+    numPeriods = 1,
     baseFrequency = 440
   ) {
     if (down < 0) {
@@ -67,13 +78,21 @@ export default class Scale {
     if (down > size) {
       throw new Error("Down must be less than size");
     }
+    if (size % numPeriods) {
+      throw new Error("Size must be a multiple of the number of periods");
+    }
+    if (down % numPeriods) {
+      throw new Error("Down must be a multiple of the number of periods");
+    }
+    size /= numPeriods;
+    down /= numPeriods;
     const intervals = [];
     for (let i = 0; i < size; ++i) {
       intervals.push(generator.mul(i - down).mmod(period));
     }
     const result = new Scale(intervals, period, baseFrequency);
     result.sortInPlace();
-    return result;
+    return result.repeat(numPeriods);
   }
 
   static fromHarmonicSeries(
@@ -97,9 +116,14 @@ export default class Scale {
       numerator++
     ) {
       intervals.push(
-        ExtendedMonzo.fromFraction(
-          new Fraction(numerator, denominator),
-          numberOfComponents
+        new Interval(
+          ExtendedMonzo.fromFraction(
+            new Fraction(numerator, denominator),
+            numberOfComponents
+          ),
+          "ratio",
+          undefined,
+          { preferredDenominator: denominator }
         )
       );
     }
@@ -126,9 +150,14 @@ export default class Scale {
       denominator--
     ) {
       intervals.push(
-        ExtendedMonzo.fromFraction(
-          new Fraction(numerator, denominator),
-          numberOfComponents
+        new Interval(
+          ExtendedMonzo.fromFraction(
+            new Fraction(numerator, denominator),
+            numberOfComponents
+          ),
+          "ratio",
+          undefined,
+          { preferredNumerator: numerator }
         )
       );
     }
@@ -136,47 +165,21 @@ export default class Scale {
     return new Scale(intervals, equave, baseFrequency);
   }
 
-  static fromChord(
-    chord: number[],
-    numberOfComponents: number,
-    baseFrequency = 440
-  ) {
+  static fromChord(chord: Interval[], baseFrequency = 440) {
     if (chord.length < 2) {
       throw new Error("Need at least two tones to enumerate a chord");
     }
     const root = chord[0];
-    const intervals = chord.map((tone) =>
-      ExtendedMonzo.fromFraction(new Fraction(tone, root), numberOfComponents)
-    );
-    const equave = intervals.pop()!;
-    return new Scale(intervals, equave, baseFrequency);
-  }
-
-  static fromInvertedChord(
-    chord: number[],
-    numberOfComponents: number,
-    baseFrequency = 440
-  ) {
-    if (chord.length < 2) {
-      throw new Error("Need at least two tones to enumerate a chord");
-    }
-    const numerator = chord[chord.length - 1];
-    const intervals = chord.map((denominator) =>
-      ExtendedMonzo.fromFraction(
-        new Fraction(numerator, denominator),
-        numberOfComponents
-      )
-    );
-    intervals.reverse();
+    const intervals = chord.map((tone) => tone.sub(root));
     const equave = intervals.pop()!;
     return new Scale(intervals, equave, baseFrequency);
   }
 
   static fromCombinations(
-    factors: ExtendedMonzo[],
+    factors: Interval[],
     numElements: number,
     addUnity: boolean,
-    equave: ExtendedMonzo,
+    equave: Interval,
     baseFrequency = 440
   ) {
     if (numElements > factors.length) {
@@ -185,13 +188,10 @@ export default class Scale {
       );
     }
     const unity = equave.mul(0);
-    let intervals: ExtendedMonzo[] = [];
+    let intervals: Interval[] = [];
     kCombinations(factors, numElements).forEach((combination) => {
       intervals.push(
-        combination.reduce(
-          (a: ExtendedMonzo, b: ExtendedMonzo) => a.add(b),
-          unity
-        )
+        combination.reduce((a: Interval, b: Interval) => a.add(b), unity)
       );
     });
     if (addUnity) {
@@ -207,13 +207,13 @@ export default class Scale {
   }
 
   static fromLattice(
-    basis: ExtendedMonzo[],
+    basis: Interval[],
     dimensions: number[],
-    equave: ExtendedMonzo,
+    equave: Interval,
     baseFrequency = 440
   ) {
-    let intervals: ExtendedMonzo[] = [];
-    function span(accumulator: ExtendedMonzo, index: number) {
+    let intervals: Interval[] = [];
+    function span(accumulator: Interval, index: number) {
       if (index >= dimensions.length) {
         intervals.push(accumulator);
         return;
@@ -228,11 +228,7 @@ export default class Scale {
     return new Scale(intervals, equave, baseFrequency);
   }
 
-  static fromCube(
-    basis: ExtendedMonzo[],
-    equave: ExtendedMonzo,
-    baseFrequency = 440
-  ) {
+  static fromCube(basis: Interval[], equave: Interval, baseFrequency = 440) {
     return this.fromLattice(
       basis,
       Array(basis.length).fill(2),
@@ -242,12 +238,12 @@ export default class Scale {
   }
 
   static fromCrossPolytope(
-    basis: ExtendedMonzo[],
+    basis: Interval[],
     addUnity: boolean,
-    equave: ExtendedMonzo,
+    equave: Interval,
     baseFrequency = 440
   ) {
-    let intervals: ExtendedMonzo[] = [];
+    let intervals: Interval[] = [];
     basis.forEach((basisInterval) => {
       intervals.push(basisInterval);
       intervals.push(basisInterval.neg());
@@ -265,15 +261,15 @@ export default class Scale {
   }
 
   static fromOctaplex(
-    basis: ExtendedMonzo[],
+    basis: Interval[],
     addUnity: boolean,
-    equave: ExtendedMonzo,
+    equave: Interval,
     baseFrequency = 440
   ) {
     if (basis.length !== 4) {
       throw new Error("Octaplex can only be generated using 4 basis vectors");
     }
-    let intervals: ExtendedMonzo[] = [];
+    let intervals: Interval[] = [];
     [-1, 1].forEach((sign1) => {
       [-1, 1].forEach((sign2) => {
         intervals.push(basis[0].mul(sign1).add(basis[1].mul(sign2)));
@@ -317,7 +313,11 @@ export default class Scale {
       ExtendedMonzo.fromNumber(factor, numberOfComponents).mmod(equaveMonzo)
     );
     intervals.sort((a, b) => a.compare(b));
-    return new Scale(intervals, equaveMonzo, baseFrequency);
+    return new Scale(
+      intervals.map((interval) => new Interval(interval, "ratio")),
+      new Interval(equaveMonzo, "ratio"),
+      baseFrequency
+    );
   }
 
   static fromDwarf(
@@ -326,7 +326,7 @@ export default class Scale {
     numberOfComponents: number,
     baseFrequency = 440
   ) {
-    const valPerLogEquave = val / Math.log(equave);
+    const valPerEquaveCents = val / valueToCents(equave);
     const degrees = new Set();
     const members = [];
     let n = 1;
@@ -341,7 +341,7 @@ export default class Scale {
           component++;
         }
         if (component !== 0) {
-          degree += component * Math.round(LOG_PRIMES[i] * valPerLogEquave);
+          degree += component * Math.round(PRIME_CENTS[i] * valPerEquaveCents);
         }
         i++;
       }
@@ -357,7 +357,11 @@ export default class Scale {
       ExtendedMonzo.fromNumber(member, numberOfComponents).mmod(equaveMonzo)
     );
     intervals.sort((a, b) => a.compare(b));
-    return new Scale(intervals, equaveMonzo, baseFrequency);
+    return new Scale(
+      intervals.map((interval) => new Interval(interval, "ratio")),
+      new Interval(equaveMonzo, "ratio"),
+      baseFrequency
+    );
   }
 
   static fromMos(
@@ -366,7 +370,7 @@ export default class Scale {
     sizeOfLargeStep: number,
     sizeOfSmallStep: number,
     brightGeneratorsUp: number,
-    equave: ExtendedMonzo,
+    equave: Interval,
     baseFrequency = 440
   ) {
     const steps = mos(
@@ -388,17 +392,31 @@ export default class Scale {
   }
 
   get numberOfComponents() {
-    return this.equave.numberOfComponents;
+    return this.equave.monzo.numberOfComponents;
   }
 
-  getMonzo(index: number) {
+  getInterval(index: number) {
     const numEquaves = Math.floor(index / this.size);
     index -= numEquaves * this.size;
     return this.intervals[index].add(this.equave.mul(numEquaves));
   }
 
+  getMonzo(index: number) {
+    const numEquaves = Math.floor(index / this.size);
+    index -= numEquaves * this.size;
+    return this.intervals[index].monzo.add(this.equave.monzo.mul(numEquaves));
+  }
+
   getFrequency(index: number) {
-    return this.baseFrequency * Math.exp(this.getMonzo(index).totalNats());
+    return this.baseFrequency * this.getMonzo(index).valueOf();
+  }
+
+  getName(index: number) {
+    index = mmod(index, this.size);
+    if (index === 0) {
+      return this.equave.name;
+    }
+    return this.intervals[index].name;
   }
 
   sortInPlace() {
@@ -406,11 +424,11 @@ export default class Scale {
     return this;
   }
 
-  variant(intervals: ExtendedMonzo[]) {
+  variant(intervals: Interval[]) {
     return new Scale(intervals, this.equave, this.baseFrequency);
   }
 
-  sort() {
+  sorted() {
     const intervals = [...this.intervals];
     intervals.sort((a, b) => a.compare(b));
     return this.variant(intervals);
@@ -421,6 +439,27 @@ export default class Scale {
       interval.mmod(this.equave)
     );
     return this.variant(intervals);
+  }
+
+  repeat(numRepeats = 2) {
+    if (numRepeats === 0) {
+      return new Scale(
+        [this.intervals[0]],
+        this.equave.zeroed(),
+        this.baseFrequency
+      );
+    }
+    const intervals = [...this.intervals];
+    for (let i = 1; i < numRepeats; ++i) {
+      this.intervals.forEach((interval) => {
+        intervals.push(interval.add(this.equave.mul(i)));
+      });
+    }
+    return new Scale(
+      intervals,
+      this.equave.mul(numRepeats),
+      this.baseFrequency
+    );
   }
 
   rotate(numSteps = 1) {
@@ -439,17 +478,20 @@ export default class Scale {
     return this.variant(intervals);
   }
 
-  subset(indices: number[]) {
+  subset(indices: number[] | Set<number>) {
+    if (indices instanceof Set) {
+      indices = [...indices.values()];
+    }
     if (!indices.includes(0)) {
       throw new Error("Subset must include unison");
     }
-    const intervals: (ExtendedMonzo | undefined)[] = indices.map(
+    const intervals: (Interval | undefined)[] = indices.map(
       (i) => this.intervals[i]
     );
     if (intervals.includes(undefined)) {
       throw new Error("Subset index out of bounds");
     }
-    return this.variant(intervals as ExtendedMonzo[]);
+    return this.variant(intervals as Interval[]);
   }
 
   stretch(scalar: number) {
@@ -471,24 +513,22 @@ export default class Scale {
     return this.variant(intervals);
   }
 
-  vary(maxNats: number) {
-    const intervals = this.intervals.map((interval) => {
-      const offset = (Math.random() * 2 - 1) * maxNats;
-      return new ExtendedMonzo(
-        interval.vector,
-        interval.residual,
-        interval.nats + offset
-      );
-    });
-    return this.variant(intervals);
+  vary(maxCents: number, varyEquave = false) {
+    const intervals = this.intervals.map((interval) => interval.vary(maxCents));
+    const result = this.variant(intervals);
+    if (varyEquave) {
+      result.equave = this.equave.vary(maxCents);
+    }
+    return result;
   }
 
   // Moves unison as well. Useful with merge, but not by itself.
-  transpose(offset: ExtendedMonzo) {
+  transpose(offset: Interval) {
     const intervals = this.intervals.map((interval) => interval.add(offset));
     return this.variant(intervals);
   }
 
+  /*
   // Duplicates unison and other scale degrees.
   concat(other: Scale) {
     if (this.baseFrequency !== other.baseFrequency) {
@@ -520,25 +560,26 @@ export default class Scale {
     return this.concat(other).reduce().removeDuplicatesInPlace().sortInPlace();
   }
 
-  transposeDegree(degree: number, offset: ExtendedMonzo) {
+  transposeDegree(degree: number, offset: Interval) {
     degree = mmod(degree, this.size);
     const intervals = [...this.intervals];
     intervals[degree] = intervals[degree].add(offset);
     return this.variant(intervals);
   }
 
-  insertAfter(degree: number, interval: ExtendedMonzo) {
+  insertAfter(degree: number, interval: Interval) {
     degree = mmod(degree, this.size);
     const intervals = [...this.intervals];
     intervals.splice(degree + 1, 0, interval);
     return this.variant(intervals);
   }
+  */
 
   approximateEqualTemperament(divisions: number) {
     const step = this.equave.div(divisions);
-    const stepNats = step.totalNats();
+    const stepCents = step.totalCents();
     const intervals = this.intervals.map((interval) => {
-      const numSteps = Math.round(interval.totalNats() / stepNats);
+      const numSteps = Math.round(interval.totalCents() / stepCents);
       return step.mul(numSteps);
     });
     return this.variant(intervals);
@@ -568,12 +609,20 @@ export default class Scale {
     return new Scale(intervals, equave, this.baseFrequency);
   }
 
+  mergeOptions(options: IntervalOptions) {
+    const intervals = this.intervals.map((interval) =>
+      interval.mergeOptions(options)
+    );
+    const equave = this.equave.mergeOptions(options);
+    return new Scale(intervals, equave, this.baseFrequency);
+  }
+
   // Reverse parsing
-  toScaleLines(options?: ScaleLineOptions): string[] {
+  toStrings(): string[] {
     const result = this.intervals
       .slice(1)
-      .map((interval) => interval.toScaleLine(options));
-    result.push(this.equave.toScaleLine(options));
+      .map((interval) => interval.toString());
+    result.push(this.equave.toString());
     return result;
   }
 }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { mmod } from "@/utils";
 import { computed, ref } from "vue";
-import VirtualKeyboardKey from "./VirtualKeyboardKey.vue";
+import VirtualKeyboardKey from "@/components/VirtualKeyboardKey.vue";
 
 type NoteOff = () => void;
 type NoteOnCallback = (index: number) => NoteOff;

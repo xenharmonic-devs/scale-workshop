@@ -1,5 +1,5 @@
 import { APP_TITLE } from "@/constants";
-import { BaseExporter, type ExporterParams } from "./base";
+import { BaseExporter, type ExporterParams } from "@/exporters/base";
 
 export default class MaxMSPExporter extends BaseExporter {
   static tuningMaxSize = 128;

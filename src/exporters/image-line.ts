@@ -1,5 +1,5 @@
 import { clamp, frequencyToCentOffset } from "@/utils";
-import { BaseExporter, type ExporterParams } from "./base";
+import { BaseExporter, type ExporterParams } from "@/exporters/base";
 
 class ImageLineExporter extends BaseExporter {
   static numberOfNotes = 121; // IL products can only retune from C0 to C10

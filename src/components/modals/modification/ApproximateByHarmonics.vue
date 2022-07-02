@@ -1,23 +1,18 @@
 <script setup lang="ts">
 import type Scale from "@/scale";
 import { ref } from "vue";
-import Modal from "../../ModalDialog.vue";
+import Modal from "@/components/ModalDialog.vue";
 
 const props = defineProps<{
   scale: Scale;
 }>();
 
-const emit = defineEmits(["update:scaleLines", "cancel"]);
+const emit = defineEmits(["update:scale", "cancel"]);
 
 const denominator = ref(128);
 
 function modify() {
-  emit(
-    "update:scaleLines",
-    props.scale
-      .approximateHarmonics(denominator.value)
-      .toScaleLines({ preferredDenominator: denominator.value })
-  );
+  emit("update:scale", props.scale.approximateHarmonics(denominator.value));
 }
 </script>
 

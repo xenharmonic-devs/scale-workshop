@@ -1,8 +1,8 @@
 import { NEWLINE_TEST } from "@/constants";
-import type ExtendedMonzo from "@/monzo";
 import { getLineType, LINE_TYPE, parseLine } from "@/parser";
 import Scale from "@/scale";
-import { TextImporter, type ImportResult } from "./base";
+import type { Interval } from "@/interval";
+import { TextImporter, type ImportResult } from "@/importers/base";
 
 export class AnaMarkImporter extends TextImporter {
   parseText(input: string, filename: string): ImportResult {
@@ -56,8 +56,7 @@ export class AnaMarkImporter extends TextImporter {
       }
     }
 
-    const intervals: ExtendedMonzo[] = [];
-    const lineTypes: LINE_TYPE[] = [LINE_TYPE.UNISON];
+    const intervals: Interval[] = [];
     functionalLines.forEach((line) => {
       if (!line.length) {
         return;
@@ -66,12 +65,11 @@ export class AnaMarkImporter extends TextImporter {
       if (lineType === LINE_TYPE.INVALID) {
         throw new Error(`Failed to parse line ${line}`);
       }
-      lineTypes.push(lineType);
       intervals.push(parseLine(line));
     });
     const scale = Scale.fromIntervalArray(intervals);
 
-    const result: ImportResult = { scale, lineTypes, name };
+    const result: ImportResult = { scale, name };
 
     // get base frequency and MIDI note
     for (let i = firstLineIndex + 1; i < lines.length; i++) {

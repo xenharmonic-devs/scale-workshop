@@ -5,18 +5,17 @@ import type Scale from "@/scale";
 defineProps<{
   scaleName: string;
   scaleLines: string[];
-  baseFrequency: number;
   baseMidiNote: number;
   keyColors: string[];
 
   scale: Scale;
-  names: string[];
   frequencies: number[];
 }>();
 
 defineEmits([
   "update:scaleName",
   "update:scaleLines",
+  "update:scale",
   "update:baseFrequency",
   "update:baseMidiNote",
   "update:keyColors",
@@ -28,14 +27,13 @@ defineEmits([
     <ScaleBuilder
       :scaleName="scaleName"
       :scaleLines="scaleLines"
-      :baseFrequency="baseFrequency"
       :baseMidiNote="baseMidiNote"
       :keyColors="keyColors"
       :scale="scale"
-      :names="names"
       :frequencies="frequencies"
       @update:scaleName="$emit('update:scaleName', $event)"
       @update:scaleLines="$emit('update:scaleLines', $event)"
+      @update:scale="$emit('update:scale', $event)"
       @update:baseFrequency="$emit('update:baseFrequency', $event)"
       @update:baseMidiNote="$emit('update:baseMidiNote', $event)"
       @update:keyColors="$emit('update:keyColors', $event)"
