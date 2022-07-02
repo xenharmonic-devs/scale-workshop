@@ -38,34 +38,45 @@ const joinedLines = computed({
   get() {
     return props.scaleLines.join("\n");
   },
-  set: debounce((newValue: string) => {
-    emit("update:scaleLines", newValue.split("\n"));
-  }),
+  set: debounce((newValue: string) =>
+    emit("update:scaleLines", newValue.split("\n"))
+  ),
 });
 
 const joinedKeyColors = computed({
   get() {
     return props.keyColors.join(" ");
   },
-  set: debounce((newValue: string) => {
-    emit("update:keyColors", newValue.split(" "));
+  set: debounce((newValue: string) =>
+    emit("update:keyColors", newValue.split(" "))
+  ),
+});
+
+const scaleName = computed({
+  get: () => props.scaleName,
+  set: (newValue: string) => emit("update:scaleName", newValue),
+});
+
+const baseFrequency = computed({
+  get: () => props.baseFrequency,
+  set: debounce((newValue: number) => {
+    if (
+      typeof newValue === "number" &&
+      !isNaN(newValue) &&
+      isFinite(newValue)
+    ) {
+      emit("update:baseFrequency", newValue);
+    }
   }),
 });
 
-function updateScaleName(event: Event) {
-  emit("update:scaleName", (event!.target as HTMLInputElement).value);
-}
-
-const updateBaseFrequency = debounce((event: Event) => {
-  const value = parseFloat((event!.target as HTMLInputElement).value);
-  if (!isNaN(value) && isFinite(value)) emit("update:baseFrequency", value);
-});
-
-const updatebaseMidiNote = debounce((event: Event) => {
-  const value = parseInt((event!.target as HTMLInputElement).value);
-  if (!isNaN(value)) {
-    emit("update:baseMidiNote", value);
-  }
+const baseMidiNote = computed({
+  get: () => props.baseMidiNote,
+  set: debounce((newValue: number) => {
+    if (typeof newValue === "number" && !isNaN(newValue)) {
+      emit("update:baseMidiNote", newValue);
+    }
+  }),
 });
 
 const midiNoteNumber = ref<HTMLInputElement | null>(null);
@@ -75,7 +86,11 @@ function autoFrequency() {
   if (midiNoteNumber.value !== null) {
     // Circumvent debouncing for this simple click
     baseMidiNote = parseInt(midiNoteNumber.value.value);
+    if (isNaN(baseMidiNote)) {
+      return;
+    }
   }
+
   emit("update:baseFrequency", mtof(baseMidiNote));
 }
 
@@ -135,8 +150,7 @@ async function doImport(importerKey: ImporterKey, event: Event) {
         id="scale-name"
         type="text"
         placeholder="Untitled scale"
-        :value="scaleName"
-        @input="updateScaleName"
+        v-model="scaleName"
       />
 
       <ul class="btn-group">
@@ -208,12 +222,12 @@ async function doImport(importerKey: ImporterKey, event: Event) {
         <div class="control">
           <label>Frequency</label>
           <input
+            class="real-valued"
             type="number"
-            :value="baseFrequency"
             min="0.1"
             step="0.1"
             max="1000000"
-            @input="updateBaseFrequency"
+            v-model="baseFrequency"
           />
           <button @click="autoFrequency">Auto</button>
           <span>Hz</span>
@@ -224,11 +238,10 @@ async function doImport(importerKey: ImporterKey, event: Event) {
           <input
             type="number"
             ref="midiNoteNumber"
-            :value="baseMidiNote"
             min="0"
             max="127"
             step="1"
-            @input="updatebaseMidiNote"
+            v-model="baseMidiNote"
           />
           <span>A5</span>
         </div>
@@ -480,5 +493,9 @@ div.exporters .btn {
 
 select optgroup + optgroup {
   margin-top: 1em;
+}
+
+.real-valued:invalid {
+  background-color: var(--color-background);
 }
 </style>
