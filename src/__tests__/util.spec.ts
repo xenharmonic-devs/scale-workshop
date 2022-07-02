@@ -1,6 +1,11 @@
 import { describe, it, expect } from "vitest";
 
-import { autoKeyColors, formatExponential, formatHertz } from "../utils";
+import {
+  autoKeyColors,
+  formatExponential,
+  formatHertz,
+  stringToFraction,
+} from "../utils";
 
 function naiveExponential(x: number, fractionDigits = 3) {
   if (Math.abs(x) < 10000) {
@@ -69,5 +74,11 @@ describe("Auto key color algorithm", () => {
     expect(colors.join(" ")).toBe(
       "white white black white white white black white white black white white white black white white black"
     );
+  });
+});
+
+describe("Fraction parser", () => {
+  it("throws an error with multiple slashes", () => {
+    expect(() => stringToFraction("1/-2/3")).toThrow();
   });
 });
