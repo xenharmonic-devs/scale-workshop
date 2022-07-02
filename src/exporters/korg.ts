@@ -1,7 +1,7 @@
 import { KORG } from "@/constants";
 import { clamp, frequencyToCentOffset, mmod, ratioToCents } from "@/utils";
 import JSZip from "jszip";
-import { BaseExporter, type ExporterParams } from "./base";
+import { BaseExporter, type ExporterParams } from "@/exporters/base";
 
 // This exporter converts tuning data into a zip-compressed file for use with Korg's
 // 'logue Sound Librarian software, supporting their 'logue series of synthesizers.

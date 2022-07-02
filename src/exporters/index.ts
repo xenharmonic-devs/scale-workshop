@@ -1,13 +1,13 @@
-import { AnaMarkV1Exporter, AnaMarkV2Exporter } from "./anamark";
-import type { ExporterParams } from "./base";
-import DeflemaskExporter from "./deflemask";
-import { HarmorExporter, SytrusExporter } from "./image-line";
-import KontaktExporter from "./kontakt";
-import { MnlgtunoExporter, MnlgtunsExporter } from "./korg";
-import MaxMSPExporter from "./max-msp";
-import PureDataExporter from "./pure-data";
-import { ScalaSclExporter, ScalaKbmExporter } from "./scala";
-import SoniccoutureExporter from "./soniccouture";
+import type { ExporterParams } from "@/exporters/base";
+import { AnaMarkV1Exporter, AnaMarkV2Exporter } from "@/exporters/anamark";
+import DeflemaskExporter from "@/exporters/deflemask";
+import { HarmorExporter, SytrusExporter } from "@/exporters/image-line";
+import KontaktExporter from "@/exporters/kontakt";
+import { MnlgtunoExporter, MnlgtunsExporter } from "@/exporters/korg";
+import MaxMSPExporter from "@/exporters/max-msp";
+import PureDataExporter from "@/exporters/pure-data";
+import { ScalaSclExporter, ScalaKbmExporter } from "@/exporters/scala";
+import SoniccoutureExporter from "@/exporters/soniccouture";
 
 const EXPORTERS = {
   anamarkv1: AnaMarkV1Exporter,

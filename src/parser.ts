@@ -1,7 +1,8 @@
 import Fraction from "fraction.js";
 import ExtendedMonzo from "@/monzo";
-import { DEFAULT_NUMBER_OF_COMPONENTS } from "./constants";
-import { stringToFraction } from "./utils";
+import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
+import { stringToFraction } from "@/utils";
+import { ScaleLine, type ScaleLineOptions } from "@/scale-line";
 
 export enum LINE_TYPE {
   CENTS = "cents",
@@ -118,50 +119,84 @@ export function getLineType(input: string) {
   return LINE_TYPE.INVALID;
 }
 
-function parseCents(input: string, numberOfComponents: number): ExtendedMonzo {
+function parseCents(
+  input: string,
+  numberOfComponents: number,
+  options?: ScaleLineOptions
+) {
   const cents = parseFloat(input);
   if (isNaN(cents)) {
     throw new Error(`Failed to parse ${input} to cents`);
   }
-  return ExtendedMonzo.fromCents(cents, numberOfComponents);
+  return new ScaleLine(
+    ExtendedMonzo.fromCents(cents, numberOfComponents),
+    "cents",
+    input,
+    options
+  );
 }
 
 function parseDecimal(
   input: string,
-  numberOfComponents: number
-): ExtendedMonzo {
+  numberOfComponents: number,
+  options?: ScaleLineOptions
+) {
   const value = parseFloat(input.replace(",", "."));
   if (isNaN(value)) {
     throw new Error(`Failed to parse ${input} to decimal`);
   }
-  return ExtendedMonzo.fromValue(value, numberOfComponents);
+  return new ScaleLine(
+    ExtendedMonzo.fromValue(value, numberOfComponents),
+    "decimal",
+    input,
+    options
+  );
 }
 
-function parseNOfEdo(input: string, numberOfComponents: number): ExtendedMonzo {
+function parseNOfEdo(
+  input: string,
+  numberOfComponents: number,
+  options?: ScaleLineOptions
+) {
   const fractionOfOctave = stringToFraction(input.replace("\\", "/"));
   const octave = new Fraction(2);
-  return ExtendedMonzo.fromEqualTemperament(
-    fractionOfOctave,
-    octave,
-    numberOfComponents
+  return new ScaleLine(
+    ExtendedMonzo.fromEqualTemperament(
+      fractionOfOctave,
+      octave,
+      numberOfComponents
+    ),
+    "equal temperament",
+    input,
+    options
   );
 }
 
 function parseGeneralizeNOfEdo(
   input: string,
-  numberOfComponents: number
-): ExtendedMonzo {
+  numberOfComponents: number,
+  options?: ScaleLineOptions
+) {
   const [nOfEdo, equavePart] = input.split("<");
   const fractionOfEquave = stringToFraction(nOfEdo.replace("\\", "/"));
   const equave = new Fraction(equavePart.slice(0, -1));
-  return ExtendedMonzo.fromEqualTemperament(
-    fractionOfEquave,
-    equave,
-    numberOfComponents
+  return new ScaleLine(
+    ExtendedMonzo.fromEqualTemperament(
+      fractionOfEquave,
+      equave,
+      numberOfComponents
+    ),
+    "equal temperament",
+    input,
+    options
   );
 }
 
-function parseMonzo(input: string, numberOfComponents: number): ExtendedMonzo {
+function parseMonzo(
+  input: string,
+  numberOfComponents: number,
+  options?: ScaleLineOptions
+) {
   const components: Fraction[] = [];
   input
     .slice(1, -1)
@@ -179,10 +214,15 @@ function parseMonzo(input: string, numberOfComponents: number): ExtendedMonzo {
   while (components.length < numberOfComponents) {
     components.push(new Fraction(0));
   }
-  return new ExtendedMonzo(components);
+  return new ScaleLine(new ExtendedMonzo(components), "monzo", input, options);
 }
 
-function parseSubtractive(input: string, numberOfComponents: number) {
+function parseSubtractive(
+  input: string,
+  numberOfComponents: number,
+  options?: ScaleLineOptions
+): [ScaleLine, boolean] {
+  let centCount = 0;
   let prefix: string | undefined;
   const parts = input.split("-");
   const results = [];
@@ -193,7 +233,10 @@ function parseSubtractive(input: string, numberOfComponents: number) {
       prefix += "-" + parts[i];
     }
     if (isNonComposite(prefix.trim())) {
-      results.push(parseLine(prefix.trim(), numberOfComponents));
+      if (isCent(prefix.trim())) {
+        centCount++;
+      }
+      results.push(parseLine(prefix.trim(), numberOfComponents, options));
       prefix = undefined;
     }
   }
@@ -201,40 +244,70 @@ function parseSubtractive(input: string, numberOfComponents: number) {
     throw new Error(`Failed to parse composite part ${input}`);
   }
   if (results.length === 1) {
-    return results[0];
+    return [results[0], false];
   }
-  return results[0].sub(results.slice(1).reduce((a, b) => a.add(b)));
+  return [
+    results[0].sub(results.slice(1).reduce((a, b) => a.add(b))),
+    results.length === 2 && centCount > 0,
+  ];
 }
 
-function parseComposite(input: string, numberOfComponents: number) {
-  return input
-    .split("+")
-    .map((part) => parseSubtractive(part, numberOfComponents))
+function parseComposite(
+  input: string,
+  numberOfComponents: number,
+  options?: ScaleLineOptions
+) {
+  const parts = input.split("+");
+  // Special handling for cent offsets: Use name of the primary interval
+  if (parts.length === 1) {
+    const [result, hasOffset] = parseSubtractive(
+      parts[0],
+      numberOfComponents,
+      options
+    );
+    if (hasOffset) {
+      return result;
+    }
+  }
+  if (
+    parts.length === 2 &&
+    (isCent(parts[0].trim()) || isCent(parts[1].trim()))
+  ) {
+    return parseLine(parts[0].trim()).add(parseLine(parts[1].trim()));
+  }
+
+  const result = parts
+    .map((part) => parseSubtractive(part, numberOfComponents, options)[0])
     .reduce((a, b) => a.add(b));
+  result.name = input;
+  return result;
 }
 
 export function parseLine(
   input: string,
-  numberOfComponents = DEFAULT_NUMBER_OF_COMPONENTS
-): ExtendedMonzo {
+  numberOfComponents = DEFAULT_NUMBER_OF_COMPONENTS,
+  options?: ScaleLineOptions
+): ScaleLine {
   switch (getLineType(input)) {
     case LINE_TYPE.CENTS:
-      return parseCents(input, numberOfComponents);
+      return parseCents(input, numberOfComponents, options);
     case LINE_TYPE.DECIMAL:
-      return parseDecimal(input, numberOfComponents);
+      return parseDecimal(input, numberOfComponents, options);
     case LINE_TYPE.N_OF_EDO:
-      return parseNOfEdo(input, numberOfComponents);
+      return parseNOfEdo(input, numberOfComponents, options);
     case LINE_TYPE.RATIO:
-      return ExtendedMonzo.fromFraction(
-        new Fraction(input),
-        numberOfComponents
+      return new ScaleLine(
+        ExtendedMonzo.fromFraction(new Fraction(input), numberOfComponents),
+        "ratio",
+        input,
+        options
       );
     case LINE_TYPE.GENERALIZED_N_OF_EDO:
-      return parseGeneralizeNOfEdo(input, numberOfComponents);
+      return parseGeneralizeNOfEdo(input, numberOfComponents, options);
     case LINE_TYPE.MONZO:
-      return parseMonzo(input, numberOfComponents);
+      return parseMonzo(input, numberOfComponents, options);
     case LINE_TYPE.COMPOSITE:
-      return parseComposite(input, numberOfComponents);
+      return parseComposite(input, numberOfComponents, options);
     default:
       throw new Error(`Failed to parse ${input}`);
   }

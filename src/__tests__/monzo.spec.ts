@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import Fraction from "fraction.js";
 
 import ExtendedMonzo from "../monzo";
-import { centsToNats } from "@/utils";
+import { valueToCents } from "../utils";
 
 describe("Extended Monzo", () => {
   it("can be constructed from an integer", () => {
@@ -12,7 +12,7 @@ describe("Extended Monzo", () => {
     expect(result.vector[1].equals(1)).toBeTruthy();
     expect(result.vector[2].equals(2)).toBeTruthy();
     expect(result.residual.equals(1)).toBeTruthy();
-    expect(result.nats).toBe(0);
+    expect(result.cents).toBe(0);
   });
   it("can be constructed from an integer with residual", () => {
     const result = ExtendedMonzo.fromNumber(75, 2);
@@ -20,7 +20,7 @@ describe("Extended Monzo", () => {
     expect(result.vector[0].equals(0)).toBeTruthy();
     expect(result.vector[1].equals(1)).toBeTruthy();
     expect(result.residual.equals(25)).toBeTruthy();
-    expect(result.nats).toBe(0);
+    expect(result.cents).toBe(0);
   });
   it("can be constructed from a fraction", () => {
     const result = ExtendedMonzo.fromFraction(new Fraction(3, 2), 2);
@@ -28,7 +28,7 @@ describe("Extended Monzo", () => {
     expect(result.vector[0].equals(-1)).toBeTruthy();
     expect(result.vector[1].equals(1)).toBeTruthy();
     expect(result.residual.equals(1)).toBeTruthy();
-    expect(result.nats).toBe(0);
+    expect(result.cents).toBe(0);
   });
   it("can be constructed from a fraction with residual", () => {
     const result = ExtendedMonzo.fromFraction(new Fraction(33, 28), 2);
@@ -36,13 +36,13 @@ describe("Extended Monzo", () => {
     expect(result.vector[0].equals(-2)).toBeTruthy();
     expect(result.vector[1].equals(1)).toBeTruthy();
     expect(result.residual.equals(new Fraction(11, 7))).toBeTruthy();
-    expect(result.nats).toBe(0);
+    expect(result.cents).toBe(0);
   });
   it("can be constructed from cents", () => {
     const result = ExtendedMonzo.fromCents(1200, 0);
     expect(result.vector.length).toBe(0);
     expect(result.residual.equals(1)).toBeTruthy();
-    expect(result.nats).toBeCloseTo(Math.log(2));
+    expect(result.cents).toBe(1200);
   });
   it("can be constructed from n of edo", () => {
     const fifthOfTwelveEdo = new Fraction(7, 12);
@@ -55,7 +55,7 @@ describe("Extended Monzo", () => {
     expect(result.vector.length).toBe(1);
     expect(result.vector[0].equals(new Fraction(7, 12))).toBeTruthy();
     expect(result.residual.equals(1)).toBeTruthy();
-    expect(result.nats).toBe(0);
+    expect(result.cents).toBe(0);
   });
 
   it("can be converted to a fraction", () => {
@@ -141,7 +141,7 @@ describe("Extended Monzo", () => {
     expect(result.vector.length).toBe(1);
     expect(result.vector[0].equals(new Fraction(1, 2))).toBeTruthy();
     expect(result.residual.equals(1)).toBeTruthy();
-    expect(result.nats).toBeCloseTo(Math.log(3) * (1 / 2));
+    expect(result.cents).toBeCloseTo(valueToCents(3 ** 0.5));
   });
   it("converts root taking to scalar division in pitch space", () => {
     const a = 9;
@@ -267,7 +267,7 @@ describe("Extended Monzo", () => {
       expect(component.compare(10)).toBeLessThan(0);
     });
     expect(result.residual.equals(1)).toBeTruthy();
-    expect(result.nats).toBe(0);
+    expect(result.cents).toBe(0);
   });
 
   it("can combine equal temperament steps exactly", () => {
@@ -281,134 +281,8 @@ describe("Extended Monzo", () => {
 
   it("can be ambiquous in terms of total size", () => {
     const tritaveJI = new ExtendedMonzo([new Fraction(0), new Fraction(1)]);
-    const tritaveNats = new ExtendedMonzo([], undefined, Math.log(3));
-    expect(tritaveJI.strictEquals(tritaveNats)).toBeFalsy();
-    expect(tritaveJI.equals(tritaveNats)).toBeTruthy();
-  });
-});
-
-describe("Extended Monzo reverse parsing", () => {
-  it("includes a denominator with integers", () => {
-    const monzo = ExtendedMonzo.fromNumber(3, 2);
-    expect(monzo.toScaleLine()).toBe("3/1");
-  });
-
-  it("can represent fractions", () => {
-    const monzo = ExtendedMonzo.fromFraction(new Fraction(2347868, 1238973), 3);
-    expect(monzo.toScaleLine()).toBe("2347868/1238973");
-  });
-
-  it("can represent unsafe fractions", () => {
-    const monzo = new ExtendedMonzo([
-      new Fraction(9999999999),
-      new Fraction(-77777777777777),
-    ]);
-    expect(monzo.toScaleLine()).toBe("[9999999999, -77777777777777>");
-  });
-
-  it("can represent equal temperament", () => {
-    const monzo = ExtendedMonzo.fromEqualTemperament(
-      new Fraction(1, 5),
-      new Fraction(4),
-      1
-    );
-    expect(monzo.toScaleLine()).toBe("2\\5");
-  });
-
-  it("can represent equal temperament (negative)", () => {
-    const monzo = ExtendedMonzo.fromEqualTemperament(
-      new Fraction(-3, 5),
-      new Fraction(2),
-      1
-    );
-    expect(monzo.toScaleLine()).toBe("-3\\5");
-  });
-
-  it("can represent generalized N-of-EDO (EDT)", () => {
-    const monzo = ExtendedMonzo.fromEqualTemperament(
-      new Fraction(7, 11),
-      new Fraction(3),
-      2
-    );
-    expect(monzo.toScaleLine()).toBe("7\\11<3>");
-  });
-
-  it("can represent generalized N-of-EDO (EDF)", () => {
-    const monzo = ExtendedMonzo.fromEqualTemperament(
-      new Fraction(7, 11),
-      new Fraction(3, 2),
-      2
-    );
-    expect(monzo.toScaleLine()).toBe("7\\11<3/2>");
-  });
-
-  it("can represent integer cents", () => {
-    const monzo = ExtendedMonzo.fromCents(1234, 1);
-    expect(monzo.toScaleLine()).toBe("1234.");
-  });
-
-  it("can represent fractional cents", () => {
-    const monzo = ExtendedMonzo.fromCents(1234.5671, 1);
-    expect(monzo.toScaleLine({ centsFractionDigits: 4 })).toBe("1234.5671");
-  });
-
-  it("can represent composite intervals (equal temperament)", () => {
-    const monzo = new ExtendedMonzo(
-      [new Fraction(3, 5)],
-      undefined,
-      centsToNats(777.7)
-    );
-    expect(monzo.toScaleLine()).toBe("3\\5 + 777.7");
-  });
-
-  it("can represent composite intervals (fractions)", () => {
-    const monzo = new ExtendedMonzo(
-      [new Fraction(0)],
-      new Fraction(5, 3),
-      centsToNats(3.14)
-    );
-    expect(monzo.toScaleLine()).toBe("5/3 + 3.14");
-  });
-
-  it("can represent composite intervals (negative offset)", () => {
-    const monzo = new ExtendedMonzo(
-      [new Fraction(0)],
-      new Fraction(5, 3),
-      centsToNats(-3.14)
-    );
-    expect(monzo.toScaleLine()).toBe("5/3 - 3.14");
-  });
-
-  it("supports numerator preferences", () => {
-    const monzo = ExtendedMonzo.fromFraction(new Fraction(5, 3), 3);
-    expect(monzo.toScaleLine({ preferredNumerator: 10 })).toBe("10/6");
-  });
-
-  it("supports denominator preferences", () => {
-    const monzo = ExtendedMonzo.fromFraction(new Fraction(5, 3), 3);
-    expect(monzo.toScaleLine({ preferredDenominator: 9 })).toBe("15/9");
-  });
-
-  it("supports edo preferences (octaves)", () => {
-    const monzo = ExtendedMonzo.fromFraction(new Fraction(1, 4), 3);
-    expect(monzo.toScaleLine({ preferredEdo: 11 })).toBe("-22\\11");
-  });
-
-  it("supports edo preferences (generic)", () => {
-    const monzo = ExtendedMonzo.fromEqualTemperament(
-      new Fraction(1, 4),
-      new Fraction(2),
-      1
-    );
-    expect(monzo.toScaleLine({ preferredEdo: 12 })).toBe("3\\12");
-  });
-
-  it("supports edo preferences (negative)", () => {
-    const monzo = ExtendedMonzo.fromEqualTemperament(
-      new Fraction(1, 3),
-      new Fraction(1, 2),
-      1
-    );
-    expect(monzo.toScaleLine({ preferredEdo: -3 })).toBe("1\\-3");
+    const tritaveCents = new ExtendedMonzo([], undefined, valueToCents(3));
+    expect(tritaveJI.strictEquals(tritaveCents)).toBeFalsy();
+    expect(tritaveJI.equals(tritaveCents)).toBeTruthy();
   });
 });

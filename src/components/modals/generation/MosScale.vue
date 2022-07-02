@@ -13,10 +13,14 @@ import {
 import { computed, ref, watch } from "vue";
 import Modal from "@/components/ModalDialog.vue";
 import ScaleLineInput from "@/components/ScaleLineInput.vue";
+import { ScaleLine } from "@/scale-line";
 
-const emit = defineEmits(["update:scaleLines", "update:scaleName", "cancel"]);
+const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
 
-const octave = ExtendedMonzo.fromNumber(2, DEFAULT_NUMBER_OF_COMPONENTS);
+const octave = new ScaleLine(
+  ExtendedMonzo.fromNumber(2, DEFAULT_NUMBER_OF_COMPONENTS),
+  "ratio"
+);
 
 // State required to generate MOS
 const numberOfLargeSteps = ref(5);
@@ -104,7 +108,7 @@ function generate() {
     "update:scaleName",
     `MOS ${numberOfLargeSteps.value}L ${numberOfSmallSteps.value}s`
   );
-  emit("update:scaleLines", scale.toScaleLines({ preferredEdo: hostEd.value }));
+  emit("update:scale", scale);
 }
 </script>
 

@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 
 import ReaperExporter from "../reaper";
 
+// @ts-ignore
 import EXPECTED_CONTENT from "./reaper.txt?raw";
 import { getTestData } from "./test-data";
 

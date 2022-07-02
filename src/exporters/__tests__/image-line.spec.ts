@@ -13,7 +13,7 @@ describe("Image-line exporters", () => {
 
     // Raw binary files are inconvenient so we're content with hashes.
     expect(createHash("sha256").update(content).digest("base64")).toBe(
-      "mq2UxRopQ6dewbnMJORTStDIrHZUCthR1Qw6sDcP2Bk="
+      "xptUh5uz/VHYwQ4xfalMQJJdI3Iqd/pSy+/kfnfKO1s="
     );
   });
 
@@ -23,7 +23,7 @@ describe("Image-line exporters", () => {
     const content = exporter.getFileContents(4);
 
     expect(createHash("sha256").update(content).digest("base64")).toBe(
-      "GgdR29dxpMPuVRh4nXLBW4jPKCjoG8t8tckNNio6IBI="
+      "cExG3YK8wwzPLW6TDq/T2E8FEUZewHk/JLF9hixvRqo="
     );
   });
 });

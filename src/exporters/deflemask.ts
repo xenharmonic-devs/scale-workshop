@@ -1,6 +1,6 @@
 import { APP_TITLE } from "@/constants";
 import { frequencyToCentOffset, ftom, midiNoteNumberToName } from "@/utils";
-import { BaseExporter, type ExporterParams } from "./base";
+import { BaseExporter, type ExporterParams } from "@/exporters/base";
 
 // This exporter converts your tuning data into a readable format you can easily input manually into Deflemask.
 // For example if you have a note 50 cents below A4, you would input that into Deflemask as A-4 -- - E5 40

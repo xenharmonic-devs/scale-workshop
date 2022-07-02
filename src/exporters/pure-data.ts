@@ -1,4 +1,4 @@
-import { BaseExporter, type ExporterParams } from "./base";
+import { BaseExporter, type ExporterParams } from "@/exporters/base";
 
 export default class PureDataExporter extends BaseExporter {
   static tuningMaxSize = 128;
