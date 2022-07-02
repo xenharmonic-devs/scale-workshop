@@ -1,6 +1,10 @@
 <script setup lang="ts">
 defineProps({
   show: Boolean,
+  extraStyle: {
+    default: "",
+    type: String,
+  },
 });
 
 defineEmits(["confirm", "cancel"]);
@@ -10,7 +14,7 @@ defineEmits(["confirm", "cancel"]);
   <Transition name="modal">
     <div v-if="show" class="modal-mask" @click.self="$emit('cancel')">
       <div class="modal-wrapper">
-        <div class="modal-container">
+        <div class="modal-container" :style="extraStyle">
           <div class="modal-header">
             <slot name="header">default header</slot>
           </div>

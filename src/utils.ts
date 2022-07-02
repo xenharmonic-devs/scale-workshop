@@ -1,4 +1,5 @@
 import type Fraction from "fraction.js";
+import { computed, type ComputedRef } from "vue";
 
 export function arraysEqual(a: any[], b: any[]) {
   if (a === b) {
@@ -268,4 +269,25 @@ export function autoKeyColors(size: number) {
   } while (hasBlackClusters);
 
   return result;
+}
+
+// Wrapper for a computed property that can fail.
+// The error string is non-empty when the property fails to compute.
+export function computedAndError<T>(
+  getter: () => T,
+  defaultValue: T
+): [ComputedRef<T>, ComputedRef<string>] {
+  const valueAndError = computed<[T, string]>(() => {
+    try {
+      return [getter(), ""];
+    } catch (error) {
+      if (error instanceof Error) {
+        return [defaultValue, error.message || " "];
+      }
+      return [defaultValue, "" + error || " "];
+    }
+  });
+  const value = computed(() => valueAndError.value[0]);
+  const error = computed(() => valueAndError.value[1]);
+  return [value, error];
 }
