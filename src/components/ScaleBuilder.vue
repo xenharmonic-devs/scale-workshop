@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import TuningTable from "./TuningTable.vue";
+import TuningTable from "@/components/TuningTable.vue";
 import { debounce, mtof, autoKeyColors } from "@/utils";
-import ScaleRule from "./ScaleRule.vue";
+import ScaleRule from "@/components/ScaleRule.vue";
 import { APP_TITLE, UNIX_NEWLINE } from "@/constants";
 import { sanitizeFilename } from "@/utils";
 import { exportFile, type ExporterKey } from "@/exporters";
-import Modal from "./ModalDialog.vue";
+import Modal from "@/components/ModalDialog.vue";
 import HarmonicSeriesModal from "./modals/generation/HarmonicSeries.vue";
-import MosModal from "./modals/generation/MosScale.vue";
-import ApproximateByHarmonicsModal from "./modals/modification/ApproximateByHarmonics.vue";
+import MosModal from "@/components/modals/generation/MosScale.vue";
+import ApproximateByHarmonicsModal from "@/components/modals/modification/ApproximateByHarmonics.vue";
 import { presets, presetsByGroup } from "@/presets";
 import type Scale from "@/scale";
 import { importFile, type ImporterKey } from "@/importers";
@@ -17,18 +17,17 @@ import { importFile, type ImporterKey } from "@/importers";
 const props = defineProps<{
   scaleName: string;
   scaleLines: string[];
-  baseFrequency: number;
   baseMidiNote: number;
   keyColors: string[];
 
   scale: Scale;
-  names: string[];
   frequencies: number[];
 }>();
 
 const emit = defineEmits([
   "update:scaleName",
   "update:scaleLines",
+  "update:scale",
   "update:baseFrequency",
   "update:baseMidiNote",
   "update:keyColors",
@@ -58,7 +57,7 @@ const scaleName = computed({
 });
 
 const baseFrequency = computed({
-  get: () => props.baseFrequency,
+  get: () => props.scale.baseFrequency,
   set: debounce((newValue: number) => {
     if (
       typeof newValue === "number" &&
@@ -105,7 +104,6 @@ function doExport(exporter: ExporterKey) {
     baseMidiNote: props.baseMidiNote,
     description: props.scaleName,
     lines: props.scaleLines,
-    names: props.names,
     appTitle: APP_TITLE,
     date: new Date(),
   };
@@ -133,7 +131,7 @@ const anamarkFile = ref<HTMLInputElement | null>(null);
 
 async function doImport(importerKey: ImporterKey, event: Event) {
   const result = await importFile(importerKey, event);
-  emit("update:scaleLines", result.scale.toScaleLines());
+  emit("update:scaleLines", result.scale.toStrings());
   if (result.name !== undefined) {
     emit("update:scaleName", result.name);
   }
@@ -267,10 +265,8 @@ async function doImport(importerKey: ImporterKey, event: Event) {
     </div>
     <TuningTable
       :scale="scale"
-      :names="names"
       :frequencies="frequencies"
       :lines="props.scaleLines"
-      :baseFrequency="props.baseFrequency"
       :baseMidiNote="props.baseMidiNote"
       :keyColors="props.keyColors"
     />
@@ -358,9 +354,9 @@ async function doImport(importerKey: ImporterKey, event: Event) {
     <HarmonicSeriesModal
       :show="showHarmonicSeriesModal"
       @update:scaleName="emit('update:scaleName', $event)"
-      @update:scaleLines="
+      @update:scale="
         showHarmonicSeriesModal = false;
-        emit('update:scaleLines', $event);
+        emit('update:scale', $event);
       "
       @cancel="showHarmonicSeriesModal = false"
     />
@@ -368,9 +364,9 @@ async function doImport(importerKey: ImporterKey, event: Event) {
     <MosModal
       :show="showMosModal"
       @update:scaleName="emit('update:scaleName', $event)"
-      @update:scaleLines="
+      @update:scale="
         showMosModal = false;
-        emit('update:scaleLines', $event);
+        emit('update:scale', $event);
       "
       @cancel="showMosModal = false"
     />
@@ -409,9 +405,9 @@ async function doImport(importerKey: ImporterKey, event: Event) {
 
     <ApproximateByHarmonicsModal
       :show="showApproximateByHarmonicsModal"
-      @update:scaleLines="
+      @update:scale="
         showApproximateByHarmonicsModal = false;
-        emit('update:scaleLines', $event);
+        emit('update:scale', $event);
       "
       @cancel="showApproximateByHarmonicsModal = false"
       :scale="scale"

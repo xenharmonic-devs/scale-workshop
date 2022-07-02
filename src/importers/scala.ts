@@ -1,14 +1,14 @@
 import { NEWLINE_TEST } from "@/constants";
-import type ExtendedMonzo from "@/monzo";
 import { getLineType, LINE_TYPE, parseLine } from "@/parser";
 import Scale from "@/scale";
-import { TextImporter, type ImportResult } from "./base";
+import type { ScaleLine } from "@/scale-line";
+import { TextImporter, type ImportResult } from "@/importers/base";
 
 export class ScalaImporter extends TextImporter {
   parseText(input: string): ImportResult {
     const lines = input.split(NEWLINE_TEST);
     const firstLine = lines.lastIndexOf("!") + 1;
-    const intervals: ExtendedMonzo[] = [];
+    const intervals: ScaleLine[] = [];
     const lineTypes: LINE_TYPE[] = [LINE_TYPE.UNISON];
     lines.slice(firstLine).forEach((line) => {
       line = line.trim();

@@ -1,4 +1,4 @@
-import PRESETS from "./presets.json";
+import PRESETS from "@/presets.json";
 
 type PresetFragment = {
   name: string;

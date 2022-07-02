@@ -1,5 +1,5 @@
 import { ftom } from "@/utils";
-import { BaseExporter, type ExporterParams } from "./base";
+import { BaseExporter, type ExporterParams } from "@/exporters/base";
 
 export default class SoniccoutureExporter extends BaseExporter {
   static tuningMaxSize = 128;

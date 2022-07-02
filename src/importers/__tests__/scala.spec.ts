@@ -1,4 +1,4 @@
-import { LINE_TYPE } from "@/parser";
+import { LINE_TYPE } from "../../parser";
 import { describe, it, expect } from "vitest";
 
 import { ScalaImporter } from "../scala";
@@ -28,7 +28,7 @@ describe("Scala importer", () => {
     const importer = new ScalaImporter({} as Event);
     const { scale, lineTypes } = importer.parseText(text);
 
-    expect(scale.getMonzo(0).totalNats()).toBe(0);
+    expect(scale.getMonzo(0).totalCents()).toBe(0);
     expect(lineTypes[0]).toBe(LINE_TYPE.UNISON);
 
     expect(scale.getMonzo(1).toCents()).toBeCloseTo(91.44607);

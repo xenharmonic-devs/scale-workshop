@@ -1,7 +1,8 @@
-import { LINE_TYPE } from "@/parser";
+import { LINE_TYPE } from "../../parser";
 import { describe, it, expect } from "vitest";
 
 import { AnaMarkImporter } from "../anamark";
+// @ts-ignore
 import UNIT_TEST_SCALE from "./unittestscale.tun?raw";
 
 describe("Anamark importer", () => {
@@ -12,7 +13,7 @@ describe("Anamark importer", () => {
       "unittestscale.tun"
     );
 
-    expect(scale.getMonzo(0).totalNats()).toBe(0);
+    expect(scale.getMonzo(0).totalCents()).toBe(0);
     expect(lineTypes[0]).toBe(LINE_TYPE.UNISON);
 
     expect(scale.getMonzo(1).toCents()).toBeCloseTo(111);

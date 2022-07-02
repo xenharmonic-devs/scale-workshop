@@ -1,7 +1,7 @@
 import Scale from "@/scale";
-import type ExtendedMonzo from "@/monzo";
 import { LINE_TYPE, getLineType, parseLine } from "@/parser";
 import { NEWLINE_TEST, UNIX_NEWLINE } from "@/constants";
+import type { ScaleLine } from "@/scale-line";
 
 // decodes HTML entities
 function decodeHTML(input: string): string {
@@ -110,7 +110,7 @@ export class ScaleWorkshopOneData {
       throw new Error("No data to parse");
     }
     const lines = this.data.split(NEWLINE_TEST);
-    const intervals: ExtendedMonzo[] = [];
+    const intervals: ScaleLine[] = [];
     const lineTypes: LINE_TYPE[] = [LINE_TYPE.UNISON];
     lines.forEach((line) => {
       if (!line.length) {

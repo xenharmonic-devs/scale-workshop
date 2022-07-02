@@ -1,8 +1,8 @@
 import { NEWLINE_TEST } from "@/constants";
-import type ExtendedMonzo from "@/monzo";
 import { getLineType, LINE_TYPE, parseLine } from "@/parser";
 import Scale from "@/scale";
-import { TextImporter, type ImportResult } from "./base";
+import type { ScaleLine } from "@/scale-line";
+import { TextImporter, type ImportResult } from "@/importers/base";
 
 export class AnaMarkImporter extends TextImporter {
   parseText(input: string, filename: string): ImportResult {
@@ -56,7 +56,7 @@ export class AnaMarkImporter extends TextImporter {
       }
     }
 
-    const intervals: ExtendedMonzo[] = [];
+    const intervals: ScaleLine[] = [];
     const lineTypes: LINE_TYPE[] = [LINE_TYPE.UNISON];
     functionalLines.forEach((line) => {
       if (!line.length) {
