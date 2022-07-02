@@ -173,7 +173,7 @@ typingKeyboad.addKeydownListener((event) => {
     baseMidiNote.value +
     scale.size * equaveShift.value +
     x * isomorphicHorizontal.value +
-    (4 - y) * isomorphicVertical.value;
+    (2 - y) * isomorphicVertical.value;
 
   return keyboardNoteOn(index);
 });
