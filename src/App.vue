@@ -31,7 +31,7 @@ const keyColors = ref([
 ]);
 const isomorphicVertical = ref(5);
 const isomorphicHorizontal = ref(1);
-const typingEquave = ref(0);
+const equaveShift = ref(0);
 const midiInput = ref<Input | null>(null);
 const midiOutput = ref<Output | null>(null);
 
@@ -90,6 +90,15 @@ try {
 }
 
 // === MIDI input / output ===
+function getFrequency(index: number) {
+  if (index >= 0 && index < frequencies.value.length) {
+    return frequencies.value[index];
+  } else {
+    // Support more than 128 notes with some additional computational cost
+    return scaleAndNames.value[0].getFrequency(index - baseMidiNote.value);
+  }
+}
+
 const midiOut = computed(() => {
   return new MidiOut(midiOutput.value as Output);
 });
@@ -98,7 +107,7 @@ function sendNoteOn(frequency: number, rawAttack: number) {
   return midiOut.value.sendNoteOn(frequency, rawAttack);
 }
 
-const midiIn = new MidiIn((i) => frequencies.value[i], sendNoteOn);
+const midiIn = new MidiIn(getFrequency, sendNoteOn);
 
 watch(midiInput, (newValue, oldValue) => {
   if (oldValue !== null) {
@@ -116,6 +125,15 @@ watch(midiOutput, (newValue) => {
   }
 });
 
+// === Virtual and typing keyboard ===
+function keyboardNoteOn(index: number) {
+  const noteOff = sendNoteOn(getFrequency(index), 80);
+  function keyOff() {
+    return noteOff(80);
+  }
+  return keyOff;
+}
+
 // === Typing keyboard input ===
 const typingKeyboad = new Keyboard();
 
@@ -130,11 +148,11 @@ typingKeyboad.addKeydownListener((event) => {
 
   // "Octave" keys
   if (event.code === "NumpadMultiply") {
-    typingEquave.value++;
+    equaveShift.value++;
     return emptyKeyup;
   }
   if (event.code === "NumpadDivide") {
-    typingEquave.value--;
+    equaveShift.value--;
     return emptyKeyup;
   }
 
@@ -153,22 +171,11 @@ typingKeyboad.addKeydownListener((event) => {
   const scale = scaleAndNames.value[0];
   const index =
     baseMidiNote.value +
-    scale.size * typingEquave.value +
+    scale.size * equaveShift.value +
     x * isomorphicHorizontal.value +
     (4 - y) * isomorphicVertical.value;
-  let frequency;
-  if (index >= 0 && index < frequencies.value.length) {
-    frequency = frequencies.value[index];
-  } else {
-    // Support more than 128 notes with some additional computational cost
-    frequency = scale.getFrequency(index - baseMidiNote.value);
-  }
-  const noteOff = sendNoteOn(frequency, 80);
-  function keyoff() {
-    noteOff(80);
-  }
 
-  return keyoff;
+  return keyboardNoteOn(index);
 });
 </script>
 
@@ -196,9 +203,10 @@ typingKeyboad.addKeydownListener((event) => {
     :frequencies="frequencies"
     :isomorphicHorizontal="isomorphicHorizontal"
     :isomorphicVertical="isomorphicVertical"
-    :typingEquave="typingEquave"
+    :equaveShift="equaveShift"
     :midiInput="midiInput"
     :midiOutput="midiOutput"
+    :noteOn="keyboardNoteOn"
     @update:scaleName="scaleName = $event"
     @update:scaleLines="scaleLines = $event"
     @update:baseMidiNote="baseMidiNote = $event"
@@ -206,7 +214,7 @@ typingKeyboad.addKeydownListener((event) => {
     @update:keyColors="keyColors = $event"
     @update:isomorphicVertical="isomorphicVertical = $event"
     @update:isomorphicHorizontal="isomorphicHorizontal = $event"
-    @update:typingEquave="typingEquave = $event"
+    @update:equaveShift="equaveShift = $event"
     @update:midiInput="midiInput = $event"
     @update:midiOutput="midiOutput = $event"
   />

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 defineProps<{
-  typingEquave: number;
+  equaveShift: number;
   isomorphicHorizontal: number;
   isomorphicVertical: number;
 }>();
 
 const emit = defineEmits([
-  "update:typingEquave",
+  "update:equaveShift",
   "update:isomorphicHorizontal",
   "update:isomorphicVertical",
 ]);
@@ -25,10 +25,10 @@ function updateIsomorphicHorizontal(event: Event) {
   }
 }
 
-function updateTypingEquave(event: Event) {
+function updateEquaveShift(event: Event) {
   const value = parseInt((event.target as HTMLInputElement).value);
   if (!isNaN(value)) {
-    emit("update:typingEquave", value);
+    emit("update:equaveShift", value);
   }
 }
 </script>
@@ -41,7 +41,7 @@ function updateTypingEquave(event: Event) {
         <i>Coming soon to a browser near you...</i>
       </div>
       <div class="column keyboard-controls">
-        <h1>(Typing) Keyboard</h1>
+        <h1>Keyboard</h1>
         <h2>Isomorphic key mapping</h2>
         <p>
           Distance (in scale degrees) between adjacent keys on the
@@ -76,13 +76,14 @@ function updateTypingEquave(event: Event) {
           <div class="control">
             <input
               type="number"
-              :value="typingEquave"
-              @input="updateTypingEquave"
+              :value="equaveShift"
+              @input="updateEquaveShift"
             />
           </div>
         </div>
         <p>"Shift" key toggles sustain for individual keys.</p>
         <p>The key left of digit "1" releases sustain.</p>
+        <i>These settings affect both typing and virtual keyboards.</i>
       </div>
     </div>
   </main>
