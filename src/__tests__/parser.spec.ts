@@ -64,4 +64,16 @@ describe("Line parser", () => {
     );
     expect(result.equals(expected)).toBeTruthy();
   });
+
+  it("parses ambiguous composites (unary minus vs. negative offset)", () => {
+    const result = parseLine("3/1 + [-1>");
+    expect(
+      result.equals(
+        ExtendedMonzo.fromFraction(
+          new Fraction(3, 2),
+          DEFAULT_NUMBER_OF_COMPONENTS
+        )
+      )
+    ).toBeTruthy();
+  });
 });
