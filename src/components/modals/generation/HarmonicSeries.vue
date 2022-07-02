@@ -4,18 +4,19 @@ import Scale from "@/scale";
 import { ref } from "vue";
 import Modal from "../../ModalDialog.vue";
 
-const emit = defineEmits(["update:scaleLines", "cancel"]);
+const emit = defineEmits(["update:scaleLines", "update:scaleName", "cancel"]);
 
-const lowestHarmonic = ref<HTMLInputElement | null>(null);
-const highestHarmonic = ref<HTMLInputElement | null>(null);
+const lowestHarmonic = ref(8);
+const highestHarmonic = ref(16);
 
 function generate() {
-  const denominator = parseInt(lowestHarmonic.value!.value);
+  const denominator = lowestHarmonic.value;
   const scale = Scale.fromHarmonicSeries(
     denominator,
-    parseInt(highestHarmonic.value!.value),
+    highestHarmonic.value,
     DEFAULT_NUMBER_OF_COMPONENTS
   );
+  emit("update:scaleName", `Harmonics ${denominator}-${highestHarmonic.value}`);
   emit(
     "update:scaleLines",
     scale.toScaleLines({ preferredDenominator: denominator })
@@ -32,21 +33,19 @@ function generate() {
       <div class="control-group">
         <label for="lowest-harmonic">Lowest harmonic</label>
         <input
-          ref="lowestHarmonic"
           id="lowest-harmonic"
           type="number"
-          value="8"
           min="1"
           class="control"
+          v-model="lowestHarmonic"
         />
         <label for="highest-harmonic">Highest harmonic</label>
         <input
-          ref="highestHarmonic"
           id="highest-harmonic"
           type="number"
-          value="16"
           min="1"
           class="control"
+          v-model="highestHarmonic"
         />
       </div>
     </template>

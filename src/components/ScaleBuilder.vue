@@ -357,6 +357,7 @@ async function doImport(importerKey: ImporterKey, event: Event) {
   <Teleport to="body">
     <HarmonicSeriesModal
       :show="showHarmonicSeriesModal"
+      @update:scaleName="emit('update:scaleName', $event)"
       @update:scaleLines="
         showHarmonicSeriesModal = false;
         emit('update:scaleLines', $event);

@@ -9,15 +9,14 @@ const props = defineProps<{
 
 const emit = defineEmits(["update:scaleLines", "cancel"]);
 
-const denominatorInput = ref<HTMLInputElement | null>(null);
+const denominator = ref(128);
 
 function modify() {
-  const denominator = parseInt(denominatorInput.value!.value);
   emit(
     "update:scaleLines",
     props.scale
-      .approximateHarmonics(denominator)
-      .toScaleLines({ preferredDenominator: denominator })
+      .approximateHarmonics(denominator.value)
+      .toScaleLines({ preferredDenominator: denominator.value })
   );
 }
 </script>
@@ -31,12 +30,11 @@ function modify() {
       <div class="control-group">
         <label for="approximate-harmonics-denominator">Denominator</label>
         <input
-          ref="denominatorInput"
           id="approximate-harmonics-denominator"
           type="number"
-          value="128"
           min="1"
           class="control"
+          v-model="denominator"
         />
       </div>
     </template>
