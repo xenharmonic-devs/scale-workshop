@@ -10,9 +10,9 @@ import Modal from "@/components/ModalDialog.vue";
 import HarmonicSeriesModal from "./modals/generation/HarmonicSeries.vue";
 import MosModal from "@/components/modals/generation/MosScale.vue";
 import ApproximateByHarmonicsModal from "@/components/modals/modification/ApproximateByHarmonics.vue";
-import RankOneModal from "./modals/generation/RankOne.vue";
-import RankTwoModal from "./modals/generation/RankTwo.vue";
-import TemperModal from "./modals/modification/TemperScale.vue";
+import RankOneModal from "@/components/modals/generation/RankOne.vue";
+import RankTwoModal from "@/components/modals/generation/RankTwo.vue";
+import TemperModal from "@/components/modals/modification/TemperScale.vue";
 import { presets, presetsByGroup } from "@/presets";
 import type Scale from "@/scale";
 import { importFile, type ImporterKey } from "@/importers";
@@ -383,20 +383,23 @@ async function doImport(importerKey: ImporterKey, event: Event) {
       @cancel="showMosModal = false"
     />
 
+    <!--TODO: Move centsFractionDigits to user preferences #143-->
     <RankOneModal
       :show="showRankOneModal"
-      @update:scaleLines="
+      :centsFractionDigits="3"
+      @update:scale="
         showRankOneModal = false;
-        emit('update:scaleLines', $event);
+        emit('update:scale', $event);
       "
       @cancel="showRankOneModal = false"
     />
 
     <RankTwoModal
       :show="showRankTwoModal"
-      @update:scaleLines="
+      :centsFractionDigits="3"
+      @update:scale="
         showRankTwoModal = false;
-        emit('update:scaleLines', $event);
+        emit('update:scale', $event);
       "
       @cancel="showRankTwoModal = false"
     />
@@ -442,13 +445,15 @@ async function doImport(importerKey: ImporterKey, event: Event) {
       @cancel="showApproximateByHarmonicsModal = false"
       :scale="scale"
     />
+
     <TemperModal
       :show="showTemperModal"
-      @update:scaleLines="
+      @update:scale="
         showTemperModal = false;
-        emit('update:scaleLines', $event);
+        emit('update:scale', $event);
       "
       @cancel="showTemperModal = false"
+      :centsFractionDigits="3"
       :scale="scale"
     />
   </Teleport>

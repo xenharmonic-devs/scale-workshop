@@ -1,12 +1,8 @@
 import Fraction from "fraction.js";
 import { getSemiConvergents } from "moment-of-symmetry";
 import { PRIME_CENTS } from "@/constants";
-import {
-  PRIMES,
-  gcd,
-  lcm,
-  centsToNats,
-} from "temperaments";
+import { PRIMES, gcd, lcm, centsToNats } from "temperaments";
+import { centsToValue, valueToCents } from "./utils";
 
 type Monzo = Fraction[];
 
@@ -76,6 +72,9 @@ export default class ExtendedMonzo {
   cents: number;
 
   constructor(vector: Monzo, residual?: Fraction, cents = 0) {
+    if (isNaN(cents)) {
+      throw new Error("Invalid cents value");
+    }
     if (residual === undefined) {
       residual = new Fraction(1);
     }
@@ -202,7 +201,7 @@ export default class ExtendedMonzo {
     if (!this.residual.equals(1)) {
       throw new Error("Cannot convert monzo with residual to integers");
     }
-    if (this.nats) {
+    if (this.cents) {
       throw new Error("Cannot convert monzo with offset to integers");
     }
     const result: number[] = [];

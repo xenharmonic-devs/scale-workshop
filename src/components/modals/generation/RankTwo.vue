@@ -8,147 +8,115 @@ import {
   makeRank2FromCommas,
   mosSizesRank2FromVals,
   mosSizesRank2FromCommas,
+  type Rank2Params,
 } from "@/tempering";
 import { mosSizes as getMosSizes } from "moment-of-symmetry";
 import { computed, ref, watch } from "vue";
-import Modal from "../../ModalDialog.vue";
-import makeState from "../tempering-state";
+import Modal from "@/components/ModalDialog.vue";
+import makeState from "@/components/modals/tempering-state";
+import { computedAndError } from "@/utils";
+import ScaleLineInput from "@/components/ScaleLineInput.vue";
+import { ScaleLine } from "@/scale-line";
+
+const props = defineProps<{
+  centsFractionDigits: number;
+}>();
 
 const MAX_SIZE = 128;
 const MAX_LENGTH = 12;
 
-const emit = defineEmits(["update:scaleLines", "cancel"]);
+const emit = defineEmits(["update:scale", "cancel"]);
 
 // === Component state ===
 const method = ref<"generator" | "vals" | "commas">("generator");
+const error = ref("");
 const state = makeState(method);
 // method: "generator"
+const generator = ref(parseLine("3/2"));
 const generatorString = ref("");
+const period = ref(parseLine("2/1"));
 const periodString = ref("2/1");
 // method: "vals"
 const valsString = state.valsString;
 // medhod: "commas"
 const commasString = state.commasString;
-// Generic
-const subgroupString = state.subgroupString;
+// method: "generator"
 const size = ref(7);
 const up = ref(5);
-const error = state.error;
+const numPeriods = ref(1);
+// Generic
+const subgroupString = state.subgroupString;
+const subgroupError = state.subgroupError;
+const subgroupInput = ref<HTMLInputElement | null>(null);
 // Advanced
 const showAdvanced = ref(false);
-const precision = ref(3);
 const weightsString = state.weightsString;
 const tempering = state.tempering;
 const constraintsString = state.constraintsString;
 
 // === Computed state ===
-const unison = ExtendedMonzo.fromNumber(1, DEFAULT_NUMBER_OF_COMPONENTS);
-const generatorAndError = computed<[ExtendedMonzo, string]>(() => {
-  try {
-    return [parseLine(generatorString.value), ""];
-  } catch (error_) {
-    if (error_ instanceof Error) {
-      return [unison, error_.message];
-    }
-    return [unison, "" + error_];
-  }
-});
-const generator = computed(() => generatorAndError.value[0]);
-const generatorError = computed(() => generatorAndError.value[1]);
-const periodAndError = computed<[ExtendedMonzo, string]>(() => {
-  try {
-    return [parseLine(periodString.value), ""];
-  } catch (error_) {
-    if (error_ instanceof Error) {
-      return [unison, error_.message];
-    }
-    return [unison, "" + error_];
-  }
-});
-const period = computed(() => periodAndError.value[0]);
-const periodError = computed(() => periodAndError.value[1]);
 const vals = state.vals;
 const commas = state.commas;
 const subgroup = state.subgroup;
 const options = state.options;
 
-const divisionsMosSizesAndError = computed<[number, number[], string]>(() => {
-  let errorValue = "";
-  let divisions = 1;
-  let sizes: number[] = [];
-  try {
-    if (method.value === "generator") {
-      // Don't show error in the default configuration
-      if (!generatorString.value.length) {
-        return [1, [], ""];
-      }
-      sizes = getMosSizes(
-        generator.value.totalNats() / period.value.totalNats(),
-        MAX_SIZE,
-        MAX_LENGTH
-      );
-    } else if (method.value === "vals") {
-      // Don't show error in the default configuration
-      if (!vals.value.length || !subgroupString.value.length) {
-        return [1, [], ""];
-      }
-      // Huge subgroups get too expensive to evaluate interactively
-      if (subgroup.value.basis.length > 6) {
-        return [1, [], ""];
-      }
-      [divisions, sizes] = mosSizesRank2FromVals(
-        vals.value,
-        subgroup.value,
-        MAX_SIZE,
-        MAX_LENGTH,
-        options.value
-      );
-    } else {
-      // Don't show error in the default configuration
-      if (!commas.value.length) {
-        return [1, [], ""];
-      }
-      // Huge subgroups get too expensive to evaluate interactively
-      if (subgroup.value.basis.length > 6) {
-        return [1, [], ""];
-      }
-      [divisions, sizes] = mosSizesRank2FromCommas(
-        commas.value,
-        subgroup.value,
-        MAX_SIZE,
-        MAX_LENGTH,
-        options.value
-      );
+// TODO: Show MOS names in the footer similar to the MOS modal
+const [mosSizes, mosSizesError] = computedAndError(() => {
+  if (method.value === "generator") {
+    // Don't show error in the default configuration
+    if (!generatorString.value.length) {
+      return [];
     }
-  } catch (error) {
-    if (error instanceof Error) {
-      errorValue = error.message;
-    } else {
-      errorValue = "" + error;
+    return getMosSizes(
+      generator.value.totalCents() / period.value.totalCents(),
+      MAX_SIZE,
+      MAX_LENGTH
+    ).map((mosSize) => mosSize * numPeriods.value);
+  } else if (method.value === "vals") {
+    // Don't show error in the default configuration
+    if (!vals.value.length || !subgroupString.value.length) {
+      return [];
     }
+    // Huge subgroups get too expensive to evaluate interactively
+    if (subgroup.value.basis.length > 6) {
+      return [];
+    }
+    return mosSizesRank2FromVals(
+      vals.value,
+      subgroup.value,
+      MAX_SIZE,
+      MAX_LENGTH,
+      options.value
+    );
+  } else {
+    // Don't show error in the default configuration
+    if (!commas.value.length) {
+      return [];
+    }
+    // Huge subgroups get too expensive to evaluate interactively
+    if (subgroup.value.basis.length > 6) {
+      return [];
+    }
+    return mosSizesRank2FromCommas(
+      commas.value,
+      subgroup.value,
+      MAX_SIZE,
+      MAX_LENGTH,
+      options.value
+    );
   }
-  if (divisions < 1) {
-    return [1, [], ""];
-  }
-  return [divisions, sizes, errorValue];
-});
-
-const divisions = computed(() => divisionsMosSizesAndError.value[0]);
-const mosSizes = computed(() => divisionsMosSizesAndError.value[1]);
-const mosError = computed(() => divisionsMosSizesAndError.value[2]);
-
+}, []);
 // === Watchers ===
 
 // Force scale size to align with the multi-MOS
-watch(divisionsMosSizesAndError, (newValue) => {
-  const divisions = newValue[0];
-  if (divisions > 1) {
-    size.value = Math.round(size.value / divisions) * divisions;
+watch(numPeriods, (newValue) => {
+  if (newValue > 1) {
+    size.value = Math.round(size.value / newValue) * newValue;
   }
 });
 
 const upMax = computed(() => {
-  return Math.round(size.value / divisions.value) - 1;
+  return Math.round(size.value / numPeriods.value) - 1;
 });
 
 const down = computed(() => {
@@ -159,57 +127,66 @@ watch(upMax, (newValue) => {
   up.value = Math.min(up.value, newValue);
 });
 
-watch(mosError, (newValue) => {
-  error.value = newValue;
-});
+watch(generator, () => (error.value = ""));
+watch(period, () => (error.value = ""));
 
-watch(generatorError, (newValue) => {
-  error.value = newValue;
-});
-
-watch(periodError, (newValue) => {
-  error.value = newValue;
-});
+watch(subgroupError, (newValue) =>
+  subgroupInput.value!.setCustomValidity(newValue)
+);
 
 // === Methods ===
 
-function generate() {
-  if (error.value.length) {
-    return;
-  }
-  try {
-    let scale: Scale;
-    if (method.value === "generator") {
-      scale = Scale.fromRank2(
-        generator.value,
-        period.value,
-        size.value,
-        down.value
-      );
-      // Assume that the user knows what they're doing if they enter precise cents
-      emit("update:scaleLines", scale.toScaleLines());
-      return;
-    } else if (method.value === "vals") {
-      scale = makeRank2FromVals(
+function selectMosSize(mosSize: number) {
+  size.value = mosSize;
+  if (method.value !== "generator") {
+    let params: Rank2Params;
+    if (method.value === "vals") {
+      params = makeRank2FromVals(
         vals.value,
-        size.value,
-        down.value,
+        mosSize,
         subgroup.value,
         options.value
       );
     } else {
-      scale = makeRank2FromCommas(
+      params = makeRank2FromCommas(
         commas.value,
-        size.value,
-        down.value,
+        mosSize,
         subgroup.value,
         options.value
       );
     }
-    emit(
-      "update:scaleLines",
-      scale.toScaleLines({ centsFractionDigits: precision.value })
+    const lineOptions = { centsFractionDigits: props.centsFractionDigits };
+    generator.value = new ScaleLine(
+      ExtendedMonzo.fromCents(params.generator, DEFAULT_NUMBER_OF_COMPONENTS),
+      "cents",
+      undefined,
+      lineOptions
     );
+    generatorString.value = generator.value.name;
+    period.value = new ScaleLine(
+      ExtendedMonzo.fromCents(params.period, DEFAULT_NUMBER_OF_COMPONENTS),
+      "cents",
+      undefined,
+      lineOptions
+    );
+    periodString.value = period.value.name;
+    numPeriods.value = params.numPeriods;
+    method.value = "generator";
+  }
+}
+
+function generate() {
+  // Clear error for the next time the modal is opened
+  error.value = "";
+  try {
+    const scale = Scale.fromRank2(
+      generator.value,
+      period.value,
+      size.value,
+      down.value,
+      numPeriods.value
+    );
+    emit("update:scale", scale);
   } catch (error_) {
     if (error_ instanceof Error) {
       error.value = error_.message;
@@ -226,7 +203,7 @@ function generate() {
       <h2>Generate rank 2 temperament</h2>
     </template>
     <template #body>
-      <div @click="error = ''">
+      <div>
         <div class="control-group">
           <div class="control">
             <label>Method</label>
@@ -235,7 +212,6 @@ function generate() {
                 type="radio"
                 id="method-generator"
                 value="generator"
-                @focus="error = ''"
                 v-model="method"
               />
               <label for="method-generator"> Generator </label>
@@ -246,7 +222,6 @@ function generate() {
                 type="radio"
                 id="method-vals"
                 value="vals"
-                @focus="error = ''"
                 v-model="method"
               />
               <label for="method-vals"> Vals </label>
@@ -257,7 +232,6 @@ function generate() {
                 type="radio"
                 id="method-commas"
                 value="commas"
-                @focus="error = ''"
                 v-model="method"
               />
               <label for="method-commas"> Comma list </label>
@@ -266,25 +240,24 @@ function generate() {
 
           <div class="control" v-show="method === 'generator'">
             <label for="generator">Generator</label>
-            <input
+            <ScaleLineInput
               id="generator"
               placeholder="3/2"
-              @focus="error = ''"
               v-model="generatorString"
+              @update:value="generator = $event"
             />
 
             <label for="period">Period</label>
-            <input id="period" @focus="error = ''" v-model="periodString" />
+            <ScaleLineInput
+              id="period"
+              v-model="periodString"
+              @update:value="period = $event"
+            />
           </div>
 
           <div class="control" v-show="method === 'vals'">
             <label for="vals">Vals</label>
-            <input
-              id="vals"
-              placeholder="12 & 17c"
-              @focus="error = ''"
-              v-model="valsString"
-            />
+            <input id="vals" placeholder="12 & 17c" v-model="valsString" />
           </div>
 
           <div class="control" v-show="method === 'commas'">
@@ -292,7 +265,6 @@ function generate() {
             <input
               id="commas"
               placeholder="225/224, 1029/1024"
-              @focus="error = ''"
               v-model="commasString"
             />
           </div>
@@ -303,39 +275,29 @@ function generate() {
           >
             <label for="subgroup">Subgroup</label>
             <input
+              ref="subgroupInput"
               id="subgroup"
               :placeholder="method === 'vals' ? '2.3.5' : ''"
-              @focus="error = ''"
               v-model="subgroupString"
             />
           </div>
 
-          <div class="control">
+          <div class="control" v-show="method === 'generator'">
             <label for="size"
               >Scale size{{
-                divisions === 1 ? "" : ` (multiple of ${divisions})`
+                numPeriods === 1 ? "" : ` (multiple of ${numPeriods})`
               }}</label
             >
             <input
-              ref="sizeInput"
               id="size"
               type="number"
-              :min="divisions"
+              :min="numPeriods"
               max="999"
-              :step="divisions"
-              @focus="error = ''"
+              :step="numPeriods"
               v-model="size"
             />
             <label for="up">Generators up/down from 1/1</label>
-            <input
-              ref="upInput"
-              id="up"
-              type="number"
-              min="0"
-              :max="upMax"
-              @focus="error = ''"
-              v-model="up"
-            />
+            <input id="up" type="number" min="0" :max="upMax" v-model="up" />
             <input
               id="down"
               type="number"
@@ -344,25 +306,31 @@ function generate() {
               min="0"
               :max="upMax"
             />
+            <label for="num-periods">Number of periods</label>
+            <input
+              id="num-periods"
+              type="number"
+              min="1"
+              max="99"
+              v-model="numPeriods"
+            />
           </div>
 
-          <div>
+          <div :class="{ error: mosSizesError.length }">
             <strong>MOS sizes:</strong>
+            <span v-show="mosSizesError.length">⚠</span>
           </div>
           <div>
             <button
               v-for="(mosSize, i) of mosSizes"
               :key="i"
-              @click="
-                size = mosSize;
-                error = '';
-              "
+              @click="selectMosSize(mosSize)"
             >
               {{ mosSize }}
             </button>
-            <p class="error">{{ error }}</p>
           </div>
         </div>
+
         <div v-show="method === 'vals' || method === 'commas'">
           <h3
             class="section"
@@ -378,7 +346,6 @@ function generate() {
                   type="radio"
                   id="tempering-TE"
                   value="TE"
-                  @focus="error = ''"
                   v-model="tempering"
                 />
                 <label for="tempering-TE"> TE </label>
@@ -389,7 +356,6 @@ function generate() {
                   type="radio"
                   id="tempering-POTE"
                   value="POTE"
-                  @focus="error = ''"
                   v-model="tempering"
                 />
                 <label for="tempering-POTE"> POTE </label>
@@ -400,7 +366,6 @@ function generate() {
                   type="radio"
                   id="tempering-CTE"
                   value="CTE"
-                  @focus="error = ''"
                   v-model="tempering"
                 />
                 <label for="tempering-CTE"> CTE </label>
@@ -409,28 +374,12 @@ function generate() {
 
             <div v-show="tempering === 'CTE'" class="control">
               <label for="constraints">Constraints</label>
-              <input
-                id="constraints"
-                @focus="error = ''"
-                v-model="constraintsString"
-              />
+              <input id="constraints" v-model="constraintsString" />
             </div>
 
             <div class="control">
               <label for="weights">Weights</label>
-              <input id="weights" @focus="error = ''" v-model="weightsString" />
-            </div>
-
-            <div class="control">
-              <label for="precision">Cents precision</label>
-              <input
-                id="precision"
-                type="number"
-                min="0"
-                max="18"
-                @focus="error = ''"
-                v-model="precision"
-              />
+              <input id="weights" v-model="weightsString" />
             </div>
           </div>
         </div>
@@ -438,8 +387,9 @@ function generate() {
     </template>
     <template #footer>
       <div class="btn-group">
-        <button @click="generate" :disabled="error.length !== 0">OK</button>
+        <button @click="generate" :disabled="method !== 'generator'">OK</button>
         <button @click="$emit('cancel')">Cancel</button>
+        <span class="error" v-show="error.length">⚠</span>
       </div>
     </template>
   </Modal>

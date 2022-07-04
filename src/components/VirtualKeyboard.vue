@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { mmod } from "@/utils";
+import { mmod } from "temperaments";
 import { computed, ref } from "vue";
 import VirtualKeyboardKey from "@/components/VirtualKeyboardKey.vue";
 

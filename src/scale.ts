@@ -74,6 +74,7 @@ export default class Scale {
     period: ScaleLine,
     size: number,
     down: number,
+    numPeriods = 1,
     baseFrequency = 440
   ) {
     if (down < 0) {
@@ -82,13 +83,21 @@ export default class Scale {
     if (down > size) {
       throw new Error("Down must be less than size");
     }
+    if (size % numPeriods) {
+      throw new Error("Size must be a multiple of the number of periods");
+    }
+    if (down % numPeriods) {
+      throw new Error("Down must be a multiple of the number of periods");
+    }
+    size /= numPeriods;
+    down /= numPeriods;
     const intervals = [];
     for (let i = 0; i < size; ++i) {
       intervals.push(generator.mul(i - down).mmod(period));
     }
     const result = new Scale(intervals, period, baseFrequency);
     result.sortInPlace();
-    return result;
+    return result.repeat(numPeriods);
   }
 
   static fromHarmonicSeries(
@@ -599,6 +608,14 @@ export default class Scale {
     const intervals = this.intervals.map((interval) =>
       interval.approximateOddLimit(limit)
     );
+    return new Scale(intervals, equave, this.baseFrequency);
+  }
+
+  mergeOptions(options: ScaleLineOptions) {
+    const intervals = this.intervals.map((interval) =>
+      interval.mergeOptions(options)
+    );
+    const equave = this.equave.mergeOptions(options);
     return new Scale(intervals, equave, this.baseFrequency);
   }
 

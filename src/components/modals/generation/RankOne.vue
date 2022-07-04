@@ -1,24 +1,36 @@
 <script setup lang="ts">
 import { makeRank1 } from "@/tempering";
-import { ref } from "vue";
-import Modal from "../../ModalDialog.vue";
+import { ref, watch } from "vue";
+import Modal from "@/components/ModalDialog.vue";
 import makeState from "../tempering-state";
 
-const emit = defineEmits(["update:scaleLines", "cancel"]);
+const props = defineProps<{
+  centsFractionDigits: number;
+}>();
+
+const emit = defineEmits(["update:scale", "cancel"]);
 
 // === Component state ===
-const state = makeState(ref("vals"));
+const state = makeState(ref("vals"), "2.3.5");
 const valsString = state.valsString;
 const subgroupString = state.subgroupString;
 const showAdvanced = ref(false);
-const precision = ref(3);
 const weightsString = state.weightsString;
-const error = state.error;
+const subgroupError = state.subgroupError;
+const error = ref("");
+const valElement = ref<HTMLInputElement | null>(null);
+const subgroupElement = ref<HTMLInputElement | null>(null);
 
 // === Computed state ===
 const vals = state.vals;
 const subgroup = state.subgroup;
 const weights = state.weights;
+
+// === Watchers ===
+watch(subgroupError, (newError) =>
+  subgroupElement.value!.setCustomValidity(newError)
+);
+watch(error, (newError) => valElement.value!.setCustomValidity(newError));
 
 // === Methods ===
 function generate() {
@@ -27,14 +39,12 @@ function generate() {
       error.value = "A single val is required";
       return;
     }
-    const scale = makeRank1(vals.value[0], subgroup.value, weights.value);
-    emit(
-      "update:scaleLines",
-      scale.toScaleLines({
-        centsFractionDigits: precision.value,
-        preferredEdo: scale.size,
-      })
-    );
+    const scale = makeRank1(
+      vals.value[0],
+      subgroup.value,
+      weights.value
+    ).mergeOptions({ centsFractionDigits: props.centsFractionDigits });
+    emit("update:scale", scale);
   } catch (error_) {
     if (error_ instanceof Error) {
       error.value = error_.message;
@@ -55,6 +65,7 @@ function generate() {
         <div class="control-group">
           <label for="val">Val</label>
           <input
+            ref="valElement"
             id="val"
             placeholder="17c"
             class="control"
@@ -63,13 +74,13 @@ function generate() {
           />
           <label for="subgroup">Subgroup</label>
           <input
+            ref="subgroupElement"
             id="subgroup"
             class="control"
             @focus="error = ''"
             v-model="subgroupString"
           />
         </div>
-        <p class="error">{{ error }}</p>
         <h3
           class="section"
           :class="{ open: showAdvanced }"
@@ -87,24 +98,17 @@ function generate() {
               v-model="weightsString"
             />
           </div>
-          <div class="control">
-            <label for="precision">Cents precision</label>
-            <input
-              id="precision"
-              type="number"
-              min="0"
-              max="18"
-              class="control"
-              @focus="error = ''"
-              v-model="precision"
-            />
-          </div>
         </div>
       </div>
     </template>
     <template #footer>
       <div class="btn-group">
-        <button @click="generate" :disabled="error.length !== 0">OK</button>
+        <button
+          @click="generate"
+          :disabled="error.length !== 0 || subgroupError.length !== 0"
+        >
+          OK
+        </button>
         <button @click="$emit('cancel')">Cancel</button>
       </div>
     </template>

@@ -1,30 +1,34 @@
 <script setup lang="ts">
-import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
+import { DEFAULT_NUMBER_OF_COMPONENTS, PRIME_CENTS } from "@/constants";
 import type Scale from "@/scale";
 import { Mapping } from "@/tempering";
-import { ref } from "vue";
-import Modal from "../../ModalDialog.vue";
-import makeState from "../tempering-state";
+import { ref, watch } from "vue";
+import Modal from "@/components/ModalDialog.vue";
+import makeState from "@/components/modals/tempering-state";
 
 const props = defineProps<{
   scale: Scale;
+  centsFractionDigits: number;
 }>();
 
-const emit = defineEmits(["update:scaleLines", "cancel"]);
+const emit = defineEmits(["update:scale", "cancel"]);
 
 // === Component state ===
-const method = ref<"vals" | "commas">("commas");
+const method = ref<"mapping" | "vals" | "commas">("mapping");
+const error = ref("");
 const state = makeState(method);
+// method: "mapping"
+const mappingString = ref("1200, 1897.2143, 2788.8573");
 // method: "vals"
 const valsString = state.valsString;
 // medhod: "commas"
 const commasString = state.commasString;
 // Generic
 const subgroupString = state.subgroupString;
-const error = state.error;
+const subgroupError = state.subgroupError;
+const subgroupInput = ref<HTMLInputElement | null>(null);
 // Advanced
 const showAdvanced = ref(false);
-const precision = ref(3);
 const weightsString = state.weightsString;
 const tempering = state.tempering;
 const constraintsString = state.constraintsString;
@@ -35,31 +39,45 @@ const commas = state.commas;
 const subgroup = state.subgroup;
 const options = state.options;
 
+watch(subgroupError, (newValue) =>
+  subgroupInput.value!.setCustomValidity(newValue)
+);
+
 // === Methods ===
 
 function modify() {
   try {
     let mapping: Mapping;
-    if (method.value === "vals") {
+    if (method.value === "mapping") {
+      const vector = mappingString.value
+        .split(",")
+        .map((component) => component.trim())
+        .filter((component) => component.length)
+        .map((component) => parseFloat(component));
+      while (vector.length < DEFAULT_NUMBER_OF_COMPONENTS) {
+        vector.push(PRIME_CENTS[vector.length]);
+      }
+      mapping = new Mapping(vector.slice(0, DEFAULT_NUMBER_OF_COMPONENTS));
+    } else if (method.value === "vals") {
       mapping = Mapping.fromVals(
         vals.value,
-        subgroup.value,
         DEFAULT_NUMBER_OF_COMPONENTS,
+        subgroup.value,
         options.value
       );
     } else {
       mapping = Mapping.fromCommas(
         commas.value,
-        subgroup.value,
         DEFAULT_NUMBER_OF_COMPONENTS,
+        subgroup.value,
         options.value
       );
     }
     emit(
-      "update:scaleLines",
+      "update:scale",
       mapping
         .apply(props.scale)
-        .toScaleLines({ centsFractionDigits: precision.value })
+        .mergeOptions({ centsFractionDigits: props.centsFractionDigits })
     );
   } catch (error_) {
     if (error_ instanceof Error) {
@@ -74,13 +92,23 @@ function modify() {
 <template>
   <Modal @confirm="modify" @cancel="$emit('cancel')">
     <template #header>
-      <h2>Generate rank 2 temperament</h2>
+      <h2>Temper scale</h2>
     </template>
     <template #body>
       <div @click="error = ''">
         <div class="control-group">
           <div class="control">
             <label>Method</label>
+            <span>
+              <input
+                type="radio"
+                id="method-mapping"
+                value="mapping"
+                @focus="error = ''"
+                v-model="method"
+              />
+              <label for="method-mapping"> Mapping </label>
+            </span>
             <span>
               <input
                 type="radio"
@@ -104,6 +132,15 @@ function modify() {
             </span>
           </div>
 
+          <div class="control" v-show="method === 'mapping'">
+            <label for="mapping">Mapping</label>
+            <textarea
+              id="mapping"
+              @focus="error = ''"
+              v-model="mappingString"
+            ></textarea>
+          </div>
+
           <div class="control" v-show="method === 'vals'">
             <label for="vals">Vals</label>
             <input
@@ -124,9 +161,13 @@ function modify() {
             />
           </div>
 
-          <div class="control">
+          <div
+            class="control"
+            v-show="method === 'vals' || method === 'commas'"
+          >
             <label for="subgroup">Subgroup</label>
             <input
+              ref="subgroupInput"
               id="subgroup"
               :placeholder="method === 'vals' ? '2.3.5' : ''"
               @focus="error = ''"
@@ -190,18 +231,6 @@ function modify() {
             <label for="weights">Weights</label>
             <input id="weights" @focus="error = ''" v-model="weightsString" />
           </div>
-
-          <div class="control">
-            <label for="precision">Cents precision</label>
-            <input
-              id="precision"
-              type="number"
-              min="0"
-              max="18"
-              @focus="error = ''"
-              v-model="precision"
-            />
-          </div>
         </div>
       </div>
     </template>
@@ -209,6 +238,7 @@ function modify() {
       <div class="btn-group">
         <button @click="modify" :disabled="error.length !== 0">OK</button>
         <button @click="$emit('cancel')">Cancel</button>
+        <span class="error" v-show="error.length">⚠</span>
       </div>
     </template>
   </Modal>

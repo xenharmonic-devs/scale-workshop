@@ -1,4 +1,3 @@
-import Fraction from "fraction.js";
 import { mosSizes } from "moment-of-symmetry";
 import {
   type Monzo,
@@ -7,29 +6,26 @@ import {
   Temperament,
   type TuningOptions,
   type FractionValue,
-  PRIMES,
-  LOG_PRIMES,
   fromWarts,
   type Weights,
   Subgroup,
 } from "temperaments";
-import { DEFAULT_NUMBER_OF_COMPONENTS } from "./constants";
-
-import ExtendedMonzo from "./monzo";
+import { DEFAULT_NUMBER_OF_COMPONENTS, PRIME_CENTS } from "./constants";
 import Scale from "./scale";
-import { toBrightGenerator } from "./utils";
+import { ScaleLine } from "./scale-line";
+import { toBrightGenerator, valueToCents } from "./utils";
 
 export class Mapping {
-  columns: ExtendedMonzo[];
+  vector: number[];
 
-  constructor(columns: ExtendedMonzo[]) {
-    this.columns = columns;
+  constructor(vector: number[]) {
+    this.vector = vector;
   }
 
   static fromVals(
     vals: (Val | number | string)[],
-    subgroup: SubgroupValue,
     numberOfComponents: number,
+    subgroup: SubgroupValue,
     options?: TuningOptions
   ) {
     const temperament = Temperament.fromVals(vals, subgroup);
@@ -37,29 +33,12 @@ export class Mapping {
   }
 
   static fromCommas(
-    commaList: ExtendedMonzo[] | (Monzo | FractionValue)[],
+    commaList: (Monzo | FractionValue)[],
+    numberOfComponents: number,
     subgroup?: SubgroupValue,
-    numberOfComponents?: number,
     options?: TuningOptions
   ) {
-    if (commaList.length) {
-      if (commaList[0] instanceof ExtendedMonzo) {
-        if (numberOfComponents === undefined) {
-          numberOfComponents = commaList[0].numberOfComponents;
-        }
-        commaList = (commaList as ExtendedMonzo[]).map((em: ExtendedMonzo) =>
-          em.toIntegerMonzo()
-        );
-      }
-    }
-    if (numberOfComponents === undefined) {
-      throw new Error("Must give number of components or use extended monzos");
-    }
-    const temperament = Temperament.fromCommas(
-      commaList as (Monzo | FractionValue)[],
-      subgroup,
-      true
-    );
+    const temperament = Temperament.fromCommas(commaList, subgroup, true);
     return Mapping.fromTemperament(temperament, numberOfComponents, options);
   }
 
@@ -68,77 +47,75 @@ export class Mapping {
     numberOfComponents: number,
     options?: TuningOptions
   ) {
-    options = options || {};
-    const primeMapping = options.primeMapping;
-    const units = options.units;
+    options = Object.assign({}, options || {});
     options.primeMapping = true;
-    options.units = "nats";
+    options.units = "cents";
     const mapping = temperament.getMapping(options);
-    options.primeMapping = primeMapping;
-    options.units = units;
     if (mapping.length > numberOfComponents) {
       throw new Error("Not enough components to represent mapping");
     }
-    const columns: ExtendedMonzo[] = [];
-    mapping.forEach((primeMapping, index) => {
-      const column = ExtendedMonzo.fromNumber(
-        PRIMES[index],
-        numberOfComponents
-      );
-      columns.push(column.stretch(primeMapping / LOG_PRIMES[index]));
-    });
-    while (columns.length < numberOfComponents) {
-      columns.push(
-        ExtendedMonzo.fromNumber(PRIMES[columns.length], numberOfComponents)
-      );
+    while (mapping.length < numberOfComponents) {
+      mapping.push(PRIME_CENTS[mapping.length]);
     }
-    return new Mapping(columns);
+
+    return new Mapping(mapping);
   }
 
   static fromWarts(
     wartToken: number | string,
     numberOfPrimesOrJip: number | number[],
-    equave?: ExtendedMonzo
+    equaveCents?: number
   ) {
     const mapping = fromWarts(wartToken, numberOfPrimesOrJip);
     if (!mapping.length) {
       throw new Error("Failed to produce mapping");
     }
-    if (equave === undefined) {
+    if (equaveCents === undefined) {
       if (Array.isArray(numberOfPrimesOrJip)) {
-        equave = ExtendedMonzo.fromNumber(1, mapping.length);
-        equave.nats = numberOfPrimesOrJip[0];
+        equaveCents = numberOfPrimesOrJip[0];
       } else {
-        equave = ExtendedMonzo.fromNumber(2, mapping.length);
+        equaveCents = 1200;
       }
     }
-    const columns: ExtendedMonzo[] = [];
+    const vector: number[] = [];
     mapping.forEach((steps) => {
-      columns.push(equave!.mul(new Fraction(steps, mapping[0])));
+      vector.push((equaveCents! * steps) / mapping[0]);
     });
-    return new Mapping(columns);
+    return new Mapping(vector);
   }
 
   get size() {
-    return this.columns.length;
+    return this.vector.length;
   }
 
   pureOctaves() {
-    const purifier = Math.LN2 / this.columns[0].totalNats();
-    const columns = this.columns.map((column) => column.stretch(purifier));
-    return new Mapping(columns);
+    const purifier = 1200 / this.vector[0];
+    return new Mapping(this.vector.map((component) => component * purifier));
   }
 
-  apply(interval: ExtendedMonzo): ExtendedMonzo;
+  apply(interval: ScaleLine): ScaleLine;
   apply(scale: Scale): Scale;
-  apply(intervalOrScale: ExtendedMonzo | Scale): ExtendedMonzo | Scale {
-    if (intervalOrScale instanceof ExtendedMonzo) {
+  apply(intervalOrScale: ScaleLine | Scale): ScaleLine | Scale {
+    if (intervalOrScale instanceof ScaleLine) {
       const interval = intervalOrScale;
-      let result = this.columns[0].mul(interval.vector[0]);
-      for (let i = 1; i < this.size; ++i) {
-        result = result.add(this.columns[i].mul(interval.vector[i]));
+      const monzo = interval.monzo;
+      const totalCents = monzo.totalCents();
+      if (!totalCents) {
+        return interval;
       }
-      return result;
+      const cents =
+        monzo.vector
+          .map((component, i) => component.valueOf() * this.vector[i])
+          .reduce((a, b) => a + b) +
+        valueToCents(monzo.residual.valueOf()) +
+        monzo.cents;
+      const tempered = monzo.stretch(cents / totalCents);
+      return new ScaleLine(
+        tempered,
+        interval.lineType,
+        interval.name,
+        interval.options
+      );
     }
     const scale = intervalOrScale;
     const intervals = scale.intervals.map((interval) => this.apply(interval));
@@ -167,27 +144,24 @@ export function makeRank1(
 
   const mapping = Mapping.fromVals(
     [val],
-    subgroup,
     DEFAULT_NUMBER_OF_COMPONENTS,
+    subgroup,
     { temperEquaves: true, weights }
   );
   return mapping.apply(scale);
 }
 
-function divisionsAndMosSizes(
+function mosSizesRank2(
   temperament: Temperament,
   maxSize?: number,
   maxLength?: number,
   options?: TuningOptions
-): [number, number[]] {
-  const divisions = temperament.divisionsGenerator()[0];
+) {
+  const numPeriods = temperament.numPeriodsGenerator()[0];
   const [period, generator] = temperament.periodGenerator(options);
-  return [
-    divisions,
-    mosSizes(generator / period, maxSize, maxLength).map(
-      (size) => size * divisions
-    ),
-  ];
+  return mosSizes(generator / period, maxSize, maxLength).map(
+    (size) => size * numPeriods
+  );
 }
 
 export function mosSizesRank2FromVals(
@@ -201,7 +175,7 @@ export function mosSizesRank2FromVals(
   if (temperament.getRank() !== 2) {
     throw new Error("Given vals do not define a rank 2 temperament");
   }
-  return divisionsAndMosSizes(temperament, maxSize, maxLength, options);
+  return mosSizesRank2(temperament, maxSize, maxLength, options);
 }
 
 export function mosSizesRank2FromCommas(
@@ -215,38 +189,35 @@ export function mosSizesRank2FromCommas(
   if (temperament.getRank() !== 2) {
     throw new Error("Given commas do not define a rank 2 temperament");
   }
-  return divisionsAndMosSizes(temperament, maxSize, maxLength, options);
+  return mosSizesRank2(temperament, maxSize, maxLength, options);
 }
+
+export type Rank2Params = {
+  generator: number;
+  period: number;
+  numPeriods: number;
+};
 
 function makeRank2(
   temperament: Temperament,
   size: number,
-  down: number,
   options?: TuningOptions
-) {
-  const divisions = temperament.divisionsGenerator()[0];
-  if (size % divisions !== 0) {
-    throw new Error(`Given size '${size}' isn't a multiple of ${divisions}`);
+): Rank2Params {
+  const numPeriods = temperament.numPeriodsGenerator()[0];
+  if (size % numPeriods) {
+    throw new Error(`Given size '${size}' isn't a multiple of ${numPeriods}`);
   }
-  const segmentSize = size / divisions;
+  const segmentSize = size / numPeriods;
 
   const [period, generator] = temperament.periodGenerator(options);
   const brightGenerator = toBrightGenerator(generator, period, segmentSize);
 
-  const scale = Scale.fromRank2(
-    ExtendedMonzo.fromCents(brightGenerator, DEFAULT_NUMBER_OF_COMPONENTS),
-    ExtendedMonzo.fromCents(period, DEFAULT_NUMBER_OF_COMPONENTS),
-    segmentSize,
-    down
-  );
-
-  return scale.repeat(divisions);
+  return { generator: brightGenerator, period, numPeriods };
 }
 
 export function makeRank2FromVals(
   vals: (Val | number | string)[],
   size: number,
-  down: number,
   subgroup: SubgroupValue,
   options?: TuningOptions
 ) {
@@ -254,13 +225,12 @@ export function makeRank2FromVals(
   if (temperament.getRank() !== 2) {
     throw new Error("Given vals do not define a rank 2 temperament");
   }
-  return makeRank2(temperament, size, down, options);
+  return makeRank2(temperament, size, options);
 }
 
 export function makeRank2FromCommas(
   commas: (Monzo | FractionValue)[],
   size: number,
-  down: number,
   subgroup?: SubgroupValue,
   options?: TuningOptions
 ) {
@@ -268,5 +238,5 @@ export function makeRank2FromCommas(
   if (temperament.getRank() !== 2) {
     throw new Error("Given vals do not define a rank 2 temperament");
   }
-  return makeRank2(temperament, size, down, options);
+  return makeRank2(temperament, size, options);
 }

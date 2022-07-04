@@ -292,13 +292,13 @@ export function toBrightGenerator(
     const positiveInterval = positive[i] - positive[0];
     const negativeInterval = negative[i] - negative[0];
     if (positiveInterval > negativeInterval) {
-      return generator;
+      return mmod(generator, period);
     }
     if (negativeInterval > positiveInterval) {
-      return -generator;
+      return mmod(-generator, period);
     }
   }
 
   // Ambiguous generator
-  return generator;
+  return mmod(generator, period);
 }

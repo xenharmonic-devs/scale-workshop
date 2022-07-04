@@ -212,6 +212,15 @@ export class ScaleLine {
     );
   }
 
+  mergeOptions(options: ScaleLineOptions) {
+    return new ScaleLine(
+      this.monzo.clone(),
+      this.lineType,
+      this.name,
+      mergeOptions(this.options, options)
+    );
+  }
+
   monzoString() {
     let result = "[";
     for (let i = 0; i < this.monzo.vector.length; ++i) {
