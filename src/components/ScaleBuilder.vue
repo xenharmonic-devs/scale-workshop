@@ -7,7 +7,8 @@ import { APP_TITLE, UNIX_NEWLINE } from "@/constants";
 import { sanitizeFilename } from "@/utils";
 import { exportFile, type ExporterKey } from "@/exporters";
 import Modal from "@/components/ModalDialog.vue";
-import HarmonicSeriesModal from "./modals/generation/HarmonicSeries.vue";
+import ReaperExportModal from "@/components/modals/ReaperExport.vue";
+import HarmonicSeriesModal from "@/components/modals/generation/HarmonicSeries.vue";
 import MosModal from "@/components/modals/generation/MosScale.vue";
 import ApproximateByHarmonicsModal from "@/components/modals/modification/ApproximateByHarmonics.vue";
 import { presets, presetsByGroup } from "@/presets";
@@ -110,6 +111,8 @@ function doExport(exporter: ExporterKey) {
 
   exportFile(exporter, params);
 }
+
+const showReaperExportModal = ref(false);
 
 const presetGroups = presetsByGroup();
 const presetSelect = ref<HTMLSelectElement | null>(null);
@@ -331,6 +334,10 @@ async function doImport(importerKey: ImporterKey, event: Event) {
         <p><strong>Deflemask reference (.txt)</strong></p>
         <p>Deflemask 'fine tune' reference</p>
       </a>
+      <a href="#" class="btn" @click="showReaperExportModal = true">
+        <p><strong>Reaper note name map (.txt)</strong></p>
+        <p>Open Reaper export dialog</p>
+      </a>
     </div>
   </div>
 
@@ -351,6 +358,16 @@ async function doImport(importerKey: ImporterKey, event: Event) {
   />
 
   <Teleport to="body">
+    <ReaperExportModal
+      :show="showReaperExportModal"
+      @confirm="showReaperExportModal = false"
+      @cancel="showReaperExportModal = false"
+      :newline="UNIX_NEWLINE"
+      :scaleName="scaleName"
+      :baseMidiNote="baseMidiNote"
+      :scale="scale"
+    />
+
     <HarmonicSeriesModal
       :show="showHarmonicSeriesModal"
       @update:scaleName="emit('update:scaleName', $event)"
