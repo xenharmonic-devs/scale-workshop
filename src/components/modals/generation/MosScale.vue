@@ -5,9 +5,14 @@ import ExtendedMonzo from "@/monzo";
 import Scale from "@/scale";
 import {
   anyForEdo,
+  daughterMos,
   getHardness,
   makeEdoMap,
   modeInfo,
+  mos,
+  mosWithDaughter,
+  mosWithParent,
+  parentMos,
   tamnamsInfo,
 } from "moment-of-symmetry";
 import { computed, ref, watch } from "vue";
@@ -16,7 +21,12 @@ import ScaleLineInput from "@/components/ScaleLineInput.vue";
 import { Interval } from "@/interval";
 import { gcd } from "xen-dev-utils";
 
-const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
+const emit = defineEmits([
+  "update:scale",
+  "update:scaleName",
+  "update:keyColors",
+  "cancel",
+]);
 
 const octave = new Interval(
   ExtendedMonzo.fromNumber(2, DEFAULT_NUMBER_OF_COMPONENTS),
@@ -30,6 +40,10 @@ const sizeOfLargeStep = ref(2);
 const sizeOfSmallStep = ref(1);
 const up = ref(5);
 const equave = ref(octave);
+
+// State for key colors
+const colorMethod = ref<"none" | "parent" | "daughter">("none");
+const colorAccidentals = ref<"flat" | "sharp">("sharp");
 
 // State to help select MOS parameters
 const method = ref<"direct" | "pyramid" | "edo">("pyramid");
@@ -97,18 +111,67 @@ watch(upMax, (newValue) => {
 });
 
 function generate() {
-  const scale = Scale.fromMos(
-    numberOfLargeSteps.value,
-    numberOfSmallSteps.value,
-    sizeOfLargeStep.value,
-    sizeOfSmallStep.value,
-    up.value,
-    equave.value
-  );
-  emit(
-    "update:scaleName",
-    `MOS ${numberOfLargeSteps.value}L ${numberOfSmallSteps.value}s`
-  );
+  let name: string;
+  let steps: number[];
+  if (colorMethod.value === "none") {
+    steps = mos(
+      numberOfLargeSteps.value,
+      numberOfSmallSteps.value,
+      sizeOfLargeStep.value,
+      sizeOfSmallStep.value,
+      up.value
+    );
+  } else {
+    const generator =
+      colorMethod.value === "parent" ? mosWithParent : mosWithDaughter;
+    const map = generator(
+      numberOfLargeSteps.value,
+      numberOfSmallSteps.value,
+      sizeOfLargeStep.value,
+      sizeOfSmallStep.value,
+      up.value,
+      colorAccidentals.value === "flat"
+    );
+    steps = [...map.keys()];
+    const colors = [...map.values()].map((isParent) =>
+      isParent ? "white" : "black"
+    );
+    colors.unshift(colors.pop()!);
+    emit("update:keyColors", colors);
+  }
+
+  if (colorMethod.value === "parent") {
+    const parent = parentMos(
+      numberOfLargeSteps.value,
+      numberOfSmallSteps.value
+    );
+    name = `MOS ${numberOfLargeSteps.value}L ${numberOfSmallSteps.value}s (${parent.mosPattern} on white)`;
+  } else if (colorMethod.value === "daughter") {
+    const daughter = daughterMos(
+      numberOfLargeSteps.value,
+      numberOfSmallSteps.value,
+      sizeOfLargeStep.value,
+      sizeOfSmallStep.value
+    );
+    name = "MOS ";
+    if (daughter.hardness === "equalized") {
+      const equaveSteps = steps[steps.length - 1];
+      name += `${equaveSteps}ED`;
+      if (equave.value.equals(octave)) {
+        name += "O";
+      } else {
+        name += equave.value.toString();
+      }
+    } else {
+      name += daughter.mosPattern;
+    }
+    name += ` (${numberOfLargeSteps.value}L ${numberOfSmallSteps.value}s on white)`;
+  } else {
+    name = `MOS ${numberOfLargeSteps.value}L ${numberOfSmallSteps.value}s`;
+  }
+  emit("update:scaleName", name);
+
+  const scale = Scale.fromEqualTemperamentSubset(steps, equave.value);
   emit("update:scale", scale);
 }
 </script>
@@ -205,6 +268,57 @@ function generate() {
             @update:value="equave = $event"
             v-model="equaveString"
           />
+        </div>
+        <div class="control">
+          <label>Generate key colors</label>
+          <span>
+            <input
+              type="radio"
+              id="color-none"
+              value="none"
+              v-model="colorMethod"
+            />
+            <label for="color-none"> Off </label>
+          </span>
+          <span>
+            <input
+              type="radio"
+              id="color-parent"
+              value="parent"
+              v-model="colorMethod"
+            />
+            <label for="color-parent"> Parent MOS </label>
+          </span>
+          <span>
+            <input
+              type="radio"
+              id="color-daughter"
+              value="daughter"
+              v-model="colorMethod"
+            />
+            <label for="color-daughter"> Daughter MOS (expand scale) </label>
+          </span>
+        </div>
+        <div class="control" v-show="colorMethod !== 'none'">
+          <label>Black keys are</label>
+          <span>
+            <input
+              type="radio"
+              id="sharp"
+              value="sharp"
+              v-model="colorAccidentals"
+            />
+            <label for="sharp"> Sharp </label>
+          </span>
+          <span>
+            <input
+              type="radio"
+              id="flat"
+              value="flat"
+              v-model="colorAccidentals"
+            />
+            <label for="flat"> Flat </label>
+          </span>
         </div>
       </div>
 

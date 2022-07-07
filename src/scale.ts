@@ -1,5 +1,3 @@
-import { mos } from "moment-of-symmetry";
-
 import ExtendedMonzo from "@/monzo";
 import { Interval, type IntervalOptions } from "@/interval";
 import {
@@ -368,23 +366,18 @@ export default class Scale {
     );
   }
 
-  static fromMos(
-    numberOfLargeSteps: number,
-    numberOfSmallSteps: number,
-    sizeOfLargeStep: number,
-    sizeOfSmallStep: number,
-    brightGeneratorsUp: number,
+  static fromEqualTemperamentSubset(
+    steps: number[],
     equave: Interval,
     baseFrequency = 440
   ) {
-    const steps = mos(
-      numberOfLargeSteps,
-      numberOfSmallSteps,
-      sizeOfLargeStep,
-      sizeOfSmallStep,
-      brightGeneratorsUp
-    );
     const equaveSteps = steps[steps.length - 1];
+    equave = equave.mergeOptions({ preferredEtDenominator: equaveSteps });
+    if (equave.monzo.isFractional()) {
+      equave.options.preferredEtEquave = equave.monzo.toFraction();
+      equave.type = "equal temperament";
+    }
+
     return Scale.fromIntervalArray(
       steps.map((step) => equave.mul(new Fraction(step, equaveSteps))),
       baseFrequency

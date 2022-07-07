@@ -434,6 +434,7 @@ async function doImport(importerKey: ImporterKey, event: Event) {
         showMosModal = false;
         emit('update:scale', $event);
       "
+      @update:keyColors="emit('update:keyColors', $event)"
       @cancel="showMosModal = false"
     />
 
