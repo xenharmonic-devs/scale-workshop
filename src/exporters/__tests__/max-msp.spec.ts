@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 
 import MaxMSPExporter from "../max-msp";
 
+// @ts-ignore
 import EXPECTED_CONTENT from "./max-msp.txt?raw";
 import { getTestData } from "./test-data";
 

@@ -1,25 +1,9 @@
 import Fraction from "fraction.js";
 import { getSemiConvergents } from "moment-of-symmetry";
-import { PRIMES, LOG_PRIMES } from "@/constants";
-import {
-  gcd,
-  lcm,
-  isSafeFraction,
-  natsToCents,
-  centsToNats,
-  fractionToString,
-} from "@/utils";
+import { PRIMES, PRIME_CENTS } from "@/constants";
+import { gcd, lcm, centsToNats, valueToCents, centsToValue } from "@/utils";
 
 type Monzo = Fraction[];
-
-export type ScaleLineOptions = {
-  forbidMonzo?: boolean;
-  forbidComposite?: boolean;
-  centsFractionDigits?: number;
-  preferredNumerator?: number;
-  preferredDenominator?: number;
-  preferredEdo?: number;
-};
 
 function monzosEqual(a: Monzo, b: Monzo) {
   if (a === b) {
@@ -84,15 +68,15 @@ function fractionToMonzoAndResidual(
 export default class ExtendedMonzo {
   vector: Monzo;
   residual: Fraction;
-  nats: number;
+  cents: number;
 
-  constructor(vector: Monzo, residual?: Fraction, nats = 0) {
+  constructor(vector: Monzo, residual?: Fraction, cents = 0) {
     if (residual === undefined) {
       residual = new Fraction(1);
     }
     this.vector = vector;
     this.residual = residual;
-    this.nats = nats;
+    this.cents = cents;
   }
 
   static fromNumber(n: number, numberOfComponents: number) {
@@ -113,7 +97,7 @@ export default class ExtendedMonzo {
     while (vector.length < numberOfComponents) {
       vector.push(new Fraction(0));
     }
-    return new ExtendedMonzo(vector, undefined, centsToNats(cents));
+    return new ExtendedMonzo(vector, undefined, cents);
   }
 
   static fromEqualTemperament(
@@ -139,7 +123,7 @@ export default class ExtendedMonzo {
     while (vector.length < numberOfComponents) {
       vector.push(new Fraction(0));
     }
-    return new ExtendedMonzo(vector, undefined, Math.log(value));
+    return new ExtendedMonzo(vector, undefined, valueToCents(value));
   }
 
   get numberOfComponents() {
@@ -151,11 +135,11 @@ export default class ExtendedMonzo {
     this.vector.forEach((component) => {
       vector.push(new Fraction(component));
     });
-    return new ExtendedMonzo(vector, new Fraction(this.residual), this.nats);
+    return new ExtendedMonzo(vector, new Fraction(this.residual), this.cents);
   }
 
   toFraction() {
-    if (this.nats !== 0) {
+    if (this.cents !== 0) {
       throw new Error("Unable to convert irrational number to fraction");
     }
     let result = this.residual;
@@ -170,11 +154,11 @@ export default class ExtendedMonzo {
   }
 
   toCents() {
-    return natsToCents(this.totalNats());
+    return this.totalCents();
   }
 
   toEqualTemperament(): [Fraction, Fraction] {
-    if (this.nats !== 0) {
+    if (this.cents !== 0) {
       throw new Error(
         "Unable to convert non-algebraic number to equal temperament"
       );
@@ -210,7 +194,7 @@ export default class ExtendedMonzo {
   }
 
   isFractional() {
-    if (this.nats !== 0) {
+    if (this.cents !== 0) {
       return false;
     }
     for (let i = 0; i < this.numberOfComponents; ++i) {
@@ -222,7 +206,7 @@ export default class ExtendedMonzo {
   }
 
   isEqualTemperament() {
-    if (this.nats !== 0) {
+    if (this.cents !== 0) {
       return false;
     }
     if (!this.residual.equals(1)) {
@@ -232,7 +216,7 @@ export default class ExtendedMonzo {
   }
 
   isPowerOfTwo() {
-    if (this.nats !== 0) {
+    if (this.cents !== 0) {
       return false;
     }
     if (!this.residual.equals(1)) {
@@ -249,133 +233,10 @@ export default class ExtendedMonzo {
     return true;
   }
 
-  monzoString() {
-    let result = "[";
-    for (let i = 0; i < this.vector.length; ++i) {
-      result += this.vector[i].toFraction();
-      if (i < this.vector.length - 1) {
-        result += ", ";
-      }
-    }
-    return result + ">";
-  }
-
-  centsString(total = true, fractionDigits?: number) {
-    let cents;
-    if (total) {
-      cents = this.toCents();
-    } else {
-      cents = natsToCents(this.nats);
-    }
-    if (cents === Math.round(cents)) {
-      fractionDigits = undefined;
-    }
-    let result;
-    if (fractionDigits === undefined) {
-      result = cents.toString();
-    } else {
-      result = cents.toFixed(fractionDigits);
-    }
-    if (!result.includes(".")) {
-      return (result += ".");
-    }
-    while (result[result.length - 1] === "0") {
-      result = result.slice(0, -1);
-    }
-    return result;
-  }
-
-  equalTemperamentString(preferredEdo?: number) {
-    const [fractionOfEquave_, equave] = this.toEqualTemperament();
-    let fractionOfEquave = fractionOfEquave_;
-    if (equave.mod(2).equals(0)) {
-      fractionOfEquave = fractionOfEquave.mul(equave.div(2));
-      return fractionToString(
-        fractionOfEquave,
-        undefined,
-        preferredEdo
-      ).replace("/", "\\");
-    }
-    return (
-      fractionToString(fractionOfEquave, undefined, preferredEdo).replace(
-        "/",
-        "\\"
-      ) +
-      "<" +
-      equave.toFraction() +
-      ">"
-    );
-  }
-
-  // Reverse parsing
-  toScaleLine(options?: ScaleLineOptions): string {
-    options = options || {};
-    const centsFractionDigits = options.centsFractionDigits;
-    const cents = () => this.centsString(true, centsFractionDigits);
-
-    if (this.isFractional()) {
-      if (options.preferredEdo !== undefined && this.isPowerOfTwo()) {
-        return `${this.vector[0].valueOf() * options.preferredEdo}\\${
-          options.preferredEdo
-        }`;
-      }
-      const fraction = this.toFraction();
-      if (isSafeFraction(fraction)) {
-        return fractionToString(
-          fraction,
-          options.preferredNumerator,
-          options.preferredDenominator
-        );
-      }
-      if (options.forbidMonzo) {
-        return cents();
-      }
-      if (this.residual.equals(1)) {
-        return this.monzoString();
-      }
-      if (!options.forbidComposite || !isSafeFraction(this.residual)) {
-        return cents();
-      }
-      return this.monzoString() + " + " + this.residual.toFraction();
-    }
-
-    if (this.isEqualTemperament()) {
-      const [fractionOfEquave, equave] = this.toEqualTemperament();
-      if (isSafeFraction(fractionOfEquave) && isSafeFraction(equave)) {
-        return this.equalTemperamentString(options.preferredEdo);
-      }
-      if (options.forbidMonzo) {
-        return cents();
-      }
-      return this.monzoString();
-    }
-
-    if (options.forbidComposite || this.totalNats() === this.nats) {
-      return cents();
-    }
-
-    const maybeFractionalPart = this.clone();
-    maybeFractionalPart.nats = 0;
-    if (
-      maybeFractionalPart.isFractional() ||
-      maybeFractionalPart.isEqualTemperament()
-    ) {
-      let centsPart = this.centsString(false, options.centsFractionDigits);
-      let operation = " + ";
-      if (this.nats < 0) {
-        centsPart = centsPart.slice(1);
-        operation = " - ";
-      }
-      return maybeFractionalPart.toScaleLine(options) + operation + centsPart;
-    }
-
-    return cents();
-  }
-
   neg() {
     const vector = this.vector.map((component) => component.neg());
     const residual = this.residual.inverse();
-    return new ExtendedMonzo(vector, residual, -this.nats);
+    return new ExtendedMonzo(vector, residual, -this.cents);
   }
 
   add(other: ExtendedMonzo) {
@@ -386,7 +247,7 @@ export default class ExtendedMonzo {
       component.add(other.vector[i])
     );
     const residual = this.residual.mul(other.residual);
-    return new ExtendedMonzo(vector, residual, this.nats + other.nats);
+    return new ExtendedMonzo(vector, residual, this.cents + other.cents);
   }
 
   sub(other: ExtendedMonzo) {
@@ -397,7 +258,7 @@ export default class ExtendedMonzo {
       component.sub(other.vector[i])
     );
     const residual = this.residual.div(other.residual);
-    return new ExtendedMonzo(vector, residual, this.nats - other.nats);
+    return new ExtendedMonzo(vector, residual, this.cents - other.cents);
   }
 
   mul(scalar: number | Fraction): ExtendedMonzo {
@@ -406,13 +267,13 @@ export default class ExtendedMonzo {
     }
     const vector = this.vector.map((component) => component.mul(scalar));
     let residual: Fraction | null | undefined = this.residual.pow(scalar);
-    let nats = this.nats;
+    let cents = this.cents;
     if (residual === null) {
-      nats += Math.log(this.residual.valueOf());
+      cents += valueToCents(this.residual.valueOf());
       residual = undefined;
     }
-    nats *= scalar.valueOf();
-    return new ExtendedMonzo(vector, residual, nats);
+    cents *= scalar.valueOf();
+    return new ExtendedMonzo(vector, residual, cents);
   }
 
   div(scalar: number | Fraction): ExtendedMonzo {
@@ -423,23 +284,23 @@ export default class ExtendedMonzo {
     let residual: Fraction | null | undefined = this.residual.pow(
       scalar.inverse()
     );
-    let nats = this.nats;
+    let cents = this.cents;
     if (residual === null) {
-      nats += Math.log(this.residual.valueOf());
+      cents += valueToCents(this.residual.valueOf());
       residual = undefined;
     }
-    nats /= scalar.valueOf();
-    return new ExtendedMonzo(vector, residual, nats);
+    cents /= scalar.valueOf();
+    return new ExtendedMonzo(vector, residual, cents);
   }
 
-  // Same as mul, but the offset is accumulated in nats
+  // Same as mul, but the offset is accumulated in cents
   stretch(scalar: number): ExtendedMonzo {
-    const offset = this.totalNats() * (scalar - 1);
-    return new ExtendedMonzo(this.vector, this.residual, this.nats + offset);
+    const offset = this.totalCents() * (scalar - 1);
+    return new ExtendedMonzo(this.vector, this.residual, this.cents + offset);
   }
 
   abs() {
-    if (this.totalNats() < 0) {
+    if (this.totalCents() < 0) {
       return this.neg();
     }
     return this;
@@ -447,17 +308,17 @@ export default class ExtendedMonzo {
 
   // Consistent with Fraction.js
   mod(other: ExtendedMonzo) {
-    const truncDiv = Math.trunc(this.totalNats() / other.totalNats());
+    const truncDiv = Math.trunc(this.totalCents() / other.totalCents());
     return this.sub(other.mul(truncDiv));
   }
 
   // Consistent with Mathematics
   mmod(other: ExtendedMonzo) {
-    const otherNats = other.totalNats();
-    if (otherNats == 0) {
+    const otherCents = other.totalCents();
+    if (otherCents == 0) {
       throw Error("Modulo by unison");
     }
-    const floorDiv = Math.floor(this.totalNats() / otherNats);
+    const floorDiv = Math.floor(this.totalCents() / otherCents);
     return this.sub(other.mul(floorDiv));
   }
 
@@ -465,20 +326,20 @@ export default class ExtendedMonzo {
     return (
       monzosEqual(this.vector, other.vector) &&
       this.residual.equals(other.residual) &&
-      this.nats === other.nats
+      this.cents === other.cents
     );
   }
 
-  totalNats() {
-    let total = this.nats + Math.log(this.residual.valueOf());
+  totalCents() {
+    let total = this.cents + valueToCents(this.residual.valueOf());
     this.vector.forEach(
-      (component, i) => (total += component.valueOf() * LOG_PRIMES[i])
+      (component, i) => (total += component.valueOf() * PRIME_CENTS[i])
     );
     return total;
   }
 
   valueOf() {
-    return Math.exp(this.totalNats());
+    return centsToValue(this.totalCents());
   }
 
   toContinued() {
@@ -489,11 +350,11 @@ export default class ExtendedMonzo {
   }
 
   equals(other: ExtendedMonzo) {
-    return this.totalNats() == other.totalNats();
+    return this.totalCents() == other.totalCents();
   }
 
   compare(other: ExtendedMonzo) {
-    return this.totalNats() - other.totalNats();
+    return this.totalCents() - other.totalCents();
   }
 
   approximateHarmonic(denominator: number) {
@@ -513,7 +374,7 @@ export default class ExtendedMonzo {
   }
 
   approximateOddLimit(limit: number) {
-    const nats = this.totalNats();
+    const nats = centsToNats(this.totalCents());
     let bestError = Infinity;
     let best = new Fraction(1);
     // This is probably still unoptimized, but at least we calculate the logs only once

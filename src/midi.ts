@@ -1,5 +1,5 @@
 import type { NoteMessageEvent, Output } from "webmidi";
-import { ftom } from "./utils";
+import { ftom } from "@/utils";
 
 export const bendRangeInSemitones = 2;
 

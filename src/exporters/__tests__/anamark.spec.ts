@@ -2,7 +2,9 @@ import { describe, it, expect } from "vitest";
 
 import { AnaMarkV1Exporter, AnaMarkV2Exporter } from "../anamark";
 
+// @ts-ignore
 import EXPECTED_CONTENT_V1 from "./anamark.v1.tun?raw";
+// @ts-ignore
 import EXPECTED_CONTENT_V2 from "./anamark.v2.tun?raw";
 import { getTestData } from "./test-data";
 

@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 
 import DeflemaskExporter from "../deflemask";
 
+// @ts-ignore
 import EXPECTED_CONTENT from "./deflemask.txt?raw";
 import { getTestData } from "./test-data";
 

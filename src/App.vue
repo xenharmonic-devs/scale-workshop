@@ -1,19 +1,20 @@
+Interval
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import { RouterLink, RouterView } from "vue-router";
-import { NEWLINE_TEST, NUMBER_OF_NOTES } from "./constants";
-import { ScaleWorkshopOneData } from "./scale-workshop-one";
 import type { Input, Output } from "webmidi";
-import Scale from "./scale";
-import type ExtendedMonzo from "./monzo";
-import { parseLine } from "./parser";
-import { bendRangeInSemitones, MidiIn, MidiOut } from "./midi";
-import { Keyboard, type CoordinateKeyboardEvent } from "./keyboard";
+import { NEWLINE_TEST, NUMBER_OF_NOTES } from "@/constants";
+import { ScaleWorkshopOneData } from "@/scale-workshop-one";
+import Scale from "@/scale";
+import { parseLine } from "@/parser";
+import { bendRangeInSemitones, MidiIn, MidiOut } from "@/midi";
+import { Keyboard, type CoordinateKeyboardEvent } from "@/keyboard";
+import type { Interval } from "@/interval";
 
 // === Application state ===
 const scaleName = ref("");
 const scaleLines = ref<string[]>([]);
-const baseFrequency = ref(440);
+const scale = reactive(Scale.fromIntervalArray([parseLine("1/1")]));
 const baseMidiNote = ref(69);
 const keyColors = ref([
   "white",
@@ -37,34 +38,42 @@ const midiInput = ref<Input | null>(null);
 const midiOutput = ref<Output | null>(null);
 
 // === Computed state ===
-const scaleAndNames = computed<[Scale, string[]]>(() => {
-  const intervals: ExtendedMonzo[] = [];
-  const names: string[] = [];
-  scaleLines.value.forEach((line) => {
+const frequencies = computed(() =>
+  [...Array(NUMBER_OF_NOTES).keys()].map((i) =>
+    scale.getFrequency(i - baseMidiNote.value)
+  )
+);
+
+function updateFromScaleLines(lines: string[]) {
+  scaleLines.value = lines;
+  const intervals: Interval[] = [];
+  lines.forEach((line) => {
     try {
-      intervals.push(parseLine(line));
-      names.push(line);
+      const interval = parseLine(line);
+      intervals.push(interval);
     } catch {}
   });
   if (!intervals.length) {
     intervals.push(parseLine("1/1"));
-    names.push("1/1");
   }
-  return [Scale.fromIntervalArray(intervals, baseFrequency.value), names];
-});
 
-const frequencies = computed(() =>
-  [...Array(NUMBER_OF_NOTES).keys()].map((i) =>
-    scaleAndNames.value[0].getFrequency(i - baseMidiNote.value)
-  )
-);
+  const surrogate = Scale.fromIntervalArray(intervals);
+  scale.intervals = surrogate.intervals;
+  scale.equave = surrogate.equave;
+}
+
+function updateFromScale(surrogate: Scale) {
+  scale.intervals = surrogate.intervals;
+  scale.equave = surrogate.equave;
+  scaleLines.value = scale.toStrings();
+}
 
 // ===  Version 1 backwards compatibility ===
 try {
   const scaleWorkshopOneData = new ScaleWorkshopOneData();
 
   scaleName.value = scaleWorkshopOneData.name;
-  baseFrequency.value = scaleWorkshopOneData.freq;
+  scale.baseFrequency = scaleWorkshopOneData.freq;
   baseMidiNote.value = scaleWorkshopOneData.midi;
   isomorphicHorizontal.value = scaleWorkshopOneData.horizontal;
   isomorphicVertical.value = scaleWorkshopOneData.vertical;
@@ -77,7 +86,7 @@ try {
     // Check that the scale is valid by attempting a parse
     scaleWorkshopOneData.parseTuningData();
     // Store raw text lines
-    scaleLines.value = scaleWorkshopOneData.data.split(NEWLINE_TEST);
+    updateFromScaleLines(scaleWorkshopOneData.data.split(NEWLINE_TEST));
   }
 } catch (error) {
   console.error("Error parsing URL", error);
@@ -89,7 +98,7 @@ function getFrequency(index: number) {
     return frequencies.value[index];
   } else {
     // Support more than 128 notes with some additional computational cost
-    return scaleAndNames.value[0].getFrequency(index - baseMidiNote.value);
+    return scale.getFrequency(index - baseMidiNote.value);
   }
 }
 
@@ -180,7 +189,6 @@ function typingKeydown(event: CoordinateKeyboardEvent) {
     return emptyKeyup;
   }
 
-  const scale = scaleAndNames.value[0];
   const index =
     baseMidiNote.value +
     scale.size * equaveShift.value +
@@ -232,11 +240,9 @@ onUnmounted(() => {
   <RouterView
     :scaleName="scaleName"
     :scaleLines="scaleLines"
-    :baseFrequency="baseFrequency"
     :baseMidiNote="baseMidiNote"
     :keyColors="keyColors"
-    :scale="scaleAndNames[0]"
-    :names="scaleAndNames[1]"
+    :scale="scale"
     :frequencies="frequencies"
     :isomorphicHorizontal="isomorphicHorizontal"
     :isomorphicVertical="isomorphicVertical"
@@ -245,9 +251,10 @@ onUnmounted(() => {
     :midiOutput="midiOutput"
     :noteOn="keyboardNoteOn"
     @update:scaleName="scaleName = $event"
-    @update:scaleLines="scaleLines = $event"
+    @update:scaleLines="updateFromScaleLines"
+    @update:scale="updateFromScale"
     @update:baseMidiNote="baseMidiNote = $event"
-    @update:baseFrequency="baseFrequency = $event"
+    @update:baseFrequency="scale.baseFrequency = $event"
     @update:keyColors="keyColors = $event"
     @update:isomorphicVertical="isomorphicVertical = $event"
     @update:isomorphicHorizontal="isomorphicHorizontal = $event"

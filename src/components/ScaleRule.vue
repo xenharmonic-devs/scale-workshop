@@ -8,7 +8,7 @@ const props = defineProps<{
 }>();
 
 const ticksAndColors = computed(() => {
-  const equaveCents = props.scale.equave.toCents();
+  const equaveCents = props.scale.equave.totalCents();
   const result = [];
 
   for (let i = 0; i < props.scale.size; ++i) {

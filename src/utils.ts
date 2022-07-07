@@ -103,8 +103,8 @@ export function natsToCents(nats: number) {
 export function debounce(func: (...args: any[]) => void, timeout = 300) {
   let timer: number;
   return (...args: any[]) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
+    window.clearTimeout(timer);
+    timer = window.setTimeout(() => {
       func(...args);
     }, timeout);
   };
@@ -112,6 +112,10 @@ export function debounce(func: (...args: any[]) => void, timeout = 300) {
 
 export function valueToCents(value: number) {
   return (Math.log(value) / Math.LN2) * 1200;
+}
+
+export function centsToValue(cents: number) {
+  return Math.pow(2, cents / 1200);
 }
 
 export function mtof(index: number) {

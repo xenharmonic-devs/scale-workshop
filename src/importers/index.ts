@@ -1,6 +1,6 @@
-import { AnaMarkImporter } from "./anamark";
-import type { ImportResult } from "./base";
-import { ScalaImporter } from "./scala";
+import type { ImportResult } from "@/importers/base";
+import { AnaMarkImporter } from "@/importers/anamark";
+import { ScalaImporter } from "@/importers/scala";
 
 const IMPORTERS = {
   scalascl: ScalaImporter,

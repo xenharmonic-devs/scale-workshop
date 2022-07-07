@@ -2,28 +2,26 @@
 import type Scale from "@/scale";
 import { mmod } from "@/utils";
 import { computed } from "vue";
-import TuningTableRow from "./TuningTableRow.vue";
+import TuningTableRow from "@/components/TuningTableRow.vue";
 
 const props = defineProps<{
   scale: Scale;
-  names: string[];
   frequencies: number[];
   baseMidiNote: number;
-  baseFrequency: number;
   keyColors: string[];
 }>();
 
 const rows = computed(() => {
   return props.frequencies.map((frequency, i) => {
-    const monzo = props.scale.getMonzo(i - props.baseMidiNote);
+    const index = i - props.baseMidiNote;
+    const monzo = props.scale.getMonzo(index);
     return {
       index: i,
       frequency: frequency,
       cents: monzo.toCents(),
       ratio: monzo.valueOf(),
-      name: props.names[mmod(i - 1 - props.baseMidiNote, props.names.length)],
-      keyColor:
-        props.keyColors[mmod(i - props.baseMidiNote, props.keyColors.length)],
+      name: props.scale.getName(index),
+      keyColor: props.keyColors[mmod(index, props.keyColors.length)],
     };
   });
 });

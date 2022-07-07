@@ -9,7 +9,6 @@ export type ExporterParams = {
   baseMidiNote: number;
   description?: string;
   lines?: string[]; // May contain invalid lines
-  names?: string[]; // Should always match scale
   appTitle?: string;
   date?: Date;
   format?: "name" | "cents" | "frequency" | "decimal" | "degree";

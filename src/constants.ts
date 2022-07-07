@@ -86,8 +86,11 @@ export const PRIMES = [
   7817, 7823, 7829, 7841, 7853, 7867, 7873, 7877, 7879, 7883,
   7901, 7907, 7919
 ];
-
-export const LOG_PRIMES = PRIMES.map(Math.log);
+const NATS_TO_CENTS = 1200 / Math.LN2;
+export const PRIME_CENTS = PRIMES.map(
+  (prime) => Math.log(prime) * NATS_TO_CENTS
+);
+PRIME_CENTS[0] = 1200; // Ensure that octaves are exact
 
 export const DEFAULT_NUMBER_OF_COMPONENTS = 25; // Enough to represent all primes < 100
 export const NEWLINE_TEST = /\r?\n/;
