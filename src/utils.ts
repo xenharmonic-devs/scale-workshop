@@ -1,5 +1,5 @@
 import { computed, type ComputedRef } from "vue";
-import { Fraction, gcd, mmod } from "xen-dev-utils";
+import { Fraction, gcd, mmod, PRIME_CENTS, valueToCents } from "xen-dev-utils";
 
 export function isSafeFraction(fraction: Fraction) {
   return (
@@ -230,4 +230,65 @@ export function computedAndError<T>(
   const value = computed(() => valueAndError.value[0]);
   const error = computed(() => valueAndError.value[1]);
   return [value, error];
+}
+
+// Cache of odd limit fractions. Expanded as necessary.
+const ODD_FRACTIONS = [new Fraction(1), new Fraction(1, 3), new Fraction(3)];
+const ODD_CENTS = [0, -PRIME_CENTS[1], PRIME_CENTS[1]];
+const ODD_BREAKPOINTS = [1, 3];
+const TWO = new Fraction(2);
+
+/**
+ * Approximate a musical interval by a ratio of which neither the numerator or denominator
+ * exceeds a specified limit, once all powers of 2 are removed.
+ * @param cents Size of the musical interval measured in cents.
+ * @param limit Maximum odd limit.
+ * @returns The closest fraction to the given intervals within the odd limit.
+ */
+export function approximateOddLimit(cents: number, limit: number) {
+  const breakpointIndex = (limit - 1) / 2;
+  // Expand cache.
+  while (ODD_BREAKPOINTS.length <= breakpointIndex) {
+    const newLimit = ODD_BREAKPOINTS.length * 2 + 1;
+    for (let numerator = 1; numerator <= newLimit; numerator += 2) {
+      for (let denominator = 1; denominator <= newLimit; denominator += 2) {
+        const fraction = new Fraction(numerator, denominator);
+        let novel = true;
+        for (let i = 0; i < ODD_FRACTIONS.length; ++i) {
+          if (fraction.equals(ODD_FRACTIONS[i])) {
+            novel = false;
+            break;
+          }
+        }
+        if (novel) {
+          ODD_FRACTIONS.push(fraction);
+          ODD_CENTS.push(valueToCents(fraction.valueOf()));
+        }
+      }
+    }
+    ODD_BREAKPOINTS.push(ODD_FRACTIONS.length);
+  }
+
+  // Find closest odd limit fraction modulo octaves.
+  let leastError = Infinity;
+  let result = new Fraction(1);
+  for (let i = 0; i < ODD_BREAKPOINTS[breakpointIndex]; ++i) {
+    const oddCents = ODD_CENTS[i];
+    const remainder = mmod(cents - oddCents, 1200);
+    // Overshot
+    if (remainder < leastError) {
+      // Rounding done to eliminate floating point jitter.
+      const exponent = Math.round((cents - oddCents - remainder) / 1200);
+      leastError = remainder;
+      // Exponentiate to add the required number of octaves.
+      result = ODD_FRACTIONS[i].mul(TWO.pow(exponent));
+    }
+    // Undershot
+    if (1200 - remainder < leastError) {
+      const exponent = Math.round((cents - oddCents - remainder) / 1200) + 1;
+      leastError = 1200 - remainder;
+      result = ODD_FRACTIONS[i].mul(TWO.pow(exponent));
+    }
+  }
+  return result;
 }

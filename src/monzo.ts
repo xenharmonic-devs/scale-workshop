@@ -1,5 +1,4 @@
 import {
-  centsToNats,
   centsToValue,
   Fraction,
   gcd,
@@ -9,6 +8,7 @@ import {
   PRIME_CENTS,
   valueToCents,
 } from "xen-dev-utils";
+import { approximateOddLimit } from "./utils";
 
 type Monzo = Fraction[];
 
@@ -381,43 +381,10 @@ export default class ExtendedMonzo {
   }
 
   approximateOddLimit(limit: number) {
-    const nats = centsToNats(this.totalCents());
-    let bestError = Infinity;
-    let best = new Fraction(1);
-    // This is probably still unoptimized, but at least we calculate the logs only once
-    const oddLogs: number[] = [];
-    for (let n = 1; n <= limit; n += 2) {
-      oddLogs.push(Math.log(n));
-    }
-    oddLogs.forEach((logNumerator, i) => {
-      const numerator = 1 + 2 * i;
-      oddLogs.forEach((logDenominator, j) => {
-        const denominator = 1 + 2 * j;
-        let candidate = logNumerator - logDenominator;
-        let exponent = 0;
-        while (candidate > nats) {
-          candidate -= Math.LN2;
-          exponent--;
-        }
-        while (candidate < nats) {
-          candidate += Math.LN2;
-          exponent++;
-        }
-        if (Math.abs(candidate - nats) < bestError) {
-          bestError = Math.abs(candidate - nats);
-          best = new Fraction(numerator, denominator).mul(
-            new Fraction(2).pow(exponent)
-          );
-        }
-        if (Math.abs(candidate - Math.LN2 - nats) < bestError) {
-          bestError = Math.abs(candidate - Math.LN2 - nats);
-          best = new Fraction(numerator, denominator).mul(
-            new Fraction(2).pow(exponent - 1)
-          );
-        }
-      });
-    });
-    return ExtendedMonzo.fromFraction(best, this.numberOfComponents);
+    return ExtendedMonzo.fromFraction(
+      approximateOddLimit(this.totalCents(), limit),
+      this.numberOfComponents
+    );
   }
 
   approximateSimple(eps: number) {

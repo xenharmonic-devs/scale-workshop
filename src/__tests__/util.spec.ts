@@ -1,6 +1,8 @@
 import { describe, it, expect } from "vitest";
+import { valueToCents } from "xen-dev-utils";
 
 import {
+  approximateOddLimit,
   autoKeyColors,
   formatExponential,
   formatHertz,
@@ -80,5 +82,19 @@ describe("Auto key color algorithm", () => {
 describe("Fraction parser", () => {
   it("throws an error with multiple slashes", () => {
     expect(() => stringToFraction("1/-2/3")).toThrow();
+  });
+});
+
+describe("Odd limit approximator", () => {
+  it("can approximate tau in the 15-odd-limit", () => {
+    const approximation = approximateOddLimit(valueToCents(2 * Math.PI), 15);
+    expect(approximation.equals("44/7")).toBeTruthy();
+    expect(approximation.valueOf()).toBeCloseTo(2 * Math.PI);
+  });
+
+  it("can approximate e in the 21-odd-limit", () => {
+    const approximation = approximateOddLimit(valueToCents(Math.E), 21);
+    expect(approximation.equals("19/7")).toBeTruthy();
+    expect(approximation.valueOf()).toBeCloseTo(Math.E);
   });
 });
