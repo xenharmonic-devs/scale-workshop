@@ -710,6 +710,20 @@ describe("Scale", () => {
     expect(bish.getMonzo(6).toCents()).toBeCloseTo(1080);
     expect(bish.getMonzo(7).toCents()).toBeCloseTo(1200);
   });
+  it("formats MOS scales consistently", () => {
+    const octave = new Interval(ExtendedMonzo.fromNumber(2, 1), "ratio");
+    const major = Scale.fromMos(5, 2, 2, 1, 5, octave);
+    const expected = [
+      "2\\12",
+      "4\\12",
+      "5\\12",
+      "7\\12",
+      "9\\12",
+      "11\\12",
+      "12\\12",
+    ];
+    expect(arraysEqual(major.toStrings(), expected)).toBeTruthy();
+  });
   /*
   it("can tile", () => {
     const two = ExtendedMonzo.fromNumber(2, 3);

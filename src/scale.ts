@@ -381,6 +381,11 @@ export default class Scale {
       brightGeneratorsUp
     );
     const equaveSteps = steps[steps.length - 1];
+    equave.options = { preferredEtDenominator: equaveSteps };
+    if (equave.monzo.isFractional()) {
+      equave.options.preferredEtEquave = equave.monzo.toFraction();
+      equave.type = "equal temperament";
+    }
     return Scale.fromIntervalArray(
       steps.map((step) => equave.mul(new Fraction(step, equaveSteps))),
       baseFrequency
