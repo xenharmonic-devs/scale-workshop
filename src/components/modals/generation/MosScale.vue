@@ -256,7 +256,7 @@ function generate() {
               method = 'direct';
             "
           >
-            {{ info.pattern }}
+            {{ info.mosPattern }}
           </button>
           {{ info.hardness }}
           <i v-if="info.name !== undefined"
@@ -271,8 +271,8 @@ function generate() {
         <button @click="$emit('cancel')">Cancel</button>
         <template v-if="method === 'direct'">
           {{ ed }}<i>{{ tamnamsName }}</i
-          >{{ mosModeInfo.pattern }} {{ mosModeInfo.udp
-          }}<i v-if="mosModeInfo.mode">"{{ mosModeInfo.mode }}"</i
+          >{{ mosModeInfo.mode }} {{ mosModeInfo.udp
+          }}<i v-if="mosModeInfo.modeName">"{{ mosModeInfo.modeName }}"</i
           ><i>{{ hardness }}</i>
         </template>
         <i v-else>{{ previewName }}</i>
