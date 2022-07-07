@@ -32,6 +32,9 @@ const keyColors = ref([
 ]);
 const isomorphicVertical = ref(5);
 const isomorphicHorizontal = ref(1);
+// TODO: Implement user preferences and make cents precision configurable
+const centsFractionDigits = ref(3);
+const decimalFractionDigits = ref(5);
 const equaveShift = ref(0);
 const typingActive = ref(true);
 const midiInput = ref<Input | null>(null);
@@ -246,6 +249,8 @@ onUnmounted(() => {
     :frequencies="frequencies"
     :isomorphicHorizontal="isomorphicHorizontal"
     :isomorphicVertical="isomorphicVertical"
+    :centsFractionDigits="centsFractionDigits"
+    :decimalFractionDigits="decimalFractionDigits"
     :equaveShift="equaveShift"
     :midiInput="midiInput"
     :midiOutput="midiOutput"
