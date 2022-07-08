@@ -1,3 +1,5 @@
+import type { LocationQuery } from "vue-router";
+
 // URL friendly versions of special characters
 const NEWLINE = "_";
 const FRACTION = "F";
@@ -163,5 +165,109 @@ export function decodeKeyColors(encoded: string) {
     }
   });
   pushColor();
+  return result;
+}
+
+// Inverse of number.toString(36)
+export function parseFloat36(string: string) {
+  const [integerString, fractionString] = string.split(".");
+  return (
+    parseInt(integerString, 36) +
+    parseInt(fractionString || "0", 36) / 36 ** (fractionString?.length || 0)
+  );
+}
+
+function getSingle(query: LocationQuery, key: string, defaultIfNull: string) {
+  const result = query[key];
+  if (Array.isArray(result)) {
+    throw new Error(`Failed to decode key '${key}'`);
+  }
+  if (result === null) {
+    return defaultIfNull;
+  }
+  return result;
+}
+
+export type DecodedState = {
+  scaleLines: string[];
+  keyColors: string[];
+  scaleName: string;
+  baseFrequency: number;
+  baseMidiNote: number;
+  isomorphicHorizontal: number;
+  isomorphicVertical: number;
+};
+
+export type EncodedState = {
+  l?: string;
+  c?: string;
+  n?: string;
+  f?: string;
+  m?: string;
+  h?: string;
+  v?: string;
+};
+
+export function decodeQuery(
+  query: LocationQuery | URLSearchParams
+): DecodedState {
+  let get;
+  if (query instanceof URLSearchParams) {
+    get = (key: string, defaultIfNull: string) => {
+      const result = query.get(key);
+      if (result === null) {
+        return defaultIfNull;
+      }
+      return result;
+    };
+  } else {
+    get = (key: string, defaultIfNull: string) =>
+      getSingle(query, key, defaultIfNull);
+  }
+  return {
+    scaleLines: decodeLines(get("l", "")),
+    keyColors: decodeKeyColors(get("c", "~-~~-~-~~-~-")),
+    scaleName: get("n", ""),
+    baseFrequency: parseFloat36(get("f", "c8")),
+    baseMidiNote: parseInt(get("m", "1x"), 36),
+    isomorphicHorizontal: parseInt(get("h", "1"), 36),
+    isomorphicVertical: parseInt(get("v", "5"), 36),
+  };
+}
+
+export function encodeQuery(state: DecodedState): EncodedState {
+  const result: EncodedState = {
+    n: state.scaleName,
+    l: encodeLines(state.scaleLines),
+    c: encodeKeyColors(state.keyColors),
+    f: state.baseFrequency.toString(36),
+    m: state.baseMidiNote.toString(36),
+    h: state.isomorphicHorizontal.toString(36),
+    v: state.isomorphicVertical.toString(36),
+  };
+
+  // The app includes version information so we can safely strip defaults
+  if (!result.n?.length) {
+    delete result.n;
+  }
+  if (!result.l?.length) {
+    delete result.l;
+  }
+  if (result.c === "~-~~-~-~~-~-") {
+    delete result.c;
+  }
+  if (result.f === "c8") {
+    delete result.f;
+  }
+  if (result.m === "1x") {
+    delete result.m;
+  }
+  if (result.h === "1") {
+    delete result.h;
+  }
+  if (result.v === "5") {
+    delete result.v;
+  }
+
   return result;
 }

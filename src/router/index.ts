@@ -1,12 +1,28 @@
+import qs from "qs";
 import {
   createRouter,
   createWebHistory,
+  type LocationQuery,
   type RouteLocationNormalized,
 } from "vue-router";
 import ScaleView from "../views/ScaleView.vue";
 
+// Boilerplate to resolve minor type incompatibility
+function qsParse(query: string) {
+  const result = qs.parse(query);
+  Object.keys(result).forEach((key) => {
+    const value = result[key];
+    if (value === undefined) {
+      throw new Error("Failed to parse query string");
+    }
+  });
+  return result as LocationQuery;
+}
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  parseQuery: qsParse,
+  stringifyQuery: qs.stringify,
   routes: [
     {
       path: "/",

@@ -1,14 +1,22 @@
 Interval
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from "vue";
-import { RouterLink, RouterView } from "vue-router";
-import type { Input, Output } from "webmidi";
+import {
+  RouterLink,
+  RouterView,
+  useRouter,
+  type LocationQuery,
+} from "vue-router";
 import { NEWLINE_TEST, NUMBER_OF_NOTES } from "@/constants";
 import { ScaleWorkshopOneData } from "@/scale-workshop-one";
+import type { Input, Output } from "webmidi";
 import Scale from "@/scale";
 import { parseLine } from "@/parser";
 import { bendRangeInSemitones, MidiIn, MidiOut } from "@/midi";
 import { Keyboard, type CoordinateKeyboardEvent } from "@/keyboard";
+import { decodeQuery, encodeQuery } from "@/url-encode";
+import { debounce } from "@/utils";
+import { version } from "../package.json";
 import type { Interval } from "@/interval";
 
 // === Application state ===
@@ -71,29 +79,78 @@ function updateFromScale(surrogate: Scale) {
   scaleLines.value = scale.toStrings();
 }
 
-// ===  Version 1 backwards compatibility ===
-try {
-  const scaleWorkshopOneData = new ScaleWorkshopOneData();
+// == State encoding ==
+const router = useRouter();
 
-  scaleName.value = scaleWorkshopOneData.name;
-  scale.baseFrequency = scaleWorkshopOneData.freq;
-  baseMidiNote.value = scaleWorkshopOneData.midi;
-  isomorphicHorizontal.value = scaleWorkshopOneData.horizontal;
-  isomorphicVertical.value = scaleWorkshopOneData.vertical;
+// Flags to prevent infinite decode - watch - encode loops
+let justEncodedUrl = false;
+let justDecodedUrl = false;
 
-  if (scaleWorkshopOneData.colors !== undefined) {
-    keyColors.value = scaleWorkshopOneData.colors.split(" ");
+// Debounced to stagger navigation loops if the flags fail
+const encodeState = debounce(() => {
+  // Navigation loop prevention
+  if (justDecodedUrl) {
+    justDecodedUrl = false;
+    return;
+  }
+  justEncodedUrl = true;
+
+  const state = {
+    scaleName: scaleName.value,
+    scaleLines: scaleLines.value,
+    baseFrequency: scale.baseFrequency,
+    baseMidiNote: baseMidiNote.value,
+    keyColors: keyColors.value,
+    isomorphicHorizontal: isomorphicHorizontal.value,
+    isomorphicVertical: isomorphicVertical.value,
+  };
+
+  const query = encodeQuery(state) as LocationQuery;
+  query.version = version;
+
+  // XXX: There are some sporadic issues with useRoute().fullPath
+  // so we use native URL.pathname.
+  const url = new URL(window.location.href);
+  router.push({ path: url.pathname, query });
+}, 200);
+
+watch(scaleName, encodeState);
+watch(scaleLines, encodeState);
+watch(scale, encodeState);
+watch(baseMidiNote, encodeState);
+watch(keyColors, encodeState);
+watch(isomorphicHorizontal, encodeState);
+watch(isomorphicVertical, encodeState);
+
+// == State decoding ==
+router.afterEach(() => {
+  // Navigation loop prevention
+  if (justEncodedUrl) {
+    justEncodedUrl = false;
+    return;
   }
 
-  if (scaleWorkshopOneData.data !== undefined) {
-    // Check that the scale is valid by attempting a parse
-    scaleWorkshopOneData.parseTuningData();
-    // Store raw text lines
-    updateFromScaleLines(scaleWorkshopOneData.data.split(NEWLINE_TEST));
+  // XXX: There are some sporadic issues with useRoute().fullPath
+  // so we use native URL.searchParams.
+  const url = new URL(window.location.href);
+  const query = url.searchParams;
+  if (query.has("version")) {
+    try {
+      const state = decodeQuery(query);
+      justDecodedUrl = true;
+
+      scaleName.value = state.scaleName;
+      scale.baseFrequency = state.baseFrequency;
+      baseMidiNote.value = state.baseMidiNote;
+      keyColors.value = state.keyColors;
+      isomorphicHorizontal.value = state.isomorphicHorizontal;
+      isomorphicVertical.value = state.isomorphicVertical;
+      updateFromScaleLines(state.scaleLines);
+    } catch (error) {
+      console.error(`Error parsing version ${query.get("version")} URL`, error);
+    }
   }
-} catch (error) {
-  console.error("Error parsing URL", error);
-}
+});
 
 // === MIDI input / output ===
 function getFrequency(index: number) {
@@ -207,6 +264,39 @@ onMounted(() => {
   window.addEventListener("keyup", windowKeydownOrUp);
   window.addEventListener("mousedown", windowKeydownOrUp);
   typingKeyboad.addKeydownListener(typingKeydown);
+
+  const url = new URL(window.location.href);
+  const query = url.searchParams;
+
+  // Special handling for the empty app state so that
+  // the browser's back button can undo to the clean state.
+  if (![...query.keys()].length) {
+    router.push({ path: url.pathname, query: { version } });
+  }
+  // Scale Workshop 1 compatibility
+  else if (!query.has("version")) {
+    try {
+      const scaleWorkshopOneData = new ScaleWorkshopOneData();
+
+      scaleName.value = scaleWorkshopOneData.name;
+      scale.baseFrequency = scaleWorkshopOneData.freq;
+      baseMidiNote.value = scaleWorkshopOneData.midi;
+      isomorphicHorizontal.value = scaleWorkshopOneData.horizontal;
+      isomorphicVertical.value = scaleWorkshopOneData.vertical;
+      if (scaleWorkshopOneData.colors !== undefined) {
+        keyColors.value = scaleWorkshopOneData.colors.split(" ");
+      }
+
+      if (scaleWorkshopOneData.data !== undefined) {
+        // Check that the scale is valid by attempting a parse
+        scaleWorkshopOneData.parseTuningData();
+        // Store raw text lines
+        updateFromScaleLines(scaleWorkshopOneData.data.split(NEWLINE_TEST));
+      }
+    } catch (error) {
+      console.error("Error parsing version 1 URL", error);
+    }
+  }
 });
 
 onUnmounted(() => {
