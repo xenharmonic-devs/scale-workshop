@@ -23,15 +23,16 @@ describe("URL encoder", () => {
       "2\\3<5>",
       "[3/2 -2,1>",
       "3/2+1.23",
+      "4/3 - 0.1",
     ];
     expect(encodeLines(lines)).toBe(
-      "29F28_-16._2B5_jg.01_1C0k3_2F1_2B3L5R_Q3F2S-2C1R_3F2P1.n"
+      "29F28_-16._2B5_jg.01_1C0k3_2F1_2B3L5R_Q3F2S-2C1R_3F2P1.n_4F3S-S0.1"
     );
   });
 
   it("can decode all line types", () => {
     const lines = decodeLines(
-      "29F28_-16._2B5_jg.01_1C0k3_2F1_2B3L5R_Q3F2S-2C1R_3F2P1.n"
+      "29F28_-16._2B5_jg.01_1C0k3_2F1_2B3L5R_Q3F2S-2C1R_3F2P1.n_4F3S-S0.1"
     );
     const expected = [
       "81/80",
@@ -43,6 +44,7 @@ describe("URL encoder", () => {
       "2\\3<5>",
       "[3/2 -2,1>",
       "3/2+1.23",
+      "4/3 - 0.1",
     ];
     expect(arraysEqual(lines, expected)).toBeTruthy();
   });

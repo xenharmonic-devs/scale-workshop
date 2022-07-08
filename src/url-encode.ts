@@ -11,6 +11,15 @@ const RIGHT_ANGLE_BRACKET = "R";
 const LEFT_SQUARE_BRACKET = "Q";
 const PLUS = "P";
 
+const FRACTION_RE = new RegExp(FRACTION, "g");
+const COMMA_RE = new RegExp(COMMA, "g");
+const BACKSLASH_RE = new RegExp(BACKSLASH, "g");
+const SPACE_RE = new RegExp(SPACE, "g");
+const LEFT_ANGLE_BRACKET_RE = new RegExp(LEFT_ANGLE_BRACKET, "g");
+const RIGHT_ANGLE_BRACKET_RE = new RegExp(RIGHT_ANGLE_BRACKET, "g");
+const LEFT_SQUARE_BRACKET_RE = new RegExp(LEFT_SQUARE_BRACKET, "g");
+const PLUS_RE = new RegExp(PLUS, "g");
+
 // Color shorhands
 const BLACK = "-";
 const WHITE = "~";
@@ -39,7 +48,11 @@ function encodeDigits(digits: string, keepZero: boolean) {
         return false;
       }
     });
-    return result + num.toString(36);
+    if (num) {
+      return result + num.toString(36);
+    } else {
+      return result;
+    }
   }
   return "";
 }
@@ -58,19 +71,23 @@ function decodeDigits(digits: string) {
       return false;
     }
   });
-  return result + num.toString();
+  if (num) {
+    return result + num.toString();
+  } else {
+    return result;
+  }
 }
 
 function encodeLine(scaleLine: string) {
   scaleLine = scaleLine
-    .replace("/", FRACTION)
-    .replace(",", COMMA)
-    .replace("\\", BACKSLASH)
-    .replace(" ", SPACE)
-    .replace("<", LEFT_ANGLE_BRACKET)
-    .replace(">", RIGHT_ANGLE_BRACKET)
-    .replace("[", LEFT_SQUARE_BRACKET)
-    .replace("+", PLUS);
+    .replace(/\//g, FRACTION)
+    .replace(/,/g, COMMA)
+    .replace(/\\/g, BACKSLASH)
+    .replace(/ /g, SPACE)
+    .replace(/</g, LEFT_ANGLE_BRACKET)
+    .replace(/>/g, RIGHT_ANGLE_BRACKET)
+    .replace(/\[/g, LEFT_SQUARE_BRACKET)
+    .replace(/\+/g, PLUS);
   let lastNondigit = "";
   let result = "";
   let currentNumber = "";
@@ -103,14 +120,14 @@ function decodeLine(encoded: string) {
   result += decodeDigits(currentNumber);
 
   return result
-    .replace(FRACTION, "/")
-    .replace(COMMA, ",")
-    .replace(BACKSLASH, "\\")
-    .replace(SPACE, " ")
-    .replace(LEFT_ANGLE_BRACKET, "<")
-    .replace(RIGHT_ANGLE_BRACKET, ">")
-    .replace(LEFT_SQUARE_BRACKET, "[")
-    .replace(PLUS, "+");
+    .replace(FRACTION_RE, "/")
+    .replace(COMMA_RE, ",")
+    .replace(BACKSLASH_RE, "\\")
+    .replace(SPACE_RE, " ")
+    .replace(LEFT_ANGLE_BRACKET_RE, "<")
+    .replace(RIGHT_ANGLE_BRACKET_RE, ">")
+    .replace(LEFT_SQUARE_BRACKET_RE, "[")
+    .replace(PLUS_RE, "+");
 }
 
 export function encodeLines(scaleLines: string[]) {
