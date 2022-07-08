@@ -2,11 +2,11 @@ import type Scale from "@/scale";
 
 export type ExporterParams = {
   newline: string;
-  name: string;
-  scaleUrl: string;
   scale: Scale;
   filename: string;
   baseMidiNote: number;
+  name?: string;
+  scaleUrl?: string;
   description?: string;
   lines?: string[]; // May contain invalid lines
   appTitle?: string;
@@ -14,6 +14,7 @@ export type ExporterParams = {
   format?: "name" | "cents" | "frequency" | "decimal" | "degree";
   basePeriod?: number;
   baseDegree?: number;
+  centsRoot?: number;
   displayPeriod?: boolean;
   integratePeriod?: boolean;
 };

@@ -1,6 +1,9 @@
+import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
+import ExtendedMonzo from "@/monzo";
 import { getLineType, LINE_TYPE } from "@/parser";
 import { fractionToString, mmod } from "@/utils";
 import { BaseExporter, type ExporterParams } from "@/exporters/base";
+import { Interval } from "@/interval";
 
 export default class ReaperExporter extends BaseExporter {
   static tuningMaxSize = 128;
@@ -18,6 +21,14 @@ export default class ReaperExporter extends BaseExporter {
     const format = this.params.format;
     const basePeriod = this.params.basePeriod || 0;
     const baseDegree = this.params.baseDegree || 0;
+    const modBySize = !this.params.integratePeriod;
+    const centsRoot = new Interval(
+      ExtendedMonzo.fromCents(
+        this.params.centsRoot || 0,
+        DEFAULT_NUMBER_OF_COMPONENTS
+      ),
+      "cents"
+    );
     let lineTypes: LINE_TYPE[];
     if (format === "name") {
       lineTypes = [];
@@ -44,11 +55,15 @@ export default class ReaperExporter extends BaseExporter {
       file += i.toString() + " ";
 
       let index = i - this.params.baseMidiNote;
-      if (!this.params.integratePeriod) {
+      const period = basePeriod + Math.floor(index / scale.size);
+      if (modBySize) {
         index = mmod(index, scale.size);
       }
 
-      if (format === "name" && index > 0 && index <= scale.size) {
+      if (
+        format === "name" &&
+        ((index > 0 && index <= scale.size) || modBySize)
+      ) {
         file += scale.getName(index);
       } else if (format === "degree") {
         file += `${index + baseDegree}/${scale.size}`;
@@ -57,7 +72,7 @@ export default class ReaperExporter extends BaseExporter {
         const lineType = lineTypes![mmod(index, scale.size)];
         switch (lineType) {
           case LINE_TYPE.CENTS:
-            file += scale.getInterval(index).centsString();
+            file += scale.getInterval(index).add(centsRoot).centsString();
             break;
           case LINE_TYPE.DECIMAL:
             file += scale
@@ -83,7 +98,7 @@ export default class ReaperExporter extends BaseExporter {
       }
 
       if (this.params.displayPeriod) {
-        file += ` (${basePeriod + Math.floor(index / scale.size)})`;
+        file += ` (${period})`;
       }
       file += this.params.newline;
     }
