@@ -1,4 +1,3 @@
-import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
 import ExtendedMonzo from "@/monzo";
 import { getLineType, LINE_TYPE } from "@/parser";
 import { fractionToString, mmod } from "@/utils";
@@ -25,7 +24,7 @@ export default class ReaperExporter extends BaseExporter {
     const centsRoot = new Interval(
       ExtendedMonzo.fromCents(
         this.params.centsRoot || 0,
-        DEFAULT_NUMBER_OF_COMPONENTS
+        scale.equave.monzo.numberOfComponents
       ),
       "cents"
     );
