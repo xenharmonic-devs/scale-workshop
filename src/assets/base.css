@@ -211,6 +211,12 @@ ul.btn-group, .btn-dropdown-group ul {
 .control select {
   flex-grow: 1;
 }
+.control.checkbox-container {
+  flex-flow: unset;
+}
+.control.checkbox-container label {
+  font-weight: normal;
+}
 
 /* Responding to screen size */
 @media (max-width: 991px) {

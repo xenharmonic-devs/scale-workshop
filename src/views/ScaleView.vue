@@ -10,6 +10,9 @@ defineProps<{
 
   scale: Scale;
   frequencies: number[];
+
+  centsFractionDigits: number;
+  decimalFractionDigits: number;
 }>();
 
 defineEmits([
@@ -31,6 +34,8 @@ defineEmits([
       :keyColors="keyColors"
       :scale="scale"
       :frequencies="frequencies"
+      :centsFractionDigits="centsFractionDigits"
+      :decimalFractionDigits="decimalFractionDigits"
       @update:scaleName="$emit('update:scaleName', $event)"
       @update:scaleLines="$emit('update:scaleLines', $event)"
       @update:scale="$emit('update:scale', $event)"
