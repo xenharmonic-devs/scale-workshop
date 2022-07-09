@@ -1,7 +1,14 @@
-import Fraction from "fraction.js";
-import { getSemiConvergents } from "moment-of-symmetry";
-import { PRIMES, PRIME_CENTS } from "@/constants";
-import { gcd, lcm, centsToNats, valueToCents, centsToValue } from "@/utils";
+import {
+  centsToNats,
+  centsToValue,
+  Fraction,
+  gcd,
+  getSemiconvergents,
+  lcm,
+  PRIMES,
+  PRIME_CENTS,
+  valueToCents,
+} from "xen-dev-utils";
 
 type Monzo = Fraction[];
 
@@ -427,14 +434,14 @@ export default class ExtendedMonzo {
     return ExtendedMonzo.fromFraction(result, this.numberOfComponents);
   }
 
-  getSemiConvergent(depth: number) {
+  getSemiconvergent(depth: number) {
     let x;
     if (this.isFractional()) {
       x = this.toFraction();
     } else {
       x = new Fraction(this.valueOf());
     }
-    const semiConvergents = getSemiConvergents(x, undefined, depth + 1);
-    return semiConvergents[Math.min(depth, semiConvergents.length - 1)];
+    const semiconvergents = getSemiconvergents(x, undefined, depth + 1);
+    return semiconvergents[Math.min(depth, semiconvergents.length - 1)];
   }
 }

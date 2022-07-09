@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type Scale from "@/scale";
-import { mmod } from "@/utils";
 import { computed } from "vue";
+import { mmod } from "xen-dev-utils";
 
 const props = defineProps<{
   scale: Scale;

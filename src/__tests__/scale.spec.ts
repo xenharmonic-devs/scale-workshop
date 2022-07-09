@@ -1,10 +1,9 @@
 import { describe, it, expect } from "vitest";
-import Fraction from "fraction.js";
 
 import ExtendedMonzo from "../monzo";
 import Scale from "../scale";
-import { arraysEqual } from "../utils";
 import { Interval, IntervalOptions } from "../interval";
+import { arraysEqual, Fraction } from "xen-dev-utils";
 
 // TODO: Convert tests relevant for non-destructive editing #33
 describe("Scale", () => {

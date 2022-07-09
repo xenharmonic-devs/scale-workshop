@@ -1,5 +1,5 @@
-import Fraction from "fraction.js";
 import { describe, it, expect } from "vitest";
+import { Fraction } from "xen-dev-utils";
 
 import { ScaleWorkshopOneData } from "../scale-workshop-one";
 

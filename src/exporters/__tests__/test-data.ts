@@ -1,8 +1,8 @@
-import Fraction from "fraction.js";
 import type { ExporterParams } from "../base";
 import ExtendedMonzo from "../../monzo";
 import { Interval } from "../../interval";
 import Scale from "../../scale";
+import { Fraction } from "xen-dev-utils";
 
 export function getTestData(appTitle: string) {
   const intervals = [

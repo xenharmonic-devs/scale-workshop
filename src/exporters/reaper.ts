@@ -1,8 +1,9 @@
 import ExtendedMonzo from "@/monzo";
 import { getLineType, LINE_TYPE } from "@/parser";
-import { fractionToString, mmod } from "@/utils";
+import { fractionToString } from "@/utils";
 import { BaseExporter, type ExporterParams } from "@/exporters/base";
 import { Interval } from "@/interval";
+import { mmod } from "xen-dev-utils";
 
 export default class ReaperExporter extends BaseExporter {
   static tuningMaxSize = 128;

@@ -1,6 +1,6 @@
 import { APP_TITLE } from "@/constants";
-import { mtof, valueToCents } from "@/utils";
 import { BaseExporter, type ExporterParams } from "@/exporters/base";
+import { mtof, valueToCents } from "xen-dev-utils";
 
 class AnaMarkExporter extends BaseExporter {
   static tuningMaxSize = 128;
@@ -41,7 +41,7 @@ class AnaMarkExporter extends BaseExporter {
     // If version 200 or higher, display the scale URL so user can easily get back to the original scale that generates this tun file.
     // If earlier than version 200, we must be careful that a long URL doesn't break the line-length limit of 512 characters.
     // Note: TUN spec says line-length limit is 255 but in the v1 file format source the limit is indeed 512.
-    if (this.version >= 200 || this.params.scaleUrl.length <= 508) {
+    if (this.version >= 200 || this.params.scaleUrl!.length <= 508) {
       file += "; " + this.params.scaleUrl + newline;
     }
     // If version before 200 and URL is too long, fall back to an alternative way of displaying the original scale data.

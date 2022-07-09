@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import TuningTable from "@/components/TuningTable.vue";
-import { debounce, mtof, autoKeyColors } from "@/utils";
+import { debounce, autoKeyColors } from "@/utils";
 import ScaleRule from "@/components/ScaleRule.vue";
 import { APP_TITLE, UNIX_NEWLINE } from "@/constants";
 import { sanitizeFilename } from "@/utils";
@@ -22,6 +22,7 @@ import ApproximateBySubharmonicsModal from "./modals/modification/ApproximateByS
 import { presets, presetsByGroup } from "@/presets";
 import type Scale from "@/scale";
 import { importFile, type ImporterKey } from "@/importers";
+import { mtof } from "xen-dev-utils";
 
 const props = defineProps<{
   scaleName: string;

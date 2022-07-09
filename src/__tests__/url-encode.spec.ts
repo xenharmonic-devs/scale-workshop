@@ -1,5 +1,5 @@
-import { arraysEqual } from "../utils";
 import { describe, it, expect } from "vitest";
+import { arraysEqual } from "xen-dev-utils";
 
 import {
   decodeKeyColors,
