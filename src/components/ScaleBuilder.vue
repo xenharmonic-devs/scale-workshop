@@ -203,9 +203,7 @@ async function doImport(importerKey: ImporterKey, event: Event) {
             <a href="#" @click="anamarkFile?.click()"><li>Import .tun</li></a>
             <a href="#"><li>Import .mnlgtuns / .mnltuno</li></a>
             <li class="divider"></li>
-            <a href="#" @click="$emit('update:scaleLines', [])"
-              ><li>Clear scale</li></a
-            >
+            <a href="#" @click="joinedLines = ''"><li>Clear scale</li></a>
             <a href="#" @click="showPresetModal = true"
               ><li>Load preset scale</li></a
             >
