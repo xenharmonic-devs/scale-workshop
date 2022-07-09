@@ -1,10 +1,10 @@
-import Fraction from "fraction.js";
 import { describe, it, expect } from "vitest";
 
 import { parseLine } from "../parser";
 import ExtendedMonzo from "../monzo";
 import { DEFAULT_NUMBER_OF_COMPONENTS } from "../constants";
 import { Interval } from "../interval";
+import { Fraction } from "xen-dev-utils";
 
 describe("Line parser", () => {
   it("doesn't parse negative fractions", () => {

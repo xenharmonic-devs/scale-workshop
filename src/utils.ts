@@ -1,40 +1,5 @@
-import Fraction from "fraction.js";
 import { computed, type ComputedRef } from "vue";
-
-export function arraysEqual(a: any[], b: any[]) {
-  if (a === b) {
-    return true;
-  }
-  if (a.length !== b.length) {
-    return false;
-  }
-  for (let i = 0; i < a.length; ++i) {
-    if (a[i] !== b[i]) {
-      return false;
-    }
-  }
-  return true;
-}
-
-// Stolen from fraction.js, because it's not exported.
-export function gcd(a: number, b: number): number {
-  if (!a) return b;
-  if (!b) return a;
-  while (true) {
-    a %= b;
-    if (!a) return b;
-    b %= a;
-    if (!b) return a;
-  }
-}
-
-export function lcm(a: number, b: number): number {
-  return (Math.abs(a) / gcd(a, b)) * Math.abs(b);
-}
-
-export function mmod(a: number, b: number) {
-  return ((a % b) + b) % b;
-}
+import { Fraction, gcd, mmod } from "xen-dev-utils";
 
 export function isSafeFraction(fraction: Fraction) {
   return (
@@ -92,14 +57,6 @@ export function stringToFraction(input: string) {
   return new Fraction(input);
 }
 
-export function centsToNats(cents: number) {
-  return (cents / 1200) * Math.LN2;
-}
-
-export function natsToCents(nats: number) {
-  return (nats / Math.LN2) * 1200;
-}
-
 export function debounce(func: (...args: any[]) => void, timeout = 300) {
   let timer: number;
   return (...args: any[]) => {
@@ -108,37 +65,6 @@ export function debounce(func: (...args: any[]) => void, timeout = 300) {
       func(...args);
     }, timeout);
   };
-}
-
-export function valueToCents(value: number) {
-  return (Math.log(value) / Math.LN2) * 1200;
-}
-
-export function centsToValue(cents: number) {
-  return Math.pow(2, cents / 1200);
-}
-
-export function mtof(index: number) {
-  return 440 * Math.pow(2, (index - 69) / 12);
-}
-
-export function ratioToCents(ratio: number) {
-  return 1200 * Math.log2(ratio);
-}
-
-export function frequencyToCentOffset(frequency: number) {
-  return ratioToCents(frequency / 440);
-}
-
-const MIDI_NOTE_NUMBER_OF_A4 = 69;
-// convert a frequency to a midi note number and cents offset
-// assuming 12-edo at 440Hz
-// returns an array [midiNoteNumber, centsOffset]
-export function ftom(frequency: number) {
-  const semitones = MIDI_NOTE_NUMBER_OF_A4 + 12 * Math.log2(frequency / 440);
-  const midiNoteNumber = Math.round(semitones);
-  const centsOffset = (semitones - midiNoteNumber) * 100;
-  return [midiNoteNumber, centsOffset];
 }
 
 const MIDI_NOTE_NAMES = [
@@ -161,16 +87,6 @@ export function midiNoteNumberToName(noteNumber: number) {
   const remainder = mmod(noteNumber, 12);
   const quotient = (noteNumber - remainder) / 12;
   return MIDI_NOTE_NAMES[remainder] + quotient.toString();
-}
-
-export function clamp(minValue: number, maxValue: number, value: number) {
-  if (value < minValue) {
-    return minValue;
-  }
-  if (value > maxValue) {
-    return maxValue;
-  }
-  return value;
 }
 
 export function sanitizeFilename(input: string) {

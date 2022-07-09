@@ -1,11 +1,15 @@
-import Fraction from "fraction.js";
 import { mos } from "moment-of-symmetry";
 
 import ExtendedMonzo from "@/monzo";
-import { kCombinations } from "@/combinations";
-import { PRIME_CENTS, PRIMES } from "@/constants";
 import { Interval, type IntervalOptions } from "@/interval";
-import { mmod, valueToCents } from "@/utils";
+import {
+  Fraction,
+  kCombinations,
+  mmod,
+  PRIMES,
+  PRIME_CENTS,
+  valueToCents,
+} from "xen-dev-utils";
 
 // TODO: Convert methods relevant for non-destructive editing #33
 export default class Scale {

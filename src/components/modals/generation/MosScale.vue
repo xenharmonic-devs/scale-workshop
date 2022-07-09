@@ -5,7 +5,6 @@ import ExtendedMonzo from "@/monzo";
 import Scale from "@/scale";
 import {
   anyForEdo,
-  gcd,
   getHardness,
   makeEdoMap,
   modeInfo,
@@ -15,6 +14,7 @@ import { computed, ref, watch } from "vue";
 import Modal from "@/components/ModalDialog.vue";
 import ScaleLineInput from "@/components/ScaleLineInput.vue";
 import { Interval } from "@/interval";
+import { gcd } from "xen-dev-utils";
 
 const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
 

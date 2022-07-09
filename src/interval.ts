@@ -1,6 +1,6 @@
-import Fraction from "fraction.js";
 import ExtendedMonzo from "@/monzo";
 import { fractionToString, isSafeFraction } from "@/utils";
+import { Fraction } from "xen-dev-utils";
 
 export type IntervalOptions = {
   forbidMonzo?: boolean;

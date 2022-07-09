@@ -1,8 +1,8 @@
-import Fraction from "fraction.js";
 import ExtendedMonzo from "@/monzo";
 import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
 import { stringToFraction } from "@/utils";
 import { Interval, type IntervalOptions } from "@/interval";
+import { Fraction } from "xen-dev-utils";
 
 export enum LINE_TYPE {
   CENTS = "cents",

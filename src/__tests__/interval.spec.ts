@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import Fraction from "fraction.js";
 
 import ExtendedMonzo from "../monzo";
 import { Interval } from "../interval";
+import { Fraction } from "xen-dev-utils";
 
 describe("Scale line reverse parsing", () => {
   it("includes a denominator with integers", () => {

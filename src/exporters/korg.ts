@@ -1,7 +1,12 @@
 import { KORG } from "@/constants";
-import { clamp, frequencyToCentOffset, mmod, ratioToCents } from "@/utils";
 import JSZip from "jszip";
 import { BaseExporter, type ExporterParams } from "@/exporters/base";
+import {
+  clamp,
+  frequencyToCentOffset,
+  mmod,
+  valueToCents,
+} from "xen-dev-utils";
 
 // This exporter converts tuning data into a zip-compressed file for use with Korg's
 // 'logue Sound Librarian software, supporting their 'logue series of synthesizers.
@@ -102,7 +107,7 @@ class KorgExporter extends BaseExporter {
     // the index of the table that's equal to the baseNote should have the following value
     const refOffsetCents =
       KORG.mnlg.refA.val +
-      ratioToCents(scale.baseFrequency / KORG.mnlg.refA.freq);
+      valueToCents(scale.baseFrequency / KORG.mnlg.refA.freq);
 
     // offset cents array for binary conversion
     let centsTable = [];
@@ -129,7 +134,7 @@ class KorgExporter extends BaseExporter {
     // prepare files for zipping
     const tuningInfo = this.getMnlgtunTuningInfoXML(
       "ScaleWorkshop",
-      this.params.name
+      this.params.name!
     );
     const fileInfo = this.getMnlgtunFileInfoXML();
     const [fileNameHeader, fileType] = this.useScaleFormat
