@@ -85,6 +85,9 @@ export default class ExtendedMonzo {
   cents: number;
 
   constructor(vector: Monzo, residual?: Fraction, cents = 0) {
+    if (isNaN(cents)) {
+      throw new Error("Invalid cents value");
+    }
     if (residual === undefined) {
       residual = new Fraction(1);
     }
@@ -205,6 +208,23 @@ export default class ExtendedMonzo {
     }
 
     return [fractionOfEquave, equave];
+  }
+
+  toIntegerMonzo(): number[] {
+    if (!this.residual.equals(1)) {
+      throw new Error("Cannot convert monzo with residual to integers");
+    }
+    if (this.cents) {
+      throw new Error("Cannot convert monzo with offset to integers");
+    }
+    const result: number[] = [];
+    this.vector.forEach((component) => {
+      if (component.d !== 1) {
+        throw new Error("Cannot convert fractional monzo to integers");
+      }
+      result.push(component.valueOf());
+    });
+    return result;
   }
 
   isFractional() {

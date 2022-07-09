@@ -15,11 +15,14 @@ import SubharmonicSeriesModal from "@/components/modals/generation/SubharmonicSe
 import EnumerateChordModal from "@/components/modals/generation/EnumerateChord.vue";
 import EulerGenusModal from "@/components/modals/generation/EulerGenus.vue";
 import DwarfModal from "@/components/modals/generation/DwarfScale.vue";
+import RankOneModal from "@/components/modals/generation/RankOne.vue";
+import RankTwoModal from "@/components/modals/generation/RankTwo.vue";
 import RotateModal from "@/components/modals/modification/RotateScale.vue";
 import SubsetModal from "@/components/modals/modification/TakeSubset.vue";
 import StretchModal from "@/components/modals/modification/StretchScale.vue";
 import RandomVarianceModal from "@/components/modals/modification/RandomVariance.vue";
-import ApproximateBySubharmonicsModal from "./modals/modification/ApproximateBySubharmonics.vue";
+import ApproximateBySubharmonicsModal from "@/components/modals/modification/ApproximateBySubharmonics.vue";
+import TemperModal from "@/components/modals/modification/TemperScale.vue";
 import { presets, presetsByGroup } from "@/presets";
 import type Scale from "@/scale";
 import { importFile, type ImporterKey } from "@/importers";
@@ -144,6 +147,8 @@ const showSubharmonicSeriesModal = ref(false);
 const showEnumerateChordModal = ref(false);
 const showEulerGenusModal = ref(false);
 const showDwarfModal = ref(false);
+const showRankOneModal = ref(false);
+const showRankTwoModal = ref(false);
 
 const showRotateModal = ref(false);
 const showSubsetModal = ref(false);
@@ -151,6 +156,7 @@ const showStretchModal = ref(false);
 const showRandomVarianceModal = ref(false);
 const showApproximateByHarmonicsModal = ref(false);
 const showApproximateBySubharmonicsModal = ref(false);
+const showTemperModal = ref(false);
 
 const subsetModal = ref<any>(null);
 
@@ -184,7 +190,12 @@ async function doImport(importerKey: ImporterKey, event: Event) {
           <a class="btn" href="#">New scale ▼</a>
           <ul>
             <a href="#"><li>Equal temperament</li></a>
-            <a href="#"><li>Rank-2 temperament</li></a>
+            <a href="#" @click="showRankOneModal = true"
+              ><li>Rank-1 temperament</li></a
+            >
+            <a href="#" @click="showRankTwoModal = true"
+              ><li>Rank-2 temperament</li></a
+            >
             <a href="#" @click="showHarmonicSeriesModal = true"
               ><li>Harmonic series segment</li></a
             >
@@ -248,6 +259,7 @@ async function doImport(importerKey: ImporterKey, event: Event) {
               ><li>Approximate by subharmonics</li></a
             >
             <a href="#"><li>Equalize</li></a>
+            <a href="#" @click="showTemperModal = true"><li>Temper</li></a>
           </ul>
         </li>
       </ul>
@@ -419,6 +431,28 @@ async function doImport(importerKey: ImporterKey, event: Event) {
       :scale="scale"
     />
 
+    <RankOneModal
+      :show="showRankOneModal"
+      :centsFractionDigits="centsFractionDigits"
+      @update:scaleName="emit('update:scaleName', $event)"
+      @update:scale="
+        showRankOneModal = false;
+        emit('update:scale', $event);
+      "
+      @cancel="showRankOneModal = false"
+    />
+
+    <RankTwoModal
+      :show="showRankTwoModal"
+      :centsFractionDigits="centsFractionDigits"
+      @update:scaleName="emit('update:scaleName', $event)"
+      @update:scale="
+        showRankTwoModal = false;
+        emit('update:scale', $event);
+      "
+      @cancel="showRankTwoModal = false"
+    />
+
     <HarmonicSeriesModal
       :show="showHarmonicSeriesModal"
       @update:scaleName="emit('update:scaleName', $event)"
@@ -575,6 +609,17 @@ async function doImport(importerKey: ImporterKey, event: Event) {
       "
       @cancel="showApproximateBySubharmonicsModal = false"
       :scale="scale"
+    />
+
+    <TemperModal
+      :show="showTemperModal"
+      @update:scale="
+        showTemperModal = false;
+        emit('update:scale', $event);
+      "
+      @cancel="showTemperModal = false"
+      :scale="scale"
+      :centsFractionDigits="centsFractionDigits"
     />
   </Teleport>
 </template>
