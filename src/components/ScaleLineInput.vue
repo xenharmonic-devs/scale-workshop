@@ -22,6 +22,7 @@ watch(error, (newError) => element.value!.setCustomValidity(newError));
 <template>
   <input
     ref="element"
+    type="text"
     :value="modelValue"
     @input="$emit('update:modelValue', ($event.target as HTMLInputElement)!.value)"
   />
