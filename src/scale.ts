@@ -189,7 +189,7 @@ export default class Scale {
         "Number of elements in a combination must be less than or equal to the number of factors"
       );
     }
-    const unity = equave.mul(0);
+    const unity = equave.zeroed();
     let intervals: Interval[] = [];
     kCombinations(factors, numElements).forEach((combination) => {
       intervals.push(
