@@ -5,6 +5,7 @@ import { Interval, type IntervalOptions } from "@/interval";
 import { Fraction } from "xen-dev-utils";
 
 export enum LINE_TYPE {
+  NUMBER = "number",
   CENTS = "cents",
   DECIMAL = "decimal",
   RATIO = "ratio",
@@ -14,6 +15,12 @@ export enum LINE_TYPE {
   MONZO = "monzo",
   COMPOSITE = "composite",
   INVALID = "invalid",
+}
+
+function isNumber(input: string): boolean {
+  // true, when the input is a string of digits
+  // for example: 19
+  return /^\d+$/.test(input);
 }
 
 function isCent(input: string): boolean {
@@ -114,8 +121,25 @@ export function getLineType(input: string) {
   if (isComposite(input)) {
     return LINE_TYPE.COMPOSITE;
   }
+  if (isNumber(input)) {
+    return LINE_TYPE.NUMBER;
+  }
 
   return LINE_TYPE.INVALID;
+}
+
+function parseNumber(
+  input: string,
+  numberOfComponents: number,
+  options?: IntervalOptions
+) {
+  const number = parseInt(input);
+  return new Interval(
+    ExtendedMonzo.fromNumber(number, numberOfComponents),
+    "ratio",
+    input,
+    options
+  );
 }
 
 function parseCents(
@@ -310,4 +334,25 @@ export function parseLine(
     default:
       throw new Error(`Failed to parse ${input}`);
   }
+}
+
+export function parseChord(
+  input: string,
+  separator: string | RegExp = ":",
+  numberOfComponents = DEFAULT_NUMBER_OF_COMPONENTS,
+  options?: IntervalOptions
+) {
+  const chord: Interval[] = [];
+  input.split(separator).forEach((line) => {
+    line = line.trim();
+    if (!line.length) {
+      return;
+    }
+    if (isNumber(line)) {
+      chord.push(parseNumber(line, numberOfComponents, options));
+    } else {
+      chord.push(parseLine(line, numberOfComponents, options));
+    }
+  });
+  return chord;
 }

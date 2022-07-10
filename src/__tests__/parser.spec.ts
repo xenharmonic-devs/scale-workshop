@@ -1,12 +1,17 @@
 import { describe, it, expect } from "vitest";
 
-import { parseLine } from "../parser";
+import { parseChord, parseLine } from "../parser";
 import ExtendedMonzo from "../monzo";
 import { DEFAULT_NUMBER_OF_COMPONENTS } from "../constants";
 import { Interval } from "../interval";
 import { Fraction } from "xen-dev-utils";
+import Scale from "../scale";
 
 describe("Line parser", () => {
+  it("doesn't parse bare numbers", () => {
+    expect(() => parseLine("42")).toThrow();
+  });
+
   it("doesn't parse negative fractions", () => {
     expect(() => parseLine("-1/2")).toThrow();
   });
@@ -158,5 +163,35 @@ describe("Line parser", () => {
         )
       )
     ).toBeTruthy();
+  });
+});
+
+describe("Chord parser", () => {
+  it("parses all line types and bare numbers", () => {
+    const scale = Scale.fromChord(
+      parseChord(
+        "2 : 1300.1 : 2,7 : 7/3 : 11\\9 : 7\\8<3> : [0 1> : 3/1 - 1. : 4"
+      )
+    );
+    expect(
+      scale
+        .getMonzo(0)
+        .equals(ExtendedMonzo.fromNumber(1, DEFAULT_NUMBER_OF_COMPONENTS))
+    ).toBeTruthy();
+    scale.baseFrequency = 1000;
+    const expected = [
+      1059.52, 1350, 1166.67, 1166.53, 1307.53, 1500, 1499.13, 2000,
+    ];
+    for (let i = 0; i < scale.size; ++i) {
+      expect(scale.getFrequency(i + 1)).toBeCloseTo(expected[i]);
+    }
+  });
+
+  it("supports whitespace as a separator", () => {
+    const cpsFactors = parseChord("1 3\t5\n7", /\s/);
+    expect(cpsFactors[0].monzo.valueOf()).toBeCloseTo(1);
+    expect(cpsFactors[1].monzo.valueOf()).toBeCloseTo(3);
+    expect(cpsFactors[2].monzo.valueOf()).toBeCloseTo(5);
+    expect(cpsFactors[3].monzo.valueOf()).toBeCloseTo(7);
   });
 });

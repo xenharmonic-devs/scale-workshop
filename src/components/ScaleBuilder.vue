@@ -12,6 +12,7 @@ import HarmonicSeriesModal from "@/components/modals/generation/HarmonicSeries.v
 import MosModal from "@/components/modals/generation/MosScale.vue";
 import ApproximateByHarmonicsModal from "@/components/modals/modification/ApproximateByHarmonics.vue";
 import SubharmonicSeriesModal from "@/components/modals/generation/SubharmonicSeries.vue";
+import EnumerateChordModal from "@/components/modals/generation/EnumerateChord.vue";
 import EulerGenusModal from "@/components/modals/generation/EulerGenus.vue";
 import DwarfModal from "@/components/modals/generation/DwarfScale.vue";
 import RotateModal from "@/components/modals/modification/RotateScale.vue";
@@ -140,6 +141,7 @@ function selectPreset() {
 const showHarmonicSeriesModal = ref(false);
 const showMosModal = ref(false);
 const showSubharmonicSeriesModal = ref(false);
+const showEnumerateChordModal = ref(false);
 const showEulerGenusModal = ref(false);
 const showDwarfModal = ref(false);
 
@@ -189,7 +191,9 @@ async function doImport(importerKey: ImporterKey, event: Event) {
             <a href="#" @click="showSubharmonicSeriesModal = true"
               ><li>Subharmonic series segment</li></a
             >
-            <a href="#"><li>Enumerate chord</li></a>
+            <a href="#" @click="showEnumerateChordModal = true"
+              ><li>Enumerate chord</li></a
+            >
             <a href="#"><li>Combination product set</li></a>
             <a href="#" @click="showMosModal = true"
               ><li>Moment of symmetry scale</li></a
@@ -444,6 +448,16 @@ async function doImport(importerKey: ImporterKey, event: Event) {
         emit('update:scale', $event);
       "
       @cancel="showSubharmonicSeriesModal = false"
+    />
+
+    <EnumerateChordModal
+      :show="showEnumerateChordModal"
+      @update:scaleName="emit('update:scaleName', $event)"
+      @update:scale="
+        showEnumerateChordModal = false;
+        emit('update:scale', $event);
+      "
+      @cancel="showEnumerateChordModal = false"
     />
 
     <EulerGenusModal
