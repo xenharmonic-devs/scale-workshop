@@ -104,7 +104,9 @@ select {
 optgroup {
   font-weight: bold;
 }
-input:invalid {
+input:invalid,
+textarea:invalid,
+select:invalid {
   background-color: var(--color-background-invalid);
 }
 
