@@ -7,7 +7,7 @@ import {
   useRouter,
   type LocationQuery,
 } from "vue-router";
-import { NEWLINE_TEST, NUMBER_OF_NOTES } from "@/constants";
+import { NEWLINE_TEST, NUMBER_OF_NOTES, UNIX_NEWLINE } from "@/constants";
 import { ScaleWorkshopOneData } from "@/scale-workshop-one";
 import type { Input, Output } from "webmidi";
 import Scale from "@/scale";
@@ -58,6 +58,8 @@ const isomorphicHorizontal = ref(1);
 // TODO: Implement user preferences and make cents precision configurable
 const centsFractionDigits = ref(3);
 const decimalFractionDigits = ref(5);
+const newline = ref(UNIX_NEWLINE);
+
 const equaveShift = ref(0);
 const typingActive = ref(true);
 const midiInput = ref<Input | null>(null);
@@ -457,6 +459,7 @@ function updateMidiInputChannels(newValue: Set<number>) {
     :isomorphicVertical="isomorphicVertical"
     :centsFractionDigits="centsFractionDigits"
     :decimalFractionDigits="decimalFractionDigits"
+    :newline="newline"
     :equaveShift="equaveShift"
     :midiInput="midiInput"
     :midiOutput="midiOutput"

@@ -3,11 +3,12 @@ import { computed, ref } from "vue";
 import TuningTable from "@/components/TuningTable.vue";
 import { debounce, autoKeyColors } from "@/utils";
 import ScaleRule from "@/components/ScaleRule.vue";
-import { APP_TITLE, UNIX_NEWLINE } from "@/constants";
+import { APP_TITLE } from "@/constants";
 import { sanitizeFilename } from "@/utils";
 import { exportFile, type ExporterKey } from "@/exporters";
 import Modal from "@/components/ModalDialog.vue";
 import ReaperExportModal from "@/components/modals/ReaperExport.vue";
+import ShareUrlModal from "@/components/modals/ShareUrl.vue";
 import HarmonicSeriesModal from "@/components/modals/generation/HarmonicSeries.vue";
 import MosModal from "@/components/modals/generation/MosScale.vue";
 import ApproximateByHarmonicsModal from "@/components/modals/modification/ApproximateByHarmonics.vue";
@@ -41,6 +42,7 @@ const props = defineProps<{
 
   centsFractionDigits: number;
   decimalFractionDigits: number;
+  newline: string;
 }>();
 
 const emit = defineEmits([
@@ -113,9 +115,8 @@ function autoFrequency() {
 }
 
 function doExport(exporter: ExporterKey) {
-  // TODO: Fetch newline from user preferences
   const params = {
-    newline: UNIX_NEWLINE,
+    newline: props.newline,
     name: props.scaleName,
     scaleUrl: window.location.href,
     scale: props.scale,
@@ -131,6 +132,8 @@ function doExport(exporter: ExporterKey) {
 }
 
 const showReaperExportModal = ref(false);
+const showShareUrlModal = ref(false);
+const shareUrlModal = ref<any>(null);
 
 const presetGroups = presetsByGroup();
 const presetSelect = ref<HTMLSelectElement | null>(null);
@@ -407,6 +410,17 @@ async function doImport(importerKey: ImporterKey, event: Event) {
         <p><strong>Reaper note name map (.txt)</strong></p>
         <p>Open Reaper export dialog</p>
       </a>
+      <a
+        href="#"
+        class="btn"
+        @click="
+          showShareUrlModal = true;
+          shareUrlModal.initialize();
+        "
+      >
+        <p><strong>Share scale as URL</strong></p>
+        <p>Open the sharing dialog</p>
+      </a>
     </div>
   </div>
 
@@ -431,7 +445,7 @@ async function doImport(importerKey: ImporterKey, event: Event) {
       :show="showReaperExportModal"
       @confirm="showReaperExportModal = false"
       @cancel="showReaperExportModal = false"
-      :newline="UNIX_NEWLINE"
+      :newline="props.newline"
       :scaleName="scaleName"
       :baseMidiNote="baseMidiNote"
       :scale="scale"
@@ -457,6 +471,15 @@ async function doImport(importerKey: ImporterKey, event: Event) {
         emit('update:scale', $event);
       "
       @cancel="showRankTwoModal = false"
+    />
+
+    <ShareUrlModal
+      ref="shareUrlModal"
+      :show="showShareUrlModal"
+      :scaleName="scaleName"
+      :newline="newline"
+      @confirm="showShareUrlModal = false"
+      @cancel="showShareUrlModal = false"
     />
 
     <HarmonicSeriesModal
