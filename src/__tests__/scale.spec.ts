@@ -4,6 +4,7 @@ import ExtendedMonzo from "../monzo";
 import Scale from "../scale";
 import { Interval, IntervalOptions } from "../interval";
 import { arraysEqual, Fraction } from "xen-dev-utils";
+import { mos } from "moment-of-symmetry";
 
 // TODO: Convert tests relevant for non-destructive editing #33
 describe("Scale", () => {
@@ -699,7 +700,8 @@ describe("Scale", () => {
   });
   it("can generate a MOS scale", () => {
     const octave = new Interval(ExtendedMonzo.fromNumber(2, 1), "ratio");
-    const bish = Scale.fromMos(3, 4, 2, 1, 3, octave);
+    const steps = mos(3, 4, 2, 1, 3);
+    const bish = Scale.fromEqualTemperamentSubset(steps, octave);
     expect(bish.getMonzo(0).toCents()).toBeCloseTo(0);
     expect(bish.getMonzo(1).toCents()).toBeCloseTo(120);
     expect(bish.getMonzo(2).toCents()).toBeCloseTo(360);
@@ -708,6 +710,21 @@ describe("Scale", () => {
     expect(bish.getMonzo(5).toCents()).toBeCloseTo(840);
     expect(bish.getMonzo(6).toCents()).toBeCloseTo(1080);
     expect(bish.getMonzo(7).toCents()).toBeCloseTo(1200);
+  });
+  it("formats MOS scales consistently", () => {
+    const octave = new Interval(ExtendedMonzo.fromNumber(2, 1), "ratio");
+    const steps = mos(5, 2, 2, 1, 5);
+    const major = Scale.fromEqualTemperamentSubset(steps, octave);
+    const expected = [
+      "2\\12",
+      "4\\12",
+      "5\\12",
+      "7\\12",
+      "9\\12",
+      "11\\12",
+      "12\\12",
+    ];
+    expect(arraysEqual(major.toStrings(), expected)).toBeTruthy();
   });
   /*
   it("can tile", () => {
