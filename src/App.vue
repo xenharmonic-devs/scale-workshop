@@ -30,6 +30,9 @@ const mainLowpass = ref<BiquadFilterNode | null>(null);
 const mainHighpass = ref<BiquadFilterNode | null>(null);
 // Keep a reference to the intended destination of the filter stack.
 const audioDestination = ref<AudioNode | null>(null);
+// Chromium has some issues with audio nodes as props
+// so we need this extra ref and the associated watcher.
+const mainVolume = ref(0.11);
 
 // === Application state ===
 const scaleName = ref("");
@@ -354,7 +357,7 @@ onMounted(() => {
   const ctx = rootProps.audioContext;
 
   const gain = ctx.createGain();
-  gain.gain.setValueAtTime(0.3, ctx.currentTime);
+  gain.gain.setValueAtTime(mainVolume.value, ctx.currentTime);
   gain.connect(ctx.destination);
   mainGain.value = gain;
 
@@ -400,6 +403,17 @@ onUnmounted(() => {
   audioDestination.value = null;
 });
 
+watch(mainVolume, (newValue) => {
+  if (mainGain.value === null) {
+    return;
+  }
+  mainGain.value.gain.setTargetAtTime(
+    newValue,
+    rootProps.audioContext.currentTime,
+    0.01
+  );
+});
+
 watch(midiOutput, sendPitchBendRange);
 watch(midiOutputChannels, sendPitchBendRange);
 
@@ -431,7 +445,8 @@ function updateMidiInputChannels(newValue: Set<number>) {
   </nav>
   <RouterView
     :audioContext="audioContext"
-    :mainGain="mainGain"
+    :audioOutput="mainGain"
+    :mainVolume="mainVolume"
     :scaleName="scaleName"
     :scaleLines="scaleLines"
     :baseMidiNote="baseMidiNote"
@@ -448,6 +463,7 @@ function updateMidiInputChannels(newValue: Set<number>) {
     :noteOn="keyboardNoteOn"
     :midiInputChannels="midiInputChannels"
     :midiOutputChannels="midiOutputChannels"
+    @update:mainVolume="mainVolume = $event"
     @update:scaleName="scaleName = $event"
     @update:scaleLines="updateFromScaleLines"
     @update:scale="updateFromScale"
