@@ -19,6 +19,18 @@ import { debounce } from "@/utils";
 import { version } from "../package.json";
 import type { Interval } from "@/interval";
 
+// === Root props and audio ===
+const rootProps = defineProps<{
+  audioContext: AudioContext;
+}>();
+// Protect the user's audio system by limiting
+// the gain and frequency response.
+const mainGain = ref<GainNode | null>(null);
+const mainLowpass = ref<BiquadFilterNode | null>(null);
+const mainHighpass = ref<BiquadFilterNode | null>(null);
+// Keep a reference to the intended destination of the filter stack.
+const audioDestination = ref<AudioNode | null>(null);
+
 // === Application state ===
 const scaleName = ref("");
 const scaleLines = ref<string[]>([]);
@@ -175,7 +187,33 @@ const midiOut = computed(() => {
 });
 
 function sendNoteOn(frequency: number, rawAttack: number) {
-  return midiOut.value.sendNoteOn(frequency, rawAttack);
+  const midiOff = midiOut.value.sendNoteOn(frequency, rawAttack);
+
+  // Simple placeholder synth
+  if (audioDestination.value !== null) {
+    const ctx = rootProps.audioContext;
+    const now = ctx.currentTime;
+    const oscillator = ctx.createOscillator();
+    oscillator.type = "triangle";
+    oscillator.frequency.setValueAtTime(frequency, now);
+    oscillator.connect(audioDestination.value);
+    oscillator.start(now);
+
+    const oscillatorOff = () => {
+      const then = ctx.currentTime;
+      oscillator.stop(then);
+      oscillator.disconnect();
+    };
+
+    const off = (rawRelease: number) => {
+      midiOff(rawRelease);
+      oscillatorOff();
+    };
+
+    return off;
+  } else {
+    return midiOff;
+  }
 }
 
 const midiIn = new MidiIn(
@@ -312,6 +350,30 @@ onMounted(() => {
       console.error("Error parsing version 1 URL", error);
     }
   }
+  // Audio
+  const ctx = rootProps.audioContext;
+
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0.3, ctx.currentTime);
+  gain.connect(ctx.destination);
+  mainGain.value = gain;
+
+  const lowpass = ctx.createBiquadFilter();
+  lowpass.frequency.setValueAtTime(5000, ctx.currentTime);
+  lowpass.Q.setValueAtTime(Math.sqrt(0.5), ctx.currentTime);
+  lowpass.type = "lowpass";
+  lowpass.connect(gain);
+  mainLowpass.value = lowpass;
+
+  const highpass = ctx.createBiquadFilter();
+  highpass.frequency.setValueAtTime(30, ctx.currentTime);
+  highpass.Q.setValueAtTime(Math.sqrt(0.5), ctx.currentTime);
+  highpass.type = "highpass";
+  highpass.connect(lowpass);
+  mainHighpass.value = highpass;
+
+  // Intended point of audio connection
+  audioDestination.value = highpass;
 });
 
 onUnmounted(() => {
@@ -322,6 +384,20 @@ onUnmounted(() => {
   if (midiInput.value !== null) {
     midiInput.value.removeListener();
   }
+  // Audio
+  if (mainGain.value !== null) {
+    mainGain.value.disconnect();
+  }
+  if (mainLowpass.value !== null) {
+    mainLowpass.value.disconnect();
+  }
+  if (mainHighpass.value !== null) {
+    mainHighpass.value.disconnect();
+  }
+  mainGain.value = null;
+  mainLowpass.value = null;
+  mainHighpass.value = null;
+  audioDestination.value = null;
 });
 
 watch(midiOutput, sendPitchBendRange);
@@ -354,6 +430,8 @@ function updateMidiInputChannels(newValue: Set<number>) {
     </ul>
   </nav>
   <RouterView
+    :audioContext="audioContext"
+    :mainGain="mainGain"
     :scaleName="scaleName"
     :scaleLines="scaleLines"
     :baseMidiNote="baseMidiNote"
