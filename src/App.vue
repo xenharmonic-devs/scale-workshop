@@ -19,6 +19,10 @@ import { debounce } from "@/utils";
 import { version } from "../package.json";
 import type { Interval } from "@/interval";
 import { arraysEqual } from "xen-dev-utils";
+import {
+  mapWhiteAsdfBlackQwerty,
+  mapWhiteQweZxcBlack123Asd,
+} from "./keyboard-mapping";
 
 // === Root props and audio ===
 const rootProps = defineProps<{
@@ -56,6 +60,9 @@ const keyColors = ref([
 ]);
 const isomorphicVertical = ref(5);
 const isomorphicHorizontal = ref(1);
+const keyboardMapping = reactive<Map<string, number>>(new Map());
+mapWhiteAsdfBlackQwerty(keyColors.value, keyboardMapping);
+const keyboardMode = ref<"isomorphic" | "mapped">("isomorphic");
 // TODO: Implement user preferences and make cents precision configurable
 const centsFractionDigits = ref(3);
 const decimalFractionDigits = ref(5);
@@ -129,6 +136,8 @@ const encodeState = debounce(() => {
     keyColors: keyColors.value,
     isomorphicHorizontal: isomorphicHorizontal.value,
     isomorphicVertical: isomorphicVertical.value,
+    keyboardMode: keyboardMode.value,
+    keyboardMapping,
   };
 
   const query = encodeQuery(state) as LocationQuery;
@@ -140,13 +149,20 @@ const encodeState = debounce(() => {
   router.push({ path: url.pathname, query });
 }, 200);
 
-watch(scaleName, encodeState);
-watch(scaleLines, encodeState);
-watch(scale, encodeState);
-watch(baseMidiNote, encodeState);
-watch(keyColors, encodeState);
-watch(isomorphicHorizontal, encodeState);
-watch(isomorphicVertical, encodeState);
+watch(
+  [
+    scaleName,
+    scaleLines,
+    scale,
+    baseMidiNote,
+    keyColors,
+    isomorphicHorizontal,
+    isomorphicVertical,
+    keyboardMode,
+    keyboardMapping,
+  ],
+  encodeState
+);
 
 // == State decoding ==
 router.afterEach((to, from) => {
@@ -174,7 +190,12 @@ router.afterEach((to, from) => {
       keyColors.value = state.keyColors;
       isomorphicHorizontal.value = state.isomorphicHorizontal;
       isomorphicVertical.value = state.isomorphicVertical;
+      keyboardMode.value = state.keyboardMode;
       updateFromScaleLines(state.scaleLines);
+      keyboardMapping.clear();
+      for (const [key, value] of state.keyboardMapping) {
+        keyboardMapping.set(key, value);
+      }
     } catch (error) {
       console.error(`Error parsing version ${query.get("version")} URL`, error);
     }
@@ -306,7 +327,7 @@ function windowKeydownOrUp(event: KeyboardEvent | MouseEvent) {
 }
 
 // === Typing keyboard input ===
-const typingKeyboad = new Keyboard();
+const typingKeyboard = new Keyboard();
 
 function emptyKeyup() {}
 
@@ -317,7 +338,7 @@ function typingKeydown(event: CoordinateKeyboardEvent) {
   }
   // The key left of Digit1 releases sustained keys
   if (event.code === "Backquote") {
-    typingKeyboad.deactivate();
+    typingKeyboard.deactivate();
     return emptyKeyup;
   }
 
@@ -343,11 +364,19 @@ function typingKeydown(event: CoordinateKeyboardEvent) {
     return emptyKeyup;
   }
 
-  const index =
-    baseMidiNote.value +
-    scale.size * equaveShift.value +
-    x * isomorphicHorizontal.value +
-    (2 - y) * isomorphicVertical.value;
+  let index = baseMidiNote.value + scale.size * equaveShift.value;
+
+  if (keyboardMode.value === "isomorphic") {
+    index +=
+      x * isomorphicHorizontal.value + (2 - y) * isomorphicVertical.value;
+  } else {
+    if (keyboardMapping.has(event.code)) {
+      index += keyboardMapping.get(event.code)!;
+    } else {
+      // No user mapping for the key, bail out
+      return emptyKeyup;
+    }
+  }
 
   return keyboardNoteOn(index);
 }
@@ -357,7 +386,7 @@ onMounted(() => {
   window.addEventListener("keydown", windowKeydownOrUp);
   window.addEventListener("keyup", windowKeydownOrUp);
   window.addEventListener("mousedown", windowKeydownOrUp);
-  typingKeyboad.addKeydownListener(typingKeydown);
+  typingKeyboard.addKeydownListener(typingKeydown);
 
   const url = new URL(window.location.href);
   const query = url.searchParams;
@@ -421,7 +450,7 @@ onUnmounted(() => {
   window.removeEventListener("keydown", windowKeydownOrUp);
   window.removeEventListener("keyup", windowKeydownOrUp);
   window.removeEventListener("mousedown", windowKeydownOrUp);
-  typingKeyboad.removeEventListener(typingKeydown);
+  typingKeyboard.removeEventListener(typingKeydown);
   if (midiInput.value !== null) {
     midiInput.value.removeListener();
   }
@@ -491,6 +520,7 @@ function updateMidiInputChannels(newValue: Set<number>) {
     :keyColors="keyColors"
     :scale="scale"
     :frequencies="frequencies"
+    :keyboardMode="keyboardMode"
     :isomorphicHorizontal="isomorphicHorizontal"
     :isomorphicVertical="isomorphicVertical"
     :centsFractionDigits="centsFractionDigits"
@@ -511,11 +541,19 @@ function updateMidiInputChannels(newValue: Set<number>) {
     @update:keyColors="keyColors = $event"
     @update:isomorphicVertical="isomorphicVertical = $event"
     @update:isomorphicHorizontal="isomorphicHorizontal = $event"
+    @update:keyboardMode="keyboardMode = $event"
     @update:equaveShift="equaveShift = $event"
     @update:midiInput="midiInput = $event"
     @update:midiOutput="midiOutput = $event"
     @update:midiInputChannels="updateMidiInputChannels"
     @update:midiOutputChannels="midiOutputChannels = $event"
+    @mapAsdf="mapWhiteAsdfBlackQwerty(keyColors, keyboardMapping)"
+    @mapZxcv0="
+      mapWhiteQweZxcBlack123Asd(keyColors, keyboardMapping, scale.size, 0)
+    "
+    @mapZxcv1="
+      mapWhiteQweZxcBlack123Asd(keyColors, keyboardMapping, scale.size, 1)
+    "
   />
 </template>
 
