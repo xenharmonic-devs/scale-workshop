@@ -284,4 +284,12 @@ describe("Extended Monzo", () => {
     expect(tritaveJI.strictEquals(tritaveCents)).toBeFalsy();
     expect(tritaveJI.equals(tritaveCents)).toBeTruthy();
   });
+
+  it("throws for zero (number)", () => {
+    expect(() => ExtendedMonzo.fromNumber(0, 1)).toThrow();
+  });
+
+  it("throws for zero (fraction)", () => {
+    expect(() => ExtendedMonzo.fromFraction(new Fraction(0), 1)).toThrow();
+  });
 });
