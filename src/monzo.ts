@@ -31,6 +31,9 @@ function numberToMonzoAndResidual(
   n: number,
   numberOfComponents: number
 ): [Monzo, Fraction] {
+  if (n < 1 || n !== Math.round(n)) {
+    throw new Error("Can only convert positive integers to monzos");
+  }
   const result: Monzo = [];
   for (let i = 0; i < numberOfComponents; ++i) {
     let component = 0;
@@ -49,6 +52,10 @@ function fractionToMonzoAndResidual(
 ): [Monzo, Fraction] {
   let numerator = fraction.n;
   let denominator = fraction.d;
+
+  if (numerator < 1) {
+    throw new Error("Can only convert non-zero fractions to monzos");
+  }
 
   const result: Monzo = [];
   for (let i = 0; i < numberOfComponents; ++i) {
