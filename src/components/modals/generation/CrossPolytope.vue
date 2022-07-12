@@ -1,0 +1,88 @@
+<script setup lang="ts">
+import { ref, watch } from "vue";
+import Modal from "@/components/ModalDialog.vue";
+import ScaleLineInput from "@/components/ScaleLineInput.vue";
+import { parseChord } from "@/parser";
+import Scale from "@/scale";
+import { Interval } from "@/interval";
+import ExtendedMonzo from "@/monzo";
+import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
+import { computedAndError } from "@/utils";
+const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
+const octave = new Interval(
+  ExtendedMonzo.fromNumber(2, DEFAULT_NUMBER_OF_COMPONENTS),
+  "ratio"
+);
+const basisString = ref("");
+const addUnity = ref(true);
+const equaveString = ref("2/1");
+const equave = ref(octave);
+const basisElement = ref<HTMLInputElement | null>(null);
+const [basis, basisError] = computedAndError(() => {
+  const input = basisString.value;
+  const separator = input.includes(":") ? ":" : /\s/;
+  return parseChord(input, separator);
+}, []);
+watch(basisError, (newError) =>
+  basisElement.value!.setCustomValidity(newError)
+);
+
+function generate() {
+  try {
+    const scale = Scale.fromCrossPolytope(
+      basis.value,
+      addUnity.value,
+      equave.value
+    );
+    let name = `Cross-polytope (${basisString.value}`;
+    if (addUnity.value) {
+      name += " with 1/1";
+    }
+    if (!equave.value.equals(octave)) {
+      name += ` over ${equave.value.toString()}`;
+    }
+    name += ")";
+    emit("update:scaleName", name);
+    emit("update:scale", scale);
+  } catch (error) {
+    if (error instanceof Error) {
+      alert(error.message);
+    } else {
+      alert(error);
+    }
+  }
+}
+</script>
+
+<template>
+  <Modal @confirm="generate" @cancel="$emit('cancel')">
+    <template #header>
+      <h2>Generate cross-polytope (hyperoctahedron)</h2>
+    </template>
+    <template #body>
+      <div class="control-group">
+        <label for="basis">Basis</label>
+        <input
+          ref="basisElement"
+          id="basis"
+          type="text"
+          class="control"
+          placeholder="3 5 7 11"
+          v-model="basisString"
+        />
+        <div class="control checkbox-container">
+          <input type="checkbox" id="add-unity" v-model="addUnity" />
+          <label for="add-unity">Include 1/1 (origin)</label>
+        </div>
+        <div class="control">
+          <label for="equave">Equave</label>
+          <ScaleLineInput
+            id="equave"
+            @update:value="equave = $event"
+            v-model="equaveString"
+          />
+        </div>
+      </div>
+    </template>
+  </Modal>
+</template>
