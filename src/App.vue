@@ -128,7 +128,10 @@ watch(isomorphicHorizontal, encodeState);
 watch(isomorphicVertical, encodeState);
 
 // == State decoding ==
-router.afterEach(() => {
+router.afterEach((to, from) => {
+  if (to.fullPath === from.fullPath) {
+    return;
+  }
   // Navigation loop prevention
   if (justEncodedUrl) {
     justEncodedUrl = false;
