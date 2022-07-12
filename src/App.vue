@@ -47,6 +47,11 @@ const equaveShift = ref(0);
 const typingActive = ref(true);
 const midiInput = ref<Input | null>(null);
 const midiOutput = ref<Output | null>(null);
+const midiInputChannels = reactive(new Set([1]));
+// Channel 10 is reserved for percussion
+const midiOutputChannels = ref(
+  new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16])
+);
 
 // === Computed state ===
 const frequencies = computed(() =>
@@ -163,14 +168,18 @@ function getFrequency(index: number) {
 }
 
 const midiOut = computed(() => {
-  return new MidiOut(midiOutput.value as Output);
+  return new MidiOut(midiOutput.value as Output, midiOutputChannels.value);
 });
 
 function sendNoteOn(frequency: number, rawAttack: number) {
   return midiOut.value.sendNoteOn(frequency, rawAttack);
 }
 
-const midiIn = new MidiIn(getFrequency, sendNoteOn);
+const midiIn = new MidiIn(
+  (i) => frequencies.value[i],
+  sendNoteOn,
+  midiInputChannels
+);
 
 watch(midiInput, (newValue, oldValue) => {
   if (oldValue !== null) {
@@ -182,11 +191,14 @@ watch(midiInput, (newValue, oldValue) => {
   }
 });
 
-watch(midiOutput, (newValue) => {
-  if (newValue !== null) {
-    newValue.channels[1].sendPitchBendRange(bendRangeInSemitones, 0);
+function sendPitchBendRange() {
+  const output = midiOutput.value;
+  if (output !== null) {
+    midiOutputChannels.value.forEach((channel) => {
+      output.channels[channel].sendPitchBendRange(bendRangeInSemitones, 0);
+    });
   }
-});
+}
 
 // === Virtual and typing keyboard ===
 function keyboardNoteOn(index: number) {
@@ -308,6 +320,14 @@ onUnmounted(() => {
     midiInput.value.removeListener();
   }
 });
+
+watch(midiOutput, sendPitchBendRange);
+watch(midiOutputChannels, sendPitchBendRange);
+
+function updateMidiInputChannels(newValue: Set<number>) {
+  midiInputChannels.clear();
+  newValue.forEach((channel) => midiInputChannels.add(channel));
+}
 </script>
 
 <template>
@@ -345,6 +365,8 @@ onUnmounted(() => {
     :midiInput="midiInput"
     :midiOutput="midiOutput"
     :noteOn="keyboardNoteOn"
+    :midiInputChannels="midiInputChannels"
+    :midiOutputChannels="midiOutputChannels"
     @update:scaleName="scaleName = $event"
     @update:scaleLines="updateFromScaleLines"
     @update:scale="updateFromScale"
@@ -356,6 +378,8 @@ onUnmounted(() => {
     @update:equaveShift="equaveShift = $event"
     @update:midiInput="midiInput = $event"
     @update:midiOutput="midiOutput = $event"
+    @update:midiInputChannels="updateMidiInputChannels"
+    @update:midiOutputChannels="midiOutputChannels = $event"
   />
 </template>
 
