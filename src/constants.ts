@@ -92,3 +92,11 @@ export const NEWLINE_TEST = /\r?\n/;
 export const UNIX_NEWLINE = "\n";
 
 export const NUMBER_OF_NOTES = 128;
+
+export const MIDI_NOTE_NUMBER_OF_A4 = 69;
+
+export const KORG = {
+  octaveSize: 12,
+  scaleSize: 128,
+  maxCents: 12800,
+}
