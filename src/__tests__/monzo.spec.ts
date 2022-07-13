@@ -221,15 +221,6 @@ describe("Extended Monzo", () => {
       undecimalSubfifth.toFraction().equals(new Fraction(16, 11))
     ).toBeTruthy();
   });
-  it("can be approximated in an odd limit", () => {
-    const majorSixth = ExtendedMonzo.fromEqualTemperament(
-      new Fraction(9, 12),
-      new Fraction(2),
-      3
-    );
-    const justMajorSixth = majorSixth.approximateOddLimit(5);
-    expect(justMajorSixth.toFraction().equals(new Fraction(5, 3))).toBeTruthy();
-  });
   it("can be approximated by its convergents", () => {
     const tritone = ExtendedMonzo.fromEqualTemperament(
       new Fraction(1, 2),
@@ -248,15 +239,6 @@ describe("Extended Monzo", () => {
     expect(
       tritone.getConvergent(3).toFraction().equals(new Fraction(17, 12))
     ).toBeTruthy();
-  });
-  it("can be approximated by its semi-convergents", () => {
-    const pi = ExtendedMonzo.fromValue(Math.PI, 0);
-    expect(pi.getSemiconvergent(0).equals(new Fraction(3))).toBeTruthy();
-    expect(pi.getSemiconvergent(1).equals(new Fraction(13, 4))).toBeTruthy();
-    expect(pi.getSemiconvergent(2).equals(new Fraction(16, 5))).toBeTruthy();
-    expect(pi.getSemiconvergent(3).equals(new Fraction(19, 6))).toBeTruthy();
-    expect(pi.getSemiconvergent(4).equals(new Fraction(22, 7))).toBeTruthy();
-    expect(pi.getSemiconvergent(5).equals(new Fraction(179, 57))).toBeTruthy();
   });
 
   it("can represent huge numbers", () => {

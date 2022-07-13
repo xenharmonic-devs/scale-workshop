@@ -109,6 +109,9 @@ textarea:invalid,
 select:invalid {
   background-color: var(--color-background-invalid);
 }
+select:invalid {
+  background-color: var(--color-background-invalid);
+}
 
 /* UI elements - button, button group */
 .btn-group {

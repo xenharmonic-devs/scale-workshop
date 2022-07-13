@@ -367,50 +367,6 @@ describe("Scale", () => {
         .strictEquals(ExtendedMonzo.fromFraction(new Fraction(16, 8), 4))
     ).toBeTruthy();
   });
-  it("can be approximated in an odd limit", () => {
-    const intervals = [
-      new Interval(
-        ExtendedMonzo.fromEqualTemperament(
-          new Fraction(2, 5),
-          new Fraction(2),
-          4
-        ),
-        "equal temperament"
-      ),
-      new Interval(
-        ExtendedMonzo.fromEqualTemperament(
-          new Fraction(4, 5),
-          new Fraction(2),
-          4
-        ),
-        "equal temperament"
-      ),
-      new Interval(
-        ExtendedMonzo.fromEqualTemperament(
-          new Fraction(5, 5),
-          new Fraction(2),
-          4
-        ),
-        "equal temperament"
-      ),
-    ];
-    const scale = Scale.fromIntervalArray(intervals).approximateOddLimit(7);
-    expect(
-      scale
-        .getMonzo(1)
-        .strictEquals(ExtendedMonzo.fromFraction(new Fraction(4, 3), 4))
-    ).toBeTruthy();
-    expect(
-      scale
-        .getMonzo(2)
-        .strictEquals(ExtendedMonzo.fromFraction(new Fraction(7, 4), 4))
-    ).toBeTruthy();
-    expect(
-      scale
-        .getMonzo(3)
-        .strictEquals(ExtendedMonzo.fromFraction(new Fraction(2), 4))
-    ).toBeTruthy();
-  });
 
   it("can generate equal temperament", () => {
     const scale = Scale.fromEqualTemperament(3, new Fraction(2), 1);

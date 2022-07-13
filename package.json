@@ -12,11 +12,11 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "xen-dev-utils": "github:xenharmonic-devs/xen-dev-utils",
+    "xen-dev-utils": "github:xenharmonic-devs/xen-dev-utils#v0.0.1",
     "jszip": "^3.10.0",
-    "moment-of-symmetry": "github:xenharmonic-devs/moment-of-symmetry",
+    "moment-of-symmetry": "github:xenharmonic-devs/moment-of-symmetry#v0.1.2",
     "qs": "^6.10.5",
-    "temperaments": "github:xenharmonic-devs/temperaments",
+    "temperaments": "github:xenharmonic-devs/temperaments#v0.2.4",
     "vue": "^3.2.33",
     "vue-router": "^4.0.14",
     "webmidi": "^3.0.20"
