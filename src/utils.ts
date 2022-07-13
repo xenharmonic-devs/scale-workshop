@@ -1,4 +1,5 @@
 import Fraction from "fraction.js";
+import { MIDI_NOTE_NUMBER_OF_A4 } from "./constants"
 
 export function arraysEqual(a: any[], b: any[]) {
   if (a === b) {
@@ -166,12 +167,16 @@ export function frequencyToCentOffset(frequency: number) {
   return ratioToCents(frequency / 440);
 }
 
-const MIDI_NOTE_NUMBER_OF_A4 = 69;
+// convert a frequency to an MTS value
+export function frequencyToMts(frequency: number) {
+  return MIDI_NOTE_NUMBER_OF_A4 + 12 * Math.log2(frequency / 440);
+}
+
 // convert a frequency to a midi note number and cents offset
 // assuming 12-edo at 440Hz
 // returns an array [midiNoteNumber, centsOffset]
 export function ftom(frequency: number) {
-  const semitones = MIDI_NOTE_NUMBER_OF_A4 + 12 * Math.log2(frequency / 440);
+  const semitones = frequencyToMts(frequency);
   const midiNoteNumber = Math.round(semitones);
   const centsOffset = (semitones - midiNoteNumber) * 100;
   return [midiNoteNumber, centsOffset];
