@@ -1,9 +1,10 @@
-import { DEFAULT_NUMBER_OF_COMPONENTS, KORG } from "@/constants";
+import { DEFAULT_NUMBER_OF_COMPONENTS, MIDI_NOTE_NUMBER_OF_A4, KORG } from "@/constants";
 import ExtendedMonzo from "@/monzo";
 import { LINE_TYPE } from "@/parser";
 import Scale from "@/scale";
 import type { JSZipObject } from "jszip";
 import { ZipImporter, type ImportResultFragment } from "./base";
+import { mtof } from "../utils"
 
 export class KorgImporter extends ZipImporter {
   mnlgBinaryToCents(data: Uint8Array) {
@@ -47,24 +48,24 @@ export class KorgImporter extends ZipImporter {
       throw new Error("Empty cents data");
     }
 
-    const octaveFormat = cents.length === KORG.mnlg.octaveSize;
+    const fileInOctaveFormat = cents.length === KORG.octaveSize;
 
-    if (octaveFormat) {
+    if (fileInOctaveFormat) {
       cents = cents.map((c) =>
-        c > KORG.mnlg.octaveSize * 200 ? c - KORG.mnlg.maxCents : c
+        c > KORG.octaveSize * 200 ? c - KORG.maxCents : c
       );
     }
 
     // to always play at the right frequencies, we have to use the first midi note
-    const octaveExp = octaveFormat
+    const octaveExp = fileInOctaveFormat
       ? cents[0] - 900
-      : cents[0] - KORG.mnlg.refA.val;
+      : cents[0] - mtof(MIDI_NOTE_NUMBER_OF_A4) * 100;
 
     // derive frequency from A440
-    const baseFrequency = KORG.mnlg.refA.freq * 2 ** (octaveExp / 1200);
+    const baseFrequency = mtof(MIDI_NOTE_NUMBER_OF_A4) * 2 ** (octaveExp / 1200);
 
     // normalize so scale starts on unison
-    if (octaveFormat) {
+    if (fileInOctaveFormat) {
       const negCents = Math.min(...cents);
       if (negCents < 0) cents = cents.map((c) => c - negCents);
     } else {
@@ -75,7 +76,7 @@ export class KorgImporter extends ZipImporter {
     cents.shift();
 
     // add period
-    if (octaveFormat) cents.push(1200);
+    if (fileInOctaveFormat) cents.push(1200);
 
     const lineTypes = Array(cents.length).fill(LINE_TYPE.CENTS);
 
@@ -86,7 +87,7 @@ export class KorgImporter extends ZipImporter {
       baseFrequency
     );
 
-    const baseMidiNote = octaveFormat ? 60 : 0;
+    const baseMidiNote = fileInOctaveFormat ? 60 : 0;
 
     return { scale, lineTypes, baseMidiNote };
   }
