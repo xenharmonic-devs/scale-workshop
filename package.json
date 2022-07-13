@@ -12,13 +12,13 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "xen-dev-utils": "github:xenharmonic-devs/xen-dev-utils",
     "jszip": "^3.10.0",
     "moment-of-symmetry": "github:xenharmonic-devs/moment-of-symmetry",
     "qs": "^6.10.5",
     "vue": "^3.2.33",
     "vue-router": "^4.0.14",
-    "webmidi": "^3.0.20"
+    "webmidi": "^3.0.20",
+    "xen-dev-utils": "github:xenharmonic-devs/xen-dev-utils#test-branch"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.0",

@@ -18,6 +18,9 @@ import { decodeQuery, encodeQuery } from "@/url-encode";
 import { debounce } from "@/utils";
 import { version } from "../package.json";
 import type { Interval } from "@/interval";
+import { testExport } from "xen-dev-utils";
+
+testExport("world");
 
 // === Application state ===
 const scaleName = ref("");
