@@ -12,9 +12,12 @@
   --color-text: #000;
 
   --color-accent: #008080;
+  --color-accent-mute: #6bb;
   --color-accent-deeper: #006060;
   --color-accent-background: #f5ffff;
   --color-accent-dimmed: rgba(0,20,20,0.7);
+
+  --color-error: red;
 
   --section-gap: 160px;
   --base-font-size: 15px;
@@ -87,6 +90,9 @@ button {
   font-size: var(--base-font-size);
   line-height: var(--base-line-height);
 }
+.error {
+  color: var(--color-error);
+}
 
 /* UI elements */
 input[type=text],
@@ -121,6 +127,14 @@ button, .btn {
 button:hover, .btn:hover {
   color: white;
   background-color: var(--color-accent);
+}
+button:disabled {
+  cursor: not-allowed;
+  color: var(--color-accent-mute);
+}
+button:disabled:hover {
+  color: var(--color-accent-mute);
+  background-color: var(--color-accent-background);
 }
 ul.btn-group, .btn-dropdown-group ul {
   list-style: none;
@@ -223,4 +237,12 @@ ul.btn-group, .btn-dropdown-group ul {
   .hidden-sm {
     display: none !important;
   }
+}
+
+/* UI element - expandable secion */
+.section::after {
+  content: " ⏶";
+}
+.section.open::after {
+  content: " ⏷";
 }
