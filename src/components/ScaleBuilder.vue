@@ -24,6 +24,7 @@ import StretchModal from "@/components/modals/modification/StretchScale.vue";
 import RandomVarianceModal from "@/components/modals/modification/RandomVariance.vue";
 import ApproximateBySubharmonicsModal from "@/components/modals/modification/ApproximateBySubharmonics.vue";
 import TemperModal from "@/components/modals/modification/TemperScale.vue";
+import EqualizeModal from "@/components/modals/modification/EqualizeScale.vue";
 import { presets, presetsByGroup } from "@/presets";
 import type Scale from "@/scale";
 import { importFile, type ImporterKey } from "@/importers";
@@ -159,6 +160,7 @@ const showRandomVarianceModal = ref(false);
 const showApproximateByHarmonicsModal = ref(false);
 const showApproximateBySubharmonicsModal = ref(false);
 const showTemperModal = ref(false);
+const showEqualizeModal = ref(false);
 
 const subsetModal = ref<any>(null);
 
@@ -262,7 +264,7 @@ async function doImport(importerKey: ImporterKey, event: Event) {
             <a href="#" @click="showApproximateBySubharmonicsModal = true"
               ><li>Approximate by subharmonics</li></a
             >
-            <a href="#"><li>Equalize</li></a>
+            <a href="#" @click="showEqualizeModal = true"><li>Equalize</li></a>
             <a href="#" @click="showTemperModal = true"><li>Temper</li></a>
           </ul>
         </li>
@@ -622,6 +624,16 @@ async function doImport(importerKey: ImporterKey, event: Event) {
         emit('update:scale', $event);
       "
       @cancel="showApproximateBySubharmonicsModal = false"
+      :scale="scale"
+    />
+
+    <EqualizeModal
+      :show="showEqualizeModal"
+      @update:scale="
+        showEqualizeModal = false;
+        emit('update:scale', $event);
+      "
+      @cancel="showEqualizeModal = false"
       :scale="scale"
     />
 

@@ -573,13 +573,21 @@ export default class Scale {
   */
 
   approximateEqualTemperament(divisions: number) {
-    const step = this.equave.div(divisions);
+    const options: IntervalOptions = { preferredEtDenominator: divisions };
+    if (this.equave.monzo.isFractional()) {
+      options.preferredEtEquave = this.equave.monzo.toFraction();
+    }
+    const equave = this.equave.mergeOptions(options);
+    if (equave.type === "ratio") {
+      equave.type = "equal temperament";
+    }
+    const step = equave.div(divisions).mergeOptions(options);
     const stepCents = step.totalCents();
     const intervals = this.intervals.map((interval) => {
       const numSteps = Math.round(interval.totalCents() / stepCents);
       return step.mul(numSteps);
     });
-    return this.variant(intervals);
+    return new Scale(intervals, equave, this.baseFrequency);
   }
 
   approximateHarmonics(denominator: number) {
