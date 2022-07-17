@@ -67,6 +67,12 @@ const router = createRouter({
       name: "virtualKeyboard",
       component: () => import("../views/VirtualKeyboardView.vue"),
     },
+    // will match everything and put it under `$route.params.pathMatch`
+    {
+      path: "/:pathMatch(.*)*",
+      name: "notFound",
+      component: () => import("../views/NotFoundView.vue"),
+    },
   ],
 });
 
