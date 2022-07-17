@@ -1,5 +1,7 @@
 <script setup lang="ts">
-defineProps({
+import { onMounted, onUnmounted, ref, watch, nextTick } from "vue";
+
+const props = defineProps({
   show: Boolean,
   extraStyle: {
     default: "",
@@ -7,7 +9,63 @@ defineProps({
   },
 });
 
-defineEmits(["confirm", "cancel"]);
+const emit = defineEmits(["confirm", "cancel"]);
+
+const body = ref<HTMLDivElement | null>(null);
+
+function cancelOnEsc(event: KeyboardEvent) {
+  if (!props.show) {
+    return;
+  }
+  if (event.code === "Escape") {
+    emit("cancel");
+  }
+}
+
+onMounted(() => {
+  window.addEventListener("keydown", cancelOnEsc);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("keydown", cancelOnEsc);
+});
+
+/**
+ * Focus the first focusable child element.
+ * @param element The modal body (or its child).
+ * @returns `true` if a focusable element was found.
+ */
+function focusFirst(element: Element) {
+  if (
+    element instanceof HTMLInputElement ||
+    element instanceof HTMLTextAreaElement ||
+    element instanceof HTMLSelectElement
+  ) {
+    element.focus();
+    return true;
+  }
+
+  for (const child of element.children) {
+    if (focusFirst(child)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+watch(
+  () => props.show,
+  (newValue) => {
+    if (newValue) {
+      nextTick(() => {
+        if (body.value) {
+          focusFirst(body.value);
+        }
+      });
+    }
+  }
+);
 </script>
 
 <template>
@@ -19,7 +77,7 @@ defineEmits(["confirm", "cancel"]);
             <slot name="header">default header</slot>
           </div>
 
-          <div class="modal-body">
+          <div class="modal-body" ref="body">
             <slot name="body">default body</slot>
           </div>
 
