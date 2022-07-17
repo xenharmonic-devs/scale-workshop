@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { formatHertz, formatExponential } from "@/utils";
+import { onMounted, ref } from "vue";
 
-defineProps<{
+const props = defineProps<{
   index: number;
   frequency: number;
   cents: number;
@@ -9,10 +10,25 @@ defineProps<{
   name: string;
   keyColor: string;
 }>();
+
+const element = ref<HTMLTableRowElement | null>(null);
+
+// Application state is not suited for real-time display
+// se we use hacks to bypass it.
+onMounted(() => {
+  let rows;
+  if ("TUNING_TABLE_ROWS" in window) {
+    rows = (window as any).TUNING_TABLE_ROWS;
+  } else {
+    rows = (window as any).TUNING_TABLE_ROWS = Array(128);
+  }
+  (element as any).heldKeys = 0;
+  rows[props.index] = element;
+});
 </script>
 
 <template>
-  <tr>
+  <tr ref="element">
     <td
       class="key-color"
       :style="'background-color:' + keyColor + ' !important;'"
@@ -26,6 +42,9 @@ defineProps<{
 </template>
 
 <style scoped>
+tr.active {
+  background-color: var(--color-accent) !important;
+}
 .key-color {
   border-bottom: 1px solid var(--color-background-mute);
 }

@@ -113,22 +113,19 @@ export class MidiOut {
   }
 }
 
-export type NoteOnCallback = (frequency: number, rawAttack: number) => NoteOff;
+export type NoteOnCallback = (index: number, rawAttack: number) => NoteOff;
 
 export class MidiIn {
-  noteNumberToFrequency: (noteNumber: number) => number;
   callback: NoteOnCallback;
   channels: Set<number>;
   noteOffMap: Map<number, (rawRelease: number) => void>;
   log: (msg: string) => void;
 
   constructor(
-    noteNumberToFrequency: (noteNumber: number) => number,
     callback: NoteOnCallback,
     channels: Set<number>,
     log?: (msg: string) => void
   ) {
-    this.noteNumberToFrequency = noteNumberToFrequency;
     this.callback = callback;
     this.channels = channels;
     this.noteOffMap = new Map();
@@ -147,11 +144,8 @@ export class MidiIn {
     const noteNumber = event.note.number;
     const attack = event.note.attack;
     const rawAttack = event.note.rawAttack;
-    const frequency = this.noteNumberToFrequency(noteNumber);
-    this.log(
-      `Midi note on ${noteNumber} resulting in frequency ${frequency} at velocity ${attack}`
-    );
-    const noteOff = this.callback(frequency, rawAttack);
+    this.log(`Midi note on ${noteNumber} at velocity ${attack}`);
+    const noteOff = this.callback(noteNumber, rawAttack);
     this.noteOffMap.set(noteNumber, noteOff);
   }
 
