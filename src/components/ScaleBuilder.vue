@@ -13,6 +13,7 @@ import MosModal from "@/components/modals/generation/MosScale.vue";
 import ApproximateByHarmonicsModal from "@/components/modals/modification/ApproximateByHarmonics.vue";
 import SubharmonicSeriesModal from "@/components/modals/generation/SubharmonicSeries.vue";
 import EnumerateChordModal from "@/components/modals/generation/EnumerateChord.vue";
+import CpsModal from "@/components/modals/generation/CombinationProductSet.vue";
 import EulerGenusModal from "@/components/modals/generation/EulerGenus.vue";
 import DwarfModal from "@/components/modals/generation/DwarfScale.vue";
 import RankOneModal from "@/components/modals/generation/RankOne.vue";
@@ -145,6 +146,7 @@ const showHarmonicSeriesModal = ref(false);
 const showMosModal = ref(false);
 const showSubharmonicSeriesModal = ref(false);
 const showEnumerateChordModal = ref(false);
+const showCpsModal = ref(false);
 const showEulerGenusModal = ref(false);
 const showDwarfModal = ref(false);
 const showRankOneModal = ref(false);
@@ -205,7 +207,9 @@ async function doImport(importerKey: ImporterKey, event: Event) {
             <a href="#" @click="showEnumerateChordModal = true"
               ><li>Enumerate chord</li></a
             >
-            <a href="#"><li>Combination product set</li></a>
+            <a href="#" @click="showCpsModal = true"
+              ><li>Combination product set</li></a
+            >
             <a href="#" @click="showMosModal = true"
               ><li>Moment of symmetry scale</li></a
             >
@@ -492,6 +496,16 @@ async function doImport(importerKey: ImporterKey, event: Event) {
         emit('update:scale', $event);
       "
       @cancel="showEnumerateChordModal = false"
+    />
+
+    <CpsModal
+      :show="showCpsModal"
+      @update:scaleName="emit('update:scaleName', $event)"
+      @update:scale="
+        showCpsModal = false;
+        emit('update:scale', $event);
+      "
+      @cancel="showCpsModal = false"
     />
 
     <EulerGenusModal
