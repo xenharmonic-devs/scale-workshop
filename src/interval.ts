@@ -204,6 +204,15 @@ export class Interval {
     );
   }
 
+  asType(type: IntervalType, options?: IntervalOptions) {
+    return new Interval(
+      this.monzo.clone(),
+      type,
+      undefined,
+      options || this.options
+    );
+  }
+
   monzoString() {
     let result = "[";
     for (let i = 0; i < this.monzo.vector.length; ++i) {

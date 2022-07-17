@@ -27,6 +27,7 @@ import RandomVarianceModal from "@/components/modals/modification/RandomVariance
 import ApproximateBySubharmonicsModal from "@/components/modals/modification/ApproximateBySubharmonics.vue";
 import TemperModal from "@/components/modals/modification/TemperScale.vue";
 import EqualizeModal from "@/components/modals/modification/EqualizeScale.vue";
+import ConvertModal from "@/components/modals/modification/ConvertType.vue";
 import { presets, presetsByGroup } from "@/presets";
 import type Scale from "@/scale";
 import { importFile, type ImporterKey } from "@/importers";
@@ -166,6 +167,7 @@ const showApproximateByHarmonicsModal = ref(false);
 const showApproximateBySubharmonicsModal = ref(false);
 const showTemperModal = ref(false);
 const showEqualizeModal = ref(false);
+const showConvertModal = ref(false);
 
 const subsetModal = ref<any>(null);
 
@@ -274,6 +276,9 @@ async function doImport(importerKey: ImporterKey, event: Event) {
             >
             <a href="#" @click="showEqualizeModal = true"><li>Equalize</li></a>
             <a href="#" @click="showTemperModal = true"><li>Temper</li></a>
+            <a href="#" @click="showConvertModal = true"
+              ><li>Convert interval values</li></a
+            >
           </ul>
         </li>
       </ul>
@@ -684,6 +689,18 @@ async function doImport(importerKey: ImporterKey, event: Event) {
       @cancel="showTemperModal = false"
       :scale="scale"
       :centsFractionDigits="centsFractionDigits"
+    />
+
+    <ConvertModal
+      :show="showConvertModal"
+      @update:scale="
+        showConvertModal = false;
+        emit('update:scale', $event);
+      "
+      @cancel="showConvertModal = false"
+      :scale="scale"
+      :centsFractionDigits="centsFractionDigits"
+      :decimalFractionDigits="decimalFractionDigits"
     />
   </Teleport>
 </template>
