@@ -14,6 +14,7 @@ import ApproximateByHarmonicsModal from "@/components/modals/modification/Approx
 import SubharmonicSeriesModal from "@/components/modals/generation/SubharmonicSeries.vue";
 import EnumerateChordModal from "@/components/modals/generation/EnumerateChord.vue";
 import CpsModal from "@/components/modals/generation/CombinationProductSet.vue";
+import CrossPolytopeModal from "@/components/modals/generation/CrossPolytope.vue";
 import EulerGenusModal from "@/components/modals/generation/EulerGenus.vue";
 import DwarfModal from "@/components/modals/generation/DwarfScale.vue";
 import RankOneModal from "@/components/modals/generation/RankOne.vue";
@@ -152,6 +153,7 @@ const showEulerGenusModal = ref(false);
 const showDwarfModal = ref(false);
 const showRankOneModal = ref(false);
 const showRankTwoModal = ref(false);
+const showCrossPolytopeModal = ref(false);
 
 const showRotateModal = ref(false);
 const showSubsetModal = ref(false);
@@ -219,6 +221,9 @@ async function doImport(importerKey: ImporterKey, event: Event) {
               ><li>Euler-Fokker genus</li></a
             >
             <a href="#" @click="showDwarfModal = true"><li>Dwarf scale</li></a>
+            <a href="#" @click="showCrossPolytopeModal = true"
+              ><li>Cross-polytope</li></a
+            >
             <li class="divider"></li>
             <a href="#" @click="scalaFile?.click()"><li>Import .scl</li></a>
             <a href="#" @click="anamarkFile?.click()"><li>Import .tun</li></a>
@@ -528,6 +533,16 @@ async function doImport(importerKey: ImporterKey, event: Event) {
         emit('update:scale', $event);
       "
       @cancel="showDwarfModal = false"
+    />
+
+    <CrossPolytopeModal
+      :show="showCrossPolytopeModal"
+      @update:scaleName="emit('update:scaleName', $event)"
+      @update:scale="
+        showCrossPolytopeModal = false;
+        emit('update:scale', $event);
+      "
+      @cancel="showCrossPolytopeModal = false"
     />
 
     <Modal
