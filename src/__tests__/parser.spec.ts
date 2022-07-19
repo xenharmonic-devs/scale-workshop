@@ -164,6 +164,19 @@ describe("Line parser", () => {
       )
     ).toBeTruthy();
   });
+
+  it("infers interval preferences for equal temperament", () => {
+    const et = parseLine("1\\12");
+    expect(et.add(et).name).toBe("2\\12");
+
+    const genEt = parseLine("3\\15<9>");
+    expect(genEt.sub(genEt).name).toBe("0\\15<9>");
+  });
+
+  it("doesn't infer preferences for ratios", () => {
+    const ratio = parseLine("4/24");
+    expect(ratio.zeroed().name).toBe("1/1");
+  });
 });
 
 describe("Chord parser", () => {

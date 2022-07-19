@@ -38,23 +38,16 @@ export function fractionToString(
 }
 
 // Extra support for negative denominators
-export function stringToFraction(input: string) {
-  // eslint-disable-next-line prefer-const
-  let [numerator, denominator, ...rest] = input.split("/");
-  if (
-    denominator !== undefined &&
-    denominator.startsWith("-") &&
-    !rest.length
-  ) {
-    denominator = denominator.slice(1);
-    if (numerator.startsWith("-")) {
-      numerator = numerator.slice(1);
-    } else {
-      numerator = "-" + numerator;
-    }
-    return new Fraction(`${numerator}/${denominator}`);
+export function stringToNumeratorDenominator(input: string): [number, number] {
+  const slashes = input.match(/\//g);
+  if (slashes && slashes.length > 1) {
+    throw new Error("Too many slashes for a fraction");
   }
-  return new Fraction(input);
+  if (slashes === null) {
+    return [parseInt(input), 1];
+  }
+  const [numerator, denominator] = input.split("/");
+  return [parseInt(numerator), parseInt(denominator)];
 }
 
 export function debounce(func: (...args: any[]) => void, timeout = 300) {

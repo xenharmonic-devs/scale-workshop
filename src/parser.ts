@@ -1,6 +1,6 @@
 import ExtendedMonzo from "@/monzo";
 import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
-import { stringToFraction } from "@/utils";
+import { stringToNumeratorDenominator } from "@/utils";
 import { Interval, type IntervalOptions } from "@/interval";
 import { Fraction } from "xen-dev-utils";
 
@@ -181,11 +181,19 @@ function parseNOfEdo(
   numberOfComponents: number,
   options?: IntervalOptions
 ) {
-  const fractionOfOctave = stringToFraction(input.replace("\\", "/"));
+  const [numerator, denominator] = stringToNumeratorDenominator(
+    input.replace("\\", "/")
+  );
   const octave = new Fraction(2);
+  if (options === undefined) {
+    options = {
+      preferredEtDenominator: denominator,
+      preferredEtEquave: octave,
+    };
+  }
   return new Interval(
     ExtendedMonzo.fromEqualTemperament(
-      fractionOfOctave,
+      new Fraction(numerator, denominator),
       octave,
       numberOfComponents
     ),
@@ -201,11 +209,19 @@ function parseGeneralizeNOfEdo(
   options?: IntervalOptions
 ) {
   const [nOfEdo, equavePart] = input.split("<");
-  const fractionOfEquave = stringToFraction(nOfEdo.replace("\\", "/"));
+  const [numerator, denominator] = stringToNumeratorDenominator(
+    nOfEdo.replace("\\", "/")
+  );
   const equave = new Fraction(equavePart.slice(0, -1));
+  if (options === undefined) {
+    options = {
+      preferredEtDenominator: denominator,
+      preferredEtEquave: equave,
+    };
+  }
   return new Interval(
     ExtendedMonzo.fromEqualTemperament(
-      fractionOfEquave,
+      new Fraction(numerator, denominator),
       equave,
       numberOfComponents
     ),
@@ -228,7 +244,8 @@ function parseMonzo(
     .forEach((token) => {
       token = token.trim();
       if (token.length) {
-        components.push(stringToFraction(token));
+        const [numerator, denominator] = stringToNumeratorDenominator(token);
+        components.push(new Fraction(numerator, denominator));
       }
     });
   if (components.length > numberOfComponents) {
@@ -238,6 +255,27 @@ function parseMonzo(
     components.push(new Fraction(0));
   }
   return new Interval(new ExtendedMonzo(components), "monzo", input, options);
+}
+
+function parseRatio(
+  input: string,
+  numberOfComponents: number,
+  options?: IntervalOptions,
+  inferPreferences = false
+) {
+  if (inferPreferences && options === undefined) {
+    const [numerator, denominator] = stringToNumeratorDenominator(input);
+    options = {
+      preferredNumerator: numerator,
+      preferredDenominator: denominator,
+    };
+  }
+  return new Interval(
+    ExtendedMonzo.fromFraction(new Fraction(input), numberOfComponents),
+    "ratio",
+    input,
+    options
+  );
 }
 
 function parseSubtractive(
@@ -319,12 +357,7 @@ export function parseLine(
     case LINE_TYPE.N_OF_EDO:
       return parseNOfEdo(input, numberOfComponents, options);
     case LINE_TYPE.RATIO:
-      return new Interval(
-        ExtendedMonzo.fromFraction(new Fraction(input), numberOfComponents),
-        "ratio",
-        input,
-        options
-      );
+      return parseRatio(input, numberOfComponents, options);
     case LINE_TYPE.GENERALIZED_N_OF_EDO:
       return parseGeneralizeNOfEdo(input, numberOfComponents, options);
     case LINE_TYPE.MONZO:
