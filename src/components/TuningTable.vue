@@ -12,6 +12,7 @@ const props = defineProps<{
 }>();
 
 const rows = computed(() => {
+  const colors = props.keyColors.length ? props.keyColors : ["white"];
   return props.frequencies.map((frequency, i) => {
     const index = i - props.baseMidiNote;
     const monzo = props.scale.getMonzo(index);
@@ -21,7 +22,7 @@ const rows = computed(() => {
       cents: monzo.toCents(),
       ratio: monzo.valueOf(),
       name: props.scale.getName(index),
-      keyColor: props.keyColors[mmod(index, props.keyColors.length)],
+      keyColor: colors[mmod(index, colors.length)],
     };
   });
 });

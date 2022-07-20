@@ -22,7 +22,7 @@ type VirtualKey = {
 };
 
 const virtualKeys = computed(() => {
-  const colors = props.keyColors;
+  const colors = props.keyColors.length ? props.keyColors : ["white"];
   const horizontal = props.isomorphicHorizontal;
   const vertical = props.isomorphicVertical;
   const result: [number, VirtualKey[]][] = [];
