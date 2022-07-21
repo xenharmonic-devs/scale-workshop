@@ -1,5 +1,5 @@
 import ExtendedMonzo from "@/monzo";
-import { Interval, type IntervalOptions } from "@/interval";
+import { Interval, type IntervalOptions, type IntervalType } from "@/interval";
 import {
   Fraction,
   kCombinations,
@@ -619,6 +619,14 @@ export default class Scale {
       interval.mergeOptions(options)
     );
     const equave = this.equave.mergeOptions(options);
+    return new Scale(intervals, equave, this.baseFrequency);
+  }
+
+  asType(type: IntervalType, options?: IntervalOptions) {
+    const intervals = this.intervals.map((interval) =>
+      interval.asType(type, options)
+    );
+    const equave = this.equave.asType(type, options);
     return new Scale(intervals, equave, this.baseFrequency);
   }
 
