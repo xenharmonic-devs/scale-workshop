@@ -88,6 +88,21 @@ export default class Scale {
     }
     size /= numPeriods;
     down /= numPeriods;
+    if (generator.type === "equal temperament") {
+      const [genFraction, genEquave] = generator.monzo.toEqualTemperament();
+      const options: IntervalOptions = {
+        preferredEtDenominator: genFraction.d,
+        preferredEtEquave: genEquave,
+      };
+      generator = generator.mergeOptions(options);
+      period = period.mergeOptions(options);
+      if (
+        period.type === "ratio" &&
+        period.monzo.toFraction().mod(genEquave).equals(0)
+      ) {
+        period.type = "equal temperament";
+      }
+    }
     const intervals = [];
     for (let i = 0; i < size; ++i) {
       intervals.push(generator.mul(i - down).mmod(period));
