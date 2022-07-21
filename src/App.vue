@@ -18,6 +18,7 @@ import { decodeQuery, encodeQuery } from "@/url-encode";
 import { debounce } from "@/utils";
 import { version } from "../package.json";
 import type { Interval } from "@/interval";
+import { arraysEqual } from "xen-dev-utils";
 
 // === Root props and audio ===
 const rootProps = defineProps<{
@@ -78,6 +79,9 @@ const frequencies = computed(() =>
 );
 
 function updateFromScaleLines(lines: string[]) {
+  if (arraysEqual(lines, scaleLines.value)) {
+    return;
+  }
   scaleLines.value = lines;
   const intervals: Interval[] = [];
   lines.forEach((line) => {
