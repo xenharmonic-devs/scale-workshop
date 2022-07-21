@@ -9,6 +9,7 @@ import { exportFile, type ExporterKey } from "@/exporters";
 import Modal from "@/components/ModalDialog.vue";
 import ReaperExportModal from "@/components/modals/ReaperExport.vue";
 import ShareUrlModal from "@/components/modals/ShareUrl.vue";
+import EqualTemperamentModal from "@/components/modals/generation/EqualTemperament.vue";
 import HarmonicSeriesModal from "@/components/modals/generation/HarmonicSeries.vue";
 import MosModal from "@/components/modals/generation/MosScale.vue";
 import ApproximateByHarmonicsModal from "@/components/modals/modification/ApproximateByHarmonics.vue";
@@ -148,6 +149,7 @@ function selectPreset() {
   emit("update:baseMidiNote", preset.baseMidiNote);
 }
 
+const showEqualTemperamentModal = ref(false);
 const showHarmonicSeriesModal = ref(false);
 const showMosModal = ref(false);
 const showSubharmonicSeriesModal = ref(false);
@@ -200,7 +202,9 @@ async function doImport(importerKey: ImporterKey, event: Event) {
         <li class="btn-dropdown-group">
           <a class="btn" href="#">New scale ▼</a>
           <ul>
-            <a href="#"><li>Equal temperament</li></a>
+            <a href="#" @click="showEqualTemperamentModal = true"
+              ><li>Equal temperament</li></a
+            >
             <a href="#" @click="showRankOneModal = true"
               ><li>Rank-1 temperament</li></a
             >
@@ -490,6 +494,16 @@ async function doImport(importerKey: ImporterKey, event: Event) {
       :newline="newline"
       @confirm="showShareUrlModal = false"
       @cancel="showShareUrlModal = false"
+    />
+
+    <EqualTemperamentModal
+      :show="showEqualTemperamentModal"
+      @update:scaleName="emit('update:scaleName', $event)"
+      @update:scale="
+        showEqualTemperamentModal = false;
+        emit('update:scale', $event);
+      "
+      @cancel="showEqualTemperamentModal = false"
     />
 
     <HarmonicSeriesModal
