@@ -10,7 +10,10 @@ import {
   mosPatternsRank2FromCommas,
   type Rank2Params,
 } from "@/tempering";
-import { mosPatterns as getMosPatterns } from "moment-of-symmetry";
+import {
+  mosPatterns as getMosPatterns,
+  type MosInfo,
+} from "moment-of-symmetry";
 import { computed, ref, watch } from "vue";
 import Modal from "@/components/ModalDialog.vue";
 import { makeState } from "@/components/modals/tempering-state";
@@ -55,6 +58,8 @@ const tempering = state.tempering;
 const constraintsString = state.constraintsString;
 // Footer preview
 const previewMosPattern = ref("");
+// Values that are expensive to compute
+const expensiveMosPatterns = ref<MosInfo[]>([]);
 
 // === Computed state ===
 const vals = state.vals;
@@ -81,7 +86,7 @@ const [mosPatterns, mosPatternsError] = computedAndError(() => {
     }
     // Huge subgroups get too expensive to evaluate interactively
     if (subgroup.value.basis.length > 6) {
-      return [];
+      return expensiveMosPatterns.value;
     }
     return mosPatternsRank2FromVals(
       vals.value,
@@ -97,7 +102,7 @@ const [mosPatterns, mosPatternsError] = computedAndError(() => {
     }
     // Huge subgroups get too expensive to evaluate interactively
     if (subgroup.value.basis.length > 6) {
-      return [];
+      return expensiveMosPatterns.value;
     }
     return mosPatternsRank2FromCommas(
       commas.value,
@@ -137,7 +142,50 @@ watch(subgroupError, (newValue) =>
   subgroupInput.value!.setCustomValidity(newValue)
 );
 
+watch(
+  [vals, commas, subgroup, options],
+  () => (expensiveMosPatterns.value = [])
+);
+
 // === Methods ===
+
+function calculateExpensiveMosPattern() {
+  try {
+    if (method.value === "generator") {
+      expensiveMosPatterns.value = getMosPatterns(
+        generator.value.totalCents() / period.value.totalCents(),
+        numPeriods.value,
+        MAX_SIZE,
+        MAX_LENGTH
+      );
+    } else if (method.value === "vals") {
+      if (!subgroupString.value.length) {
+        throw new Error("A subgroup must be given with vals");
+      }
+      expensiveMosPatterns.value = mosPatternsRank2FromVals(
+        vals.value,
+        subgroup.value,
+        MAX_SIZE,
+        MAX_LENGTH,
+        options.value
+      );
+    } else {
+      expensiveMosPatterns.value = mosPatternsRank2FromCommas(
+        commas.value,
+        subgroup.value,
+        MAX_SIZE,
+        MAX_LENGTH,
+        options.value
+      );
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      alert(error.message);
+      return;
+    }
+    alert(error);
+  }
+}
 
 function selectMosSize(mosSize: number) {
   size.value = mosSize;
@@ -343,7 +391,7 @@ function generate() {
             <strong>MOS sizes:</strong>
             <span v-show="mosPatternsError.length">⚠</span>
           </div>
-          <div class="btn-group">
+          <div class="btn-group" v-if="mosPatterns.length">
             <button
               v-for="(mosInfo, i) of mosPatterns"
               :key="i"
@@ -352,6 +400,11 @@ function generate() {
               @click="selectMosSize(mosInfo.size)"
             >
               {{ mosInfo.size }}
+            </button>
+          </div>
+          <div class="btn-group" v-else>
+            <button @click="calculateExpensiveMosPattern">
+              Calculate MOS sizes...
             </button>
           </div>
         </div>
