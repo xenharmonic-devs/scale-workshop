@@ -491,8 +491,7 @@ function updateMidiInputChannels(newValue: Set<number>) {
 
 function panic() {
   console.log("Firing global key off.");
-  // Variable name typo fixed in #170
-  typingKeyboad.deactivate();
+  typingKeyboard.deactivate();
   midiIn.deactivate();
   if (midiOutput.value !== null) {
     midiOutput.value.sendAllNotesOff({
