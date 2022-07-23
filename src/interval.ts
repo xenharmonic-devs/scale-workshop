@@ -213,6 +213,10 @@ export class Interval {
     );
   }
 
+  isComposite() {
+    return this.monzo.isComposite();
+  }
+
   monzoString() {
     let result = "[";
     for (let i = 0; i < this.monzo.vector.length; ++i) {
