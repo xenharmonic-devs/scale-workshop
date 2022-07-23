@@ -64,11 +64,6 @@ const isomorphicHorizontal = ref(1);
 const keyboardMapping = reactive<Map<string, number>>(new Map());
 mapWhiteAsdfBlackQwerty(keyColors.value, keyboardMapping);
 const keyboardMode = ref<"isomorphic" | "mapped">("isomorphic");
-// TODO: Implement user preferences and make cents precision configurable
-const centsFractionDigits = ref(3);
-const decimalFractionDigits = ref(5);
-const newline = ref(UNIX_NEWLINE);
-
 const equaveShift = ref(0);
 const typingActive = ref(true);
 const midiInput = ref<Input | null>(null);
@@ -79,6 +74,11 @@ const midiOutputChannels = ref(
   new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16])
 );
 const virtualSynth = reactive(new VirtualSynth(rootProps.audioContext));
+// These are user preferences and are fetched from local storage.
+const newline = ref(UNIX_NEWLINE); // XXX: Needs #160 to actually affect anything.
+const colorScheme = ref<"light" | "dark" | "default">("default");
+const centsFractionDigits = ref(3);
+const decimalFractionDigits = ref(5);
 
 // === Computed state ===
 const frequencies = computed(() =>
@@ -449,6 +449,28 @@ onMounted(() => {
 
   // Intended point of audio connection
   audioDestination.value = highpass;
+
+  // Fetch user preferences
+  const storage = window.localStorage;
+  if ("newline" in storage) {
+    newline.value = storage.getItem("newline")!;
+  }
+  if ("colorScheme" in storage) {
+    const scheme = storage.getItem("colorScheme");
+    if (scheme === "light" || scheme === "dark" || scheme === "default") {
+      colorScheme.value = scheme;
+    }
+  }
+  if ("centsFractionDigits" in storage) {
+    centsFractionDigits.value = parseInt(
+      storage.getItem("centsFractionDigits")!
+    );
+  }
+  if ("decimalFractionDigits" in storage) {
+    decimalFractionDigits.value = parseInt(
+      storage.getItem("decimalFractionDigits")!
+    );
+  }
 });
 
 onUnmounted(() => {
@@ -524,6 +546,17 @@ function unpanic() {
   rootProps.audioContext.resume();
 }
 */
+// Store user preferences
+watch(newline, (newValue) => window.localStorage.setItem("newline", newValue));
+watch(colorScheme, (newValue) =>
+  window.localStorage.setItem("colorScheme", newValue)
+);
+watch(centsFractionDigits, (newValue) =>
+  window.localStorage.setItem("centsFractionDigits", newValue.toString())
+);
+watch(decimalFractionDigits, (newValue) =>
+  window.localStorage.setItem("decimalFractionDigits", newValue.toString())
+);
 </script>
 
 <template>
@@ -562,9 +595,6 @@ function unpanic() {
     :keyboardMode="keyboardMode"
     :isomorphicHorizontal="isomorphicHorizontal"
     :isomorphicVertical="isomorphicVertical"
-    :centsFractionDigits="centsFractionDigits"
-    :decimalFractionDigits="decimalFractionDigits"
-    :newline="newline"
     :equaveShift="equaveShift"
     :midiInput="midiInput"
     :midiOutput="midiOutput"
@@ -572,6 +602,10 @@ function unpanic() {
     :midiInputChannels="midiInputChannels"
     :midiOutputChannels="midiOutputChannels"
     :virtualSynth="virtualSynth"
+    :newline="newline"
+    :colorScheme="colorScheme"
+    :centsFractionDigits="centsFractionDigits"
+    :decimalFractionDigits="decimalFractionDigits"
     @update:mainVolume="mainVolume = $event"
     @update:scaleName="scaleName = $event"
     @update:scaleLines="updateFromScaleLines"
@@ -594,6 +628,10 @@ function unpanic() {
     @mapZxcv1="
       mapWhiteQweZxcBlack123Asd(keyColors, keyboardMapping, scale.size, 1)
     "
+    @update:newline="newline = $event"
+    @update:colorScheme="colorScheme = $event"
+    @update:centsFractionDigits="centsFractionDigits = $event"
+    @update:decimalFractionDigits="decimalFractionDigits = $event"
   />
 </template>
 
