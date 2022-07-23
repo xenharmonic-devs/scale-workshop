@@ -26,10 +26,11 @@ import RotateModal from "@/components/modals/modification/RotateScale.vue";
 import SubsetModal from "@/components/modals/modification/TakeSubset.vue";
 import StretchModal from "@/components/modals/modification/StretchScale.vue";
 import RandomVarianceModal from "@/components/modals/modification/RandomVariance.vue";
-import ApproximateBySubharmonicsModal from "@/components/modals/modification/ApproximateBySubharmonics.vue";
 import TemperModal from "@/components/modals/modification/TemperScale.vue";
 import EqualizeModal from "@/components/modals/modification/EqualizeScale.vue";
 import ConvertModal from "@/components/modals/modification/ConvertType.vue";
+import ApproximateBySubharmonicsModal from "@/components/modals/modification/ApproximateBySubharmonics.vue";
+import ApproximateByRatiosModal from "@/components/modals/modification/ApproximateByRatios.vue";
 import { presets, presetsByGroup } from "@/presets";
 import type Scale from "@/scale";
 import { importFile, type ImporterKey } from "@/importers";
@@ -172,6 +173,7 @@ const showApproximateBySubharmonicsModal = ref(false);
 const showTemperModal = ref(false);
 const showEqualizeModal = ref(false);
 const showConvertModal = ref(false);
+const showApproximateByRatiosModal = ref(false);
 
 const scaleDataArea = ref<HTMLTextAreaElement | null>(null);
 const subsetModal = ref<any>(null);
@@ -285,7 +287,9 @@ async function doImport(importerKey: ImporterKey, event: Event) {
             <a href="#" @click="showRandomVarianceModal = true"
               ><li>Random variance</li></a
             >
-            <a href="#"><li>Approximate by ratios</li></a>
+            <a href="#" @click="showApproximateByRatiosModal = true"
+              ><li>Approximate by ratios</li></a
+            >
             <a href="#" @click="showApproximateByHarmonicsModal = true"
               ><li>Approximate by harmonics</li></a
             >
@@ -689,6 +693,13 @@ async function doImport(importerKey: ImporterKey, event: Event) {
       :scale="scale"
       :centsFractionDigits="centsFractionDigits"
       :decimalFractionDigits="decimalFractionDigits"
+    />
+
+    <ApproximateByRatiosModal
+      :show="showApproximateByRatiosModal"
+      @update:scale="emit('update:scale', $event)"
+      @cancel="showApproximateByRatiosModal = false"
+      :scale="scale"
     />
 
     <ApproximateByHarmonicsModal

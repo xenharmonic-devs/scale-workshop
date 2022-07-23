@@ -197,7 +197,7 @@ describe("Temperament Mapping", () => {
   });
 
   it("can represent pantent vals", () => {
-    const edo12 = Mapping.fromWarts(12, 3);
+    const edo12 = Mapping.fromWarts(12, 5);
     expect(edo12.vector[0]).toBeCloseTo((1200 * 12) / 12);
     expect(edo12.vector[1]).toBeCloseTo((1200 * 19) / 12);
     expect(edo12.vector[2]).toBeCloseTo((1200 * 28) / 12);
@@ -210,7 +210,7 @@ describe("Temperament Mapping", () => {
   });
 
   it("can represent vals with warts", () => {
-    const edo18b = Mapping.fromWarts("18b", 2);
+    const edo18b = Mapping.fromWarts("18b", 5);
     expect(edo18b.vector[0]).toBeCloseTo((1200 * 18) / 18);
     expect(edo18b.vector[1]).toBeCloseTo((1200 * 28) / 18);
   });

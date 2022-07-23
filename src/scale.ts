@@ -540,6 +540,15 @@ export default class Scale {
     return this.variant(intervals);
   }
 
+  replaceDegree(degree: number, replacement: Interval) {
+    if (degree === this.intervals.length) {
+      return new Scale(this.intervals, replacement, this.baseFrequency);
+    }
+    const intervals = [...this.intervals];
+    intervals[degree] = replacement;
+    return this.variant(intervals);
+  }
+
   /*
   // Duplicates unison and other scale degrees.
   concat(other: Scale) {
@@ -617,14 +626,6 @@ export default class Scale {
     const equave = this.equave.approximateSubharmonic(numerator);
     const intervals = this.intervals.map((interval) =>
       interval.approximateSubharmonic(numerator)
-    );
-    return new Scale(intervals, equave, this.baseFrequency);
-  }
-
-  approximateOddLimit(limit: number) {
-    const equave = this.equave.approximateOddLimit(limit);
-    const intervals = this.intervals.map((interval) =>
-      interval.approximateOddLimit(limit)
     );
     return new Scale(intervals, equave, this.baseFrequency);
   }

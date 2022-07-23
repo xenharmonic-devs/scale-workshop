@@ -1,6 +1,5 @@
 import { mosPatterns, toBrightGeneratorPerPeriod } from "moment-of-symmetry";
 import {
-  type Monzo,
   type Val,
   type SubgroupValue,
   Temperament,
@@ -8,11 +7,17 @@ import {
   fromWarts,
   type Weights,
   Subgroup,
+  type JipOrLimit,
 } from "temperaments";
 import { DEFAULT_NUMBER_OF_COMPONENTS } from "./constants";
 import Scale from "./scale";
 import { Interval } from "./interval";
-import { PRIME_CENTS, valueToCents, type FractionValue } from "xen-dev-utils";
+import {
+  PRIME_CENTS,
+  valueToCents,
+  type FractionValue,
+  type Monzo,
+} from "xen-dev-utils";
 
 export class Mapping {
   vector: number[];
@@ -62,16 +67,22 @@ export class Mapping {
 
   static fromWarts(
     wartToken: number | string,
-    numberOfPrimesOrJip: number | number[],
+    jipOrLimit: JipOrLimit,
     equaveCents?: number
   ) {
-    const mapping = fromWarts(wartToken, numberOfPrimesOrJip);
+    // XXX: There's something weird going on with how fromWarts gets transpiled
+    let mapping: Val;
+    if (typeof jipOrLimit === "number") {
+      mapping = fromWarts(wartToken, jipOrLimit);
+    } else {
+      mapping = fromWarts(wartToken, jipOrLimit);
+    }
     if (!mapping.length) {
       throw new Error("Failed to produce mapping");
     }
     if (equaveCents === undefined) {
-      if (Array.isArray(numberOfPrimesOrJip)) {
-        equaveCents = numberOfPrimesOrJip[0];
+      if (Array.isArray(jipOrLimit)) {
+        equaveCents = jipOrLimit[0];
       } else {
         equaveCents = 1200;
       }
