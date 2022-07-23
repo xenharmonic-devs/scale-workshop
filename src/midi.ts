@@ -163,4 +163,11 @@ export class MidiIn {
       noteOff(rawRelease);
     }
   }
+
+  deactivate() {
+    for (const [noteNumber, noteOff] of this.noteOffMap) {
+      this.noteOffMap.delete(noteNumber);
+      noteOff(80);
+    }
+  }
 }

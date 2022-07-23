@@ -459,6 +459,38 @@ function updateMidiInputChannels(newValue: Set<number>) {
   midiInputChannels.clear();
   newValue.forEach((channel) => midiInputChannels.add(channel));
 }
+
+function panic() {
+  console.log("Firing global key off.");
+  // Variable name typo fixed in #170
+  typingKeyboad.deactivate();
+  midiIn.deactivate();
+  if (midiOutput.value !== null) {
+    midiOutput.value.sendAllNotesOff({
+      channels: [...midiOutputChannels.value],
+    });
+  }
+}
+
+// Code for hard panic if needed in the future.
+/*
+function hardPanic() {
+  console.warn("Cutting all audio!");
+  typingKeyboad.deactivate();
+  midiIn.deactivate();
+  if (midiOutput.value !== null) {
+    midiOutput.value.sendAllNotesOff();
+    midiOutput.value.sendAllSoundOff();
+    midiOutput.value.sendStop();
+  }
+  rootProps.audioContext.suspend();
+}
+
+function unpanic() {
+  console.log("Resuming audio.");
+  rootProps.audioContext.resume();
+}
+*/
 </script>
 
 <template>
@@ -478,6 +510,9 @@ function updateMidiInputChannels(newValue: Set<number>) {
           enabled <i>(press QWERTY keys to play)</i>
         </template>
         <template v-else> disabled <i>(click to enable)</i> </template>
+      </span>
+      <span class="panic">
+        <a href="#" @click="panic">Quiet</a>
       </span>
     </ul>
   </nav>
@@ -597,5 +632,9 @@ nav a:first-of-type {
 
 .typing-info {
   background-color: var(--color-accent-deeper);
+}
+
+.panic a {
+  color: black;
 }
 </style>
