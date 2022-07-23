@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { arraysEqual } from "xen-dev-utils";
+import {
+  mapWhiteAsdfBlackQwerty,
+  mapWhiteQweZxcBlack123Asd,
+} from "../keyboard-mapping";
 
 import {
   decodeKeyColors,
@@ -9,6 +13,11 @@ import {
   encodeKeyColors,
   encodeLines,
   parseFloat36,
+  encodeNumber,
+  decodeNumber,
+  encodeKeyMap,
+  decodeKeyMap,
+  DecodedState,
 } from "../url-encode";
 
 describe("URL encoder", () => {
@@ -75,7 +84,7 @@ describe("URL encoder", () => {
   });
 
   it("can encode the app state", () => {
-    const state = {
+    const state: DecodedState = {
       scaleName: "", // default
       scaleLines: ["5/4", "6/4", "7/4", "8/4"],
       keyColors: ["white", "white", "black", "white"],
@@ -83,6 +92,8 @@ describe("URL encoder", () => {
       baseMidiNote: 60,
       isomorphicHorizontal: 1, // default
       isomorphicVertical: 3,
+      keyboardMode: "isomorphic",
+      keyboardMapping: new Map(),
     };
     const encoded = encodeQuery(state);
     expect(encoded).toMatchObject({
@@ -114,5 +125,91 @@ describe("Float 36 parser", () => {
   it("can decode random values", () => {
     const value = Math.random() * 1000;
     expect(parseFloat36(value.toString(36))).toBeCloseTo(value);
+  });
+});
+
+describe("Integer encoder", () => {
+  it("can encode non-negative numbers less than 64 using a single character", () => {
+    for (let i = 0; i < 64; ++i) {
+      expect(encodeNumber(i)).toHaveLength(1);
+    }
+  });
+
+  it("can encode and decode all numbers in the range from -1000 to 1000", () => {
+    for (let i = -1000; i <= 1000; ++i) {
+      expect(decodeNumber(encodeNumber(i))).toBe(i);
+    }
+  });
+});
+
+describe("Keyboard map encoder", () => {
+  it("can encode the default ASDF map", () => {
+    const keyboardMapping = new Map();
+    mapWhiteAsdfBlackQwerty(decodeKeyColors("~-~~-~-~~-~-"), keyboardMapping);
+    expect(encodeKeyMap(keyboardMapping)).toBe(
+      "............-1-1.46.9bd.gi023578acefhj..........."
+    );
+  });
+
+  it("can encode the default ZXCV map", () => {
+    const keyboardMapping = new Map();
+    mapWhiteQweZxcBlack123Asd(
+      decodeKeyColors("~-~~-~-~~-~-"),
+      keyboardMapping,
+      12
+    );
+    expect(encodeKeyMap(keyboardMapping)).toBe(
+      "bd.gi.lnp.sucefhjkmoqrtv-1-1.46.9bd.gh.023578acef"
+    );
+  });
+
+  it("can encode large custom values", () => {
+    const keyboardMapping = new Map();
+    keyboardMapping.set("KeyA", 1000);
+    keyboardMapping.set("Digit2", -500);
+    expect(encodeKeyMap(keyboardMapping)).toBe(
+      ".-7Q-......................--fE-......................"
+    );
+  });
+
+  it("can decode the default ASDF map", () => {
+    const decoded = decodeKeyMap(
+      "............-1-1.46.9bd.gi023578acefhj..........."
+    );
+    const keyboardMapping: Map<string, number> = new Map();
+    mapWhiteAsdfBlackQwerty(decodeKeyColors("~-~~-~-~~-~-"), keyboardMapping);
+    for (const [key, value] of keyboardMapping) {
+      expect(decoded.get(key)).toBe(value);
+    }
+    for (const [key, value] of decoded) {
+      expect(keyboardMapping.get(key)).toBe(value);
+    }
+  });
+
+  it("can decode the default ZXCV map", () => {
+    const decoded = decodeKeyMap(
+      "bd.gi.lnp.sucefhjkmoqrtv-1-1.46.9bd.gh.023578acef"
+    );
+    const keyboardMapping: Map<string, number> = new Map();
+    mapWhiteQweZxcBlack123Asd(
+      decodeKeyColors("~-~~-~-~~-~-"),
+      keyboardMapping,
+      12
+    );
+    for (const [key, value] of keyboardMapping) {
+      expect(decoded.get(key)).toBe(value);
+    }
+    for (const [key, value] of decoded) {
+      expect(keyboardMapping.get(key)).toBe(value);
+    }
+  });
+
+  it("can decode large custom values", () => {
+    const map = decodeKeyMap(
+      ".-7Q-......................--fE-......................"
+    );
+    expect(map.size).toBe(2);
+    expect(map.get("KeyA")).toBe(1000);
+    expect(map.get("Digit2")).toBe(-500);
   });
 });
