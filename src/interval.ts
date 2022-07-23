@@ -287,16 +287,20 @@ export class Interval {
     const preferredDenominator = this.options.preferredEtDenominator;
     const preferredEquave = this.options.preferredEtEquave || new Fraction(2);
     let [fractionOfEquave, equave] = this.monzo.toEqualTemperament();
-    for (let power = 2; power < 10; ++power) {
-      if (equave.pow(power).equals(preferredEquave)) {
-        fractionOfEquave = fractionOfEquave.div(power);
-        equave = preferredEquave;
-        break;
-      }
-      if (preferredEquave.pow(power).equals(equave)) {
-        fractionOfEquave = fractionOfEquave.mul(power);
-        equave = preferredEquave;
-        break;
+    if (equave.equals(1)) {
+      equave = preferredEquave;
+    } else {
+      for (let power = 2; power < 10; ++power) {
+        if (equave.pow(power).equals(preferredEquave)) {
+          fractionOfEquave = fractionOfEquave.div(power);
+          equave = preferredEquave;
+          break;
+        }
+        if (preferredEquave.pow(power).equals(equave)) {
+          fractionOfEquave = fractionOfEquave.mul(power);
+          equave = preferredEquave;
+          break;
+        }
       }
     }
 
