@@ -12,7 +12,7 @@ import { ScaleWorkshopOneData } from "@/scale-workshop-one";
 import type { Input, Output } from "webmidi";
 import Scale from "@/scale";
 import { parseLine } from "@/parser";
-import { bendRangeInSemitones, MidiIn, MidiOut } from "@/midi";
+import { bendRangeInSemitones, MidiIn, midiNoteInfo, MidiOut } from "@/midi";
 import { Keyboard, type CoordinateKeyboardEvent } from "@/keyboard";
 import { decodeQuery, encodeQuery } from "@/url-encode";
 import { debounce } from "@/utils";
@@ -74,8 +74,11 @@ const midiOutputChannels = ref(
   new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16])
 );
 const virtualSynth = reactive(new VirtualSynth(rootProps.audioContext));
+const midiVelocityOn = ref(true);
+const midiWhiteMode = ref(false);
+const midiBlackAverage = ref(false);
 // These are user preferences and are fetched from local storage.
-const newline = ref(UNIX_NEWLINE); // XXX: Needs #160 to actually affect anything.
+const newline = ref(UNIX_NEWLINE);
 const colorScheme = ref<"light" | "dark" | "default">("default");
 const centsFractionDigits = ref(3);
 const decimalFractionDigits = ref(5);
@@ -275,17 +278,71 @@ function sendNoteOn(frequency: number, rawAttack: number) {
   }
 }
 
+// Offset such that default base MIDI note doesn't move
+const WHITE_MODE_OFFSET = 69 - 40;
+
 function midiNoteOn(index: number, rawAttack: number) {
-  tuningTableKeyOn(index);
-  const frequency = frequencies.value[index];
+  let frequency = frequencies.value[index];
+  if (!midiVelocityOn.value) {
+    rawAttack = 80;
+  }
+
+  // Store state to ensure consistent note off.
+  const info = midiNoteInfo(index);
+  const whiteMode = midiWhiteMode.value;
+  const blackAverage = midiBlackAverage.value;
+
+  if (whiteMode) {
+    if (info.whiteNumber === undefined) {
+      info.flatOf += WHITE_MODE_OFFSET;
+      info.sharpOf += WHITE_MODE_OFFSET;
+      if (blackAverage) {
+        frequency = Math.sqrt(
+          getFrequency(info.flatOf) * getFrequency(info.sharpOf)
+        );
+        tuningTableKeyOn(info.flatOf);
+        tuningTableKeyOn(info.sharpOf);
+      } else {
+        frequency = NaN;
+      }
+    } else {
+      info.whiteNumber += WHITE_MODE_OFFSET;
+      frequency = getFrequency(info.whiteNumber);
+      tuningTableKeyOn(info.whiteNumber);
+    }
+  } else {
+    tuningTableKeyOn(index);
+  }
+
+  if (isNaN(frequency)) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    return (rawRelease: number) => {};
+  }
+
   const noteOff = sendNoteOn(frequency, rawAttack);
   return (rawRelease: number) => {
-    tuningTableKeyOff(index);
+    if (!midiVelocityOn.value) {
+      rawRelease = 80;
+    }
+    if (whiteMode) {
+      if (info.whiteNumber === undefined) {
+        if (blackAverage) {
+          tuningTableKeyOff(info.flatOf);
+          tuningTableKeyOff(info.sharpOf);
+        }
+      } else {
+        tuningTableKeyOff(info.whiteNumber);
+      }
+    } else {
+      tuningTableKeyOff(index);
+    }
     noteOff(rawRelease);
   };
 }
 
 const midiIn = new MidiIn(midiNoteOn, midiInputChannels);
+
+const RESERVED_MESSAGES = ["noteon", "noteoff", "pitchbend"];
 
 watch(midiInput, (newValue, oldValue) => {
   if (oldValue !== null) {
@@ -294,6 +351,28 @@ watch(midiInput, (newValue, oldValue) => {
   if (newValue !== null) {
     newValue.addListener("noteon", midiIn.noteOn.bind(midiIn));
     newValue.addListener("noteoff", midiIn.noteOff.bind(midiIn));
+
+    // Pass everything else through and distrubute among the channels
+    newValue.addListener("midimessage", (event) => {
+      if (
+        !RESERVED_MESSAGES.includes(event.message.type) &&
+        midiOutput.value !== null
+      ) {
+        if (
+          event.message.isChannelMessage &&
+          midiInputChannels.has(event.message.channel)
+        ) {
+          const status = event.message.statusByte & 0b11110000;
+          for (const channel of midiOutputChannels.value) {
+            const data = [...event.message.data];
+            data[0] = status | (channel - 1);
+            midiOutput.value.send(data);
+          }
+        } else {
+          midiOutput.value.send(event.message);
+        }
+      }
+    });
   }
 });
 
@@ -607,6 +686,9 @@ watch(decimalFractionDigits, (newValue) =>
     :centsFractionDigits="centsFractionDigits"
     :decimalFractionDigits="decimalFractionDigits"
     @update:mainVolume="mainVolume = $event"
+    :midiVelocityOn="midiVelocityOn"
+    :midiWhiteMode="midiWhiteMode"
+    :midiBlackAverage="midiBlackAverage"
     @update:scaleName="scaleName = $event"
     @update:scaleLines="updateFromScaleLines"
     @update:scale="updateFromScale"
@@ -628,6 +710,9 @@ watch(decimalFractionDigits, (newValue) =>
     @mapZxcv1="
       mapWhiteQweZxcBlack123Asd(keyColors, keyboardMapping, scale.size, 1)
     "
+    @update:midiVelocityOn="midiVelocityOn = $event"
+    @update:midiWhiteMode="midiWhiteMode = $event"
+    @update:midiBlackAverage="midiBlackAverage = $event"
     @update:newline="newline = $event"
     @update:colorScheme="colorScheme = $event"
     @update:centsFractionDigits="centsFractionDigits = $event"
