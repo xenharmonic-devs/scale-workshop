@@ -231,7 +231,7 @@ export default class Scale {
   ) {
     let intervals: Interval[] = [];
     function span(accumulator: Interval, index: number) {
-      if (index >= dimensions.length) {
+      if (index >= dimensions.length || index >= basis.length) {
         intervals.push(accumulator);
         return;
       }
