@@ -66,7 +66,11 @@ function draw(time: DOMHighResTimeStamp) {
   // Gradual fadeout of previous renders.
   const [red, green, blue] = props.backgroundRBG;
   // Blend with small alpha leaves a ghost image that we need to get rid of.
-  if (props.fadeAlpha && props.fadeAlpha < 0.25 && frameIndex % Math.round(1 / props.fadeAlpha) === 0) {
+  if (
+    props.fadeAlpha &&
+    props.fadeAlpha < 0.25 &&
+    frameIndex % Math.round(1 / props.fadeAlpha) === 0
+  ) {
     ctx.fillStyle = `rgba(${red}, ${green}, ${blue}, 0.25)`;
   } else {
     ctx.fillStyle = `rgba(${red}, ${green}, ${blue}, ${props.fadeAlpha})`;
