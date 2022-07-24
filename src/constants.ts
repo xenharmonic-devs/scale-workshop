@@ -20,3 +20,6 @@ export const KORG = {
     maxCents: 128000,
   },
 };
+
+export const MIN_MTS_FREQ = 8.175798915643707;
+export const MAX_MTS_FREQ = 12543.853951415975;

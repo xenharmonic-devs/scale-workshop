@@ -1,18 +1,14 @@
-import { KORG } from "@/constants";
+import { KORG, MAX_MTS_FREQ, MIN_MTS_FREQ } from "@/constants";
 import JSZip from "jszip";
 import { BaseExporter, type ExporterParams } from "@/exporters/base";
 import {
   clamp,
-  frequencyToCentOffset,
-  mmod,
-  valueToCents,
+  ftomtsBytes,
+  mtof,
 } from "xen-dev-utils";
 
 // This exporter converts tuning data into a zip-compressed file for use with Korg's
 // 'logue Sound Librarian software, supporting their 'logue series of synthesizers.
-// While this exporter preserves accuracy as much as possible, the Sound Librarian software
-// unforunately truncates cent values to 1 cent precision. It's unknown whether the tuning accuracy
-// from this exporter is written to the synthesizer and used in the synthesis.
 class KorgExporter extends BaseExporter {
   params: ExporterParams;
   useScaleFormat: boolean;
@@ -23,29 +19,23 @@ class KorgExporter extends BaseExporter {
     this.useScaleFormat = useScaleFormat;
   }
 
-  centsTableToMnlgBinary(centsTableIn: number[]) {
-    const dataSize = centsTableIn.length * 3;
-    const data = new Uint8Array(dataSize);
-    let dataIndex = 0;
-    centsTableIn.forEach((c) => {
-      // restrict to valid values
-      const cents = clamp(0, KORG.mnlg.maxCents, c);
-
-      const semitones = Math.floor(cents / 100.0);
-      const microtones = cents / 100.0 - semitones;
-
-      const u16a = new Uint16Array([Math.round(0x8000 * microtones)]);
-      const u8a = new Uint8Array(u16a.buffer);
-
-      data[dataIndex] = semitones;
-      data[dataIndex + 1] = u8a[1];
-      data[dataIndex + 2] = u8a[0];
-      dataIndex += 3;
-    });
-    return data;
+  static frequencyTableToMtsBinary(frequencyTableIn: number[]) : Uint8Array {
+      const dataSize = frequencyTableIn.length * 3;
+      const data = new Uint8Array(dataSize);
+      let index = 0;
+      frequencyTableIn.forEach((freq:number) => {
+        freq = clamp(MIN_MTS_FREQ, MAX_MTS_FREQ, freq);
+      
+        const bytes = ftomtsBytes(freq);
+        data[index] = bytes[0];
+        data[index + 1] = bytes[1];
+        data[index + 2] = bytes[2];
+        index += 3;
+        })
+      return data;
   }
 
-  getMnlgtunTuningInfoXML(programmer: string, comment: string) {
+  getTuningInfoXml(programmer: string, comment: string) {
     // Builds an XML file necessary for the .mnlgtun file format
     const rootName = this.useScaleFormat
       ? "minilogue_TuneScaleInformation"
@@ -63,7 +53,7 @@ class KorgExporter extends BaseExporter {
     return xml;
   }
 
-  getMnlgtunFileInfoXML(product = "minilogue") {
+  getFileInfoXml(product = "minilogue") {
     // Builds an XML file necessary for the .mnlgtun file format
     const rootName = "KorgMSLibrarian_Data";
     const xml = document.implementation.createDocument(null, rootName);
@@ -98,43 +88,27 @@ class KorgExporter extends BaseExporter {
     return xml;
   }
 
-  getFileContents(): [JSZip, string] {
+  buildZipContents(): [JSZip, string] {
     const scale = this.params.scale;
-    const baseMidiNote = this.params.baseMidiNote;
 
-    // the index of the table that's equal to the baseNote should have the following value
-    const refOffsetCents =
-      KORG.mnlg.refA.val +
-      valueToCents(scale.baseFrequency / KORG.mnlg.refA.freq);
+    const tableSize = (this.useScaleFormat) ? KORG.mnlg.scaleSize : KORG.mnlg.octaveSize;
+    const baseMidiNote = (this.useScaleFormat) ? -this.params.baseMidiNote : 0;
+    const hzScalar = (this.useScaleFormat) ? 1 : mtof(0) / scale.getFrequency(baseMidiNote);
 
-    // offset cents array for binary conversion
-    let centsTable = [];
+    const lastScaleIndex = baseMidiNote + tableSize;
 
-    for (let i = 0; i < KORG.mnlg.scaleSize; ++i) {
-      const cents =
-        frequencyToCentOffset(scale.getFrequency(i - baseMidiNote)) +
-        refOffsetCents;
-      centsTable.push(Math.round(cents * 1000) / 1000); // Round to 3 decimals
-    }
+    let frequencyTable = [];
+    for (var i = baseMidiNote; i < lastScaleIndex; i++)
+      frequencyTable.push(scale.getFrequency(i) * hzScalar);
 
-    if (!this.useScaleFormat) {
-      // normalize around root, truncate to 12 notes, and wrap flattened Cs
-      const cNote =
-        Math.floor(baseMidiNote / KORG.mnlg.octaveSize) * KORG.mnlg.octaveSize;
-      centsTable = centsTable
-        .slice(cNote, cNote + KORG.mnlg.octaveSize)
-        .map((cents) => mmod(cents - KORG.mnlg.refC.val, KORG.mnlg.maxCents));
-    }
-
-    // convert to binary
-    const binaryData = this.centsTableToMnlgBinary(centsTable);
+    const binaryData = KorgExporter.frequencyTableToMtsBinary(frequencyTable);
 
     // prepare files for zipping
-    const tuningInfo = this.getMnlgtunTuningInfoXML(
+    const tuningInfo = this.getTuningInfoXml(
       "ScaleWorkshop",
       this.params.name!
     );
-    const fileInfo = this.getMnlgtunFileInfoXML();
+    const fileInfo = this.getFileInfoXml();
     const [fileNameHeader, fileType] = this.useScaleFormat
       ? ["TunS_000.TunS_", ".mnlgtuns"]
       : ["TunO_000.TunO_", ".mnlgtuno"];
@@ -148,7 +122,7 @@ class KorgExporter extends BaseExporter {
   }
 
   async saveFile() {
-    const [zip, fileType] = this.getFileContents();
+    const [zip, fileType] = this.buildZipContents();
     const base64 = await zip.generateAsync({ type: "base64" });
     super.saveFile(
       this.params.filename + fileType,
