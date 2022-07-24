@@ -20,7 +20,6 @@ import CrossPolytopeModal from "@/components/modals/generation/CrossPolytope.vue
 import LatticeModal from "@/components/modals/generation/SpanLattice.vue";
 import EulerGenusModal from "@/components/modals/generation/EulerGenus.vue";
 import DwarfModal from "@/components/modals/generation/DwarfScale.vue";
-import RankOneModal from "@/components/modals/generation/RankOne.vue";
 import RankTwoModal from "@/components/modals/generation/RankTwo.vue";
 import RotateModal from "@/components/modals/modification/RotateScale.vue";
 import SubsetModal from "@/components/modals/modification/TakeSubset.vue";
@@ -160,7 +159,6 @@ const showCpsModal = ref(false);
 const showLatticeModal = ref(false);
 const showEulerGenusModal = ref(false);
 const showDwarfModal = ref(false);
-const showRankOneModal = ref(false);
 const showRankTwoModal = ref(false);
 const showCrossPolytopeModal = ref(false);
 
@@ -209,9 +207,6 @@ async function doImport(importerKey: ImporterKey, event: Event) {
           <ul>
             <a href="#" @click="showEqualTemperamentModal = true"
               ><li>Equal temperament</li></a
-            >
-            <a href="#" @click="showRankOneModal = true"
-              ><li>Rank-1 temperament</li></a
             >
             <a href="#" @click="showRankTwoModal = true"
               ><li>Rank-2 temperament</li></a
@@ -487,17 +482,6 @@ async function doImport(importerKey: ImporterKey, event: Event) {
       :scale="scale"
     />
 
-    <RankOneModal
-      :show="showRankOneModal"
-      :centsFractionDigits="centsFractionDigits"
-      @update:scaleName="emit('update:scaleName', $event)"
-      @update:scale="
-        showRankOneModal = false;
-        emit('update:scale', $event);
-      "
-      @cancel="showRankOneModal = false"
-    />
-
     <RankTwoModal
       :show="showRankTwoModal"
       :centsFractionDigits="centsFractionDigits"
@@ -610,6 +594,7 @@ async function doImport(importerKey: ImporterKey, event: Event) {
     />
     <LatticeModal
       :show="showLatticeModal"
+      :centsFractionDigits="centsFractionDigits"
       @update:scaleName="emit('update:scaleName', $event)"
       @update:scale="
         showLatticeModal = false;
