@@ -180,6 +180,7 @@ const subsetModal = ref<any>(null);
 
 const scalaFile = ref<HTMLInputElement | null>(null);
 const anamarkFile = ref<HTMLInputElement | null>(null);
+const mnlgtunFile = ref<HTMLInputElement | null>(null);
 
 async function doImport(importerKey: ImporterKey, event: Event) {
   const result = await importFile(importerKey, event);
@@ -244,7 +245,7 @@ async function doImport(importerKey: ImporterKey, event: Event) {
             <li class="divider"></li>
             <a href="#" @click="scalaFile?.click()"><li>Import .scl</li></a>
             <a href="#" @click="anamarkFile?.click()"><li>Import .tun</li></a>
-            <a href="#"><li>Import .mnlgtuns / .mnltuno</li></a>
+            <a href="#" @click="mnlgtunFile?.click()"><li>Import .mnlgtuns / .mnltuno</li></a>
             <li class="divider"></li>
             <a href="#" @click="joinedLines = ''; scaleDataArea!.focus()"
               ><li>Clear scale</li></a
@@ -474,6 +475,13 @@ async function doImport(importerKey: ImporterKey, event: Event) {
     accept=".tun"
     style="display: none"
     @change="doImport('anamark', $event)"
+  />
+  <input
+    type="file"
+    ref="mnlgtunFile"
+    accept=".mnlgtuns,.mnlgtuno"
+    style="display: none"
+    @change="doImport('mnlgtun', $event)"
   />
 
   <Teleport to="body">

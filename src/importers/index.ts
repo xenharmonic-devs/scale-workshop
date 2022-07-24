@@ -1,10 +1,12 @@
 import type { ImportResult } from "@/importers/base";
 import { AnaMarkImporter } from "@/importers/anamark";
 import { ScalaImporter } from "@/importers/scala";
+import { KorgImporter } from "@/importers/korg";
 
 const IMPORTERS = {
   scalascl: ScalaImporter,
   anamark: AnaMarkImporter,
+  mnlgtun: KorgImporter
 };
 
 export type ImporterKey = keyof typeof IMPORTERS;

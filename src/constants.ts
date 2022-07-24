@@ -18,7 +18,5 @@ export const KORG = {
     octaveSize: 12,
     scaleSize: 128,
     maxCents: 128000,
-    refA: { val: 6900, ind: 69, freq: 440.0 },
-    refC: { val: 6000, ind: 60, freq: 261.6255653 },
   },
 };

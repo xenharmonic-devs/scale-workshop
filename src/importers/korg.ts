@@ -4,9 +4,11 @@ import ExtendedMonzo from "@/monzo";
 import Scale from "@/scale";
 import type { JSZipObject } from "jszip";
 import { ZipImporter, type ImportResultFragment } from "./base";
+import { mtof } from "xen-dev-utils"
+
 
 export class KorgImporter extends ZipImporter {
-  mnlgBinaryToCents(data: Uint8Array) {
+  mnlgBinaryToCents(data: Uint8Array) : number[] {
     const centsOut = [];
     const tuningSize = data.length / 3;
     for (let i = 0; i < tuningSize; i++) {
@@ -53,27 +55,30 @@ export class KorgImporter extends ZipImporter {
       );
     }
 
-    // to always play at the right frequencies, we have to use the first midi note
-    const octaveExp = octaveFormat
-      ? cents[0] - 900
-      : cents[0] - KORG.mnlg.refA.val;
+    // use the first midi note as the root frequency
+    let baseMts = cents[0] / 100;
+    if (octaveFormat)
+      baseMts += 60 // (in octave format, 9 semitones = A440 = 69)
 
     // derive frequency from A440
-    const baseFrequency = KORG.mnlg.refA.freq * 2 ** (octaveExp / 1200);
+    const baseFrequency = mtof(baseMts);
 
     // normalize so scale starts on unison
     if (octaveFormat) {
-      const negCents = Math.min(...cents);
-      if (negCents < 0) cents = cents.map((c) => c - negCents);
+      const negCents = cents.find((n:number) => n < 0);
+      if (negCents !== undefined) {
+        cents = cents.map((c) => Math.round((c - negCents) * 100) / 100);
+      }
     } else {
-      cents = cents.map((c) => c - cents[0]);
+      cents = cents.map((c) => Math.round((c - cents[0]) * 100) / 100);
     }
 
     // remove unison (but may have other unison lines to preserve mapping)
     cents.shift();
 
     // add period
-    if (octaveFormat) cents.push(1200);
+    if (octaveFormat) 
+      cents.push(1200);
 
     const scale = Scale.fromIntervalArray(
       cents.map(
