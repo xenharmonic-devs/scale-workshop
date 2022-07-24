@@ -23,6 +23,7 @@ const rows = computed(() => {
       ratio: monzo.valueOf(),
       name: props.scale.getName(index),
       keyColor: colors[mmod(index, colors.length)],
+      isRoot: index === 0,
     };
   });
 });
@@ -42,16 +43,7 @@ const rows = computed(() => {
         </tr>
       </thead>
       <tbody>
-        <TuningTableRow
-          v-for="row of rows"
-          :key="row.index"
-          :index="row.index"
-          :frequency="row.frequency"
-          :cents="row.cents"
-          :ratio="row.ratio"
-          :name="row.name"
-          :keyColor="row.keyColor"
-        />
+        <TuningTableRow v-for="row of rows" :key="row.index" v-bind="row" />
       </tbody>
     </table>
   </div>

@@ -9,6 +9,7 @@ const props = defineProps<{
   ratio: number;
   name: string;
   keyColor: string;
+  isRoot: boolean;
 }>();
 
 const element = ref<HTMLTableRowElement | null>(null);
@@ -24,6 +25,10 @@ onMounted(() => {
   }
   (element as any).heldKeys = 0;
   rows[props.index] = element;
+
+  if (props.isRoot) {
+    element.value!.scrollIntoView({ block: "center" });
+  }
 });
 </script>
 
