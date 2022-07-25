@@ -175,15 +175,6 @@ export class Interval {
     );
   }
 
-  approximateOddLimit(limit: number) {
-    return new Interval(
-      this.monzo.approximateOddLimit(limit),
-      "ratio",
-      undefined,
-      this.options
-    );
-  }
-
   vary(maxCents: number) {
     const offset = (Math.random() * 2 - 1) * maxCents;
     const monzo = this.monzo;
