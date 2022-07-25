@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive } from "vue";
+import { computed, onMounted, reactive } from "vue";
 import { Input, Output, WebMidi } from "webmidi";
 
 const props = defineProps<{
@@ -7,6 +7,9 @@ const props = defineProps<{
   midiOutput: Output | null;
   midiInputChannels: Set<number>;
   midiOutputChannels: Set<number>;
+  midiVelocityOn: boolean;
+  midiWhiteMode: boolean;
+  midiBlackAverage: boolean;
 }>();
 
 const emit = defineEmits([
@@ -14,10 +17,25 @@ const emit = defineEmits([
   "update:midiOutput",
   "update:midiInputChannels",
   "update:midiOutputChannels",
+  "update:midiVelocityOn",
+  "update:midiWhiteMode",
+  "update:midiBlackAverage",
 ]);
 
 const inputs = reactive<Input[]>([]);
 const outputs = reactive<Output[]>([]);
+const midiVelocityOn = computed({
+  get: () => props.midiVelocityOn,
+  set: (newValue) => emit("update:midiVelocityOn", newValue),
+});
+const midiWhiteMode = computed({
+  get: () => props.midiWhiteMode,
+  set: (newValue) => emit("update:midiWhiteMode", newValue),
+});
+const midiBlackAverage = computed({
+  get: () => props.midiBlackAverage,
+  set: (newValue) => emit("update:midiBlackAverage", newValue),
+});
 
 function selectMidiInput(event: Event) {
   const id = (event!.target as HTMLSelectElement).value;
@@ -115,6 +133,33 @@ onMounted(async () => {
                 @input="toggleInputChannel"
               />
             </span>
+          </div>
+          <div class="control checkbox-container">
+            <input
+              type="checkbox"
+              id="midi-velocity"
+              v-model="midiVelocityOn"
+            />
+            <label for="midi-velocity">Use velocity</label>
+          </div>
+          <div class="control checkbox-container">
+            <input
+              type="checkbox"
+              id="midi-white-mode"
+              v-model="midiWhiteMode"
+            />
+            <label for="midi-white-mode">Map white keys only</label>
+          </div>
+          <div class="control checkbox-container">
+            <input
+              type="checkbox"
+              id="midi-black-average"
+              :disabled="!midiWhiteMode"
+              v-model="midiBlackAverage"
+            />
+            <label for="midi-black-average"
+              >Play averaged notes on black keys</label
+            >
           </div>
           <label for="output">Output</label>
           <select id="output" @change="selectMidiOutput" class="control">

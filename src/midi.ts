@@ -171,3 +171,31 @@ export class MidiIn {
     }
   }
 }
+
+export type MidiNoteInfo = {
+  whiteNumber?: number;
+  sharpOf?: number;
+  flatOf?: number;
+};
+
+const WHITES = [0, 2, 4, 5, 7, 9, 11];
+
+export function midiNoteInfo(chromaticNumber: number) {
+  const octave = Math.floor(chromaticNumber / 12);
+  const index = chromaticNumber - 12 * octave;
+  if (WHITES.includes(index)) {
+    return {
+      whiteNumber: Math.floor((index + 1) / 2) + 7 * octave,
+    };
+  }
+  if (index === 1 || index === 3) {
+    return {
+      sharpOf: (index - 1) / 2 + 7 * octave,
+      flatOf: (index + 1) / 2 + 7 * octave,
+    };
+  }
+  return {
+    sharpOf: index / 2 + 7 * octave,
+    flatOf: (index + 2) / 2 + 7 * octave,
+  };
+}
