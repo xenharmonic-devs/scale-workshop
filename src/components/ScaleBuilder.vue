@@ -317,14 +317,7 @@ async function doImport(importerKey: ImporterKey, event: Event) {
         <h2>Tuning</h2>
 
         <div class="control">
-          <label>Interval</label>
-          <select>
-            <option>1/1</option>
-          </select>
-        </div>
-
-        <div class="control">
-          <label>Frequency</label>
+          <label>Base frequency</label>
           <input
             class="real-valued"
             type="number"
@@ -338,7 +331,7 @@ async function doImport(importerKey: ImporterKey, event: Event) {
         </div>
 
         <div class="control">
-          <label>MIDI note number</label>
+          <label>MIDI note for base frequency</label>
           <input
             type="number"
             ref="midiNoteNumber"
@@ -349,6 +342,18 @@ async function doImport(importerKey: ImporterKey, event: Event) {
           />
           <span>A5</span>
         </div>
+
+        <!--<div class="control">
+          <label>MIDI note for 1/1</label>
+          <input
+            class="real-valued"
+            type="number"
+            min="0"
+            step="1"
+            max="127"
+          />
+          <span>A5</span>
+        </div>-->
       </div>
 
       <div class="control-group">
