@@ -77,62 +77,43 @@ onUnmounted(() => {
   <main>
     <div class="columns-container">
       <div class="column synth-controls">
-        <h1>Synth</h1>
+        <h2>Synth</h2>
+        <div class="control-group">
+          <TimeDomainVisualizer
+            ref="timeDomainVisualizer"
+            class="waveform"
+            :width="512"
+            :height="128"
+            :lineWidth="1.5"
+            strokeStyle="black"
+            :analyser="analyser"
+          />
+        </div>
         <div class="control-group">
           <label for="volume">Main volume</label>
           <input
             type="range"
             min="0"
-            max="0.5"
+            max="0.4"
             step="any"
             v-model="mainVolume"
           />
         </div>
-        <h2>Waveform</h2>
-        <TimeDomainVisualizer
-          ref="timeDomainVisualizer"
-          class="waveform"
-          :width="512"
-          :height="192"
-          :lineWidth="1.5"
-          strokeStyle="black"
-          :analyser="analyser"
-        />
       </div>
       <div class="column keyboard-controls">
-        <h1>Keyboard</h1>
-        <h2>Isomorphic key mapping</h2>
-        <p>
-          Distance (in scale degrees) between adjacent keys on the
-          horizontal/vertical axes.
-        </p>
+        <h2>Keyboard equave shift</h2>
         <div class="control-group">
-          <div class="control">
-            <label for="vertical">Vertical</label>
-            <input type="number" id="vertical" v-model="isomorphicVertical" />
-          </div>
-          <div class="control">
-            <label for="horizontal">Horizontal</label>
-            <input
-              type="number"
-              id="horizontal"
-              v-model="isomorphicHorizontal"
-            />
-          </div>
-        </div>
-        <h2>Octave/equave shift</h2>
-        <p>
-          Trigger lower/higher notes. Also mapped to numpad division " / " and
-          multiply " * ".
-        </p>
-        <div class="control-group">
+          <p>
+            Trigger lower or higher notes. (Shortcut keys: numpad
+            <code>/</code> and <code>*</code>)
+          </p>
           <div class="control">
             <input type="number" v-model="equaveShift" />
           </div>
         </div>
         <h2>Keyboard mode</h2>
         <div class="control-group">
-          <div class="control">
+          <div class="control radio-group">
             <span>
               <input
                 type="radio"
@@ -164,27 +145,62 @@ onUnmounted(() => {
             </button>
           </template>
         </div>
-        <p>"Shift" key toggles sustain for individual keys.</p>
-        <p>The key left of digit "1" releases sustain.</p>
-        <i>The isomorphic settings affect both typing and virtual keyboards.</i>
+        <h2>Isomorphic key mapping</h2>
+        <div class="control-group">
+          <p>
+            Distance between adjacent keys on the horizontal/vertical axes, in
+            scale degrees. Affects virtual keyboard (and also typing keyboard if
+            in isomorphic mode).
+          </p>
+          <div class="control">
+            <label for="vertical">Vertical</label>
+            <input type="number" id="vertical" v-model="isomorphicVertical" />
+          </div>
+          <div class="control">
+            <label for="horizontal">Horizontal</label>
+            <input
+              type="number"
+              id="horizontal"
+              v-model="isomorphicHorizontal"
+            />
+          </div>
+        </div>
+        <h2>Keyboard shortcuts</h2>
+        <div class="control-group">
+          <p><code>Shift</code> sustain currently held keys after release</p>
+          <p><code>`</code> release sustain, stop all playing notes</p>
+          <p><code>numpad /</code> equave shift down</p>
+          <p><code>numpad *</code> equave shift up</p>
+        </div>
       </div>
     </div>
   </main>
 </template>
 
 <style scoped>
+/* Content layout */
 div.columns-container {
   height: 100%;
   overflow-y: auto;
-  background-color: var(--color-border);
-  column-count: 2;
-  column-gap: 1px;
 }
 div.column {
-  background-color: var(--color-background);
   overflow-x: hidden;
-  height: 100%;
 }
+
+@media screen and (min-width: 600px) {
+  div.columns-container {
+    background-color: var(--color-border);
+    column-count: 2;
+    column-gap: 1px;
+    height: 100%;
+  }
+  div.column {
+    height: 100%;
+    overflow-y: auto;
+    background-color: var(--color-background);
+  }
+}
+
 div.synth-controls {
   padding: 1rem;
 }
@@ -195,7 +211,7 @@ div.keyboard-controls {
 .waveform {
   width: 100%;
   height: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
 }
-
-/* TODO: media queries left for a later UI pass */
 </style>

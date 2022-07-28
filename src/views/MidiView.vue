@@ -106,9 +106,9 @@ onMounted(async () => {
   <main>
     <div class="columns-container">
       <div class="column midi-controls">
-        <h1>MIDI</h1>
+        <h2>MIDI Input</h2>
         <div class="control-group">
-          <label for="input">Input</label>
+          <label for="input">Input device</label>
           <select id="input" @change="selectMidiInput" class="control">
             <option value="no-midi-input" :selected="midiInput === null">
               No MIDI input
@@ -161,7 +161,12 @@ onMounted(async () => {
               >Play averaged notes on black keys</label
             >
           </div>
-          <label for="output">Output</label>
+        </div>
+      </div>
+      <div class="column midi-controls">
+        <h2>MIDI Output</h2>
+        <div class="control-group">
+          <label for="output">Output device</label>
           <select id="output" @change="selectMidiOutput" class="control">
             <option value="no-midi-output" :selected="midiOutput === null">
               No MIDI output
@@ -194,23 +199,36 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+/* Content layout */
 div.columns-container {
   height: 100%;
   overflow-y: auto;
-  background-color: var(--color-border);
-  column-count: 1;
 }
 div.column {
-  background-color: var(--color-background);
   overflow-x: hidden;
-  height: 100%;
 }
+
+@media screen and (min-width: 600px) {
+  div.columns-container {
+    background-color: var(--color-border);
+    column-count: 2;
+    column-gap: 1px;
+    height: 100%;
+  }
+  div.column {
+    background-color: var(--color-background);
+    height: 100%;
+    overflow-y: auto;
+  }
+}
+
 div.midi-controls {
   padding: 1rem;
 }
 
 div.channels-wrapper {
   column-gap: 1rem;
+  margin-bottom: 1rem;
 }
 
 div.channels-wrapper span {

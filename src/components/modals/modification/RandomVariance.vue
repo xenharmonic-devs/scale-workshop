@@ -38,8 +38,8 @@ function modify() {
       <h2>Random variance</h2>
     </template>
     <template #body>
-      <p>Add random amount of detuning to each note of the scale</p>
       <div class="control-group">
+        <p>Add random amount of detuning to each note of the scale</p>
         <div class="control">
           <label for="amount">Maximum variance in cents</label>
           <input

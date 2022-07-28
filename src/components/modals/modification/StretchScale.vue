@@ -27,12 +27,12 @@ function modify() {
       <h2>Stretch/compress scale</h2>
     </template>
     <template #body>
-      <p>Stretch or compress the whole scale evenly.</p>
-      <p>
-        Entering 1 will cause no change; entering 2 will make every interval
-        twice as large.
-      </p>
       <div class="control-group">
+        <p>Stretch or compress the whole scale evenly.</p>
+        <p>
+          Entering 1 will cause no change; entering 2 will make every interval
+          twice as large.
+        </p>
         <div class="control">
           <label for="amount">Stretch ratio</label>
           <input

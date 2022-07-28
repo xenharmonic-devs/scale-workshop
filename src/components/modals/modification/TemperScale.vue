@@ -96,7 +96,7 @@ function modify() {
     <template #body>
       <div @click="error = ''">
         <div class="control-group">
-          <div class="control">
+          <div class="control radio-group">
             <label>Method</label>
             <span>
               <input
@@ -177,15 +177,15 @@ function modify() {
             />
           </div>
         </div>
-        <h3
+        <p
           class="section"
           :class="{ open: showAdvanced }"
           @click="showAdvanced = !showAdvanced"
         >
           Advanced options
-        </h3>
+        </p>
         <div class="control-group" v-show="showAdvanced">
-          <div class="control">
+          <div class="control radio-group">
             <span>
               <input
                 type="radio"

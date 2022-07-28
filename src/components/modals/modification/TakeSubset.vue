@@ -59,8 +59,8 @@ function modify() {
       <h2>Take subset</h2>
     </template>
     <template #body>
-      <p>Select a subset from the current scale.</p>
       <div class="control-group">
+        <p>Select a subset from the current scale.</p>
         <label>Selected intervals</label>
         <div class="control">
           <button
@@ -81,19 +81,11 @@ function modify() {
 </template>
 
 <style scoped>
-.degree {
-  color: #477;
-}
-.degree:hover {
-  color: #eee;
-  background-color: #6aa;
-}
 .degree.selected {
-  color: #111;
-  background-color: #199;
+  color: var(--color-accent-text);
+  background-color: var(--color-accent);
 }
 .degree.selected:hover {
-  color: white;
-  background-color: #2bb;
+  background-color: var(--color-accent-deeper);
 }
 </style>

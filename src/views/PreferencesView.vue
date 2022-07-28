@@ -4,7 +4,7 @@ import { computed } from "vue";
 
 const props = defineProps<{
   newline: string;
-  colorScheme: "light" | "dark" | "default";
+  colorScheme: "light" | "dark";
   centsFractionDigits: number;
   decimalFractionDigits: number;
 }>();
@@ -37,9 +37,7 @@ const decimalFractionDigits = computed({
 <template>
   <main>
     <div class="columns-container">
-      <div class="column preferences">
-        <h1>Preferences</h1>
-
+      <div class="column">
         <h2>File export</h2>
         <div class="control-group">
           <label for="newline">Line endings format</label>
@@ -53,10 +51,11 @@ const decimalFractionDigits = computed({
             <option :value="UNIX_NEWLINE">Unix (Mac/Linux)</option>
           </select>
         </div>
-
+      </div>
+      <div class="column">
         <h2>Appearance</h2>
         <div class="control-group">
-          <div class="control">
+          <div class="control radio-group">
             <span>
               <input
                 type="radio"
@@ -75,18 +74,10 @@ const decimalFractionDigits = computed({
               />
               <label for="scheme-dark"> Dark </label>
             </span>
-            <span>
-              <input
-                type="radio"
-                id="scheme-default"
-                value="default"
-                v-model="colorScheme"
-              />
-              <label for="scheme-default"> Browser default </label>
-            </span>
           </div>
         </div>
-
+      </div>
+      <div class="column">
         <h2>Precision</h2>
         <div class="control-group">
           <label for="cents">Cents digits after decimal point</label>
@@ -115,15 +106,23 @@ const decimalFractionDigits = computed({
 div.columns-container {
   height: 100%;
   overflow-y: auto;
-  background-color: var(--color-border);
-  column-count: 1;
 }
 div.column {
-  background-color: var(--color-background);
   overflow-x: hidden;
-  height: 100%;
-}
-div.preferences {
   padding: 1rem;
+}
+
+@media screen and (min-width: 860px) {
+  div.columns-container {
+    background-color: var(--color-border);
+    column-count: 3;
+    column-gap: 1px;
+    height: 100%;
+  }
+  div.column {
+    height: 100%;
+    overflow-y: auto;
+    background-color: var(--color-background);
+  }
 }
 </style>

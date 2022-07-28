@@ -1,1 +1,75 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 261.76 226.69"  xmlns:v="https://vecta.io/nano"><path d="M161.096.001l-30.225 52.351L100.647.001H-.005l130.877 226.688L261.749.001z" fill="#41b883"/><path d="M161.096.001l-30.225 52.351L100.647.001H52.346l78.526 136.01L209.398.001z" fill="#34495e"/></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="512"
+   height="512"
+   viewBox="0 0 135.46666 135.46668"
+   version="1.1"
+   id="svg8"
+   sodipodi:docname="logo.svg"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1"
+     inkscape:cx="173.5"
+     inkscape:cy="185.12321"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1051"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     units="px" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-161.53332)">
+    <path
+       style="fill:#008080;fill-opacity:1;stroke:none;stroke-width:22.92934418;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       d="M 0,161.53333 H 135.46666 V 296.99998 H 0 Z"
+       id="rect873" />
+    <g
+       aria-label="Sw"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       id="text878">
+      <path
+         d="m 19.028297,241.51826 q 0.602891,4.34944 2.368503,6.50262 3.229777,3.9188 11.067369,3.9188 4.693942,0 7.622273,-1.03353 5.555217,-1.98093 5.555217,-7.36389 0,-3.14365 -2.756077,-4.8662 -2.756076,-1.67948 -8.655802,-2.9714 l -6.717936,-1.50722 q -9.904649,-2.23932 -13.694254,-4.8662 -6.4164904,-4.3925 -6.4164904,-13.73732 0,-8.52661 6.2011714,-14.16795 6.201172,-5.64135 18.215942,-5.64135 10.033841,0 17.096286,5.3399 7.10551,5.29683 7.450019,15.4168 H 43.617665 q -0.344509,-5.72747 -4.995388,-8.13904 -3.100586,-1.59335 -7.708401,-1.59335 -5.12458,0 -8.182102,2.06705 -3.057522,2.06706 -3.057522,5.77054 0,3.40203 3.014459,5.08151 1.937866,1.11966 8.268229,2.62689 l 10.938178,2.62689 q 7.191636,1.72254 10.85205,4.60781 5.684408,4.47862 5.684408,12.96217 0,8.69887 -6.674873,14.4694 -6.631809,5.72747 -18.77577,5.72747 -12.402343,0 -19.507853,-5.64134 -7.105509,-5.68441 -7.105509,-15.58906 z m 12.876044,-45.81977 z"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:88.19444275px;font-family:Helvetica;-inkscape-font-specification:'Helvetica Bold';fill:#ffffff;fill-opacity:1;stroke-width:0.26458332"
+         id="path880" />
+      <path
+         d="m 89.394371,214.17282 h 12.445409 l 7.14857,33.805 7.32083,-33.805 h 12.78992 l -13.60813,46.93942 h -12.61766 l -7.363895,-34.19257 -7.450019,34.19257 H 75.312543 l -13.17749,-46.93942 h 13.17749 l 7.320828,33.67581 z"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:88.19444275px;font-family:Helvetica;-inkscape-font-specification:'Helvetica Bold';fill:#ffffff;fill-opacity:1;stroke-width:0.26458332"
+         id="path882" />
+    </g>
+  </g>
+</svg>
