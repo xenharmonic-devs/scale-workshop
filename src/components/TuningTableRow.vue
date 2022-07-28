@@ -33,7 +33,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <tr ref="element">
+  <tr ref="element" :style="'background-color:' + keyColor + ';'">
     <td
       class="key-color"
       :style="'background-color:' + keyColor + ' !important;'"
@@ -47,8 +47,12 @@ onMounted(() => {
 </template>
 
 <style scoped>
+tr:not(.active) td:not(.key-color) {
+  background-color: var(--color-background-semitransparent);
+}
 tr.active {
   background-color: var(--color-accent) !important;
+  color: var(--color-accent-text);
 }
 .key-color {
   border-bottom: 1px solid var(--color-background-mute);

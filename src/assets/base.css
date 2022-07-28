@@ -4,6 +4,7 @@
   --color-background-soft: #eee;
   --color-background-mute: #ddd;
   --color-background-invalid: #fee;
+  --color-background-semitransparent: rgba(255,255,255,0.9);
 
   --color-border: #ccc;
   --color-border-hover: #eee;
@@ -12,6 +13,7 @@
   --color-text: #000;
 
   --color-accent: #008080;
+  --color-accent-text: #fff;
   --color-accent-mute: #6bb;
   --color-accent-deeper: #006060;
   --color-accent-background: #f5ffff;
