@@ -14,7 +14,7 @@ const emit = defineEmits(["update:value", "update:modelValue"]);
 
 const element = ref<HTMLInputElement | null>(null);
 const defaultValue =
-  props.defaultValue === null
+  props.defaultValue === undefined
     ? parseLine(props.modelValue || "1/1")
     : props.defaultValue;
 const [value, error] = computedAndError(
