@@ -11,6 +11,7 @@ import {
   type Rank2Params,
 } from "@/tempering";
 import {
+  isBright,
   mosPatterns as getMosPatterns,
   type MosInfo,
 } from "moment-of-symmetry";
@@ -75,6 +76,15 @@ const commas = state.commas;
 const subgroup = state.subgroup;
 const options = state.options;
 
+const generatorPerPeriod = computed(
+  () => generator.value.totalCents() / period.value.totalCents()
+);
+const opposite = computed(() =>
+  isBright(generatorPerPeriod.value, size.value / numPeriods.value)
+    ? "dark"
+    : "bright"
+);
+
 const [mosPatterns, mosPatternsError] = computedAndError(() => {
   if (method.value === "generator") {
     // Don't show error in the default configuration
@@ -82,7 +92,7 @@ const [mosPatterns, mosPatternsError] = computedAndError(() => {
       return [];
     }
     return getMosPatterns(
-      generator.value.totalCents() / period.value.totalCents(),
+      generatorPerPeriod.value,
       numPeriods.value,
       MAX_SIZE,
       MAX_LENGTH
@@ -157,6 +167,15 @@ watch(
 );
 
 // === Methods ===
+
+function flipGenerator() {
+  generator.value = generator.value.neg().mmod(
+    period.value.mergeOptions({
+      centsFractionDigits: props.centsFractionDigits,
+    })
+  );
+  generatorString.value = generator.value.name;
+}
 
 function calculateExpensiveMosPattern() {
   try {
@@ -332,6 +351,7 @@ function generate() {
               v-model="generatorString"
               @update:value="generator = $event"
             />
+            <button @click="flipGenerator">Flip to {{ opposite }}</button>
 
             <label for="period">Period</label>
             <ScaleLineInput
