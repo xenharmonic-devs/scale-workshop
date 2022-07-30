@@ -216,7 +216,7 @@ function modifyAndAdvance() {
           step="0.1"
           v-model="maxError"
         />
-        <div class="control">
+        <div class="control radio-group">
           <span>
             <input
               type="radio"

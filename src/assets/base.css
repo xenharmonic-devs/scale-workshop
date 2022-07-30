@@ -238,6 +238,12 @@ ul.btn-group, .btn-dropdown-group ul {
 .control.checkbox-container label {
   font-weight: normal;
 }
+.control.radio-group {
+  gap: 0.15rem 1rem;
+}
+.control.radio-group span label {
+  font-weight: unset;
+}
 
 /* Responding to screen size */
 @media (max-width: 991px) {

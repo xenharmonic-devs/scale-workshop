@@ -187,7 +187,7 @@ function generate() {
     </template>
     <template #body>
       <div class="control-group">
-        <div class="control">
+        <div class="control radio-group">
           <span>
             <input
               type="radio"
@@ -269,7 +269,7 @@ function generate() {
             v-model="equaveString"
           />
         </div>
-        <div class="control">
+        <div class="control radio-group">
           <label>Generate key colors</label>
           <span>
             <input
@@ -299,7 +299,7 @@ function generate() {
             <label for="color-daughter"> Daughter MOS (expand scale) </label>
           </span>
         </div>
-        <div class="control" v-show="colorMethod !== 'none'">
+        <div class="control radio-group" v-show="colorMethod !== 'none'">
           <label>Black keys are</label>
           <span>
             <input

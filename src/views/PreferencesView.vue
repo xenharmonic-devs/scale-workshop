@@ -56,7 +56,7 @@ const decimalFractionDigits = computed({
 
         <h2>Appearance</h2>
         <div class="control-group">
-          <div class="control">
+          <div class="control radio-group">
             <span>
               <input
                 type="radio"

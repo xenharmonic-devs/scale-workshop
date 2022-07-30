@@ -262,7 +262,7 @@ function generate() {
     <template #body>
       <div>
         <div class="control-group">
-          <div class="control">
+          <div class="control radio-group">
             <label>Method</label>
             <span>
               <input

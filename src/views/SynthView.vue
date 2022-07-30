@@ -132,7 +132,7 @@ onUnmounted(() => {
         </div>
         <h2>Keyboard mode</h2>
         <div class="control-group">
-          <div class="control">
+          <div class="control radio-group">
             <span>
               <input
                 type="radio"

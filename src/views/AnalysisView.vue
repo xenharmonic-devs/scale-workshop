@@ -65,7 +65,7 @@ const matrix = computed(() => {
         <h2>Interval Matrix / Modes</h2>
         <div class="control-group">
           <label>Cell format</label>
-          <div class="control">
+          <div class="control radio-group">
             <span>
               <input
                 type="radio"
