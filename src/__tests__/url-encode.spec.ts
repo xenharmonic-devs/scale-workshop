@@ -94,6 +94,8 @@ describe("URL encoder", () => {
       isomorphicVertical: 3,
       keyboardMode: "isomorphic",
       keyboardMapping: new Map(),
+      equaveShift: 0, // default
+      degreeShift: 0, // default
     };
     const encoded = encodeQuery(state);
     expect(encoded).toMatchObject({

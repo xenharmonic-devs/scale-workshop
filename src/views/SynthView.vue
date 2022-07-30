@@ -10,6 +10,7 @@ const props = defineProps<{
   isomorphicHorizontal: number;
   isomorphicVertical: number;
   equaveShift: number;
+  degreeShift: number;
 }>();
 
 const emit = defineEmits([
@@ -18,6 +19,7 @@ const emit = defineEmits([
   "update:isomorphicHorizontal",
   "update:isomorphicVertical",
   "update:equaveShift",
+  "update:degreeShift",
   "mapAsdf",
   "mapZxcv0",
   "mapZxcv1",
@@ -55,6 +57,10 @@ const isomorphicHorizontal = computed({
 const equaveShift = computed({
   get: () => props.equaveShift,
   set: (newValue: number) => emit("update:equaveShift", newValue),
+});
+const degreeShift = computed({
+  get: () => props.degreeShift,
+  set: (newValue: number) => emit("update:degreeShift", newValue),
 });
 
 onMounted(() => {
@@ -109,6 +115,16 @@ onUnmounted(() => {
           </p>
           <div class="control">
             <input type="number" v-model="equaveShift" />
+          </div>
+        </div>
+        <h2>Keyboard degree shift</h2>
+        <div class="control-group">
+          <p>
+            Shift down/up by one scale degree <i>(Isomorphic only)</i>.
+            (Shortcut keys: numpad <code>-</code> and <code>+</code>).
+          </p>
+          <div class="control">
+            <input type="number" v-model="degreeShift" />
           </div>
         </div>
         <h2>Keyboard mode</h2>

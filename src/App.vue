@@ -65,6 +65,7 @@ const keyboardMapping = reactive<Map<string, number>>(new Map());
 mapWhiteAsdfBlackQwerty(keyColors.value, keyboardMapping);
 const keyboardMode = ref<"isomorphic" | "mapped">("isomorphic");
 const equaveShift = ref(0);
+const degreeShift = ref(0);
 const typingActive = ref(true);
 const midiInput = ref<Input | null>(null);
 const midiOutput = ref<Output | null>(null);
@@ -143,6 +144,8 @@ const encodeState = debounce(() => {
     isomorphicVertical: isomorphicVertical.value,
     keyboardMode: keyboardMode.value,
     keyboardMapping,
+    equaveShift: equaveShift.value,
+    degreeShift: degreeShift.value,
   };
 
   const query = encodeQuery(state) as LocationQuery;
@@ -165,6 +168,8 @@ watch(
     isomorphicVertical,
     keyboardMode,
     keyboardMapping,
+    equaveShift,
+    degreeShift,
   ],
   encodeState
 );
@@ -201,6 +206,8 @@ router.afterEach((to, from) => {
       for (const [key, value] of state.keyboardMapping) {
         keyboardMapping.set(key, value);
       }
+      equaveShift.value = state.equaveShift;
+      degreeShift.value = state.degreeShift;
     } catch (error) {
       console.error(`Error parsing version ${query.get("version")} URL`, error);
     }
@@ -436,6 +443,16 @@ function typingKeydown(event: CoordinateKeyboardEvent) {
     return emptyKeyup;
   }
 
+  // "Transpose" keys
+  if (event.code === "NumpadAdd") {
+    degreeShift.value++;
+    return emptyKeyup;
+  }
+  if (event.code === "NumpadSubtract") {
+    degreeShift.value--;
+    return emptyKeyup;
+  }
+
   // Key not mapped to layers, bail out
   if (event.coordinates === undefined) {
     return emptyKeyup;
@@ -452,7 +469,9 @@ function typingKeydown(event: CoordinateKeyboardEvent) {
 
   if (keyboardMode.value === "isomorphic") {
     index +=
-      x * isomorphicHorizontal.value + (2 - y) * isomorphicVertical.value;
+      degreeShift.value +
+      x * isomorphicHorizontal.value +
+      (2 - y) * isomorphicVertical.value;
   } else {
     if (keyboardMapping.has(event.code)) {
       index += keyboardMapping.get(event.code)!;
@@ -683,6 +702,7 @@ watch(decimalFractionDigits, (newValue) =>
     :isomorphicHorizontal="isomorphicHorizontal"
     :isomorphicVertical="isomorphicVertical"
     :equaveShift="equaveShift"
+    :degreeShift="degreeShift"
     :midiInput="midiInput"
     :midiOutput="midiOutput"
     :noteOn="keyboardNoteOn"
@@ -707,6 +727,7 @@ watch(decimalFractionDigits, (newValue) =>
     @update:isomorphicHorizontal="isomorphicHorizontal = $event"
     @update:keyboardMode="keyboardMode = $event"
     @update:equaveShift="equaveShift = $event"
+    @update:degreeShift="degreeShift = $event"
     @update:midiInput="midiInput = $event"
     @update:midiOutput="midiOutput = $event"
     @update:midiInputChannels="updateMidiInputChannels"

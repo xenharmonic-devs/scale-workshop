@@ -336,6 +336,8 @@ export type DecodedState = {
   isomorphicVertical: number;
   keyboardMode: "isomorphic" | "mapped";
   keyboardMapping: Map<string, number>;
+  equaveShift: number;
+  degreeShift: number;
 };
 
 export type EncodedState = {
@@ -347,6 +349,8 @@ export type EncodedState = {
   h?: string;
   v?: string;
   k?: string;
+  e?: string;
+  d?: string;
 };
 
 export function decodeQuery(
@@ -384,6 +388,8 @@ export function decodeQuery(
     keyboardMapping: decodeKeyMap(
       get("k", "............-1-1.46.9bd.gi023578acefhj...........")
     ),
+    equaveShift: parseInt(get("e", "0"), 36),
+    degreeShift: parseInt(get("d", "0"), 36),
   };
 }
 
@@ -397,6 +403,8 @@ export function encodeQuery(state: DecodedState): EncodedState {
     h: state.isomorphicHorizontal.toString(36),
     v: state.isomorphicVertical.toString(36),
     k: encodeKeyMap(state.keyboardMapping),
+    e: state.equaveShift.toString(36),
+    d: state.degreeShift.toString(36),
   };
 
   if (state.keyboardMode === "isomorphic") {
@@ -424,6 +432,12 @@ export function encodeQuery(state: DecodedState): EncodedState {
   }
   if (result.v === "5") {
     delete result.v;
+  }
+  if (result.e === "0") {
+    delete result.e;
+  }
+  if (result.d === "0") {
+    delete result.d;
   }
 
   return result;
