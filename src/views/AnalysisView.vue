@@ -184,6 +184,9 @@ th,
 td {
   border: 1px solid;
 }
+th, td {
+  padding: 0.2rem 0.5rem;
+}
 table {
   border-collapse: collapse;
 }
