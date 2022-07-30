@@ -649,16 +649,14 @@ watch(decimalFractionDigits, (newValue) =>
       <li><RouterLink to="/midi">MIDI I/O</RouterLink></li>
       <li><RouterLink to="/prefs">Preferences</RouterLink></li>
       <li><RouterLink to="/guide">User Guide</RouterLink></li>
-      <span class="typing-info"
-        >Keyboard
-        <template v-if="typingActive">
-          enabled <i>(press QWERTY keys to play)</i>
-        </template>
-        <template v-else> disabled <i>(click to enable)</i> </template>
-      </span>
-      <span class="panic">
+      <template v-if="typingActive"
+        ><span class="typing-info">KEY</span></template
+      >
+      <template v-else></template>
+      <!-- TODO remove panic completely or move to Synth view -->
+      <!--<span class="panic">
         <a href="#" @click="panic">Quiet</a>
-      </span>
+      </span>-->
     </ul>
   </nav>
   <RouterView
@@ -798,6 +796,7 @@ nav a:first-of-type {
 
 .typing-info {
   background-color: var(--color-accent-deeper);
+  padding: 0 0.3rem;
 }
 
 .panic a {

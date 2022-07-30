@@ -59,56 +59,95 @@ const matrix = computed(() => {
 
 <template>
   <main>
+    <h2>Interval matrix (modes)</h2>
+    <div class="control-group interval-matrix">
+      <table>
+        <tr>
+          <th></th>
+          <th v-for="i of scale.size" :key="i">{{ i }}</th>
+          <th>({{ scale.size + 1 }})</th>
+        </tr>
+        <tr v-for="(row, i) of matrix" :key="i">
+          <th>{{ formatMatrixCell(scale.getInterval(i)) }}</th>
+          <td v-for="(name, j) of row" :key="j">{{ name }}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="control-group">
+      <div class="control radio-group">
+        <label>Display intervals in matrix as</label>
+        <span>
+          <input
+            type="radio"
+            id="format-best"
+            value="best"
+            v-model="cellFormat"
+          />
+          <label for="format-best"> Default </label>
+        </span>
+
+        <span>
+          <input
+            type="radio"
+            id="format-cents"
+            value="cents"
+            v-model="cellFormat"
+          />
+          <label for="format-cents"> Cents </label>
+        </span>
+
+        <span>
+          <input
+            type="radio"
+            id="format-decimal"
+            value="decimal"
+            v-model="cellFormat"
+          />
+          <label for="format-decimal"> Decimal ratio </label>
+        </span>
+      </div>
+    </div>
     <div class="columns-container">
-      <div class="column analysis">
-        <h1>Analysis</h1>
-        <h2>Interval Matrix / Modes</h2>
+      <div class="column">
+        <h2>Otonal chord</h2>
         <div class="control-group">
-          <label>Cell format</label>
-          <div class="control radio-group">
-            <span>
-              <input
-                type="radio"
-                id="format-best"
-                value="best"
-                v-model="cellFormat"
-              />
-              <label for="format-best"> Best </label>
-            </span>
-
-            <span>
-              <input
-                type="radio"
-                id="format-cents"
-                value="cents"
-                v-model="cellFormat"
-              />
-              <label for="format-cents"> Cents </label>
-            </span>
-
-            <span>
-              <input
-                type="radio"
-                id="format-decimal"
-                value="decimal"
-                v-model="cellFormat"
-              />
-              <label for="format-decimal"> Decimal ratio </label>
-            </span>
-          </div>
+          <ChordWheel
+            class="chord-wheel"
+            type="otonal"
+            :maxChordRoot="maxOtonalRoot"
+            :virtualSynth="virtualSynth"
+            :width="500"
+            :height="400"
+            :lineWidth="2"
+            :backgroundRBG="[255, 255, 255]"
+            :fadeAlpha="fadeAlpha"
+            :shadowBlur="2"
+            strokeStyle="black"
+            textColor="red"
+          />
         </div>
-        <table>
-          <tr>
-            <th></th>
-            <th v-for="i of scale.size" :key="i">{{ i }}</th>
-            <th>({{ scale.size + 1 }})</th>
-          </tr>
-          <tr v-for="(row, i) of matrix" :key="i">
-            <th>{{ formatMatrixCell(scale.getInterval(i)) }}</th>
-            <td v-for="(name, j) of row" :key="j">{{ name }}</td>
-          </tr>
-        </table>
-        <h2>Currently played chord</h2>
+      </div>
+      <div class="column">
+        <h2>Utonal chord</h2>
+        <div class="control-group">
+          <ChordWheel
+            class="chord-wheel"
+            type="utonal"
+            :maxChordRoot="maxUtonalRoot"
+            :virtualSynth="virtualSynth"
+            :width="500"
+            :height="400"
+            :lineWidth="2"
+            :backgroundRBG="[255, 255, 255]"
+            :fadeAlpha="fadeAlpha"
+            :shadowBlur="2"
+            strokeStyle="black"
+            textColor="blue"
+          />
+        </div>
+      </div>
+      <div class="column">
+        <h2>Chord analysis</h2>
         <div class="control-group">
           <label for="trail-longevity">Trail longevity</label>
           <input
@@ -120,9 +159,8 @@ const matrix = computed(() => {
             v-model="trailLongevity"
           />
         </div>
-        <h3>Otonal</h3>
         <div class="control-group">
-          <label for="otonal-root">Maximum root</label>
+          <label for="otonal-root">Maximum root (otonal)</label>
           <input
             id="otonal-root"
             type="number"
@@ -131,23 +169,8 @@ const matrix = computed(() => {
             v-model="maxOtonalRoot"
           />
         </div>
-        <ChordWheel
-          class="chord-wheel"
-          type="otonal"
-          :maxChordRoot="maxOtonalRoot"
-          :virtualSynth="virtualSynth"
-          :width="500"
-          :height="400"
-          :lineWidth="2"
-          :backgroundRBG="[255, 255, 255]"
-          :fadeAlpha="fadeAlpha"
-          :shadowBlur="2"
-          strokeStyle="black"
-          textColor="red"
-        />
-        <h3>Utonal</h3>
         <div class="control-group">
-          <label for="otonal-root">Maximum root</label>
+          <label for="utonal-root">Maximum root (utonal)</label>
           <input
             id="utonal-root"
             type="number"
@@ -156,53 +179,63 @@ const matrix = computed(() => {
             v-model="maxUtonalRoot"
           />
         </div>
-        <ChordWheel
-          class="chord-wheel"
-          type="utonal"
-          :maxChordRoot="maxUtonalRoot"
-          :virtualSynth="virtualSynth"
-          :width="500"
-          :height="400"
-          :lineWidth="2"
-          :backgroundRBG="[255, 255, 255]"
-          :fadeAlpha="fadeAlpha"
-          :shadowBlur="2"
-          strokeStyle="black"
-          textColor="blue"
-        />
       </div>
     </div>
   </main>
 </template>
 
 <style scoped>
-th {
-  font-weight: bold;
-}
-table,
-th,
-td {
-  border: 1px solid;
-}
-th, td {
-  padding: 0.2rem 0.5rem;
-}
-table {
-  border-collapse: collapse;
+/* View */
+main {
+  padding: 1rem;
+  overflow-y: auto !important;
 }
 
-div.columns-container {
-  height: 100%;
-  overflow-y: auto;
-  background-color: var(--color-border);
-  column-count: 1;
+/* Interval matrix */
+.interval-matrix {
+  overflow-x: auto;
+  display: block;
 }
-div.column {
-  background-color: var(--color-background);
-  overflow-x: hidden;
-  height: 100%;
+.interval-matrix th {
+  font-weight: bold;
 }
-div.analysis {
-  padding: 1rem;
+.interval-matrix table,
+.interval-matrix th,
+.interval-matrix td {
+  border: 1px solid var(--color-border);
+}
+.interval-matrix th, .interval-matrix td {
+  padding: 0.2rem 0.5rem;
+}
+.interval-matrix table {
+  border-collapse: collapse;
+  text-align: center;
+}
+
+/* Content layout (medium) */
+  div.columns-container {
+    column-count: 2;
+    column-gap: 1rem;
+    overflow: hidden;
+  }
+  div.column {
+    overflow-y: auto;
+  }
+
+/* Content layout (medium and large) */
+@media screen and (min-width: 600px) {
+  div.columns-container {
+    column-count: 3;
+  }
+  div.column {
+    height: 100%;
+  }
+}
+
+/* Chord wheel */
+.chord-wheel {
+  border: 1px solid var(--color-border);
+  max-width: 100%;
+  height: auto;
 }
 </style>

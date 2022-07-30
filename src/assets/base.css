@@ -6,7 +6,7 @@
   --color-background-invalid: #fee;
   --color-background-semitransparent: rgba(255,255,255,0.9);
 
-  --color-border: #ccc;
+  --color-border: #bbb;
   --color-border-hover: #eee;
 
   --color-heading: #000;
@@ -94,6 +94,14 @@ button {
 }
 .error {
   color: var(--color-error);
+}
+code {
+  display: inline-block;
+  background-color: var(--color-background-soft);
+  padding: 0 0.3rem;
+  border-radius: 5px;
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
 }
 
 /* UI elements */
