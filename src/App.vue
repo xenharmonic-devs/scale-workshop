@@ -641,7 +641,7 @@ watch(decimalFractionDigits, (newValue) =>
 <template>
   <nav id="app-navigation">
     <ul>
-      <li><RouterLink to="/about">Scale Workshop</RouterLink></li>
+      <li><RouterLink to="/about"><strong>Sw</strong></RouterLink></li>
       <li><RouterLink to="/">Build Scale</RouterLink></li>
       <li><RouterLink to="/analysis">Analysis</RouterLink></li>
       <li><RouterLink to="/vk">Virtual Keyboard</RouterLink></li>
@@ -769,11 +769,6 @@ nav#app-navigation ul li a.router-link-exact-active,
 nav#app-navigation ul li a.router-link-exact-active:hover {
   background-color: var(--color-background);
   color: var(--color-text);
-}
-
-.logo {
-  float: left;
-  margin: 0;
 }
 
 nav a.router-link-exact-active {
