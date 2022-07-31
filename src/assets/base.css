@@ -255,8 +255,21 @@ ul.btn-group, .btn-dropdown-group ul {
 
 /* UI element - expandable secion */
 .section::after {
-  content: " ⏶";
+  content: " ⏷";
+  color: var(--color-accent-text-btn);
+  background-color: var(--color-accent-background);
+  border: var(--color-accent-text-btn) 1px solid;
+  border-radius: 3px;
+  padding: 0 0.3rem;
 }
 .section.open::after {
-  content: " ⏷";
+  content: " ⏶";
+}
+.section:hover::after {
+  color: var(--color-accent-text);
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+p.section {
+  font-weight: bold;
 }

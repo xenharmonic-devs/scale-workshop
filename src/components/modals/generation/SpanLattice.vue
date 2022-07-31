@@ -229,17 +229,18 @@ function generate() {
             v-model="subgroupString"
           />
         </div>
-
+      </div>
+      <div class="control-group">
         <div v-show="method === 'vals' || method === 'commas'">
-          <h3
+          <p
             class="section"
             :class="{ open: showAdvanced }"
             @click="showAdvanced = !showAdvanced"
           >
             Advanced options
-          </h3>
+          </p>
           <div class="control-group" v-show="showAdvanced">
-            <div class="control">
+            <div class="control radio-group">
               <span>
                 <input
                   type="radio"
@@ -281,8 +282,9 @@ function generate() {
               <textarea id="weights" v-model="weightsString"></textarea>
             </div>
           </div>
+        </div>
+        <div class="control">
           <button
-            class="control"
             @click="calculateGenerators"
             :disabled="subgroupError.length !== 0"
           >
