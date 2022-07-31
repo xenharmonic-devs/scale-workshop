@@ -18,9 +18,9 @@ function modify() {
       <h2>Rotate</h2>
     </template>
     <template #body>
-      <p>Rotates the mode of your scale.</p>
-      <p>The resulting scale will be sort ascendingly.</p>
       <div class="control-group">
+        <p>Rotates the mode of your scale.</p>
+        <p>The resulting scale will be sorted ascendingly.</p>
         <label for="new-unison">New 1/1</label>
         <select id="new-unison" class="control" v-model="newUnison">
           <option v-for="i of props.scale.size - 1" :key="i" :value="i">
