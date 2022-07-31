@@ -215,9 +215,7 @@ div.keyboard-controls {
   border-radius: 5px;
 }
 
-@media (prefers-color-scheme: dark) {
-  .waveform {
-    filter: invert(1);
-  }
+[data-theme="dark"] .waveform {
+  filter: invert(1);
 }
 </style>

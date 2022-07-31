@@ -213,14 +213,14 @@ main {
 }
 
 /* Content layout (medium) */
-  div.columns-container {
-    column-count: 2;
-    column-gap: 1rem;
-    overflow: hidden;
-  }
-  div.column {
-    overflow-y: auto;
-  }
+div.columns-container {
+  column-count: 2;
+  column-gap: 1rem;
+  overflow: hidden;
+}
+div.column {
+  overflow-y: auto;
+}
 
 /* Content layout (medium and large) */
 @media screen and (min-width: 600px) {
@@ -238,9 +238,7 @@ main {
   max-width: 100%;
   height: auto;
 }
-@media (prefers-color-scheme: dark) {
-  .chord-wheel {
-    filter: invert(1);
-  }
+[data-theme="dark"] .chord-wheel {
+  filter: invert(1);
 }
 </style>
