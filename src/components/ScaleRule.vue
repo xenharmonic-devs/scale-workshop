@@ -14,7 +14,7 @@ const ticksAndColors = computed(() => {
   for (let i = 0; i < props.scale.size; ++i) {
     const cents = props.scale.getMonzo(i).toCents();
     const tick = cents / equaveCents;
-    let color = "black";
+    let color = "var(--color-text)";
     if (tick < 0) {
       color = "blue";
     } else if (tick > 1) {
@@ -25,14 +25,14 @@ const ticksAndColors = computed(() => {
     }
   }
   // mmod(1, 1) === 0, so we have to manually push the equave tick
-  result.push(["99.5%", "black"]);
+  result.push(["99.5%", "var(--color-text)"]);
   return result;
 });
 </script>
 
 <template>
   <svg width="100%" height="10">
-    <line x1="0.5%" y1="50%" x2="99.5%" y2="50%" style="stroke: black" />
+    <line x1="0.5%" y1="50%" x2="99.5%" y2="50%" style="stroke: var(--color-text)" />
     <line
       v-for="([tick, color], i) of ticksAndColors"
       :key="i"

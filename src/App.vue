@@ -767,8 +767,8 @@ nav#app-navigation ul li a:hover {
 
 nav#app-navigation ul li a.router-link-exact-active,
 nav#app-navigation ul li a.router-link-exact-active:hover {
-  background-color: white;
-  color: black;
+  background-color: var(--color-background);
+  color: var(--color-text);
 }
 
 .logo {

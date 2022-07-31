@@ -6,14 +6,16 @@
   --color-background-invalid: #fee;
   --color-background-semitransparent: rgba(255,255,255,0.9);
 
-  --color-border: #bbb;
+  --color-border: #aaa;
   --color-border-hover: #eee;
+  --color-drop-shadow: rgba(0,0,0,0.5);
 
   --color-heading: #000;
   --color-text: #000;
 
   --color-accent: #008080;
   --color-accent-text: #fff;
+  --color-accent-text-btn: #008080;
   --color-accent-mute: #6bb;
   --color-accent-deeper: #006060;
   --color-accent-background: #f5ffff;
@@ -26,24 +28,33 @@
   --base-line-height: 1.5;
 }
 
-/* TODO dark scheme */
-/*
+/* dark scheme */
 @media (prefers-color-scheme: dark) {
   :root {
     --color-background: #000;
-    --color-background-soft: #080808;
-    --color-background-mute: #111;
+    --color-background-soft: #111;
+    --color-background-mute: #222;
+    --color-background-invalid: #300;
+    --color-background-semitransparent: rgba(0,0,0,0.9);
 
-    --color-border: #333;
+    --color-border: #666;
     --color-border-hover: #111;
+    --color-drop-shadow: rgba(100,200,200,0.5);
 
     --color-heading: #fff;
     --color-text: #fff;
 
-    --color-accent: green;
+    --color-accent: #008080;
+    --color-accent-text: #fff;
+    --color-accent-text-btn: #0cc;
+    --color-accent-mute: #133;
+    --color-accent-deeper: #006060;
+    --color-accent-background: #011;
+    --color-accent-dimmed: rgba(0,20,20,0.7);
+
+    --color-error: red;
   }
 }
-*/
 
 *,
 *::before,
@@ -110,6 +121,10 @@ input[type=number],
 textarea,
 select {
   padding: 0.4rem;
+  background-color: var(--color-background-soft);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
 }
 optgroup {
   font-weight: bold;
@@ -133,15 +148,16 @@ button, .btn {
   cursor: pointer;
   display: inline-block;
   border-radius: 3px;
-  border: var(--color-accent) 1px solid;
+  border: var(--color-accent-text-btn) 1px solid;
   background-color: var(--color-accent-background);
   padding: 0.25rem 0.5rem;
   text-decoration: none;
-  color: var(--color-accent);
+  color: var(--color-accent-text-btn);
 }
 button:hover, .btn:hover {
   color: white;
   background-color: var(--color-accent);
+  border-color: var(--color-accent);
 }
 button:disabled {
   cursor: not-allowed;
@@ -156,24 +172,27 @@ ul.btn-group, .btn-dropdown-group ul {
   padding-left: unset;
 }
 .btn-dropdown-group ul {
-  visibility: hidden;
+  display: none;
   position: absolute;
   width: 16rem;
   margin-top: -1px;
   z-index: 10;
   background-color: var(--color-accent-background);
-  border: 1px solid var(--color-accent);
+  border: 1px solid var(--color-accent-text-btn);
 }
 .btn-dropdown-group li {
   padding: 0rem 0.5rem;
 }
 .btn-dropdown-group li.divider {
-  border-bottom: 1px solid var(--color-accent);
+  border-bottom: 1px solid var(--color-accent-text-btn);
 }
 
 .btn-dropdown-group:hover ul,
 .btn-dropdown-group:focus-within ul {
-  visibility: visible;
+  display: block;
+}
+.btn-dropdown-group ul a {
+  color: var(--color-accent-text-btn);
 }
 .btn-dropdown-group a {
   text-decoration: none;
@@ -185,32 +204,6 @@ ul.btn-group, .btn-dropdown-group ul {
 ul.btn-group, .btn-dropdown-group ul {
   list-style: none;
   padding-left: unset;
-}
-.btn-dropdown-group ul {
-  display: none;
-  position: absolute;
-  width: 16rem;
-  margin-top: -1px;
-  z-index: 10;
-  background-color: var(--color-accent-background);
-  border: 1px solid var(--color-accent);
-}
-.btn-dropdown-group li {
-  padding: 0rem 0.5rem;
-}
-.btn-dropdown-group li.divider {
-  border-bottom: 1px solid var(--color-accent);
-}
-
-.btn-dropdown-group:focus-within ul {
-  display: block;
-}
-.btn-dropdown-group a {
-  text-decoration: none;
-}
-.btn-dropdown-group a:hover li {
-  color: white;
-  background-color: var(--color-accent);
 }
 
 /* UI elements - control, control group */

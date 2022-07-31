@@ -194,12 +194,12 @@ async function doImport(importerKey: ImporterKey, event: Event) {
 <template>
   <div id="tab-build-scale" class="columns-container">
     <div class="column scale-builder">
-      <input
+      <textarea
         id="scale-name"
-        type="text"
+        rows="1"
         placeholder="Untitled scale"
         v-model="scaleName"
-      />
+      ></textarea>
 
       <ul class="btn-group">
         <li class="btn-dropdown-group">
@@ -812,6 +812,7 @@ div.exporters {
   font-size: 1.4em;
   margin-bottom: 1rem;
   padding: 0.3rem;
+  font-family: sans-serif;
 }
 div.exporters .btn {
   width: 100%;

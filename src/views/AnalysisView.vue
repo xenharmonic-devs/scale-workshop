@@ -238,4 +238,9 @@ main {
   max-width: 100%;
   height: auto;
 }
+@media (prefers-color-scheme: dark) {
+  .chord-wheel {
+    filter: invert(1);
+  }
+}
 </style>
