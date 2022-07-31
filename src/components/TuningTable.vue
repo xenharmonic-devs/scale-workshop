@@ -24,6 +24,7 @@ const rows = computed(() => {
       name: props.scale.getName(index),
       keyColor: colors[mmod(index, colors.length)],
       isRoot: index === 0,
+      equave: mmod(index, props.scale.size) === 0,
     };
   });
 });
