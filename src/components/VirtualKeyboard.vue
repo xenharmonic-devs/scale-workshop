@@ -69,13 +69,9 @@ const isMousePressed = ref(false);
 <style scoped>
 table {
   background-color: white;
-  position: fixed;
   border-spacing: 0px;
-  top: 50px;
-  left: 0;
-  width: 100vw;
+  width: 100%;
+  height: 100%;
   min-width: 500px; /* this stops the keys getting too close together for portrait mobile users */
-  height: calc(100vh - 50px);
-  z-index: 100;
 }
 </style>
