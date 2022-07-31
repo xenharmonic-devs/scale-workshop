@@ -385,38 +385,47 @@ async function doImport(importerKey: ImporterKey, event: Event) {
       <h2>Export current settings</h2>
       <a href="#" class="btn" @click="doExport('anamarkv1')">
         <p><strong>AnaMark v1 tuning (.tun)</strong></p>
-        <p>Tuning file for various softsynths</p>
+        <p>Tuning file for various synths</p>
       </a>
       <a href="#" class="btn" @click="doExport('anamarkv2')">
         <p><strong>AnaMark v2 tuning (.tun)</strong></p>
-        <p>Tuning file for various softsynths</p>
+        <p>Tuning file for various synths</p>
       </a>
       <a href="#" class="btn" @click="doExport('scalascl')">
         <p><strong>Scala scale (.scl)</strong></p>
         <p>
-          Scale file for various softsynths. Note that this contains only
-          intervals, and most synths will assume middle C ~261Hz unless a kbm
-          file is also exported.
+          Scale file for various synths.<br />If you use this file without an
+          accompanying .kbm file, most synths will assume your scale starts on C
+          ~261Hz
         </p>
       </a>
       <a href="#" class="btn" @click="doExport('scalakbm')">
         <p><strong>Scala keyboard mapping (.kbm)</strong></p>
         <p>
-          Keyboard mapping to accompany a .scl file. Maps the scale to a
-          specific frequency.
+          Maps an accompanying .scl file to start on a specific MIDI note and
+          frequency
         </p>
       </a>
       <a href="#" class="btn" @click="doExport('maxmsp')">
         <p><strong>Max/MSP coll tuning (.txt)</strong></p>
-        <p>For Max/MSP coll object</p>
+        <p>
+          List of frequencies (Hz) in a text file to load into a Max/MSP coll
+          object
+        </p>
       </a>
       <a href="#" class="btn" @click="doExport('puredata')">
         <p><strong>PureData text tuning (.txt)</strong></p>
-        <p>For PureData text object</p>
+        <p>
+          List of frequencies (Hz) in a text file to load into a PureData text
+          object
+        </p>
       </a>
       <a href="#" class="btn" @click="doExport('kontakt')">
         <p><strong>Kontakt tuning script (.txt)</strong></p>
-        <p>For Native Instruments Kontakt</p>
+        <p>
+          Tuning script for Native Instruments Kontakt. Some instrument
+          libraries allow this custom script
+        </p>
       </a>
       <a href="#" class="btn" @click="doExport('soniccouture')">
         <p><strong>Soniccouture tuning file (.nka)</strong></p>
@@ -424,27 +433,29 @@ async function doImport(importerKey: ImporterKey, event: Event) {
       </a>
       <a href="#" class="btn" @click="doExport('harmor')">
         <p><strong>Harmor pitch map (.fnv)</strong></p>
-        <p>For Image-Line Harmor</p>
+        <p>Envelope state file for the pitch envelope in Image-Line Harmor</p>
       </a>
       <a href="#" class="btn" @click="doExport('sytrus')">
         <p><strong>Sytrus pitch map (.fnv)</strong></p>
-        <p>For Image-Line Sytrus</p>
+        <p>Envelope state file for the pitch envelope in Image-Line Sytrus</p>
       </a>
       <a href="#" class="btn" @click="doExport('mnlgtuns')">
-        <p><strong>Korg 'logue tuning (.mnlgtuns)</strong></p>
-        <p>For Korg 'logue Sound Librarian Scale</p>
+        <p><strong>Korg 'logue user scale (.mnlgtuns)</strong></p>
+        <p>Single scale for Korg 'logue Sound Librarian.</p>
+        <p>Full tuning of all MIDI notes</p>
       </a>
       <a href="#" class="btn" @click="doExport('mnlgtuno')">
-        <p><strong>Korg 'logue octave map (.mnlgtuno)</strong></p>
-        <p>For Korg 'logue Sound Librarian Octave</p>
+        <p><strong>Korg 'logue user octave (.mnlgtuno)</strong></p>
+        <p>Single scale for Korg 'logue Sound Librarian.</p>
+        <p>Only supports octave-repeating scales with 12 intervals</p>
       </a>
       <a href="#" class="btn" @click="doExport('deflemask')">
         <p><strong>Deflemask reference (.txt)</strong></p>
-        <p>Deflemask 'fine tune' reference</p>
+        <p>List of 'fine tune' values for Deflemask</p>
       </a>
       <a href="#" class="btn" @click="showReaperExportModal = true">
         <p><strong>Reaper note name map (.txt)</strong></p>
-        <p>Open Reaper export dialog</p>
+        <p>Displays custom note names on Reaper's piano roll</p>
       </a>
       <a
         href="#"
@@ -455,7 +466,7 @@ async function doImport(importerKey: ImporterKey, event: Event) {
         "
       >
         <p><strong>Share scale as URL</strong></p>
-        <p>Open the sharing dialog</p>
+        <p>Copy this scale's unique URL for convenient sharing</p>
       </a>
     </div>
   </div>
