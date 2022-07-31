@@ -1,4 +1,3 @@
-/* semantic color variables for this project */
 :root {
   --color-background: #fff;
   --color-background-soft: #eee;
@@ -28,32 +27,30 @@
   --base-line-height: 1.5;
 }
 
-/* dark scheme */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: #000;
-    --color-background-soft: #111;
-    --color-background-mute: #222;
-    --color-background-invalid: #300;
-    --color-background-semitransparent: rgba(0,0,0,0.9);
+/* Dark theme */
+[data-theme="dark"] {
+  --color-background: #000;
+  --color-background-soft: #111;
+  --color-background-mute: #222;
+  --color-background-invalid: #300;
+  --color-background-semitransparent: rgba(0,0,0,0.9);
 
-    --color-border: #666;
-    --color-border-hover: #111;
-    --color-drop-shadow: rgba(100,200,200,0.5);
+  --color-border: #666;
+  --color-border-hover: #111;
+  --color-drop-shadow: rgba(100,200,200,0.5);
 
-    --color-heading: #fff;
-    --color-text: #fff;
+  --color-heading: #fff;
+  --color-text: #fff;
 
-    --color-accent: #008080;
-    --color-accent-text: #fff;
-    --color-accent-text-btn: #0cc;
-    --color-accent-mute: #133;
-    --color-accent-deeper: #006060;
-    --color-accent-background: #011;
-    --color-accent-dimmed: rgba(0,20,20,0.7);
+  --color-accent: #008080;
+  --color-accent-text: #fff;
+  --color-accent-text-btn: #0cc;
+  --color-accent-mute: #133;
+  --color-accent-deeper: #006060;
+  --color-accent-background: #011;
+  --color-accent-dimmed: rgba(0,20,20,0.7);
 
-    --color-error: red;
-  }
+  --color-error: red;
 }
 
 *,
