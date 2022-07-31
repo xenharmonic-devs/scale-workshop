@@ -813,6 +813,7 @@ div.exporters {
   margin-bottom: 1rem;
   padding: 0.3rem;
   font-family: sans-serif;
+  resize: vertical;
 }
 div.exporters .btn {
   width: 100%;

@@ -272,4 +272,5 @@ ul.btn-group, .btn-dropdown-group ul {
 }
 p.section {
   font-weight: bold;
+  cursor: pointer;
 }
