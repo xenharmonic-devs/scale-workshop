@@ -79,7 +79,7 @@ const midiWhiteMode = ref(false);
 const midiBlackAverage = ref(false);
 // These are user preferences and are fetched from local storage.
 const newline = ref(UNIX_NEWLINE);
-const colorScheme = ref<"light" | "dark" | "default">("default");
+const colorScheme = ref<"light" | "dark">("light");
 const centsFractionDigits = ref(3);
 const decimalFractionDigits = ref(5);
 
@@ -536,8 +536,15 @@ onMounted(() => {
   }
   if ("colorScheme" in storage) {
     const scheme = storage.getItem("colorScheme");
-    if (scheme === "light" || scheme === "dark" || scheme === "default") {
+    if (scheme === "light" || scheme === "dark") {
       colorScheme.value = scheme;
+    }
+  } else {
+    // Infer based on a media query.
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      colorScheme.value = "dark";
+    } else {
+      colorScheme.value = "light";
     }
   }
   if ("centsFractionDigits" in storage) {
@@ -595,6 +602,8 @@ function updateMidiInputChannels(newValue: Set<number>) {
   newValue.forEach((channel) => midiInputChannels.add(channel));
 }
 
+// Code for panic if needed in the future.
+/*
 function panic() {
   console.log("Firing global key off.");
   typingKeyboard.deactivate();
@@ -606,8 +615,6 @@ function panic() {
   }
 }
 
-// Code for hard panic if needed in the future.
-/*
 function hardPanic() {
   console.warn("Cutting all audio!");
   typingKeyboad.deactivate();
@@ -627,9 +634,10 @@ function unpanic() {
 */
 // Store user preferences
 watch(newline, (newValue) => window.localStorage.setItem("newline", newValue));
-watch(colorScheme, (newValue) =>
-  window.localStorage.setItem("colorScheme", newValue)
-);
+watch(colorScheme, (newValue) => {
+  window.localStorage.setItem("colorScheme", newValue);
+  document.documentElement.setAttribute("data-theme", newValue);
+});
 watch(centsFractionDigits, (newValue) =>
   window.localStorage.setItem("centsFractionDigits", newValue.toString())
 );
@@ -641,7 +649,9 @@ watch(decimalFractionDigits, (newValue) =>
 <template>
   <nav id="app-navigation">
     <ul>
-      <li><RouterLink to="/about"><strong>Sw</strong></RouterLink></li>
+      <li>
+        <RouterLink to="/about"><strong>Sw</strong></RouterLink>
+      </li>
       <li><RouterLink to="/">Build Scale</RouterLink></li>
       <li><RouterLink to="/analysis">Analysis</RouterLink></li>
       <li><RouterLink to="/vk">Virtual Keyboard</RouterLink></li>

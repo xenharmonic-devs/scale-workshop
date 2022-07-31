@@ -4,7 +4,7 @@ import { computed } from "vue";
 
 const props = defineProps<{
   newline: string;
-  colorScheme: "light" | "dark" | "default";
+  colorScheme: "light" | "dark";
   centsFractionDigits: number;
   decimalFractionDigits: number;
 }>();
@@ -73,15 +73,6 @@ const decimalFractionDigits = computed({
                 v-model="colorScheme"
               />
               <label for="scheme-dark"> Dark </label>
-            </span>
-            <span>
-              <input
-                type="radio"
-                id="scheme-default"
-                value="default"
-                v-model="colorScheme"
-              />
-              <label for="scheme-default"> Browser default </label>
             </span>
           </div>
         </div>
