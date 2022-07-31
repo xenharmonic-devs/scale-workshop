@@ -173,8 +173,8 @@ function modifyAndAdvance() {
       <h2>Approximate by ratios</h2>
     </template>
     <template #body>
-      <p>Select scale degrees and apply rational replacements one by one.</p>
       <div class="control-group">
+        <p>Select scale degrees and apply rational replacements one by one.</p>
         <label for="degree">Scale Degree</label>
         <input
           type="number"
