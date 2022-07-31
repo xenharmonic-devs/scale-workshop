@@ -4,7 +4,7 @@ import TuningTable from "@/components/TuningTable.vue";
 import { debounce, autoKeyColors } from "@/utils";
 import ScaleRule from "@/components/ScaleRule.vue";
 import { APP_TITLE } from "@/constants";
-import { sanitizeFilename } from "@/utils";
+import { sanitizeFilename, midiNoteNumberToName } from "@/utils";
 import { exportFile, type ExporterKey } from "@/exporters";
 import Modal from "@/components/ModalDialog.vue";
 import ReaperExportModal from "@/components/modals/ReaperExport.vue";
@@ -347,7 +347,7 @@ async function doImport(importerKey: ImporterKey, event: Event) {
             step="1"
             v-model="baseMidiNote"
           />
-          <span>A5</span>
+          <span>{{ midiNoteNumberToName(baseMidiNote) }}</span>
         </div>
       </div>
 
