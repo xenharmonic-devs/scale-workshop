@@ -54,6 +54,10 @@ tr.active {
   background-color: var(--color-accent) !important;
   color: var(--color-accent-text);
 }
+/* TODO add logic so that all rows which are the 1/1 or equave have class .equave added to tr */
+.equave td {
+  font-weight: bold;
+}
 .key-color {
   border-bottom: 1px solid var(--color-background-mute);
 }
