@@ -27,7 +27,11 @@ onMounted(() => {
   (element as any).heldKeys = 0;
   rows[props.index] = element;
 
-  if (props.isRoot) {
+  const isMediumOrLarger = window.matchMedia(
+    "screen and (min-width: 600px)"
+  ).matches;
+
+  if (props.isRoot && isMediumOrLarger) {
     element.value!.scrollIntoView({ block: "center" });
   }
 });
