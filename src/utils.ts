@@ -204,6 +204,62 @@ export function autoKeyColors(size: number) {
   return result;
 }
 
+/**
+ * Fill in the gaps of a parent scale (in white) with accidentals (in black).
+ * @param generatorPerPeriod Generator sizre divided by period size (in pitch space).
+ * @param size Size of the parent scale.
+ * @param down Number of generators to go down from 1/1.
+ * @returns Array of key colors.
+ */
+export function gapKeyColors(
+  generatorPerPeriod: number,
+  size: number,
+  down: number,
+  flats = true
+) {
+  const scale = [...Array(size).keys()].map((i) =>
+    mmod(generatorPerPeriod * (i - down), 1)
+  );
+  scale.sort((a, b) => a - b);
+  const colors = Array(size).fill("white");
+
+  let i = size - down;
+  let delta = 1;
+  if (flats) {
+    i = -down - 1;
+    delta = -1;
+  }
+  // Limit for sanity
+  while (Math.abs(i) < 1000) {
+    const newNote = mmod(generatorPerPeriod * i, 1);
+    let gapFound = false;
+    for (let j = 1; j < scale.length; ++j) {
+      const oldNote = scale[j];
+      if (oldNote > newNote) {
+        if (colors[j] === "black" || colors[j - 1] === "black") {
+          return colors;
+        } else {
+          scale.splice(j, 0, newNote);
+          colors.splice(j, 0, "black");
+        }
+        gapFound = true;
+        break;
+      }
+    }
+    if (!gapFound) {
+      if (colors[colors.length - 1] === "black" || colors[0] === "black") {
+        return colors;
+      }
+      scale.push(newNote);
+      colors.push("black");
+    }
+
+    i += delta;
+  }
+
+  return colors;
+}
+
 // Wrapper for a computed property that can fail.
 // The error string is non-empty when the property fails to compute.
 export function computedAndError<T>(
