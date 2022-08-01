@@ -20,6 +20,9 @@ const props = defineProps<{
 
   isomorphicHorizontal: number;
   isomorphicVertical: number;
+
+  keyboardMode: "isomorphic" | "mapped";
+  keyboardMapping: Map<string, number>;
 }>();
 
 const emit = defineEmits(["update:scale", "update:scaleName"]);
@@ -42,6 +45,8 @@ function openTheGates(scale: Scale) {
       keyColors: props.keyColors,
       isomorphicHorizontal: props.isomorphicHorizontal,
       isomorphicVertical: props.isomorphicVertical,
+      keyboardMode: props.keyboardMode,
+      keyboardMapping: props.keyboardMapping,
     };
 
     const query = encodeQuery(state) as LocationQuery;
