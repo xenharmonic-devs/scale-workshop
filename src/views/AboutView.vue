@@ -15,7 +15,7 @@
     <div class="control-group">
       <div class="control">
         <p>
-          With contributions from Sevish, Lumi Pakkanen, Lajos Mészáros,
+          With contributions from Sevish, Lumi Pakkanen, Lajos Mészáros and
           Vincenzo Sicurella
         </p>
       </div>
@@ -26,7 +26,7 @@
         <a
           class="btn"
           href="https://github.com/xenharmonic-devs/scale-workshop/issues"
-          >Report issue</a
+          >Report an issue</a
         >
       </div>
     </div>

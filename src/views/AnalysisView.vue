@@ -238,7 +238,4 @@ div.column {
   max-width: 100%;
   height: auto;
 }
-[data-theme="dark"] .chord-wheel {
-  filter: invert(1);
-}
 </style>

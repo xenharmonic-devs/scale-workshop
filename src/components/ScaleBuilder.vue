@@ -343,6 +343,7 @@ async function doImport(importerKey: ImporterKey, event: Event) {
           <span>A5</span>
         </div>
 
+        <!-- This control is for the 3rd field that is found at the top of kbm files -->
         <!--<div class="control">
           <label>MIDI note for 1/1</label>
           <input
@@ -383,6 +384,17 @@ async function doImport(importerKey: ImporterKey, event: Event) {
     />
     <div class="column exporters">
       <h2>Export current settings</h2>
+      <a
+        href="#"
+        class="btn"
+        @click="
+          showShareUrlModal = true;
+          shareUrlModal.initialize();
+        "
+      >
+        <p><strong>Share scale</strong></p>
+        <p>Copy this scale's unique URL for convenient sharing</p>
+      </a>
       <a href="#" class="btn" @click="doExport('anamarkv1')">
         <p><strong>AnaMark v1 tuning (.tun)</strong></p>
         <p>Tuning file for various synths</p>
@@ -456,17 +468,6 @@ async function doImport(importerKey: ImporterKey, event: Event) {
       <a href="#" class="btn" @click="showReaperExportModal = true">
         <p><strong>Reaper note name map (.txt)</strong></p>
         <p>Displays custom note names on Reaper's piano roll</p>
-      </a>
-      <a
-        href="#"
-        class="btn"
-        @click="
-          showShareUrlModal = true;
-          shareUrlModal.initialize();
-        "
-      >
-        <p><strong>Share scale as URL</strong></p>
-        <p>Copy this scale's unique URL for convenient sharing</p>
       </a>
     </div>
   </div>

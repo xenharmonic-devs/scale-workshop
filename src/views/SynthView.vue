@@ -214,8 +214,4 @@ div.keyboard-controls {
   border: 1px solid var(--color-border);
   border-radius: 5px;
 }
-
-[data-theme="dark"] .waveform {
-  filter: invert(1);
-}
 </style>
