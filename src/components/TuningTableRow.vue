@@ -10,6 +10,7 @@ const props = defineProps<{
   name: string;
   keyColor: string;
   isRoot: boolean;
+  equave: boolean;
 }>();
 
 const element = ref<HTMLTableRowElement | null>(null);
@@ -33,7 +34,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <tr ref="element" :style="'background-color:' + keyColor + ';'">
+  <tr
+    ref="element"
+    :class="{ equave }"
+    :style="'background-color:' + keyColor + ';'"
+  >
     <td
       class="key-color"
       :style="'background-color:' + keyColor + ' !important;'"
@@ -54,7 +59,6 @@ tr.active {
   background-color: var(--color-accent) !important;
   color: var(--color-accent-text);
 }
-/* TODO add logic so that all rows which are the 1/1 or equave have class .equave added to tr */
 .equave td {
   font-weight: bold;
 }
