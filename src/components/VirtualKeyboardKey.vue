@@ -85,7 +85,8 @@ function onMouseLeave(event: MouseEvent) {
 td {
   text-align: center;
   vertical-align: middle;
-  border: 1px solid grey;
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
   font-size: 0.6em;
   user-select: none;
   cursor: pointer;

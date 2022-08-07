@@ -57,8 +57,8 @@ function modify() {
       <h2>Convert interval values</h2>
     </template>
     <template #body>
-      <p>Convert interval values to a different type.</p>
       <div class="control-group">
+        <p>Convert interval values to a different type.</p>
         <label for="type">Interval type</label>
         <select id="type" class="control" v-model="type">
           <option value="cents">Cents</option>

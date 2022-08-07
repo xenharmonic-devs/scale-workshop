@@ -115,7 +115,7 @@ watch(
 .modal-container {
   padding: 1rem;
   background-color: var(--color-background);
-  box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 200px;
+  box-shadow: var(--color-drop-shadow) 0px 0px 200px;
   max-height: 100vh;
   max-width: 100vw;
   width: 20rem;

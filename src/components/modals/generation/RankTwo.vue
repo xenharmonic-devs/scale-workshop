@@ -262,7 +262,7 @@ function generate() {
     <template #body>
       <div>
         <div class="control-group">
-          <div class="control">
+          <div class="control radio-group">
             <label>Method</label>
             <span>
               <input
@@ -388,7 +388,7 @@ function generate() {
           </div>
 
           <div :class="{ error: mosPatternsError.length }">
-            <strong>MOS sizes:</strong>
+            <strong>MOS sizes</strong>
             <span v-show="mosPatternsError.length">⚠</span>
           </div>
           <div class="btn-group" v-if="mosPatterns.length">
@@ -410,15 +410,15 @@ function generate() {
         </div>
 
         <div v-show="method === 'vals' || method === 'commas'">
-          <h3
+          <p
             class="section"
             :class="{ open: showAdvanced }"
             @click="showAdvanced = !showAdvanced"
           >
             Advanced options
-          </h3>
+          </p>
           <div class="control-group" v-show="showAdvanced">
-            <div class="control">
+            <div class="control radio-group">
               <span>
                 <input
                   type="radio"

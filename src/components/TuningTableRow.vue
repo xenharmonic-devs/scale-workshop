@@ -10,6 +10,7 @@ const props = defineProps<{
   name: string;
   keyColor: string;
   isRoot: boolean;
+  equave: boolean;
 }>();
 
 const element = ref<HTMLTableRowElement | null>(null);
@@ -33,7 +34,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <tr ref="element">
+  <tr
+    ref="element"
+    :class="{ equave }"
+    :style="'background-color:' + keyColor + ';'"
+  >
     <td
       class="key-color"
       :style="'background-color:' + keyColor + ' !important;'"
@@ -47,8 +52,15 @@ onMounted(() => {
 </template>
 
 <style scoped>
+tr:not(.active) td:not(.key-color) {
+  background-color: var(--color-background-semitransparent);
+}
 tr.active {
   background-color: var(--color-accent) !important;
+  color: var(--color-accent-text);
+}
+.equave td {
+  font-weight: bold;
 }
 .key-color {
   border-bottom: 1px solid var(--color-background-mute);

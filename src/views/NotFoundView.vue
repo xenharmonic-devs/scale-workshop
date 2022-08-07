@@ -54,14 +54,12 @@ function openTheGates(scale: Scale) {
 
 <template>
   <main>
-    <div class="columns-container">
-      <div class="column labyrinth">
-        <h1>Not found</h1>
-        <p>
-          We couldn't find what you were looking for, but
-          <a href="#" @click="ritualInProgress = true">here's an octaplex</a>.
-        </p>
-      </div>
+    <div class="labyrinth">
+      <h2>Not found</h2>
+      <p>
+        We couldn't find what you were looking for, but
+        <a href="#" @click="ritualInProgress = true">here's an octaplex</a>.
+      </p>
     </div>
     <Teleport to="body">
       <OctaplexPortal
@@ -75,18 +73,11 @@ function openTheGates(scale: Scale) {
 </template>
 
 <style scoped>
-div.columns-container {
+.labyrinth {
   height: 100%;
-  overflow-y: auto;
-  background-color: var(--color-border);
-  column-count: 1;
-}
-div.column {
-  background-color: var(--color-background);
-  overflow-x: hidden;
-  height: 100%;
-}
-div.labyrinth {
   padding: 1rem;
+}
+.labyrinth > * {
+  max-width: 30rem;
 }
 </style>

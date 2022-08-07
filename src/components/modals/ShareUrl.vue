@@ -73,21 +73,22 @@ function postOnFacebook() {
       <h2>Share scale as URL</h2>
     </template>
     <template #body>
-      <p>Share your scale using the sharing link.</p>
       <div class="control-group">
-        <input
-          type="text"
+        <p>This sharing link allows others to try your scale.</p>
+        <textarea
           ref="urlInput"
           class="control"
+          style="resize: vertical"
+          rows="6"
           readonly
           v-model="url"
-        />
+        ></textarea>
+        <div class="control">
+          <button @click="email">Email</button>
+          <button href="#" @click="tweet">Twitter</button>
+          <button href="#" @click="postOnFacebook">Facebook</button>
+        </div>
       </div>
-      <ul>
-        <li><a href="#" @click="email">email</a></li>
-        <li><a href="#" @click="tweet">tweet</a></li>
-        <li><a href="#" @click="postOnFacebook">Facebook</a></li>
-      </ul>
     </template>
     <template #footer>
       <div class="btn-group">

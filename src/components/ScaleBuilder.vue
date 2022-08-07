@@ -194,12 +194,12 @@ async function doImport(importerKey: ImporterKey, event: Event) {
 <template>
   <div id="tab-build-scale" class="columns-container">
     <div class="column scale-builder">
-      <input
+      <textarea
         id="scale-name"
-        type="text"
+        rows="1"
         placeholder="Untitled scale"
         v-model="scaleName"
-      />
+      ></textarea>
 
       <ul class="btn-group">
         <li class="btn-dropdown-group">
@@ -317,14 +317,7 @@ async function doImport(importerKey: ImporterKey, event: Event) {
         <h2>Tuning</h2>
 
         <div class="control">
-          <label>Interval</label>
-          <select>
-            <option>1/1</option>
-          </select>
-        </div>
-
-        <div class="control">
-          <label>Frequency</label>
+          <label>Base frequency</label>
           <input
             class="real-valued"
             type="number"
@@ -338,7 +331,7 @@ async function doImport(importerKey: ImporterKey, event: Event) {
         </div>
 
         <div class="control">
-          <label>MIDI note number</label>
+          <label>MIDI note for base frequency</label>
           <input
             type="number"
             ref="midiNoteNumber"
@@ -349,6 +342,19 @@ async function doImport(importerKey: ImporterKey, event: Event) {
           />
           <span>{{ midiNoteNumberToName(baseMidiNote) }}</span>
         </div>
+
+        <!-- This control is for the 3rd field that is found at the top of kbm files -->
+        <!--<div class="control">
+          <label>MIDI note for 1/1</label>
+          <input
+            class="real-valued"
+            type="number"
+            min="0"
+            step="1"
+            max="127"
+          />
+          <span>A5</span>
+        </div>-->
       </div>
 
       <div class="control-group">
@@ -378,69 +384,6 @@ async function doImport(importerKey: ImporterKey, event: Event) {
     />
     <div class="column exporters">
       <h2>Export current settings</h2>
-      <a href="#" class="btn" @click="doExport('anamarkv1')">
-        <p><strong>AnaMark v1 tuning (.tun)</strong></p>
-        <p>Tuning file for various softsynths</p>
-      </a>
-      <a href="#" class="btn" @click="doExport('anamarkv2')">
-        <p><strong>AnaMark v2 tuning (.tun)</strong></p>
-        <p>Tuning file for various softsynths</p>
-      </a>
-      <a href="#" class="btn" @click="doExport('scalascl')">
-        <p><strong>Scala scale (.scl)</strong></p>
-        <p>
-          Scale file for various softsynths. Note that this contains only
-          intervals, and most synths will assume middle C ~261Hz unless a kbm
-          file is also exported.
-        </p>
-      </a>
-      <a href="#" class="btn" @click="doExport('scalakbm')">
-        <p><strong>Scala keyboard mapping (.kbm)</strong></p>
-        <p>
-          Keyboard mapping to accompany a .scl file. Maps the scale to a
-          specific frequency.
-        </p>
-      </a>
-      <a href="#" class="btn" @click="doExport('maxmsp')">
-        <p><strong>Max/MSP coll tuning (.txt)</strong></p>
-        <p>For Max/MSP coll object</p>
-      </a>
-      <a href="#" class="btn" @click="doExport('puredata')">
-        <p><strong>PureData text tuning (.txt)</strong></p>
-        <p>For PureData text object</p>
-      </a>
-      <a href="#" class="btn" @click="doExport('kontakt')">
-        <p><strong>Kontakt tuning script (.txt)</strong></p>
-        <p>For Native Instruments Kontakt</p>
-      </a>
-      <a href="#" class="btn" @click="doExport('soniccouture')">
-        <p><strong>Soniccouture tuning file (.nka)</strong></p>
-        <p>For Soniccouture sample libraries</p>
-      </a>
-      <a href="#" class="btn" @click="doExport('harmor')">
-        <p><strong>Harmor pitch map (.fnv)</strong></p>
-        <p>For Image-Line Harmor</p>
-      </a>
-      <a href="#" class="btn" @click="doExport('sytrus')">
-        <p><strong>Sytrus pitch map (.fnv)</strong></p>
-        <p>For Image-Line Sytrus</p>
-      </a>
-      <a href="#" class="btn" @click="doExport('mnlgtuns')">
-        <p><strong>Korg 'logue tuning (.mnlgtuns)</strong></p>
-        <p>For Korg 'logue Sound Librarian Scale</p>
-      </a>
-      <a href="#" class="btn" @click="doExport('mnlgtuno')">
-        <p><strong>Korg 'logue octave map (.mnlgtuno)</strong></p>
-        <p>For Korg 'logue Sound Librarian Octave</p>
-      </a>
-      <a href="#" class="btn" @click="doExport('deflemask')">
-        <p><strong>Deflemask reference (.txt)</strong></p>
-        <p>Deflemask 'fine tune' reference</p>
-      </a>
-      <a href="#" class="btn" @click="showReaperExportModal = true">
-        <p><strong>Reaper note name map (.txt)</strong></p>
-        <p>Open Reaper export dialog</p>
-      </a>
       <a
         href="#"
         class="btn"
@@ -449,8 +392,82 @@ async function doImport(importerKey: ImporterKey, event: Event) {
           shareUrlModal.initialize();
         "
       >
-        <p><strong>Share scale as URL</strong></p>
-        <p>Open the sharing dialog</p>
+        <p><strong>Share scale</strong></p>
+        <p>Copy this scale's unique URL for convenient sharing</p>
+      </a>
+      <a href="#" class="btn" @click="doExport('anamarkv1')">
+        <p><strong>AnaMark v1 tuning (.tun)</strong></p>
+        <p>Tuning file for various synths</p>
+      </a>
+      <a href="#" class="btn" @click="doExport('anamarkv2')">
+        <p><strong>AnaMark v2 tuning (.tun)</strong></p>
+        <p>Tuning file for various synths</p>
+      </a>
+      <a href="#" class="btn" @click="doExport('scalascl')">
+        <p><strong>Scala scale (.scl)</strong></p>
+        <p>
+          Scale file for various synths.<br />If you use this file without an
+          accompanying .kbm file, most synths will assume your scale starts on C
+          ~261Hz
+        </p>
+      </a>
+      <a href="#" class="btn" @click="doExport('scalakbm')">
+        <p><strong>Scala keyboard mapping (.kbm)</strong></p>
+        <p>
+          Maps an accompanying .scl file to start on a specific MIDI note and
+          frequency
+        </p>
+      </a>
+      <a href="#" class="btn" @click="doExport('maxmsp')">
+        <p><strong>Max/MSP coll tuning (.txt)</strong></p>
+        <p>
+          List of frequencies (Hz) in a text file to load into a Max/MSP coll
+          object
+        </p>
+      </a>
+      <a href="#" class="btn" @click="doExport('puredata')">
+        <p><strong>PureData text tuning (.txt)</strong></p>
+        <p>
+          List of frequencies (Hz) in a text file to load into a PureData text
+          object
+        </p>
+      </a>
+      <a href="#" class="btn" @click="doExport('kontakt')">
+        <p><strong>Kontakt tuning script (.txt)</strong></p>
+        <p>
+          Tuning script for Native Instruments Kontakt. Some instrument
+          libraries allow this custom script
+        </p>
+      </a>
+      <a href="#" class="btn" @click="doExport('soniccouture')">
+        <p><strong>Soniccouture tuning file (.nka)</strong></p>
+        <p>For Soniccouture sample libraries</p>
+      </a>
+      <a href="#" class="btn" @click="doExport('harmor')">
+        <p><strong>Harmor pitch map (.fnv)</strong></p>
+        <p>Envelope state file for the pitch envelope in Image-Line Harmor</p>
+      </a>
+      <a href="#" class="btn" @click="doExport('sytrus')">
+        <p><strong>Sytrus pitch map (.fnv)</strong></p>
+        <p>Envelope state file for the pitch envelope in Image-Line Sytrus</p>
+      </a>
+      <a href="#" class="btn" @click="doExport('mnlgtuns')">
+        <p><strong>Korg 'logue user scale (.mnlgtuns)</strong></p>
+        <p>Single scale for Korg 'logue Sound Librarian.</p>
+        <p>Full tuning of all MIDI notes</p>
+      </a>
+      <a href="#" class="btn" @click="doExport('mnlgtuno')">
+        <p><strong>Korg 'logue user octave (.mnlgtuno)</strong></p>
+        <p>Single scale for Korg 'logue Sound Librarian.</p>
+        <p>Only supports octave-repeating scales with 12 intervals</p>
+      </a>
+      <a href="#" class="btn" @click="doExport('deflemask')">
+        <p><strong>Deflemask reference (.txt)</strong></p>
+        <p>List of 'fine tune' values for Deflemask</p>
+      </a>
+      <a href="#" class="btn" @click="showReaperExportModal = true">
+        <p><strong>Reaper note name map (.txt)</strong></p>
+        <p>Displays custom note names on Reaper's piano roll</p>
       </a>
     </div>
   </div>
@@ -807,6 +824,8 @@ div.exporters {
   font-size: 1.4em;
   margin-bottom: 1rem;
   padding: 0.3rem;
+  font-family: sans-serif;
+  resize: vertical;
 }
 div.exporters .btn {
   width: 100%;
