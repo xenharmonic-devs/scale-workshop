@@ -24,6 +24,7 @@ import {
   mapWhiteQweZxcBlack123Asd,
 } from "./keyboard-mapping";
 import { VirtualSynth } from "./virtual-synth";
+import { Synth } from "@/synth";
 
 // === Root props and audio ===
 const rootProps = defineProps<{
@@ -38,7 +39,7 @@ const mainHighpass = ref<BiquadFilterNode | null>(null);
 const audioDestination = ref<AudioNode | null>(null);
 // Chromium has some issues with audio nodes as props
 // so we need this extra ref and the associated watcher.
-const mainVolume = ref(0.11);
+const mainVolume = ref(0.175);
 
 // === Application state ===
 const scaleName = ref("");
@@ -66,6 +67,7 @@ mapWhiteAsdfBlackQwerty(keyColors.value, keyboardMapping);
 const keyboardMode = ref<"isomorphic" | "mapped">("isomorphic");
 const equaveShift = ref(0);
 const typingActive = ref(true);
+const synth = reactive(new Synth(rootProps.audioContext));
 const midiInput = ref<Input | null>(null);
 const midiOutput = ref<Output | null>(null);
 const midiInputChannels = reactive(new Set([1]));
@@ -247,28 +249,20 @@ const midiOut = computed(() => {
 function sendNoteOn(frequency: number, rawAttack: number) {
   const midiOff = midiOut.value.sendNoteOn(frequency, rawAttack);
 
-  // Simple placeholder synth
   if (audioDestination.value !== null) {
-    const ctx = rootProps.audioContext;
-    const now = ctx.currentTime;
-    const oscillator = ctx.createOscillator();
-    oscillator.type = "triangle";
-    oscillator.frequency.setValueAtTime(frequency, now);
-    oscillator.connect(audioDestination.value);
-    oscillator.start(now);
-
-    const oscillatorOff = () => {
-      const then = ctx.currentTime;
-      oscillator.stop(then);
-      oscillator.disconnect();
-    };
+    // Trigger web audio API synth.
+    const synthOff = synth.noteOn(
+      frequency,
+      rawAttack / 127,
+      audioDestination.value
+    );
 
     // Trigger virtual synth for per-voice visualization.
     const virtualOff = virtualSynth.voiceOn(frequency);
 
     const off = (rawRelease: number) => {
       midiOff(rawRelease);
-      oscillatorOff();
+      synthOff();
       virtualOff();
     };
 
@@ -688,6 +682,7 @@ watch(decimalFractionDigits, (newValue) =>
     :noteOn="keyboardNoteOn"
     :midiInputChannels="midiInputChannels"
     :midiOutputChannels="midiOutputChannels"
+    :synth="synth"
     :virtualSynth="virtualSynth"
     :newline="newline"
     :colorScheme="colorScheme"
