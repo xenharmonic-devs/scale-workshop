@@ -9,6 +9,7 @@ import type { Interval, IntervalOptions } from "@/interval";
 const props = defineProps<{
   scale: Scale;
   virtualSynth: VirtualSynth;
+  colorScheme: "light" | "dark";
 }>();
 
 const cellFormat = ref<"best" | "cents" | "decimal">("best");
@@ -17,6 +18,32 @@ const maxOtonalRoot = ref(16);
 const maxUtonalRoot = ref(23);
 
 const fadeAlpha = computed(() => 1 - trailLongevity.value / 100);
+
+const backgroundRBG = computed<[number, number, number]>(() => {
+  // Add dependency.
+  props.colorScheme;
+  // Fetch from document.
+  const css = getComputedStyle(document.documentElement)
+    .getPropertyValue("--color-background")
+    .trim()
+    .toLowerCase();
+  if (css === "#fff") {
+    return [255, 255, 255];
+  } else if (css === "#000") {
+    return [0, 0, 0];
+  } else {
+    throw new Error("General color parsing not implemented");
+  }
+});
+
+const strokeStyle = computed(() => {
+  // Add dependency.
+  props.colorScheme;
+  // Fetch from document.
+  return getComputedStyle(document.documentElement)
+    .getPropertyValue("--color-text")
+    .trim();
+});
 
 // While interval.name suffices for the tuning table
 // we want more accurate results here.
@@ -119,10 +146,10 @@ const matrix = computed(() => {
             :width="500"
             :height="400"
             :lineWidth="2"
-            :backgroundRBG="[255, 255, 255]"
+            :backgroundRBG="backgroundRBG"
             :fadeAlpha="fadeAlpha"
             :shadowBlur="2"
-            strokeStyle="black"
+            :strokeStyle="strokeStyle"
             textColor="red"
           />
         </div>
@@ -138,10 +165,10 @@ const matrix = computed(() => {
             :width="500"
             :height="400"
             :lineWidth="2"
-            :backgroundRBG="[255, 255, 255]"
+            :backgroundRBG="backgroundRBG"
             :fadeAlpha="fadeAlpha"
             :shadowBlur="2"
-            strokeStyle="black"
+            :strokeStyle="strokeStyle"
             textColor="blue"
           />
         </div>
