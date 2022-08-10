@@ -670,7 +670,6 @@ watch(decimalFractionDigits, (newValue) =>
       <li><RouterLink to="/synth">Synth</RouterLink></li>
       <li><RouterLink to="/midi">MIDI I/O</RouterLink></li>
       <li><RouterLink to="/prefs">Preferences</RouterLink></li>
-      <li><RouterLink to="/guide">User Guide</RouterLink></li>
       <template v-if="typingActive"
         ><span class="typing-info">KEY</span></template
       >

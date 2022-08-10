@@ -58,11 +58,6 @@ const router = createRouter({
       component: () => import("../views/SynthView.vue"),
     },
     {
-      path: "/guide",
-      name: "userGuide",
-      component: () => import("../views/UserGuideView.vue"),
-    },
-    {
       path: "/vk",
       name: "virtualKeyboard",
       component: () => import("../views/VirtualKeyboardView.vue"),
