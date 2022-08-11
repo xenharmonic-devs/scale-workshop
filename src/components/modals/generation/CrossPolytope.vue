@@ -8,6 +8,11 @@ import { Interval } from "@/interval";
 import ExtendedMonzo from "@/monzo";
 import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
 import { computedAndError } from "@/utils";
+
+const props = defineProps<{
+  show: boolean;
+}>();
+
 const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
 const octave = new Interval(
   ExtendedMonzo.fromNumber(2, DEFAULT_NUMBER_OF_COMPONENTS),
@@ -19,6 +24,9 @@ const equaveString = ref("2/1");
 const equave = ref(octave);
 const basisElement = ref<HTMLInputElement | null>(null);
 const [basis, basisError] = computedAndError(() => {
+  if (!props.show) {
+    return [];
+  }
   const input = basisString.value;
   const separator = input.includes(":") ? ":" : /\s/;
   return parseChord(input, separator);
@@ -55,7 +63,7 @@ function generate() {
 </script>
 
 <template>
-  <Modal @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate cross-polytope (hyperoctahedron)</h2>
     </template>
