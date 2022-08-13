@@ -1,4 +1,3 @@
-Interval
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import {

@@ -13,6 +13,7 @@ const props = defineProps<{
   isomorphicVertical: number;
   equaveShift: number;
   degreeShift: number;
+  colorScheme: "light" | "dark";
 }>();
 
 const emit = defineEmits([
@@ -121,6 +122,15 @@ const releaseTime = computed({
   },
 });
 
+const strokeStyle = computed(() => {
+  // Add dependency.
+  props.colorScheme;
+  // Fetch from document.
+  return getComputedStyle(document.documentElement)
+    .getPropertyValue("--color-text")
+    .trim();
+});
+
 onMounted(() => {
   if (props.audioOutput !== null) {
     analyser.value = props.audioContext.createAnalyser();
@@ -149,7 +159,7 @@ onUnmounted(() => {
             :width="512"
             :height="128"
             :lineWidth="1.5"
-            strokeStyle="black"
+            :strokeStyle="strokeStyle"
             :analyser="analyser"
           />
         </div>
