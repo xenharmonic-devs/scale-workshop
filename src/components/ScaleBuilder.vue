@@ -507,6 +507,7 @@ async function doImport(importerKey: ImporterKey, event: Event) {
         showRankTwoModal = false;
         emit('update:scale', $event);
       "
+      @update:keyColors="emit('update:keyColors', $event)"
       @cancel="showRankTwoModal = false"
     />
 

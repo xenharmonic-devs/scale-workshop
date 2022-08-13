@@ -17,7 +17,7 @@ import {
 import { computed, ref, watch } from "vue";
 import Modal from "@/components/ModalDialog.vue";
 import { makeState } from "@/components/modals/tempering-state";
-import { computedAndError } from "@/utils";
+import { computedAndError, gapKeyColors } from "@/utils";
 import ScaleLineInput from "@/components/ScaleLineInput.vue";
 import { Interval } from "@/interval";
 
@@ -28,7 +28,12 @@ const props = defineProps<{
 const MAX_SIZE = 128;
 const MAX_LENGTH = 12;
 
-const emit = defineEmits(["update:scaleName", "update:scale", "cancel"]);
+const emit = defineEmits([
+  "update:scaleName",
+  "update:scale",
+  "update:keyColors",
+  "cancel",
+]);
 
 // === Component state ===
 const method = ref<"generator" | "vals" | "commas">("generator");
@@ -60,6 +65,9 @@ const constraintsString = state.constraintsString;
 const previewMosPattern = ref("");
 // Values that are expensive to compute
 const expensiveMosPatterns = ref<MosInfo[]>([]);
+// State for key colors
+const colorMethod = ref<"none" | "gaps">("none");
+const colorAccidentals = ref<"flat" | "sharp">("sharp");
 
 // === Computed state ===
 const vals = state.vals;
@@ -113,6 +121,7 @@ const [mosPatterns, mosPatternsError] = computedAndError(() => {
     );
   }
 }, []);
+
 // === Watchers ===
 
 // Force scale size and generator stack to align with the multi-MOS
@@ -231,12 +240,32 @@ function generate() {
   error.value = "";
   try {
     const lineOptions = { centsFractionDigits: props.centsFractionDigits };
+    let size_ = size.value;
+    let down_ = down.value;
+    const n = numPeriods.value;
+    if (colorMethod.value === "gaps") {
+      const colors = Array(n)
+        .fill(
+          gapKeyColors(
+            generator.value.totalCents() / period.value.totalCents(),
+            size_ / n,
+            down_ / n,
+            colorAccidentals.value === "flat"
+          )
+        )
+        .flat();
+      size_ = colors.length;
+      if (colorAccidentals.value === "flat") {
+        down_ = size_ - n - up.value;
+      }
+      emit("update:keyColors", colors);
+    }
     const scale = Scale.fromRank2(
       generator.value.mergeOptions(lineOptions),
       period.value.mergeOptions(lineOptions),
-      size.value,
-      down.value,
-      numPeriods.value
+      size_,
+      down_,
+      n
     );
     emit(
       "update:scaleName",
@@ -407,8 +436,50 @@ function generate() {
               Calculate MOS sizes...
             </button>
           </div>
-        </div>
 
+          <div class="control radio-group">
+            <label>Generate key colors</label>
+            <span>
+              <input
+                type="radio"
+                id="color-none"
+                value="none"
+                v-model="colorMethod"
+              />
+              <label for="color-none"> Off </label>
+            </span>
+            <span>
+              <input
+                type="radio"
+                id="color-gaps"
+                value="gaps"
+                v-model="colorMethod"
+              />
+              <label for="color-gaps"> Fill gaps (expand scale) </label>
+            </span>
+          </div>
+          <div class="control radio-group" v-show="colorMethod !== 'none'">
+            <label>Black keys are</label>
+            <span>
+              <input
+                type="radio"
+                id="sharp"
+                value="sharp"
+                v-model="colorAccidentals"
+              />
+              <label for="sharp"> Sharp </label>
+            </span>
+            <span>
+              <input
+                type="radio"
+                id="flat"
+                value="flat"
+                v-model="colorAccidentals"
+              />
+              <label for="flat"> Flat </label>
+            </span>
+          </div>
+        </div>
         <div v-show="method === 'vals' || method === 'commas'">
           <p
             class="section"
