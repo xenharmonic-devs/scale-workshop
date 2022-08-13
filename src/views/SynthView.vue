@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import TimeDomainVisualizer from "@/components/TimeDomainVisualizer.vue";
+import { BASIC_WAVEFORMS, CUSTOM_WAVEFORMS, type Synth } from "@/synth";
 
 const props = defineProps<{
   audioContext: AudioContext;
   audioOutput: AudioNode | null;
+  synth: Synth;
   mainVolume: number;
   keyboardMode: "isomorphic" | "mapped";
   isomorphicHorizontal: number;
@@ -57,6 +59,62 @@ const equaveShift = computed({
   set: (newValue: number) => emit("update:equaveShift", newValue),
 });
 
+// Synth parameters not stored in URL because this synth is temporary.
+const waveforms = BASIC_WAVEFORMS.concat(Object.keys(CUSTOM_WAVEFORMS));
+
+const attackTime = computed({
+  get: () => props.synth.attackTime,
+  set(newValue: number) {
+    if (typeof newValue !== "number") {
+      newValue = parseFloat(newValue);
+    }
+    if (!isNaN(newValue)) {
+      // Whatever, this is a temporary solution...
+      // eslint-disable-next-line vue/no-mutating-props
+      props.synth.attackTime = newValue;
+    }
+  },
+});
+
+const decayTime = computed({
+  get: () => props.synth.decayTime,
+  set(newValue: number) {
+    if (typeof newValue !== "number") {
+      newValue = parseFloat(newValue);
+    }
+    if (!isNaN(newValue)) {
+      // eslint-disable-next-line vue/no-mutating-props
+      props.synth.decayTime = newValue;
+    }
+  },
+});
+
+const sustainLevel = computed({
+  get: () => props.synth.sustainLevel,
+  set(newValue: number) {
+    if (typeof newValue !== "number") {
+      newValue = parseFloat(newValue);
+    }
+    if (!isNaN(newValue)) {
+      // eslint-disable-next-line vue/no-mutating-props
+      props.synth.sustainLevel = newValue;
+    }
+  },
+});
+
+const releaseTime = computed({
+  get: () => props.synth.releaseTime,
+  set(newValue: number) {
+    if (typeof newValue !== "number") {
+      newValue = parseFloat(newValue);
+    }
+    if (!isNaN(newValue)) {
+      // eslint-disable-next-line vue/no-mutating-props
+      props.synth.releaseTime = newValue;
+    }
+  },
+});
+
 onMounted(() => {
   if (props.audioOutput !== null) {
     analyser.value = props.audioContext.createAnalyser();
@@ -92,11 +150,63 @@ onUnmounted(() => {
         <div class="control-group">
           <label for="volume">Main volume</label>
           <input
+            class="control"
             type="range"
             min="0"
             max="0.4"
             step="any"
             v-model="mainVolume"
+          />
+          <label for="waveform">Waveform</label>
+          <!-- eslint-disable-next-line vue/no-mutating-props -->
+          <select id="waveform" class="control" v-model="synth.waveform">
+            <option
+              v-for="waveform of waveforms"
+              :value="waveform"
+              :key="waveform"
+            >
+              {{ waveform }}
+            </option>
+          </select>
+          <label for="attack">Attack time</label>
+          <input
+            id="attack"
+            class="control"
+            type="range"
+            min="0.01"
+            max="1.0"
+            step="any"
+            v-model="attackTime"
+          />
+          <label for="decay">Decay time</label>
+          <input
+            id="decay"
+            class="control"
+            type="range"
+            min="0.01"
+            max="1.0"
+            step="any"
+            v-model="decayTime"
+          />
+          <label for="sustain">Sustain level</label>
+          <input
+            id="sustain"
+            class="control"
+            type="range"
+            min="0.01"
+            max="1.0"
+            step="any"
+            v-model="sustainLevel"
+          />
+          <label for="release">Release time</label>
+          <input
+            id="release"
+            class="control"
+            type="range"
+            min="0.01"
+            max="1.0"
+            step="any"
+            v-model="releaseTime"
           />
         </div>
       </div>
