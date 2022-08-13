@@ -674,6 +674,7 @@ watch(decimalFractionDigits, (newValue) =>
     :scale="scale"
     :frequencies="frequencies"
     :keyboardMode="keyboardMode"
+    :keyboardMapping="keyboardMapping"
     :isomorphicHorizontal="isomorphicHorizontal"
     :isomorphicVertical="isomorphicVertical"
     :equaveShift="equaveShift"
