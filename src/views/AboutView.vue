@@ -22,6 +22,12 @@
     </div>
     <div class="control-group">
       <div class="control">
+        <a
+          class="btn"
+          href="https://github.com/xenharmonic-devs/scale-workshop/wiki"
+          target="_blank"
+          >User guide</a
+        >
         <a class="btn" href="https://github.com/xenharmonic-devs/scale-workshop"
           >GitHub</a
         >
