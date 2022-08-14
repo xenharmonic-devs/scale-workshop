@@ -4,6 +4,7 @@ import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
 import ExtendedMonzo from "@/monzo";
 import Scale from "@/scale";
 import {
+  allForEdo,
   anyForEdo,
   daughterMos,
   getHardness,
@@ -14,8 +15,9 @@ import {
   mosWithParent,
   parentMos,
   tamnamsInfo,
+  type MosScaleInfo,
 } from "moment-of-symmetry";
-import { computed, ref, watch } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import Modal from "@/components/ModalDialog.vue";
 import ScaleLineInput from "@/components/ScaleLineInput.vue";
 import { Interval } from "@/interval";
@@ -52,10 +54,25 @@ const equaveString = ref("2/1");
 const previewL = ref(0);
 const previewS = ref(0);
 
+const boundedEdo = computed(() => {
+  const value = edo.value;
+  if (isNaN(value) || !isFinite(value)) {
+    return 12;
+  }
+  if (value < 2) {
+    return 2;
+  }
+  return Math.round(value);
+});
 const edoMap = computed(() => makeEdoMap());
-const edoList = computed(
-  () => edoMap.value.get(edo.value) || [anyForEdo(edo.value)]
-);
+const edoExtraMap = reactive<Map<number, MosScaleInfo[]>>(new Map());
+const edoList = computed(() => {
+  const edo_ = boundedEdo.value;
+  if (!edoMap.value.has(edo_)) {
+    return [anyForEdo(edo_)].concat(edoExtraMap.get(edo_) || []);
+  }
+  return edoMap.value.get(edo_)!.concat(edoExtraMap.get(edo_) || []);
+});
 const tamnamsName = computed(() => {
   const info = tamnamsInfo(numberOfLargeSteps.value, numberOfSmallSteps.value);
   if (info?.name === undefined) {
@@ -109,6 +126,31 @@ watch(numberOfPeriods, (newValue) => {
 watch(upMax, (newValue) => {
   up.value = Math.min(up.value, newValue);
 });
+
+// Methods
+function moreForEdo() {
+  const edo_ = boundedEdo.value;
+  const existing = edoList.value;
+  const extra = allForEdo(edo_, 5, 12, 5);
+  const more = [];
+  for (const info of extra) {
+    let novel = true;
+    for (const old of existing) {
+      if (
+        info.mosPattern === old.mosPattern &&
+        info.sizeOfLargeStep === old.sizeOfLargeStep &&
+        info.sizeOfSmallStep === old.sizeOfSmallStep
+      ) {
+        novel = false;
+        break;
+      }
+    }
+    if (novel) {
+      more.push(info);
+    }
+  }
+  edoExtraMap.set(edo_, more);
+}
 
 function generate() {
   let name: string;
@@ -377,6 +419,20 @@ function generate() {
             >[{{ info.name.split(";")[0] + (info.subset ? " (sub)" : "") }}]</i
           >
         </span>
+        <button
+          @click="moreForEdo"
+          v-if="
+            (edo === 17 ||
+              edo === 19 ||
+              edo === 21 ||
+              edo === 22 ||
+              edo === 23 ||
+              edo > 24) &&
+            !edoExtraMap.has(edo)
+          "
+        >
+          More...
+        </button>
       </div>
     </template>
     <template #footer>

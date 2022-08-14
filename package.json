@@ -13,9 +13,9 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "xen-dev-utils": "github:xenharmonic-devs/xen-dev-utils#v0.0.1",
+    "xen-dev-utils": "github:xenharmonic-devs/xen-dev-utils#v0.0.2",
     "jszip": "^3.10.0",
-    "moment-of-symmetry": "github:xenharmonic-devs/moment-of-symmetry#v0.1.2",
+    "moment-of-symmetry": "github:xenharmonic-devs/moment-of-symmetry#v0.1.3",
     "qs": "^6.10.5",
     "temperaments": "github:xenharmonic-devs/temperaments#v0.2.4",
     "vue": "^3.2.33",
