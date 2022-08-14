@@ -12,6 +12,7 @@ import { makeState } from "@/components/modals/tempering-state";
 import Temperament from "temperaments";
 
 const props = defineProps<{
+  show: boolean;
   centsFractionDigits: number;
 }>();
 
@@ -44,6 +45,9 @@ const constraintsString = state.constraintsString;
 
 const basisElement = ref<HTMLInputElement | null>(null);
 const [basis, basisError] = computedAndError(() => {
+  if (!props.show) {
+    return [];
+  }
   const input = basisString.value;
   const separator = input.includes(":") ? ":" : /\s/;
   return parseChord(input, separator);
@@ -139,7 +143,7 @@ function generate() {
 </script>
 
 <template>
-  <Modal @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate lattice</h2>
     </template>
