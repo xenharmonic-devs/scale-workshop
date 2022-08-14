@@ -36,14 +36,16 @@ function generate() {
     </template>
     <template #body>
       <div class="control-group">
-        <label for="chord">Chord</label>
-        <input
-          id="chord"
-          type="text"
-          class="control"
-          placeholder="4:5:6:8"
-          v-model="chord"
-        />
+        <div class="control">
+          <label for="chord">Chord</label>
+          <input
+            id="chord"
+            type="text"
+            class="control"
+            placeholder="4:5:6:8"
+            v-model="chord"
+          />
+        </div>
         <div class="control checkbox-container">
           <input type="checkbox" id="integrate-period" v-model="invertChord" />
           <label for="integrate-period">Invert chord</label>

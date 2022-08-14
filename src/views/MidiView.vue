@@ -108,20 +108,22 @@ onMounted(async () => {
       <div class="column midi-controls">
         <h2>MIDI Input</h2>
         <div class="control-group">
-          <label for="input">Input device</label>
-          <select id="input" @change="selectMidiInput" class="control">
-            <option value="no-midi-input" :selected="midiInput === null">
-              No MIDI input
-            </option>
-            <option
-              v-for="input of inputs"
-              :value="input.id"
-              :key="input.id"
-              :selected="input.id === props.midiInput?.id"
-            >
-              {{ (input.manufacturer || "(Generic)") + ": " + input.name }}
-            </option>
-          </select>
+          <div class="control">
+            <label for="input">Input device</label>
+            <select id="input" @change="selectMidiInput" class="control">
+              <option value="no-midi-input" :selected="midiInput === null">
+                No MIDI input
+              </option>
+              <option
+                v-for="input of inputs"
+                :value="input.id"
+                :key="input.id"
+                :selected="input.id === props.midiInput?.id"
+              >
+                {{ (input.manufacturer || "(Generic)") + ": " + input.name }}
+              </option>
+            </select>
+          </div>
           <div class="control channels-wrapper">
             <label>Input channels</label>
             <span v-for="channel in 16" :key="channel">
@@ -166,20 +168,22 @@ onMounted(async () => {
       <div class="column midi-controls">
         <h2>MIDI Output</h2>
         <div class="control-group">
-          <label for="output">Output device</label>
-          <select id="output" @change="selectMidiOutput" class="control">
-            <option value="no-midi-output" :selected="midiOutput === null">
-              No MIDI output
-            </option>
-            <option
-              v-for="output of outputs"
-              :value="output.id"
-              :key="output.id"
-              :selected="output.id === props.midiOutput?.id"
-            >
-              {{ (output.manufacturer || "(Generic)") + ": " + output.name }}
-            </option>
-          </select>
+          <div class="control">
+            <label for="output">Output device</label>
+            <select id="output" @change="selectMidiOutput" class="control">
+              <option value="no-midi-output" :selected="midiOutput === null">
+                No MIDI output
+              </option>
+              <option
+                v-for="output of outputs"
+                :value="output.id"
+                :key="output.id"
+                :selected="output.id === props.midiOutput?.id"
+              >
+                {{ (output.manufacturer || "(Generic)") + ": " + output.name }}
+              </option>
+            </select>
+          </div>
           <div class="control channels-wrapper">
             <label>Output channels</label>
             <span v-for="channel in 16" :key="channel">

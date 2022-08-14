@@ -19,14 +19,16 @@ function modify() {
     </template>
     <template #body>
       <div class="control-group">
-        <p>Rotates the mode of your scale.</p>
-        <p>The resulting scale will be sorted in ascending order.</p>
-        <label for="new-unison">New 1/1</label>
-        <select id="new-unison" class="control" v-model="newUnison">
-          <option v-for="i of props.scale.size - 1" :key="i" :value="i">
-            {{ props.scale.getName(i) }}
-          </option>
-        </select>
+        <div class="control">
+          <p>Rotates the mode of your scale.</p>
+          <p>The resulting scale will be sorted in ascending order.</p>
+          <label for="new-unison">New 1/1</label>
+          <select id="new-unison" class="control" v-model="newUnison">
+            <option v-for="i of props.scale.size - 1" :key="i" :value="i">
+              {{ props.scale.getName(i) }}
+            </option>
+          </select>
+        </div>
       </div>
     </template>
   </Modal>

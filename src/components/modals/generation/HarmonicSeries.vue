@@ -28,22 +28,26 @@ function generate() {
     </template>
     <template #body>
       <div class="control-group">
-        <label for="lowest-harmonic">Lowest harmonic</label>
-        <input
-          id="lowest-harmonic"
-          type="number"
-          min="1"
-          class="control"
-          v-model="lowestHarmonic"
-        />
-        <label for="highest-harmonic">Highest harmonic</label>
-        <input
-          id="highest-harmonic"
-          type="number"
-          min="1"
-          class="control"
-          v-model="highestHarmonic"
-        />
+        <div class="control">
+          <label for="lowest-harmonic">Lowest harmonic</label>
+          <input
+            id="lowest-harmonic"
+            type="number"
+            min="1"
+            class="control"
+            v-model="lowestHarmonic"
+          />
+        </div>
+        <div class="control">
+          <label for="highest-harmonic">Highest harmonic</label>
+          <input
+            id="highest-harmonic"
+            type="number"
+            min="1"
+            class="control"
+            v-model="highestHarmonic"
+          />
+        </div>
       </div>
     </template>
   </Modal>

@@ -28,22 +28,26 @@ function generate() {
     </template>
     <template #body>
       <div class="control-group">
-        <label for="lowest-subharmonic">Lowest subharmonic</label>
-        <input
-          id="lowest-subharmonic"
-          type="number"
-          min="1"
-          class="control"
-          v-model="lowestSubharmonic"
-        />
-        <label for="highest-subharmonic">Highest subharmonic</label>
-        <input
-          id="highest-subharmonic"
-          type="number"
-          min="1"
-          class="control"
-          v-model="highestSubharmonic"
-        />
+        <div class="control">
+          <label for="lowest-subharmonic">Lowest subharmonic</label>
+          <input
+            id="lowest-subharmonic"
+            type="number"
+            min="1"
+            class="control"
+            v-model="lowestSubharmonic"
+          />
+        </div>
+        <div class="control">
+          <label for="highest-subharmonic">Highest subharmonic</label>
+          <input
+            id="highest-subharmonic"
+            type="number"
+            min="1"
+            class="control"
+            v-model="highestSubharmonic"
+          />
+        </div>
       </div>
     </template>
   </Modal>

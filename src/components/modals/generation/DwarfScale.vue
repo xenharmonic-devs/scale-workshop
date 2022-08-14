@@ -28,16 +28,20 @@ function generate() {
     </template>
     <template #body>
       <div class="control-group">
-        <label for="val">Patent val</label>
-        <input id="val" type="number" min="1" class="control" v-model="val" />
-        <label for="equave">Equave</label>
-        <input
-          id="equave"
-          type="number"
-          min="2"
-          class="control"
-          v-model="equave"
-        />
+        <div class="control">
+          <label for="val">Patent val</label>
+          <input id="val" type="number" min="1" class="control" v-model="val" />
+        </div>
+        <div class="control">
+          <label for="equave">Equave</label>
+          <input
+            id="equave"
+            type="number"
+            min="2"
+            class="control"
+            v-model="equave"
+          />
+        </div>
       </div>
     </template>
   </Modal>

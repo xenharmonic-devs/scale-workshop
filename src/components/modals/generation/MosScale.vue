@@ -393,8 +393,10 @@ function generate() {
         @mouseleave="previewL = 0"
         v-show="method === 'edo'"
       >
-        <label for="edo">EDO</label>
-        <input id="edo" type="number" min="2" class="control" v-model="edo" />
+        <div class="control">
+          <label for="edo">EDO</label>
+          <input id="edo" type="number" min="2" class="control" v-model="edo" />
+        </div>
         <span
           v-for="(info, i) of edoList"
           @mouseenter="

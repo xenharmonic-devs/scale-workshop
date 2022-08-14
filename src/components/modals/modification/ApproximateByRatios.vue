@@ -175,47 +175,55 @@ function modifyAndAdvance() {
     <template #body>
       <div class="control-group">
         <p>Select scale degrees and apply rational replacements one by one.</p>
-        <label for="degree">Scale Degree</label>
-        <input
-          type="number"
-          id="degree"
-          min="1"
-          :max="scale.size"
-          v-model="degree"
-        />
-        <label for="interval">Interval</label>
-        <input
-          type="text"
-          id="interval"
-          disabled
-          :value="scale.getName(degree)"
-        />
-        <label for="approximation">Approximation</label>
-        <select
-          ref="approximationSelect"
-          id="approximation"
-          class="control"
-          v-model="approximationIndex"
-        >
-          <option
-            v-for="(approximation, i) of approximationsWithErrorsAndLimits"
-            :key="i"
-            :value="i"
+        <div class="control">
+          <label for="degree">Scale Degree</label>
+          <input
+            type="number"
+            id="degree"
+            min="1"
+            :max="scale.size"
+            v-model="degree"
+          />
+        </div>
+        <div class="control">
+          <label for="interval">Interval</label>
+          <input
+            type="text"
+            id="interval"
+            disabled
+            :value="scale.getName(degree)"
+          />
+        </div>
+        <div class="control">
+          <label for="approximation">Approximation</label>
+          <select
+            ref="approximationSelect"
+            id="approximation"
+            class="control"
+            v-model="approximationIndex"
           >
-            {{ fractionToString(approximation.fraction) }} |
-            {{ approximation.error.toFixed(5) }} |
-            {{ approximation.limit }}
-          </option>
-        </select>
-        <label for="max-error">Maximum error</label>
-        <input
-          type="number"
-          id="max-error"
-          min="0.1"
-          max="600"
-          step="0.1"
-          v-model="maxError"
-        />
+            <option
+              v-for="(approximation, i) of approximationsWithErrorsAndLimits"
+              :key="i"
+              :value="i"
+            >
+              {{ fractionToString(approximation.fraction) }} |
+              {{ approximation.error.toFixed(5) }} |
+              {{ approximation.limit }}
+            </option>
+          </select>
+        </div>
+        <div class="control">
+          <label for="max-error">Maximum error</label>
+          <input
+            type="number"
+            id="max-error"
+            min="0.1"
+            max="600"
+            step="0.1"
+            v-model="maxError"
+          />
+        </div>
         <div class="control radio-group">
           <span>
             <input
