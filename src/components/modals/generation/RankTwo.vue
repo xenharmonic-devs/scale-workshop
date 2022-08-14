@@ -11,6 +11,7 @@ import {
   type Rank2Params,
 } from "@/tempering";
 import {
+  isBright,
   mosPatterns as getMosPatterns,
   type MosInfo,
 } from "moment-of-symmetry";
@@ -75,6 +76,15 @@ const commas = state.commas;
 const subgroup = state.subgroup;
 const options = state.options;
 
+const generatorPerPeriod = computed(
+  () => generator.value.totalCents() / period.value.totalCents()
+);
+const opposite = computed(() =>
+  isBright(generatorPerPeriod.value, size.value / numPeriods.value)
+    ? "dark"
+    : "bright"
+);
+
 const [mosPatterns, mosPatternsError] = computedAndError(() => {
   if (method.value === "generator") {
     // Don't show error in the default configuration
@@ -82,7 +92,7 @@ const [mosPatterns, mosPatternsError] = computedAndError(() => {
       return [];
     }
     return getMosPatterns(
-      generator.value.totalCents() / period.value.totalCents(),
+      generatorPerPeriod.value,
       numPeriods.value,
       MAX_SIZE,
       MAX_LENGTH
@@ -157,6 +167,15 @@ watch(
 );
 
 // === Methods ===
+
+function flipGenerator() {
+  generator.value = generator.value.neg().mmod(
+    period.value.mergeOptions({
+      centsFractionDigits: props.centsFractionDigits,
+    })
+  );
+  generatorString.value = generator.value.toString();
+}
 
 function calculateExpensiveMosPattern() {
   try {
@@ -323,8 +342,10 @@ function generate() {
               <label for="method-commas"> Comma list </label>
             </span>
           </div>
+        </div>
 
-          <div class="control" v-show="method === 'generator'">
+        <div class="control-group" v-show="method === 'generator'">
+          <div class="control">
             <label for="generator">Generator</label>
             <ScaleLineInput
               id="generator"
@@ -332,14 +353,19 @@ function generate() {
               v-model="generatorString"
               @update:value="generator = $event"
             />
+            <button @click="flipGenerator">Flip to {{ opposite }}</button>
+          </div>
 
+          <div class="control">
             <label for="period">Period</label>
             <ScaleLineInput
               id="period"
               v-model="periodString"
               @update:value="period = $event"
             />
+          </div>
 
+          <div class="control">
             <label for="num-periods">Number of periods</label>
             <input
               id="num-periods"
@@ -348,7 +374,9 @@ function generate() {
               max="99"
               v-model="numPeriods"
             />
+          </div>
 
+          <div class="control">
             <label for="up">Generators up/down from 1/1</label>
             <input
               id="up"
@@ -366,7 +394,9 @@ function generate() {
               min="0"
               :max="upMax"
             />
+          </div>
 
+          <div class="control">
             <label for="size"
               >Scale size{{
                 numPeriods === 1 ? "" : ` (multiple of ${numPeriods})`
@@ -381,8 +411,10 @@ function generate() {
               v-model="size"
             />
           </div>
+        </div>
 
-          <div class="control" v-show="method === 'vals'">
+        <div class="control-group" v-show="method === 'vals'">
+          <div class="control">
             <label for="vals">Vals</label>
             <input
               type="text"
@@ -391,8 +423,10 @@ function generate() {
               v-model="valsString"
             />
           </div>
+        </div>
 
-          <div class="control" v-show="method === 'commas'">
+        <div class="control-group" v-show="method === 'commas'">
+          <div class="control">
             <label for="commas">Comma list</label>
             <input
               type="text"
@@ -401,11 +435,13 @@ function generate() {
               v-model="commasString"
             />
           </div>
+        </div>
 
-          <div
-            class="control"
-            v-show="method === 'vals' || method === 'commas'"
-          >
+        <div
+          class="control-group"
+          v-show="method === 'vals' || method === 'commas'"
+        >
+          <div class="control">
             <label for="subgroup">Subgroup / Prime limit</label>
             <input
               type="text"
@@ -415,28 +451,30 @@ function generate() {
               v-model="subgroupString"
             />
           </div>
+        </div>
 
-          <div :class="{ error: mosPatternsError.length }">
-            <strong>MOS sizes</strong>
-            <span v-show="mosPatternsError.length">⚠</span>
-          </div>
-          <div class="btn-group" v-if="mosPatterns.length">
-            <button
-              v-for="(mosInfo, i) of mosPatterns"
-              :key="i"
-              @mouseenter="previewMosPattern = mosInfo.mosPattern"
-              @mouseleave="previewMosPattern = ''"
-              @click="selectMosSize(mosInfo.size)"
-            >
-              {{ mosInfo.size }}
-            </button>
-          </div>
-          <div class="btn-group" v-else>
-            <button @click="calculateExpensiveMosPattern">
-              Calculate MOS sizes...
-            </button>
-          </div>
+        <div :class="{ error: mosPatternsError.length }">
+          <strong>MOS sizes</strong>
+          <span v-show="mosPatternsError.length">⚠</span>
+        </div>
+        <div class="btn-group" v-if="mosPatterns.length">
+          <button
+            v-for="(mosInfo, i) of mosPatterns"
+            :key="i"
+            @mouseenter="previewMosPattern = mosInfo.mosPattern"
+            @mouseleave="previewMosPattern = ''"
+            @click="selectMosSize(mosInfo.size)"
+          >
+            {{ mosInfo.size }}
+          </button>
+        </div>
+        <div class="btn-group" v-else>
+          <button @click="calculateExpensiveMosPattern">
+            Calculate MOS sizes...
+          </button>
+        </div>
 
+        <div class="control-group">
           <div class="control radio-group">
             <label>Generate key colors</label>
             <span>
@@ -480,56 +518,56 @@ function generate() {
             </span>
           </div>
         </div>
-        <div v-show="method === 'vals' || method === 'commas'">
-          <p
-            class="section"
-            :class="{ open: showAdvanced }"
-            @click="showAdvanced = !showAdvanced"
-          >
-            Advanced options
-          </p>
-          <div class="control-group" v-show="showAdvanced">
-            <div class="control radio-group">
-              <span>
-                <input
-                  type="radio"
-                  id="tempering-TE"
-                  value="TE"
-                  v-model="tempering"
-                />
-                <label for="tempering-TE"> TE </label>
-              </span>
+      </div>
+      <div v-show="method === 'vals' || method === 'commas'">
+        <p
+          class="section"
+          :class="{ open: showAdvanced }"
+          @click="showAdvanced = !showAdvanced"
+        >
+          Advanced options
+        </p>
+        <div class="control-group" v-show="showAdvanced">
+          <div class="control radio-group">
+            <span>
+              <input
+                type="radio"
+                id="tempering-TE"
+                value="TE"
+                v-model="tempering"
+              />
+              <label for="tempering-TE"> TE </label>
+            </span>
 
-              <span>
-                <input
-                  type="radio"
-                  id="tempering-POTE"
-                  value="POTE"
-                  v-model="tempering"
-                />
-                <label for="tempering-POTE"> POTE </label>
-              </span>
+            <span>
+              <input
+                type="radio"
+                id="tempering-POTE"
+                value="POTE"
+                v-model="tempering"
+              />
+              <label for="tempering-POTE"> POTE </label>
+            </span>
 
-              <span>
-                <input
-                  type="radio"
-                  id="tempering-CTE"
-                  value="CTE"
-                  v-model="tempering"
-                />
-                <label for="tempering-CTE"> CTE </label>
-              </span>
-            </div>
+            <span>
+              <input
+                type="radio"
+                id="tempering-CTE"
+                value="CTE"
+                v-model="tempering"
+              />
+              <label for="tempering-CTE"> CTE </label>
+            </span>
+          </div>
 
-            <div v-show="tempering === 'CTE'" class="control">
-              <label for="constraints">Constraints</label>
-              <textarea id="constraints" v-model="constraintsString"></textarea>
-            </div>
+          <div class="control" v-show="tempering === 'CTE'">
+            <label for="constraints">Constraints</label>
+            <textarea id="constraints" v-model="constraintsString"></textarea>
+          </div>
 
-            <div class="control">
-              <label for="weights">Weights</label>
-              <textarea id="weights" v-model="weightsString"></textarea>
-            </div>
+          <div class="control">
+            <label for="weights">Weights</label>
+            <textarea id="weights" v-model="weightsString"></textarea>
           </div>
         </div>
       </div>

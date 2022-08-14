@@ -102,6 +102,17 @@ function updateDimension(index: number, event: Event) {
   dimensions[index] = value;
 }
 
+function flip(index: number) {
+  const generator = basis.value[index].neg().mmod(
+    equave.value.mergeOptions({
+      centsFractionDigits: props.centsFractionDigits,
+    })
+  );
+  const newBasis = [...basis.value];
+  newBasis.splice(index, 1, generator);
+  basisString.value = newBasis.map((gen) => gen.toString()).join(" ");
+}
+
 function generate() {
   try {
     const scale = Scale.fromLattice(basis.value, dimensions, equave.value);
@@ -183,6 +194,7 @@ function generate() {
             :key="i"
           >
             <label>Generator {{ basis[i] }}</label>
+            <button @click="flip(i)">Flip</button>
             <input
               type="number"
               min="1"
