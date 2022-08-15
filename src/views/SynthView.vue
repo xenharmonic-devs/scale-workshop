@@ -173,17 +173,19 @@ onUnmounted(() => {
             step="any"
             v-model="mainVolume"
           />
-          <label for="waveform">Waveform</label>
-          <!-- eslint-disable-next-line vue/no-mutating-props -->
-          <select id="waveform" class="control" v-model="synth.waveform">
-            <option
-              v-for="waveform of waveforms"
-              :value="waveform"
-              :key="waveform"
-            >
-              {{ waveform }}
-            </option>
-          </select>
+          <div class="control">
+            <label for="waveform">Waveform</label>
+            <!-- eslint-disable-next-line vue/no-mutating-props -->
+            <select id="waveform" class="control" v-model="synth.waveform">
+              <option
+                v-for="waveform of waveforms"
+                :value="waveform"
+                :key="waveform"
+              >
+                {{ waveform }}
+              </option>
+            </select>
+          </div>
           <label for="attack">Attack time</label>
           <input
             id="attack"

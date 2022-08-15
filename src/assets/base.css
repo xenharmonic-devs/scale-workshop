@@ -122,6 +122,7 @@ select {
   color: var(--color-text);
   border: 1px solid var(--color-border);
   border-radius: 3px;
+  width: 6rem;
 }
 optgroup {
   font-weight: bold;

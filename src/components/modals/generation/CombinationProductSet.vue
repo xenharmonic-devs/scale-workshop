@@ -81,24 +81,28 @@ function generate() {
     </template>
     <template #body>
       <div class="control-group">
-        <label for="factors">Factors</label>
-        <input
-          ref="factorsElement"
-          id="factors"
-          type="text"
-          class="control"
-          placeholder="1 3 5 7"
-          v-model="factorsString"
-        />
-        <label for="num-elements">Combination count</label>
-        <input
-          id="num-elements"
-          type="number"
-          class="control"
-          min="1"
-          :max="maxElements"
-          v-model="numElements"
-        />
+        <div class="control">
+          <label for="factors">Factors</label>
+          <input
+            ref="factorsElement"
+            id="factors"
+            type="text"
+            class="control"
+            placeholder="1 3 5 7"
+            v-model="factorsString"
+          />
+        </div>
+        <div class="control">
+          <label for="num-elements">Combination count</label>
+          <input
+            id="num-elements"
+            type="number"
+            class="control"
+            min="1"
+            :max="maxElements"
+            v-model="numElements"
+          />
+        </div>
         <div class="control checkbox-container">
           <input type="checkbox" id="add-unity" v-model="addUnity" />
           <label for="add-unity">Include 1/1 (origin)</label>

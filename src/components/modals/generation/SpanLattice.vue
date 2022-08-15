@@ -181,16 +181,18 @@ function generate() {
             <label for="method-commas"> Comma list </label>
           </span>
         </div>
-        <div class="control" v-show="method === 'generators'">
-          <label for="basis">Generators</label>
-          <input
-            ref="basisElement"
-            id="basis"
-            type="text"
-            class="control"
-            placeholder="3 5 7"
-            v-model="basisString"
-          />
+        <div class="control-group" v-show="method === 'generators'">
+          <div class="control">
+            <label for="basis">Generators</label>
+            <input
+              ref="basisElement"
+              id="basis"
+              type="text"
+              class="control"
+              placeholder="3 5 7"
+              v-model="basisString"
+            />
+          </div>
           <label>Generators up from 1/1</label>
           <div
             class="control"

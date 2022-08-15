@@ -634,21 +634,23 @@ async function doImport(importerKey: ImporterKey, event: Event) {
       </template>
       <template #body>
         <div class="control-group">
-          <select ref="presetSelect" size="10" class="control">
-            <optgroup
-              v-for="group of presetGroups"
-              :key="group.name"
-              :label="group.name"
-            >
-              <option
-                v-for="preset of group.members"
-                :key="preset.id"
-                :value="preset.id"
+          <div class="control">
+            <select ref="presetSelect" size="10" class="control">
+              <optgroup
+                v-for="group of presetGroups"
+                :key="group.name"
+                :label="group.name"
               >
-                {{ preset.title }}
-              </option>
-            </optgroup>
-          </select>
+                <option
+                  v-for="preset of group.members"
+                  :key="preset.id"
+                  :value="preset.id"
+                >
+                  {{ preset.title }}
+                </option>
+              </optgroup>
+            </select>
+          </div>
         </div>
       </template>
     </Modal>

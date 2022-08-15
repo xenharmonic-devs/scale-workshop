@@ -69,15 +69,17 @@ function generate() {
     </template>
     <template #body>
       <div class="control-group">
-        <label for="basis">Basis</label>
-        <input
-          ref="basisElement"
-          id="basis"
-          type="text"
-          class="control"
-          placeholder="3 5 7 11"
-          v-model="basisString"
-        />
+        <div class="control">
+          <label for="basis">Basis</label>
+          <input
+            ref="basisElement"
+            id="basis"
+            type="text"
+            class="control"
+            placeholder="3 5 7 11"
+            v-model="basisString"
+          />
+        </div>
         <div class="control checkbox-container">
           <input type="checkbox" id="add-unity" v-model="addUnity" />
           <label for="add-unity">Include 1/1 (origin)</label>

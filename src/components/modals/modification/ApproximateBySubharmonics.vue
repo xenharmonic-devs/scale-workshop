@@ -19,14 +19,16 @@ function modify() {
     </template>
     <template #body>
       <div class="control-group">
-        <label for="approximate-subharmonics-numerator">Numerator</label>
-        <input
-          id="approximate-subharmonics-numerator"
-          type="number"
-          min="1"
-          class="control"
-          v-model="numerator"
-        />
+        <div class="control">
+          <label for="approximate-subharmonics-numerator">Numerator</label>
+          <input
+            id="approximate-subharmonics-numerator"
+            type="number"
+            min="1"
+            class="control"
+            v-model="numerator"
+          />
+        </div>
       </div>
     </template>
   </Modal>

@@ -23,14 +23,16 @@ function modify() {
     </template>
     <template #body>
       <div class="control-group">
-        <label for="approximate-harmonics-denominator">Denominator</label>
-        <input
-          id="approximate-harmonics-denominator"
-          type="number"
-          min="1"
-          class="control"
-          v-model="denominator"
-        />
+        <div class="control">
+          <label for="approximate-harmonics-denominator">Denominator</label>
+          <input
+            id="approximate-harmonics-denominator"
+            type="number"
+            min="1"
+            class="control"
+            v-model="denominator"
+          />
+        </div>
       </div>
     </template>
   </Modal>

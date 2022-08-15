@@ -59,14 +59,16 @@ function modify() {
     <template #body>
       <div class="control-group">
         <p>Convert interval values to a different type.</p>
-        <label for="type">Interval type</label>
-        <select id="type" class="control" v-model="type">
-          <option value="cents">Cents</option>
-          <option value="ratio">Ratio</option>
-          <option value="equal temperament">Equal temperament</option>
-          <option value="decimal">Decimal ratio</option>
-          <option value="monzo">Monzo</option>
-        </select>
+        <div class="control">
+          <label for="type">Interval type</label>
+          <select id="type" class="control" v-model="type">
+            <option value="cents">Cents</option>
+            <option value="ratio">Ratio</option>
+            <option value="equal temperament">Equal temperament</option>
+            <option value="decimal">Decimal ratio</option>
+            <option value="monzo">Monzo</option>
+          </select>
+        </div>
 
         <div class="control" v-if="type === 'cents'">
           <label for="cents-digits">Digits after decimal point</label>

@@ -176,35 +176,41 @@ const matrix = computed(() => {
       <div class="column">
         <h2>Chord analysis</h2>
         <div class="control-group">
-          <label for="trail-longevity">Trail longevity</label>
-          <input
-            id="trail-longevity"
-            type="number"
-            class="control"
-            min="0"
-            max="100"
-            v-model="trailLongevity"
-          />
+          <div class="control">
+            <label for="trail-longevity">Trail longevity</label>
+            <input
+              id="trail-longevity"
+              type="number"
+              class="control"
+              min="0"
+              max="100"
+              v-model="trailLongevity"
+            />
+          </div>
         </div>
         <div class="control-group">
-          <label for="otonal-root">Maximum root (otonal)</label>
-          <input
-            id="otonal-root"
-            type="number"
-            class="control"
-            min="1"
-            v-model="maxOtonalRoot"
-          />
+          <div class="control">
+            <label for="otonal-root">Maximum root (otonal)</label>
+            <input
+              id="otonal-root"
+              type="number"
+              class="control"
+              min="1"
+              v-model="maxOtonalRoot"
+            />
+          </div>
         </div>
         <div class="control-group">
-          <label for="utonal-root">Maximum root (utonal)</label>
-          <input
-            id="utonal-root"
-            type="number"
-            class="control"
-            min="1"
-            v-model="maxUtonalRoot"
-          />
+          <div class="control">
+            <label for="utonal-root">Maximum root (utonal)</label>
+            <input
+              id="utonal-root"
+              type="number"
+              class="control"
+              min="1"
+              v-model="maxUtonalRoot"
+            />
+          </div>
         </div>
       </div>
     </div>
