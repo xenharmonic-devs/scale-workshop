@@ -301,7 +301,7 @@ function generate() {
             </div>
           </div>
         </div>
-        <div class="control">
+        <div class="control" v-show="method === 'vals' || method === 'commas'">
           <button
             @click="calculateGenerators"
             :disabled="subgroupError.length !== 0"
