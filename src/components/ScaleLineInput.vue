@@ -31,6 +31,8 @@ watch(error, (newError) => element.value!.setCustomValidity(newError));
     type="text"
     :placeholder="placeholder"
     :value="modelValue"
-    @input="$emit('update:modelValue', ($event.target as HTMLInputElement)!.value)"
+    @input="
+      $emit('update:modelValue', ($event.target as HTMLInputElement)!.value)
+    "
   />
 </template>
