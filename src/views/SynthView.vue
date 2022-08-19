@@ -229,26 +229,6 @@ onUnmounted(() => {
         </div>
       </div>
       <div class="column keyboard-controls">
-        <h2>Keyboard equave shift</h2>
-        <div class="control-group">
-          <p>
-            Trigger lower or higher notes. (Shortcut keys: numpad
-            <code>/</code> and <code>*</code>)
-          </p>
-          <div class="control">
-            <input type="number" v-model="equaveShift" />
-          </div>
-        </div>
-        <h2>Keyboard degree shift</h2>
-        <div class="control-group">
-          <p>
-            Shift down/up by one scale degree <i>(Isomorphic only)</i>.
-            (Shortcut keys: numpad <code>-</code> and <code>+</code>).
-          </p>
-          <div class="control">
-            <input type="number" v-model="degreeShift" />
-          </div>
-        </div>
         <h2>Keyboard mode</h2>
         <div class="control-group">
           <div class="control radio-group">
@@ -283,26 +263,51 @@ onUnmounted(() => {
             </button>
           </template>
         </div>
-        <h2>Isomorphic key mapping</h2>
+        <h2>Keyboard equave shift</h2>
         <div class="control-group">
+          <p>
+            Trigger lower or higher notes. (Shortcut keys: numpad
+            <code>/</code> and <code>*</code>)
+          </p>
+          <div class="control">
+            <input type="number" v-model="equaveShift" />
+          </div>
+        </div>
+        <template v-if="keyboardMode === 'isomorphic'">
+          <h2>Keyboard degree shift</h2>
+          <div class="control-group">
+            <p>
+              Shift down/up by one scale degree. (Shortcut keys: numpad
+              <code>-</code> and <code>+</code>).
+            </p>
+            <div class="control">
+              <input type="number" v-model="degreeShift" />
+            </div>
+          </div>
+          <h2>Isomorphic key mapping</h2>
           <p>
             Distance between adjacent keys on the horizontal/vertical axes, in
             scale degrees. Affects virtual keyboard (and also typing keyboard if
             in isomorphic mode).
           </p>
-          <div class="control">
-            <label for="vertical">Vertical</label>
-            <input type="number" id="vertical" v-model="isomorphicVertical" />
+          <div
+            class="control-group"
+            style="flex-direction: row; align-items: stretch; flex-wrap: nowrap"
+          >
+            <div class="control" style="width: 50%">
+              <label for="vertical">Vertical</label>
+              <input type="number" id="vertical" v-model="isomorphicVertical" />
+            </div>
+            <div class="control" style="width: 50%">
+              <label for="horizontal">Horizontal</label>
+              <input
+                type="number"
+                id="horizontal"
+                v-model="isomorphicHorizontal"
+              />
+            </div>
           </div>
-          <div class="control">
-            <label for="horizontal">Horizontal</label>
-            <input
-              type="number"
-              id="horizontal"
-              v-model="isomorphicHorizontal"
-            />
-          </div>
-        </div>
+        </template>
         <h2>Keyboard shortcuts</h2>
         <div class="control-group">
           <p><code>Shift</code> sustain currently held keys after release</p>
