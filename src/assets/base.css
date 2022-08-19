@@ -253,15 +253,17 @@ ul.btn-group, .btn-dropdown-group ul {
 
 /* UI element - expandable secion */
 .section::after {
-  content: " ⏷";
+  content: " ▼";
+  font-size: 0.5rem;
   color: var(--color-accent-text-btn);
   background-color: var(--color-accent-background);
   border: var(--color-accent-text-btn) 1px solid;
   border-radius: 3px;
-  padding: 0 0.3rem;
+  padding: 0.25rem 0.3rem;
+  vertical-align: middle;
 }
 .section.open::after {
-  content: " ⏶";
+  content: " ▲";
 }
 .section:hover::after {
   color: var(--color-accent-text);
