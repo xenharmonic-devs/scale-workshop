@@ -454,11 +454,22 @@ function generate() {
 </template>
 
 <style scoped>
+.pyramid {
+  text-align: center;
+  overflow-x: auto;
+}
 .pyramid div {
-  display: flex;
-  justify-content: center;
+  white-space: nowrap;
 }
 .pyramid button {
   font-size: small;
+}
+@media only screen and (max-width: 38rem) {
+  .pyramid {
+    text-align: left;
+  }
+  .pyramid button {
+    width: 4.5em;
+  }
 }
 </style>
