@@ -30,10 +30,10 @@
 /* Dark theme */
 [data-theme="dark"] {
   --color-background: #000;
-  --color-background-soft: #111;
+  --color-background-soft: #333;
   --color-background-mute: #222;
   --color-background-invalid: #300;
-  --color-background-semitransparent: rgba(0,0,0,0.9);
+  --color-background-semitransparent: rgba(0,0,0,0.75);
 
   --color-border: #666;
   --color-border-hover: #111;
@@ -45,7 +45,7 @@
   --color-accent: #008080;
   --color-accent-text: #fff;
   --color-accent-text-btn: #0cc;
-  --color-accent-mute: #133;
+  --color-accent-mute: #366;
   --color-accent-deeper: #006060;
   --color-accent-background: #011;
   --color-accent-dimmed: rgba(0,20,20,0.7);
