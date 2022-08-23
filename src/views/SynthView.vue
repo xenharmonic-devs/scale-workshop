@@ -2,6 +2,7 @@
 /* eslint vue/no-mutating-props: 0 */
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import TimeDomainVisualizer from "@/components/TimeDomainVisualizer.vue";
+import Modal from "@/components/ModalDialog.vue";
 import { BASIC_WAVEFORMS, CUSTOM_WAVEFORMS, type Synth } from "@/synth";
 
 const props = defineProps<{
@@ -15,6 +16,11 @@ const props = defineProps<{
   equaveShift: number;
   degreeShift: number;
   colorScheme: "light" | "dark";
+  deactivationCode: string;
+  equaveUpCode: string;
+  equaveDownCode: string;
+  degreeUpCode: string;
+  degreeDownCode: string;
 }>();
 
 const emit = defineEmits([
@@ -24,11 +30,18 @@ const emit = defineEmits([
   "update:isomorphicVertical",
   "update:equaveShift",
   "update:degreeShift",
+  "update:deactivationCode",
+  "update:equaveUpCode",
+  "update:equaveDownCode",
+  "update:degreeUpCode",
+  "update:degreeDownCode",
   "mapAsdf",
   "mapZxcv0",
   "mapZxcv1",
   "panic",
 ]);
+
+const remappedKey = ref("");
 
 const timeDomainVisualizer = ref<any>(null);
 
@@ -163,12 +176,20 @@ function presetLong() {
   props.synth.releaseTime = 0.8;
 }
 
+function assignCode(event: KeyboardEvent) {
+  if (remappedKey.value.length && event.code.length) {
+    emit(("update:" + remappedKey.value) as any, event.code);
+    remappedKey.value = "";
+  }
+}
+
 onMounted(() => {
   if (props.audioOutput !== null) {
     analyser.value = props.audioContext.createAnalyser();
     props.audioOutput.connect(analyser.value);
     timeDomainVisualizer.value.initialize(analyser.value);
   }
+  window.addEventListener("keydown", assignCode);
 });
 
 onUnmounted(() => {
@@ -176,6 +197,7 @@ onUnmounted(() => {
     props.audioOutput.disconnect(analyser.value);
     analyser.value = null;
   }
+  window.removeEventListener("keydown", assignCode);
 });
 </script>
 
@@ -307,7 +329,7 @@ onUnmounted(() => {
         <h2>Keyboard equave shift</h2>
         <div class="control-group">
           <p>
-            Trigger lower or higher notes. (Shortcut keys: numpad
+            Trigger lower or higher notes. (Default shortcut keys: numpad
             <code>/</code> and <code>*</code>)
           </p>
           <div class="control">
@@ -318,7 +340,7 @@ onUnmounted(() => {
           <h2>Keyboard degree shift</h2>
           <div class="control-group">
             <p>
-              Shift down/up by one scale degree. (Shortcut keys: numpad
+              Shift down/up by one scale degree. (Default shortcut keys: numpad
               <code>-</code> and <code>+</code>).
             </p>
             <div class="control">
@@ -352,12 +374,56 @@ onUnmounted(() => {
         <h2>Keyboard shortcuts</h2>
         <div class="control-group">
           <p><code>Shift</code> sustain currently held keys after release</p>
-          <p><code>`</code> release sustain, stop all playing notes</p>
-          <p><code>numpad /</code> equave shift down</p>
-          <p><code>numpad *</code> equave shift up</p>
+          <p>
+            <code @click="remappedKey = 'deactivationCode'">{{
+              deactivationCode
+            }}</code>
+            release sustain, stop all playing notes (click to reassign)
+          </p>
+          <p>
+            <code @click="remappedKey = 'equaveDownCode'">{{
+              equaveDownCode
+            }}</code>
+            equave shift down (click to reassign)
+          </p>
+          <p>
+            <code @click="remappedKey = 'equaveUpCode'">{{
+              equaveUpCode
+            }}</code>
+            equave shift up (click to reassign)
+          </p>
+          <p>
+            <code @click="remappedKey = 'degreeDownCode'">{{
+              degreeDownCode
+            }}</code>
+            degree shift down (click to reassign)
+          </p>
+          <p>
+            <code @click="remappedKey = 'degreeUpCode'">{{
+              degreeUpCode
+            }}</code>
+            degree shift up (click to reassign)
+          </p>
         </div>
       </div>
     </div>
+    <Teleport to="body">
+      <Modal
+        :show="remappedKey.length > 0"
+        @confirm="remappedKey = ''"
+        @cancel="remappedKey = ''"
+      >
+        <template #header>
+          <h2>Press a key...</h2>
+        </template>
+        <template #body><div></div></template>
+        <template #footer>
+          <div class="btn-group">
+            <button @click="remappedKey = ''">Cancel</button>
+          </div>
+        </template>
+      </Modal>
+    </Teleport>
   </main>
 </template>
 

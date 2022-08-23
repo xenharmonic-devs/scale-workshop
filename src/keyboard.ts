@@ -138,25 +138,31 @@ export class Keyboard {
   activeKeys: Set<string>;
   pendingKeys: Set<string>;
   stickyKeys: Set<string>;
-  private _keydown: (event: KeyboardEvent) => void;
-  private _keyup: (event: KeyboardEvent) => void;
+  private _keydown?: (event: KeyboardEvent) => void;
+  private _keyup?: (event: KeyboardEvent) => void;
 
-  constructor() {
+  constructor(autobind = false) {
     this.keydownCallbacks = [];
     this.keyupCallbacks = new Map();
     this.activeKeys = new Set();
     this.pendingKeys = new Set();
     this.stickyKeys = new Set();
 
-    this._keydown = this.keydown.bind(this);
-    this._keyup = this.keyup.bind(this);
-    window.addEventListener("keydown", this._keydown);
-    window.addEventListener("keyup", this._keyup);
+    if (autobind) {
+      this._keydown = this.keydown.bind(this);
+      this._keyup = this.keyup.bind(this);
+      window.addEventListener("keydown", this._keydown);
+      window.addEventListener("keyup", this._keyup);
+    }
   }
 
   dispose() {
-    window.removeEventListener("keydown", this._keydown);
-    window.removeEventListener("keyup", this._keyup);
+    if (this._keydown) {
+      window.removeEventListener("keydown", this._keydown);
+    }
+    if (this._keyup) {
+      window.removeEventListener("keyup", this._keyup);
+    }
   }
 
   addKeydownListener(listener: KeydownCallback) {

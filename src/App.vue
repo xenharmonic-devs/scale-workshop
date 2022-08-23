@@ -85,6 +85,12 @@ const newline = ref(UNIX_NEWLINE);
 const colorScheme = ref<"light" | "dark">("light");
 const centsFractionDigits = ref(3);
 const decimalFractionDigits = ref(5);
+// Special keyboard codes also from local storage.
+const deactivationCode = ref("Backquote");
+const equaveUpCode = ref("NumpadMultiply");
+const equaveDownCode = ref("NumpadDivide");
+const degreeUpCode = ref("NumpadAdd");
+const degreeDownCode = ref("NumpadSubtract");
 
 // === Computed state ===
 const frequencies = computed(() =>
@@ -425,42 +431,53 @@ function windowKeydownOrUp(event: KeyboardEvent | MouseEvent) {
   }
 }
 
+// === Handle special keys ===
+function windowKeydown(event: KeyboardEvent) {
+  // Currently editing the scale, bail out
+  if (!typingActive.value) {
+    return;
+  }
+
+  // The key left of Digit1 releases sustained keys
+  if (event.code === deactivationCode.value) {
+    typingKeyboard.deactivate();
+    return;
+  }
+
+  // "Octave" keys
+  if (event.code === equaveUpCode.value) {
+    equaveShift.value++;
+    return;
+  }
+  if (event.code === equaveDownCode.value) {
+    equaveShift.value--;
+    return;
+  }
+
+  // "Transpose" keys
+  if (event.code === degreeUpCode.value) {
+    degreeShift.value++;
+    return;
+  }
+  if (event.code === degreeDownCode.value) {
+    degreeShift.value--;
+    return;
+  }
+
+  typingKeyboard.keydown(event);
+}
+
+// Keyups don't make new sounds so they can be passed through.
+function windowKeyup(event: KeyboardEvent) {
+  typingKeyboard.keyup(event);
+}
+
 // === Typing keyboard input ===
 const typingKeyboard = new Keyboard();
 
 function emptyKeyup() {}
 
 function typingKeydown(event: CoordinateKeyboardEvent) {
-  // Currently editing the scale, bail out
-  if (!typingActive.value) {
-    return emptyKeyup;
-  }
-  // The key left of Digit1 releases sustained keys
-  if (event.code === "Backquote") {
-    typingKeyboard.deactivate();
-    return emptyKeyup;
-  }
-
-  // "Octave" keys
-  if (event.code === "NumpadMultiply") {
-    equaveShift.value++;
-    return emptyKeyup;
-  }
-  if (event.code === "NumpadDivide") {
-    equaveShift.value--;
-    return emptyKeyup;
-  }
-
-  // "Transpose" keys
-  if (event.code === "NumpadAdd") {
-    degreeShift.value++;
-    return emptyKeyup;
-  }
-  if (event.code === "NumpadSubtract") {
-    degreeShift.value--;
-    return emptyKeyup;
-  }
-
   // Key not mapped to layers, bail out
   if (event.coordinates === undefined) {
     return emptyKeyup;
@@ -494,6 +511,8 @@ function typingKeydown(event: CoordinateKeyboardEvent) {
 
 // === Lifecycle ===
 onMounted(() => {
+  window.addEventListener("keydown", windowKeydown);
+  window.addEventListener("keyup", windowKeyup);
   window.addEventListener("keydown", windowKeydownOrUp);
   window.addEventListener("keyup", windowKeydownOrUp);
   window.addEventListener("mousedown", windowKeydownOrUp);
@@ -590,9 +609,28 @@ onMounted(() => {
       storage.getItem("decimalFractionDigits")!
     );
   }
+
+  // Fetch special key map
+  if ("deactivationCode" in storage) {
+    deactivationCode.value = storage.getItem("deactivationCode")!;
+  }
+  if ("equaveUpCode" in storage) {
+    equaveUpCode.value = storage.getItem("equaveUpCode")!;
+  }
+  if ("equaveDownCode" in storage) {
+    equaveDownCode.value = storage.getItem("equaveDownCode")!;
+  }
+  if ("degreeUpCode" in storage) {
+    degreeUpCode.value = storage.getItem("degreeUpCode")!;
+  }
+  if ("degreeDownCode" in storage) {
+    degreeDownCode.value = storage.getItem("degreeDownCode")!;
+  }
 });
 
 onUnmounted(() => {
+  window.removeEventListener("keydown", windowKeydown);
+  window.removeEventListener("keyup", windowKeyup);
   window.removeEventListener("keydown", windowKeydownOrUp);
   window.removeEventListener("keyup", windowKeydownOrUp);
   window.removeEventListener("mousedown", windowKeydownOrUp);
@@ -677,6 +715,22 @@ watch(centsFractionDigits, (newValue) =>
 watch(decimalFractionDigits, (newValue) =>
   window.localStorage.setItem("decimalFractionDigits", newValue.toString())
 );
+// Store keymaps
+watch(deactivationCode, (newValue) =>
+  window.localStorage.setItem("deactivationCode", newValue)
+);
+watch(equaveUpCode, (newValue) =>
+  window.localStorage.setItem("equaveUpCode", newValue)
+);
+watch(equaveDownCode, (newValue) =>
+  window.localStorage.setItem("equaveDownCode", newValue)
+);
+watch(degreeUpCode, (newValue) =>
+  window.localStorage.setItem("degreeUpCode", newValue)
+);
+watch(degreeDownCode, (newValue) =>
+  window.localStorage.setItem("degreeDownCode", newValue)
+);
 </script>
 
 <template>
@@ -728,6 +782,11 @@ watch(decimalFractionDigits, (newValue) =>
     :midiVelocityOn="midiVelocityOn"
     :midiWhiteMode="midiWhiteMode"
     :midiBlackAverage="midiBlackAverage"
+    :deactivationCode="deactivationCode"
+    :equaveUpCode="equaveUpCode"
+    :equaveDownCode="equaveDownCode"
+    :degreeUpCode="degreeUpCode"
+    :degreeDownCode="degreeDownCode"
     @update:mainVolume="mainVolume = $event"
     @update:scaleName="scaleName = $event"
     @update:scaleLines="updateFromScaleLines"
@@ -758,6 +817,11 @@ watch(decimalFractionDigits, (newValue) =>
     @update:colorScheme="colorScheme = $event"
     @update:centsFractionDigits="centsFractionDigits = $event"
     @update:decimalFractionDigits="decimalFractionDigits = $event"
+    @update:deactivationCode="deactivationCode = $event"
+    @update:equaveUpCode="equaveUpCode = $event"
+    @update:equaveDownCode="equaveDownCode = $event"
+    @update:degreeUpCode="degreeUpCode = $event"
+    @update:degreeDownCode="degreeDownCode = $event"
     @panic="panic"
   />
 </template>
