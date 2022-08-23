@@ -614,8 +614,6 @@ function updateMidiInputChannels(newValue: Set<number>) {
   newValue.forEach((channel) => midiInputChannels.add(channel));
 }
 
-// Code for panic if needed in the future.
-/*
 function panic() {
   console.log("Firing global key off.");
   typingKeyboard.deactivate();
@@ -627,6 +625,8 @@ function panic() {
   }
 }
 
+// Code for hard panic if needed in the future.
+/*
 function hardPanic() {
   console.warn("Cutting all audio!");
   typingKeyboad.deactivate();
@@ -674,10 +674,6 @@ watch(decimalFractionDigits, (newValue) =>
         ><span class="typing-info">KEY</span></template
       >
       <template v-else></template>
-      <!-- TODO remove panic completely or move to Synth view -->
-      <!--<span class="panic">
-        <a href="#" @click="panic">Quiet</a>
-      </span>-->
     </ul>
   </nav>
   <RouterView
@@ -740,6 +736,7 @@ watch(decimalFractionDigits, (newValue) =>
     @update:colorScheme="colorScheme = $event"
     @update:centsFractionDigits="centsFractionDigits = $event"
     @update:decimalFractionDigits="decimalFractionDigits = $event"
+    @panic="panic"
   />
 </template>
 
