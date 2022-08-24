@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import Modal from "@/components/ModalDialog.vue";
-import { parseChord } from "@/parser";
+import { parseChordInput } from "@/parser";
 import Scale from "@/scale";
 
 const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
@@ -11,7 +11,7 @@ const invertChord = ref(false);
 
 function generate() {
   try {
-    const intervals = parseChord(chord.value);
+    const intervals = parseChordInput(chord.value);
     const scale = Scale.fromChord(intervals);
     emit("update:scaleName", `Chord ${chord.value}`);
     if (invertChord.value) {
