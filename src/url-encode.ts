@@ -326,6 +326,54 @@ function getSingle(query: LocationQuery, key: string, defaultIfNull: string) {
   return result;
 }
 
+const WAVEFORM_TO_LETTER: { [key: string]: string } = {
+  sine: "s",
+  square: "q",
+  sawtooth: "w",
+  triangle: "t",
+
+  semisine: "e",
+  warm1: "1",
+  warm2: "2",
+  warm3: "3",
+  warm4: "4",
+  octaver: "o",
+  brightness: "b",
+  harmonicbell: "h",
+  rich: "r",
+  bohlen: "l",
+  glass: "g",
+  boethius: "i",
+};
+
+const LETTER_TO_WAVEFORM: { [key: string]: string } = {
+  s: "sine",
+  q: "square",
+  w: "sawtooth",
+  t: "triangle",
+
+  e: "semisine",
+  "1": "warm1",
+  "2": "warm2",
+  "3": "warm3",
+  "4": "warm4",
+  o: "octaver",
+  b: "brightness",
+  h: "harmonicbell",
+  r: "rich",
+  l: "bohlen",
+  g: "glass",
+  i: "boethius",
+};
+
+function millify(value: number) {
+  return Math.round(value * 1000).toString(36);
+}
+
+function unmillify(encoded: string) {
+  return parseInt(encoded, 36) / 1000;
+}
+
 export type DecodedState = {
   scaleLines: string[];
   keyColors: string[];
@@ -338,19 +386,29 @@ export type DecodedState = {
   keyboardMapping: Map<string, number>;
   equaveShift: number;
   degreeShift: number;
+  waveform: string;
+  attackTime: number;
+  decayTime: number;
+  sustainLevel: number;
+  releaseTime: number;
 };
 
 export type EncodedState = {
-  l?: string;
-  c?: string;
-  n?: string;
-  f?: string;
-  m?: string;
-  h?: string;
-  v?: string;
-  k?: string;
-  e?: string;
-  d?: string;
+  l?: string; // (scale) Lines
+  c?: string; // (key) Colors
+  n?: string; // (scale) Name
+  f?: string; // (base) Frequency
+  m?: string; // (base) Midi note
+  h?: string; // (isomorphic) Horizontal
+  v?: string; // (isomorphic) Vertical
+  k?: string; // Keyboard mapping
+  e?: string; // Equave shift
+  d?: string; // Degree shift
+  w?: string; // Waveform
+  a?: string; // Attack time
+  y?: string; // decaY time
+  s?: string; // Sustain level
+  r?: string; // Release time
 };
 
 export function decodeQuery(
@@ -390,6 +448,11 @@ export function decodeQuery(
     ),
     equaveShift: parseInt(get("e", "0"), 36),
     degreeShift: parseInt(get("d", "0"), 36),
+    waveform: LETTER_TO_WAVEFORM[get("w", "e")] || "semisine",
+    attackTime: unmillify(get("a", "a")),
+    decayTime: unmillify(get("y", "8c")),
+    sustainLevel: unmillify(get("s", "m8")),
+    releaseTime: unmillify(get("r", "a")),
   };
 }
 
@@ -405,6 +468,11 @@ export function encodeQuery(state: DecodedState): EncodedState {
     k: encodeKeyMap(state.keyboardMapping),
     e: state.equaveShift.toString(36),
     d: state.degreeShift.toString(36),
+    w: WAVEFORM_TO_LETTER[state.waveform],
+    a: millify(state.attackTime),
+    y: millify(state.decayTime),
+    s: millify(state.sustainLevel),
+    r: millify(state.releaseTime),
   };
 
   if (state.keyboardMode === "isomorphic") {
@@ -438,6 +506,21 @@ export function encodeQuery(state: DecodedState): EncodedState {
   }
   if (result.d === "0") {
     delete result.d;
+  }
+  if (result.w === "e") {
+    delete result.w;
+  }
+  if (result.a === "a") {
+    delete result.a;
+  }
+  if (result.y === "8c") {
+    delete result.y;
+  }
+  if (result.s === "m8") {
+    delete result.s;
+  }
+  if (result.r === "a") {
+    delete result.r;
   }
 
   return result;

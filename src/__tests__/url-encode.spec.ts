@@ -94,8 +94,14 @@ describe("URL encoder", () => {
       isomorphicVertical: 3,
       keyboardMode: "isomorphic",
       keyboardMapping: new Map(),
-      equaveShift: 0, // default
-      degreeShift: 0, // default
+      // All defaults from here
+      equaveShift: 0,
+      degreeShift: 0,
+      waveform: "semisine",
+      attackTime: 0.01,
+      decayTime: 0.3,
+      sustainLevel: 0.8,
+      releaseTime: 0.01,
     };
     const encoded = encodeQuery(state);
     expect(encoded).toMatchObject({

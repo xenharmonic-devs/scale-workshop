@@ -151,7 +151,7 @@ export class Synth {
       envelope.gain.cancelScheduledValues(then);
       envelope.gain.setTargetAtTime(0, then, this.releaseTime * TIME_CONSTANT);
       // Extend time a bit to let exponential tail fall off.
-      oscillator.stop(then + 1.5 * this.releaseTime);
+      oscillator.stop(then + 3.0 * this.releaseTime);
     };
 
     return noteOff;

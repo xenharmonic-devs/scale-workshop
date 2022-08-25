@@ -13,7 +13,7 @@ import Scale from "@/scale";
 import { parseLine } from "@/parser";
 import { bendRangeInSemitones, MidiIn, midiNoteInfo, MidiOut } from "@/midi";
 import { Keyboard, type CoordinateKeyboardEvent } from "@/keyboard";
-import { decodeQuery, encodeQuery } from "@/url-encode";
+import { decodeQuery, encodeQuery, type DecodedState } from "@/url-encode";
 import { debounce } from "@/utils";
 import { version } from "../package.json";
 import type { Interval } from "@/interval";
@@ -136,7 +136,7 @@ const encodeState = debounce(() => {
   }
   justEncodedUrl = true;
 
-  const state = {
+  const state: DecodedState = {
     scaleName: scaleName.value,
     scaleLines: scaleLines.value,
     baseFrequency: scale.baseFrequency,
@@ -148,6 +148,11 @@ const encodeState = debounce(() => {
     keyboardMapping,
     equaveShift: equaveShift.value,
     degreeShift: degreeShift.value,
+    waveform: synth.waveform,
+    attackTime: synth.attackTime,
+    decayTime: synth.decayTime,
+    sustainLevel: synth.sustainLevel,
+    releaseTime: synth.releaseTime,
   };
 
   const query = encodeQuery(state) as LocationQuery;
@@ -172,6 +177,7 @@ watch(
     keyboardMapping,
     equaveShift,
     degreeShift,
+    synth,
   ],
   encodeState
 );
@@ -210,6 +216,11 @@ router.afterEach((to, from) => {
       }
       equaveShift.value = state.equaveShift;
       degreeShift.value = state.degreeShift;
+      synth.waveform = state.waveform;
+      synth.attackTime = state.attackTime;
+      synth.decayTime = state.decayTime;
+      synth.sustainLevel = state.sustainLevel;
+      synth.releaseTime = state.releaseTime;
     } catch (error) {
       console.error(`Error parsing version ${query.get("version")} URL`, error);
     }
@@ -516,6 +527,12 @@ onMounted(() => {
         // Store raw text lines
         updateFromScaleLines(scaleWorkshopOneData.data.split(NEWLINE_TEST));
       }
+
+      synth.waveform = scaleWorkshopOneData.waveform || "semisine";
+      synth.attackTime = scaleWorkshopOneData.attackTime;
+      synth.decayTime = scaleWorkshopOneData.decayTime;
+      synth.sustainLevel = scaleWorkshopOneData.sustainLevel;
+      synth.releaseTime = scaleWorkshopOneData.releaseTime;
     } catch (error) {
       console.error("Error parsing version 1 URL", error);
     }
