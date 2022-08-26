@@ -78,11 +78,7 @@ const tamnamsName = computed(() => {
   if (info?.name === undefined) {
     return "";
   }
-  const name = info.name.split(";")[0];
-  if (info.subset) {
-    return `${name} (sub)`;
-  }
-  return name;
+  return info.name.split(";")[0];
 });
 const mosModeInfo = computed(() =>
   modeInfo(numberOfLargeSteps.value, numberOfSmallSteps.value, up.value, true)
@@ -112,9 +108,6 @@ const previewName = computed(() => {
   const info = tamnamsInfo(previewL.value, previewS.value);
   if (info?.name === undefined) {
     return "";
-  }
-  if (info.subset) {
-    return `${info.name} (subset)`;
   }
   return info.name;
 });
@@ -417,9 +410,7 @@ function generate() {
             {{ info.mosPattern }}
           </button>
           {{ info.hardness }}
-          <i v-if="info.name !== undefined"
-            >[{{ info.name.split(";")[0] + (info.subset ? " (sub)" : "") }}]</i
-          >
+          <i v-if="info.name !== undefined">[{{ info.name.split(";")[0] }}]</i>
         </span>
         <button
           @click="moreForEdo"
