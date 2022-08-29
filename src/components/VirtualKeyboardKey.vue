@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { LEFT_MOUSE_BTN } from "@/constants";
 import { onUnmounted, ref } from "vue";
 
 type NoteOff = () => void;
@@ -34,8 +35,6 @@ function onTouchEnd() {
     noteOff = null;
   }
 }
-
-const LEFT_MOUSE_BTN = 0;
 
 function onMouseDown(event: MouseEvent) {
   if (event.button !== LEFT_MOUSE_BTN) {

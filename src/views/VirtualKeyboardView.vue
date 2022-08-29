@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import VirtualKeyboard from "@/components/VirtualKeyboard.vue";
+import VirtualPiano from "@/components/VirtualPiano.vue";
 import type Scale from "@/scale";
 
 type NoteOff = () => void;
@@ -15,12 +16,22 @@ defineProps<{
   keyColors: string[];
   noteOn: NoteOnCallback;
   heldNotes: Map<number, number>;
+  virtualKeyboardMode: "isomorphic" | "piano";
 }>();
 </script>
 
 <template>
   <main>
+    <VirtualPiano
+      v-if="virtualKeyboardMode === 'piano'"
+      :baseIndex="baseMidiNote + equaveShift * scale.size + degreeShift"
+      :baseMidiNote="baseMidiNote"
+      :keyColors="keyColors"
+      :noteOn="noteOn"
+      :heldNotes="heldNotes"
+    ></VirtualPiano>
     <VirtualKeyboard
+      v-else
       :baseIndex="baseMidiNote + equaveShift * scale.size + degreeShift"
       :baseMidiNote="baseMidiNote"
       :isomorphicHorizontal="isomorphicHorizontal"
