@@ -12,6 +12,7 @@ const props = defineProps<{
   isomorphicHorizontal: number;
   isomorphicVertical: number;
   noteOn: NoteOnCallback;
+  heldNotes: Map<number, number>;
 }>();
 
 type VirtualKey = {
@@ -55,7 +56,10 @@ const isMousePressed = ref(false);
       <VirtualKeyboardKey
         v-for="key of row"
         :key="key.x"
-        :class="{ 'hidden-sm': key.x > 8 }"
+        :class="{
+          'hidden-sm': key.x > 8,
+          held: (heldNotes.get(key.index) || 0) > 0,
+        }"
         :color="key.color"
         :isMousePressed="isMousePressed"
         :noteOn="() => noteOn(key.index)"

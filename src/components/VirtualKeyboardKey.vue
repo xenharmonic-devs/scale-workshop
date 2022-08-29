@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onUnmounted } from "vue";
+import { onUnmounted, ref } from "vue";
 
 type NoteOff = () => void;
 type NoteOnCallback = () => NoteOff;
@@ -9,6 +9,8 @@ const props = defineProps<{
   isMousePressed: boolean;
   noteOn: NoteOnCallback;
 }>();
+
+const active = ref(false);
 
 const emit = defineEmits(["press", "unpress"]);
 
@@ -20,15 +22,13 @@ onUnmounted(() => {
   }
 });
 
-function onTouchStart(event: Event) {
-  const target = event.target as HTMLTableCellElement;
-  target.classList.add("active");
+function onTouchStart() {
+  active.value = true;
   noteOff = props.noteOn();
 }
 
-function onTouchEnd(event: Event) {
-  const target = event.target as HTMLTableCellElement;
-  target.classList.remove("active");
+function onTouchEnd() {
+  active.value = false;
   if (noteOff !== null) {
     noteOff();
     noteOff = null;
@@ -42,7 +42,7 @@ function onMouseDown(event: MouseEvent) {
     return;
   }
   emit("press");
-  onTouchStart(event as Event);
+  onTouchStart();
 }
 
 function onMouseUp(event: MouseEvent) {
@@ -50,27 +50,28 @@ function onMouseUp(event: MouseEvent) {
     return;
   }
   emit("unpress");
-  onTouchEnd(event as Event);
+  onTouchEnd();
 }
 
-function onMouseEnter(event: MouseEvent) {
+function onMouseEnter() {
   if (!props.isMousePressed) {
     return;
   }
-  onTouchStart(event as Event);
+  onTouchStart();
 }
 
-function onMouseLeave(event: MouseEvent) {
+function onMouseLeave() {
   if (!props.isMousePressed) {
     return;
   }
-  onTouchEnd(event as Event);
+  onTouchEnd();
 }
 </script>
 
 <template>
   <td
     :style="'background-color:' + color"
+    :class="{ active }"
     @touchstart="onTouchStart"
     @touchend="onTouchEnd"
     @touchcancel="onTouchEnd"
@@ -104,6 +105,14 @@ td:hover {
     rgba(255, 255, 255, 0) 0%,
     rgba(255, 0, 0, 0.5) 50%,
     rgba(255, 255, 255, 0) 100%
+  );
+}
+td.held {
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(200, 230, 0, 0.5) 50%,
+    rgba(0, 0, 0, 0) 100%
   );
 }
 td.active {

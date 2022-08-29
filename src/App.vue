@@ -66,6 +66,7 @@ mapWhiteAsdfBlackQwerty(keyColors.value, keyboardMapping);
 const keyboardMode = ref<"isomorphic" | "mapped">("isomorphic");
 const equaveShift = ref(0);
 const degreeShift = ref(0);
+const heldNotes = reactive(new Map<number, number>());
 const typingActive = ref(true);
 const synth = reactive(new Synth(rootProps.audioContext));
 const midiInput = ref<Input | null>(null);
@@ -225,6 +226,8 @@ function tuningTableKeyOn(index: number) {
       tuningTableRow.heldKeys++;
     }
   }
+  // Virtual keyboard state is too complex so we take the performance hit.
+  heldNotes.set(index, (heldNotes.get(index) || 0) + 1);
 }
 
 function tuningTableKeyOff(index: number) {
@@ -236,6 +239,7 @@ function tuningTableKeyOff(index: number) {
       }
     }
   }
+  heldNotes.set(index, (heldNotes.get(index) || 1) - 1);
 }
 
 // === MIDI input / output ===
@@ -699,6 +703,7 @@ watch(decimalFractionDigits, (newValue) =>
     :midiInput="midiInput"
     :midiOutput="midiOutput"
     :noteOn="keyboardNoteOn"
+    :heldNotes="heldNotes"
     :midiInputChannels="midiInputChannels"
     :midiOutputChannels="midiOutputChannels"
     :synth="synth"
@@ -707,10 +712,10 @@ watch(decimalFractionDigits, (newValue) =>
     :colorScheme="colorScheme"
     :centsFractionDigits="centsFractionDigits"
     :decimalFractionDigits="decimalFractionDigits"
-    @update:mainVolume="mainVolume = $event"
     :midiVelocityOn="midiVelocityOn"
     :midiWhiteMode="midiWhiteMode"
     :midiBlackAverage="midiBlackAverage"
+    @update:mainVolume="mainVolume = $event"
     @update:scaleName="scaleName = $event"
     @update:scaleLines="updateFromScaleLines"
     @update:scale="updateFromScale"

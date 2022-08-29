@@ -13,6 +13,7 @@ defineProps<{
   scale: Scale;
   keyColors: string[];
   noteOn: NoteOnCallback;
+  heldNotes: Map<number, number>;
 }>();
 </script>
 
@@ -24,6 +25,7 @@ defineProps<{
       :isomorphicVertical="isomorphicVertical"
       :keyColors="keyColors"
       :noteOn="noteOn"
+      :heldNotes="heldNotes"
     ></VirtualKeyboard>
   </main>
 </template>
