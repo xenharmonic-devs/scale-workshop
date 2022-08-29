@@ -8,6 +8,7 @@ type NoteOnCallback = (index: number) => NoteOff;
 
 const props = defineProps<{
   baseIndex: number; // Should incorporate equave shift
+  baseMidiNote: number;
   keyColors: string[];
   isomorphicHorizontal: number;
   isomorphicVertical: number;
@@ -35,7 +36,7 @@ const virtualKeys = computed(() => {
         x,
         y,
         index,
-        color: colors[mmod(index, colors.length)],
+        color: colors[mmod(index - props.baseMidiNote, colors.length)],
       });
     }
     result.push([y, row]);
