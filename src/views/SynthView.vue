@@ -26,6 +26,7 @@ const emit = defineEmits([
   "mapAsdf",
   "mapZxcv0",
   "mapZxcv1",
+  "panic",
 ]);
 
 const timeDomainVisualizer = ref<any>(null);
@@ -173,6 +174,7 @@ onUnmounted(() => {
             step="any"
             v-model="mainVolume"
           />
+          <button @click="emit('panic')">Panic</button>
           <div class="control">
             <label for="waveform">Waveform</label>
             <!-- eslint-disable-next-line vue/no-mutating-props -->
