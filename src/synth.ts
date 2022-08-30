@@ -52,6 +52,50 @@ export function initializeCustomWaveforms(audioContext: AudioContext) {
     semisineCosineComponents,
     semisineSineComponents
   );
+
+  // Subgroup optimized waveforms
+
+  const zeros = new Float32Array(101);
+  const rich = new Float32Array(101);
+  const bohlen = new Float32Array(101);
+  const glass = new Float32Array(101);
+  const boethius = new Float32Array(101);
+
+  // No multiples of 13, 17 or primes above 23
+  const lowPrimeHarmonics = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 18, 19, 20, 21, 22, 24,
+    25, 27, 28, 30, 32, 33, 35, 36, 38, 40, 42, 44, 45, 48, 49, 50, 54, 55, 56,
+    57, 60, 63, 64, 66, 70, 72, 75, 76, 77, 80, 81, 84, 88, 90, 95, 96, 98, 99,
+    100,
+  ];
+
+  lowPrimeHarmonics.forEach((n) => {
+    if (n % 7 && n % 11 && n % 19) {
+      rich[n] = 1 / n;
+    }
+    if (n % 2 && n % 11 && n % 19) {
+      bohlen[n] = 1 / n;
+    }
+    if (n % 3 && n % 5 && n % 19) {
+      if (n % 7 && n % 11) {
+        glass[n] = 1 / n;
+      } else {
+        glass[n] = 2 / n;
+      }
+    }
+    if (n % 5 && n % 7 && n % 11) {
+      if (n % 19) {
+        boethius[n] = 1 / n;
+      } else {
+        boethius[n] = 2 / n;
+      }
+    }
+  });
+
+  CUSTOM_WAVEFORMS.rich = audioContext.createPeriodicWave(zeros, rich);
+  CUSTOM_WAVEFORMS.bohlen = audioContext.createPeriodicWave(zeros, bohlen);
+  CUSTOM_WAVEFORMS.glass = audioContext.createPeriodicWave(zeros, glass);
+  CUSTOM_WAVEFORMS.boethius = audioContext.createPeriodicWave(zeros, boethius);
 }
 
 // Simple web audio synth of infinite polyphony.
