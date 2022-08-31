@@ -8,6 +8,7 @@ type NoteOnCallback = (index: number) => NoteOff;
 defineProps<{
   baseMidiNote: number;
   equaveShift: number;
+  degreeShift: number;
   isomorphicHorizontal: number;
   isomorphicVertical: number;
   scale: Scale;
@@ -20,7 +21,8 @@ defineProps<{
 <template>
   <main>
     <VirtualKeyboard
-      :baseIndex="baseMidiNote + equaveShift * scale.size"
+      :baseIndex="baseMidiNote + equaveShift * scale.size + degreeShift"
+      :baseMidiNote="baseMidiNote"
       :isomorphicHorizontal="isomorphicHorizontal"
       :isomorphicVertical="isomorphicVertical"
       :keyColors="keyColors"
