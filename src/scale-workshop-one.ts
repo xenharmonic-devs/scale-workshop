@@ -124,4 +124,72 @@ export class ScaleWorkshopOneData {
     const scale = Scale.fromIntervalArray(intervals, this.freq);
     return scale;
   }
+
+  get attackTime() {
+    switch (this.ampenv) {
+      case "organ":
+        return 0.01;
+      case "pad":
+        return 0.5;
+      case "perc-short":
+        return 0.002;
+      case "perc-medium":
+        return 0.003;
+      case "perc-long":
+        return 0.005;
+      default:
+        return 0.01;
+    }
+  }
+
+  get decayTime() {
+    switch (this.ampenv) {
+      case "organ":
+        return 0.15;
+      case "pad":
+        return 1.5;
+      case "perc-short":
+        return 0.125;
+      case "perc-medium":
+        return 0.5;
+      case "perc-long":
+        return 4;
+      default:
+        return 0.3;
+    }
+  }
+
+  get sustainLevel() {
+    switch (this.ampenv) {
+      case "organ":
+        return 0.8;
+      case "pad":
+        return 0.5;
+      case "perc-short":
+        return 0.0;
+      case "perc-medium":
+        return 0.0;
+      case "perc-long":
+        return 0.0;
+      default:
+        return 0.8;
+    }
+  }
+
+  get releaseTime() {
+    switch (this.ampenv) {
+      case "organ":
+        return 0.01;
+      case "pad":
+        return 0.7;
+      case "perc-short":
+        return 0.1;
+      case "perc-medium":
+        return 0.3;
+      case "perc-long":
+        return 0.8;
+      default:
+        return 0.01;
+    }
+  }
 }

@@ -5,6 +5,7 @@
 
 import OctaplexPortal from "@/components/modals/generation/SummonOctaplex.vue";
 import type Scale from "@/scale";
+import type { Synth } from "@/synth";
 import { encodeQuery } from "@/url-encode";
 import { nextTick, ref } from "vue";
 import { useRouter, type LocationQuery } from "vue-router";
@@ -26,6 +27,8 @@ const props = defineProps<{
 
   equaveShift: number;
   degreeShift: number;
+
+  synth: Synth;
 }>();
 
 const emit = defineEmits(["update:scale", "update:scaleName"]);
@@ -52,6 +55,12 @@ function openTheGates(scale: Scale) {
       keyboardMapping: props.keyboardMapping,
       equaveShift: props.equaveShift,
       degreeShift: props.degreeShift,
+
+      waveform: props.synth.waveform,
+      attackTime: props.synth.attackTime,
+      decayTime: props.synth.decayTime,
+      sustainLevel: props.synth.sustainLevel,
+      releaseTime: props.synth.releaseTime,
     };
 
     const query = encodeQuery(state) as LocationQuery;

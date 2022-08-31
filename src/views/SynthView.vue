@@ -1,4 +1,5 @@
 <script setup lang="ts">
+/* eslint vue/no-mutating-props: 0 */
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import TimeDomainVisualizer from "@/components/TimeDomainVisualizer.vue";
 import { BASIC_WAVEFORMS, CUSTOM_WAVEFORMS, type Synth } from "@/synth";
@@ -77,8 +78,6 @@ const attackTime = computed({
       newValue = parseFloat(newValue);
     }
     if (!isNaN(newValue)) {
-      // Whatever, this is a temporary solution...
-      // eslint-disable-next-line vue/no-mutating-props
       props.synth.attackTime = newValue;
     }
   },
@@ -91,7 +90,6 @@ const decayTime = computed({
       newValue = parseFloat(newValue);
     }
     if (!isNaN(newValue)) {
-      // eslint-disable-next-line vue/no-mutating-props
       props.synth.decayTime = newValue;
     }
   },
@@ -104,7 +102,6 @@ const sustainLevel = computed({
       newValue = parseFloat(newValue);
     }
     if (!isNaN(newValue)) {
-      // eslint-disable-next-line vue/no-mutating-props
       props.synth.sustainLevel = newValue;
     }
   },
@@ -117,7 +114,6 @@ const releaseTime = computed({
       newValue = parseFloat(newValue);
     }
     if (!isNaN(newValue)) {
-      // eslint-disable-next-line vue/no-mutating-props
       props.synth.releaseTime = newValue;
     }
   },
@@ -131,6 +127,41 @@ const strokeStyle = computed(() => {
     .getPropertyValue("--color-text")
     .trim();
 });
+
+function presetOrgan() {
+  props.synth.attackTime = 0.01;
+  props.synth.decayTime = 0.15;
+  props.synth.sustainLevel = 0.8;
+  props.synth.releaseTime = 0.01;
+}
+
+function presetPad() {
+  props.synth.attackTime = 0.5;
+  props.synth.decayTime = 1.5;
+  props.synth.sustainLevel = 0.5;
+  props.synth.releaseTime = 0.7;
+}
+
+function presetShort() {
+  props.synth.attackTime = 0.002;
+  props.synth.decayTime = 0.125;
+  props.synth.sustainLevel = 0.0;
+  props.synth.releaseTime = 0.1;
+}
+
+function presetMedium() {
+  props.synth.attackTime = 0.003;
+  props.synth.decayTime = 1.5;
+  props.synth.sustainLevel = 0.0;
+  props.synth.releaseTime = 0.3;
+}
+
+function presetLong() {
+  props.synth.attackTime = 0.005;
+  props.synth.decayTime = 4;
+  props.synth.sustainLevel = 0.0;
+  props.synth.releaseTime = 0.8;
+}
 
 onMounted(() => {
   if (props.audioOutput !== null) {
@@ -204,7 +235,7 @@ onUnmounted(() => {
             class="control"
             type="range"
             min="0.01"
-            max="1.0"
+            max="4.0"
             step="any"
             v-model="decayTime"
           />
@@ -213,7 +244,7 @@ onUnmounted(() => {
             id="sustain"
             class="control"
             type="range"
-            min="0.01"
+            min="0.0"
             max="1.0"
             step="any"
             v-model="sustainLevel"
@@ -228,6 +259,14 @@ onUnmounted(() => {
             step="any"
             v-model="releaseTime"
           />
+          <div class="btn-group">
+            <label>Presets</label>
+            <button @click="presetOrgan">Organ</button>
+            <button @click="presetPad">Pad</button>
+            <button @click="presetShort">Percussive (Short)</button>
+            <button @click="presetMedium">Percussive (Medium)</button>
+            <button @click="presetLong">Percussive (Long)</button>
+          </div>
         </div>
       </div>
       <div class="column keyboard-controls">
