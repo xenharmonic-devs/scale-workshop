@@ -389,3 +389,8 @@ export function parseChord(
   });
   return chord;
 }
+
+export function parseChordInput(input: string) {
+  const separator = input.includes(":") ? ":" : /\s/;
+  return parseChord(input, separator);
+}

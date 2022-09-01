@@ -2,7 +2,7 @@
 import { reactive, ref, watch } from "vue";
 import Modal from "@/components/ModalDialog.vue";
 import ScaleLineInput from "@/components/ScaleLineInput.vue";
-import { parseChord } from "@/parser";
+import { parseChordInput } from "@/parser";
 import Scale from "@/scale";
 import { Interval, type IntervalOptions } from "@/interval";
 import ExtendedMonzo from "@/monzo";
@@ -48,9 +48,7 @@ const [basis, basisError] = computedAndError(() => {
   if (!props.show) {
     return [];
   }
-  const input = basisString.value;
-  const separator = input.includes(":") ? ":" : /\s/;
-  return parseChord(input, separator);
+  return parseChordInput(basisString.value);
 }, []);
 watch(basisError, (newError) =>
   basisElement.value!.setCustomValidity(newError)
