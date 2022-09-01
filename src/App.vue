@@ -63,7 +63,7 @@ const isomorphicVertical = ref(5);
 const isomorphicHorizontal = ref(1);
 const keyboardMapping = reactive<Map<string, number>>(new Map());
 mapWhiteAsdfBlackQwerty(keyColors.value, keyboardMapping);
-const keyboardMode = ref<"isomorphic" | "mapped">("isomorphic");
+const keyboardMode = ref<"isomorphic" | "mapped">("isomorphic"); // physical qwerty
 const equaveShift = ref(0);
 const degreeShift = ref(0);
 const heldNotes = reactive(new Map<number, number>());
@@ -85,6 +85,7 @@ const newline = ref(UNIX_NEWLINE);
 const colorScheme = ref<"light" | "dark">("light");
 const centsFractionDigits = ref(3);
 const decimalFractionDigits = ref(5);
+const virtualKeyboardMode = ref<"isomorphic" | "piano">("isomorphic"); // on-screen
 // Special keyboard codes also from local storage.
 const deactivationCode = ref("Backquote");
 const equaveUpCode = ref("NumpadMultiply");
@@ -626,6 +627,12 @@ onMounted(() => {
   if ("degreeDownCode" in storage) {
     degreeDownCode.value = storage.getItem("degreeDownCode")!;
   }
+  if ("virtualKeyboardMode" in storage) {
+    const mode = storage.getItem("virtualKeyboardMode");
+    if (mode === "isomorphic" || mode === "piano") {
+      virtualKeyboardMode.value = mode;
+    }
+  }
 });
 
 onUnmounted(() => {
@@ -715,6 +722,9 @@ watch(centsFractionDigits, (newValue) =>
 watch(decimalFractionDigits, (newValue) =>
   window.localStorage.setItem("decimalFractionDigits", newValue.toString())
 );
+watch(virtualKeyboardMode, (newValue) =>
+  window.localStorage.setItem("virtualKeyboardMode", newValue)
+);
 // Store keymaps
 watch(deactivationCode, (newValue) =>
   window.localStorage.setItem("deactivationCode", newValue)
@@ -779,6 +789,7 @@ watch(degreeDownCode, (newValue) =>
     :colorScheme="colorScheme"
     :centsFractionDigits="centsFractionDigits"
     :decimalFractionDigits="decimalFractionDigits"
+    :virtualKeyboardMode="virtualKeyboardMode"
     :midiVelocityOn="midiVelocityOn"
     :midiWhiteMode="midiWhiteMode"
     :midiBlackAverage="midiBlackAverage"
@@ -822,6 +833,7 @@ watch(degreeDownCode, (newValue) =>
     @update:equaveDownCode="equaveDownCode = $event"
     @update:degreeUpCode="degreeUpCode = $event"
     @update:degreeDownCode="degreeDownCode = $event"
+    @update:virtualKeyboardMode="virtualKeyboardMode = $event"
     @panic="panic"
   />
 </template>

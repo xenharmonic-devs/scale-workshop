@@ -22,3 +22,6 @@ export const KORG = {
     refC: { val: 6000, ind: 60, freq: 261.6255653 },
   },
 };
+
+// Browser interaction
+export const LEFT_MOUSE_BTN = 0;
