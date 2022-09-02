@@ -11,7 +11,13 @@ import { ScaleWorkshopOneData } from "@/scale-workshop-one";
 import type { Input, Output } from "webmidi";
 import Scale from "@/scale";
 import { parseLine } from "@/parser";
-import { bendRangeInSemitones, MidiIn, midiNoteInfo, MidiOut } from "@/midi";
+import {
+  bendRangeInSemitones,
+  computeWhiteIndices,
+  MidiIn,
+  midiNoteInfo,
+  MidiOut,
+} from "@/midi";
 import { Keyboard, type CoordinateKeyboardEvent } from "@/keyboard";
 import { decodeQuery, encodeQuery, type DecodedState } from "@/url-encode";
 import { debounce } from "@/utils";
@@ -78,8 +84,6 @@ const midiOutputChannels = ref(
 );
 const virtualSynth = reactive(new VirtualSynth(rootProps.audioContext));
 const midiVelocityOn = ref(true);
-const midiWhiteMode = ref(false);
-const midiBlackAverage = ref(false);
 // The synth needs to wait for a user gesture to initialize
 const synth = ref<Synth | null>(null);
 // These are synth params that use watchers to relay their values to the synth
@@ -89,6 +93,9 @@ const decayTime = ref(0.3);
 const sustainLevel = ref(0.8);
 const releaseTime = ref(0.01);
 const maxPolyphony = ref(6);
+const midiWhiteMode = ref<"off" | "simple" | "blackAverage" | "keyColors">(
+  "off"
+);
 // These are user preferences and are fetched from local storage.
 const newline = ref(UNIX_NEWLINE);
 const colorScheme = ref<"light" | "dark">("light");
@@ -106,6 +113,11 @@ const frequencies = computed(() =>
   [...Array(NUMBER_OF_NOTES).keys()].map((i) =>
     scale.getFrequency(i - baseMidiNote.value)
   )
+);
+
+// For midi mapping
+const whiteIndices = computed(() =>
+  computeWhiteIndices(baseMidiNote.value, keyColors.value)
 );
 
 const keyboardMapping = computed<Map<string, number>>(() => {
@@ -369,28 +381,52 @@ function midiNoteOn(index: number, rawAttack: number) {
   // Store state to ensure consistent note off.
   const info = midiNoteInfo(index);
   const whiteMode = midiWhiteMode.value;
-  const blackAverage = midiBlackAverage.value;
+  const indices = whiteIndices.value;
 
-  if (whiteMode) {
+  if (whiteMode === "off") {
+    tuningTableKeyOn(index);
+  } else if (whiteMode === "simple") {
     if (info.whiteNumber === undefined) {
-      info.flatOf += WHITE_MODE_OFFSET;
-      info.sharpOf += WHITE_MODE_OFFSET;
-      if (blackAverage) {
-        frequency = Math.sqrt(
-          getFrequency(info.flatOf) * getFrequency(info.sharpOf)
-        );
-        tuningTableKeyOn(info.flatOf);
-        tuningTableKeyOn(info.sharpOf);
-      } else {
-        frequency = NaN;
-      }
+      frequency = NaN;
     } else {
       info.whiteNumber += WHITE_MODE_OFFSET;
       frequency = getFrequency(info.whiteNumber);
       tuningTableKeyOn(info.whiteNumber);
     }
-  } else {
-    tuningTableKeyOn(index);
+  } else if (whiteMode === "blackAverage") {
+    if (info.whiteNumber === undefined) {
+      info.flatOf += WHITE_MODE_OFFSET;
+      info.sharpOf += WHITE_MODE_OFFSET;
+      frequency = Math.sqrt(
+        getFrequency(info.flatOf) * getFrequency(info.sharpOf)
+      );
+      tuningTableKeyOn(info.flatOf);
+      tuningTableKeyOn(info.sharpOf);
+    } else {
+      info.whiteNumber += WHITE_MODE_OFFSET;
+      frequency = getFrequency(info.whiteNumber);
+      tuningTableKeyOn(info.whiteNumber);
+    }
+  } else if (whiteMode === "keyColors") {
+    if (indices.length) {
+      if (info.whiteNumber === undefined) {
+        // Use a black key if available
+        index = indices[info.sharpOf] + 1;
+        // Eliminate duplicates
+        if (index === indices[info.sharpOf + 1]) {
+          frequency = NaN;
+        } else {
+          frequency = getFrequency(index);
+          tuningTableKeyOn(index);
+        }
+      } else {
+        index = indices[info.whiteNumber];
+        frequency = getFrequency(index);
+        tuningTableKeyOn(index);
+      }
+    } else {
+      frequency = NaN;
+    }
   }
 
   if (isNaN(frequency)) {
@@ -403,12 +439,14 @@ function midiNoteOn(index: number, rawAttack: number) {
     if (!midiVelocityOn.value) {
       rawRelease = 80;
     }
-    if (whiteMode) {
+    if (whiteMode === "simple") {
+      if (info.whiteNumber !== undefined) {
+        tuningTableKeyOff(info.whiteNumber);
+      }
+    } else if (whiteMode === "blackAverage") {
       if (info.whiteNumber === undefined) {
-        if (blackAverage) {
-          tuningTableKeyOff(info.flatOf);
-          tuningTableKeyOff(info.sharpOf);
-        }
+        tuningTableKeyOff(info.flatOf);
+        tuningTableKeyOff(info.sharpOf);
       } else {
         tuningTableKeyOff(info.whiteNumber);
       }
@@ -901,7 +939,6 @@ watch(degreeDownCode, (newValue) =>
     :decimalFractionDigits="decimalFractionDigits"
     :midiVelocityOn="midiVelocityOn"
     :midiWhiteMode="midiWhiteMode"
-    :midiBlackAverage="midiBlackAverage"
     :deactivationCode="deactivationCode"
     :equaveUpCode="equaveUpCode"
     :equaveDownCode="equaveDownCode"
@@ -932,7 +969,6 @@ watch(degreeDownCode, (newValue) =>
     @update:midiOutputChannels="midiOutputChannels = $event"
     @update:midiVelocityOn="midiVelocityOn = $event"
     @update:midiWhiteMode="midiWhiteMode = $event"
-    @update:midiBlackAverage="midiBlackAverage = $event"
     @update:newline="newline = $event"
     @update:colorScheme="colorScheme = $event"
     @update:centsFractionDigits="centsFractionDigits = $event"

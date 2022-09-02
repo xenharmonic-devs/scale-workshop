@@ -8,8 +8,7 @@ const props = defineProps<{
   midiInputChannels: Set<number>;
   midiOutputChannels: Set<number>;
   midiVelocityOn: boolean;
-  midiWhiteMode: boolean;
-  midiBlackAverage: boolean;
+  midiWhiteMode: "off" | "simple" | "blackAverage" | "keyColors";
 }>();
 
 const emit = defineEmits([
@@ -19,7 +18,6 @@ const emit = defineEmits([
   "update:midiOutputChannels",
   "update:midiVelocityOn",
   "update:midiWhiteMode",
-  "update:midiBlackAverage",
 ]);
 
 const inputs = reactive<Input[]>([]);
@@ -31,10 +29,6 @@ const midiVelocityOn = computed({
 const midiWhiteMode = computed({
   get: () => props.midiWhiteMode,
   set: (newValue) => emit("update:midiWhiteMode", newValue),
-});
-const midiBlackAverage = computed({
-  get: () => props.midiBlackAverage,
-  set: (newValue) => emit("update:midiBlackAverage", newValue),
 });
 
 function selectMidiInput(event: Event) {
@@ -144,24 +138,44 @@ onMounted(async () => {
             />
             <label for="midi-velocity">Use velocity</label>
           </div>
-          <div class="control checkbox-container">
-            <input
-              type="checkbox"
-              id="midi-white-mode"
-              v-model="midiWhiteMode"
-            />
-            <label for="midi-white-mode">Map white keys only</label>
-          </div>
-          <div class="control checkbox-container">
-            <input
-              type="checkbox"
-              id="midi-black-average"
-              :disabled="!midiWhiteMode"
-              v-model="midiBlackAverage"
-            />
-            <label for="midi-black-average"
-              >Play averaged notes on black keys</label
-            >
+          <div class="control radio-group">
+            <label>Color mapping</label>
+            <span>
+              <input
+                type="radio"
+                id="white-off"
+                value="off"
+                v-model="midiWhiteMode"
+              />
+              <label for="white-off"> Chromatic </label>
+            </span>
+            <span>
+              <input
+                type="radio"
+                id="white-simple"
+                value="simple"
+                v-model="midiWhiteMode"
+              />
+              <label for="white-simple"> White only </label>
+            </span>
+            <span>
+              <input
+                type="radio"
+                id="white-black"
+                value="blackAverage"
+                v-model="midiWhiteMode"
+              />
+              <label for="white-black"> White w/ interpolation </label>
+            </span>
+            <span>
+              <input
+                type="radio"
+                id="white-color"
+                value="keyColors"
+                v-model="midiWhiteMode"
+              />
+              <label for="white-color"> White key to white color </label>
+            </span>
           </div>
         </div>
       </div>
