@@ -1,14 +1,12 @@
 <script setup lang="ts">
-/* eslint vue/no-mutating-props: 0 */
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import TimeDomainVisualizer from "@/components/TimeDomainVisualizer.vue";
 import Modal from "@/components/ModalDialog.vue";
-import { BASIC_WAVEFORMS, CUSTOM_WAVEFORMS, type Synth } from "@/synth";
+import { BASIC_WAVEFORMS, CUSTOM_WAVEFORMS } from "@/synth";
 
 const props = defineProps<{
   audioContext: AudioContext;
   audioOutput: AudioNode | null;
-  synth: Synth;
   mainVolume: number;
   keyboardMode: "isomorphic" | "piano";
   pianoMode: "Asdf" | "QweZxc0" | "QweZxc1";
@@ -22,6 +20,12 @@ const props = defineProps<{
   equaveDownCode: string;
   degreeUpCode: string;
   degreeDownCode: string;
+  waveform: string;
+  attackTime: number;
+  decayTime: number;
+  sustainLevel: number;
+  releaseTime: number;
+  maxPolyphony: number;
 }>();
 
 const emit = defineEmits([
@@ -37,6 +41,15 @@ const emit = defineEmits([
   "update:equaveDownCode",
   "update:degreeUpCode",
   "update:degreeDownCode",
+  "update:waveform",
+  "update:attackTime",
+  "update:decayTime",
+  "update:sustainLevel",
+  "update:releaseTime",
+  "update:maxPolyphony",
+  "mapAsdf",
+  "mapZxcv0",
+  "mapZxcv1",
   "panic",
 ]);
 
@@ -85,54 +98,67 @@ const degreeShift = computed({
   set: (newValue: number) => emit("update:degreeShift", newValue),
 });
 
-// Synth parameters not stored in URL because this synth is temporary.
 const waveforms = BASIC_WAVEFORMS.concat(Object.keys(CUSTOM_WAVEFORMS));
 
+const waveform = computed({
+  get: () => props.waveform,
+  set(newValue: string) {
+    emit("update:waveform", newValue);
+  },
+});
+
 const attackTime = computed({
-  get: () => props.synth.attackTime,
+  get: () => props.attackTime,
   set(newValue: number) {
     if (typeof newValue !== "number") {
       newValue = parseFloat(newValue);
     }
     if (!isNaN(newValue)) {
-      props.synth.attackTime = newValue;
+      emit("update:attackTime", newValue);
     }
   },
 });
 
 const decayTime = computed({
-  get: () => props.synth.decayTime,
+  get: () => props.decayTime,
   set(newValue: number) {
     if (typeof newValue !== "number") {
       newValue = parseFloat(newValue);
     }
     if (!isNaN(newValue)) {
-      props.synth.decayTime = newValue;
+      emit("update:decayTime", newValue);
     }
   },
 });
 
 const sustainLevel = computed({
-  get: () => props.synth.sustainLevel,
+  get: () => props.sustainLevel,
   set(newValue: number) {
     if (typeof newValue !== "number") {
       newValue = parseFloat(newValue);
     }
     if (!isNaN(newValue)) {
-      props.synth.sustainLevel = newValue;
+      emit("update:sustainLevel", newValue);
     }
   },
 });
 
 const releaseTime = computed({
-  get: () => props.synth.releaseTime,
+  get: () => props.releaseTime,
   set(newValue: number) {
     if (typeof newValue !== "number") {
       newValue = parseFloat(newValue);
     }
     if (!isNaN(newValue)) {
-      props.synth.releaseTime = newValue;
+      emit("update:releaseTime", newValue);
     }
+  },
+});
+
+const maxPolyphony = computed({
+  get: () => props.maxPolyphony,
+  set(newValue: number) {
+    emit("update:maxPolyphony", newValue);
   },
 });
 
@@ -146,38 +172,38 @@ const strokeStyle = computed(() => {
 });
 
 function presetOrgan() {
-  props.synth.attackTime = 0.01;
-  props.synth.decayTime = 0.15;
-  props.synth.sustainLevel = 0.8;
-  props.synth.releaseTime = 0.01;
+  attackTime.value = 0.01;
+  decayTime.value = 0.15;
+  sustainLevel.value = 0.8;
+  releaseTime.value = 0.01;
 }
 
 function presetPad() {
-  props.synth.attackTime = 0.5;
-  props.synth.decayTime = 1.5;
-  props.synth.sustainLevel = 0.5;
-  props.synth.releaseTime = 0.7;
+  attackTime.value = 0.5;
+  decayTime.value = 1.5;
+  sustainLevel.value = 0.5;
+  releaseTime.value = 0.7;
 }
 
 function presetShort() {
-  props.synth.attackTime = 0.002;
-  props.synth.decayTime = 0.125;
-  props.synth.sustainLevel = 0.0;
-  props.synth.releaseTime = 0.1;
+  attackTime.value = 0.002;
+  decayTime.value = 0.125;
+  sustainLevel.value = 0.0;
+  releaseTime.value = 0.1;
 }
 
 function presetMedium() {
-  props.synth.attackTime = 0.003;
-  props.synth.decayTime = 1.5;
-  props.synth.sustainLevel = 0.0;
-  props.synth.releaseTime = 0.3;
+  attackTime.value = 0.003;
+  decayTime.value = 1.5;
+  sustainLevel.value = 0.0;
+  releaseTime.value = 0.3;
 }
 
 function presetLong() {
-  props.synth.attackTime = 0.005;
-  props.synth.decayTime = 4;
-  props.synth.sustainLevel = 0.0;
-  props.synth.releaseTime = 0.8;
+  attackTime.value = 0.005;
+  decayTime.value = 4;
+  sustainLevel.value = 0.0;
+  releaseTime.value = 0.8;
 }
 
 function assignCode(event: KeyboardEvent) {
@@ -234,8 +260,7 @@ onUnmounted(() => {
           <button @click="emit('panic')">Panic</button>
           <div class="control">
             <label for="waveform">Waveform</label>
-            <!-- eslint-disable-next-line vue/no-mutating-props -->
-            <select id="waveform" class="control" v-model="synth.waveform">
+            <select id="waveform" class="control" v-model="waveform">
               <option
                 v-for="waveform of waveforms"
                 :value="waveform"
@@ -292,6 +317,16 @@ onUnmounted(() => {
             <button @click="presetShort">Percussive (Short)</button>
             <button @click="presetMedium">Percussive (Medium)</button>
             <button @click="presetLong">Percussive (Long)</button>
+          </div>
+          <div class="control">
+            <label for="polyphony">Max polyphony</label>
+            <input
+              id="polyphony"
+              type="number"
+              min="1"
+              max="32"
+              v-model="maxPolyphony"
+            />
           </div>
         </div>
       </div>

@@ -1,6 +1,9 @@
 // Exponential approach conversion, smaller value results in more eager envelopes
 const TIME_CONSTANT = 0.5;
 
+// Large but finite number to signify voices that are off
+const EXPIRED = 10000;
+
 export const BASIC_WAVEFORMS = ["sine", "square", "sawtooth", "triangle"];
 export const CUSTOM_WAVEFORMS: { [key: string]: PeriodicWave } = {};
 
@@ -98,62 +101,163 @@ export function initializeCustomWaveforms(audioContext: AudioContext) {
   CUSTOM_WAVEFORMS.boethius = audioContext.createPeriodicWave(zeros, boethius);
 }
 
-// Simple web audio synth of infinite polyphony.
+// Tracking numbers for voice stealing
+// Technically we could run out of note identifiers,
+// but who is going to play 9007199254740991 notes in one session?
+let NOTE_ID = 1;
+
+// Simple combination of envelope and oscillator
+class Voice {
+  age: number;
+  audioContext: AudioContext;
+  oscillator: OscillatorNode;
+  envelope: GainNode;
+  noteId: number;
+
+  constructor(audioContext: AudioContext, destination: AudioNode) {
+    this.age = EXPIRED;
+    this.audioContext = audioContext;
+
+    this.oscillator = this.audioContext.createOscillator();
+    this.envelope = this.audioContext.createGain();
+    this.oscillator.connect(this.envelope).connect(destination);
+    const now = this.audioContext.currentTime;
+    this.envelope.gain.setValueAtTime(0, now);
+    this.oscillator.start(now);
+    this.oscillator.addEventListener("ended", () => {
+      this.envelope.disconnect();
+      this.oscillator.disconnect();
+    });
+
+    this.noteId = 0;
+  }
+
+  noteOn(
+    frequency: number,
+    velocity: number,
+    waveform: string,
+    attackTime: number,
+    decayTime: number,
+    sustainLevel: number,
+    releaseTime: number,
+    noteId: number
+  ) {
+    this.age = 0;
+    this.noteId = noteId;
+
+    if (BASIC_WAVEFORMS.includes(waveform)) {
+      this.oscillator.type = waveform as OscillatorType;
+    } else {
+      this.oscillator.setPeriodicWave(CUSTOM_WAVEFORMS[waveform]);
+    }
+
+    const now = this.audioContext.currentTime;
+    this.oscillator.frequency.setValueAtTime(frequency, now);
+    this.envelope.gain.setValueAtTime(0, now);
+    this.envelope.gain.setTargetAtTime(
+      velocity,
+      now,
+      attackTime * TIME_CONSTANT
+    );
+    this.envelope.gain.setTargetAtTime(
+      velocity * sustainLevel,
+      now + attackTime,
+      decayTime * TIME_CONSTANT
+    );
+
+    const noteOff = () => {
+      // Do nothing if the voice has been stolen.
+      if (this.noteId !== noteId) {
+        return;
+      }
+      this.age = EXPIRED;
+      const then = this.audioContext.currentTime;
+      this.envelope.gain.cancelScheduledValues(then);
+      this.envelope.gain.setTargetAtTime(0, then, releaseTime * TIME_CONSTANT);
+    };
+
+    return noteOff;
+  }
+
+  dispose() {
+    this.oscillator.stop();
+  }
+}
+
+// Simple web audio synth of finite polyphony.
 export class Synth {
   audioContext: AudioContext;
+  destination: AudioNode;
   waveform: string;
   attackTime: number;
   decayTime: number;
   sustainLevel: number;
   releaseTime: number;
+  voices: Voice[];
 
-  constructor(audioContext: AudioContext) {
+  constructor(
+    audioContext: AudioContext,
+    destination: AudioNode,
+    waveform = "semisine",
+    attackTime = 0.01,
+    decayTime = 0.3,
+    sustainLevel = 0.8,
+    releaseTime = 0.01,
+    maxPolyphony = 6
+  ) {
     this.audioContext = audioContext;
-    this.waveform = "semisine";
-    this.attackTime = 0.01;
-    this.decayTime = 0.3;
-    this.sustainLevel = 0.8;
-    this.releaseTime = 0.01;
+    this.destination = destination;
+    this.waveform = waveform;
+    this.attackTime = attackTime;
+    this.decayTime = decayTime;
+    this.sustainLevel = sustainLevel;
+    this.releaseTime = releaseTime;
+
+    this.voices = [];
+    this.setPolyphony(maxPolyphony);
   }
 
-  noteOn(frequency: number, velocity: number, destination: AudioNode) {
-    const oscillator = this.audioContext.createOscillator();
-    if (BASIC_WAVEFORMS.includes(this.waveform)) {
-      oscillator.type = this.waveform as OscillatorType;
-    } else {
-      oscillator.setPeriodicWave(CUSTOM_WAVEFORMS[this.waveform]);
+  setPolyphony(maxPolyphony: number) {
+    while (this.voices.length > maxPolyphony) {
+      this.voices.pop()?.dispose();
     }
-    const envelope = this.audioContext.createGain();
-    oscillator.connect(envelope).connect(destination);
-    oscillator.addEventListener("ended", () => {
-      envelope.disconnect();
-      oscillator.disconnect();
-    });
+    while (this.voices.length < maxPolyphony) {
+      this.voices.push(new Voice(this.audioContext, this.destination));
+    }
+  }
 
-    const now = this.audioContext.currentTime;
-    oscillator.frequency.setValueAtTime(frequency, now);
-    envelope.gain.setValueAtTime(0, now);
-    envelope.gain.setTargetAtTime(
+  get maxPolyphony() {
+    return this.voices.length;
+  }
+  set maxPolyphony(value: number) {
+    this.setPolyphony(value);
+  }
+
+  noteOn(frequency: number, velocity: number) {
+    // Allocate voices based on age.
+    // Boils down to:
+    // a) Pick the oldest released voice.
+    // b) If there are no released voices, replace the oldest currently playing voice.
+    let oldestVoice: Voice | undefined;
+    for (const voice of this.voices) {
+      voice.age++;
+      if (oldestVoice === undefined || voice.age > oldestVoice.age) {
+        oldestVoice = voice;
+      }
+    }
+    if (oldestVoice === undefined) {
+      return () => {};
+    }
+
+    return oldestVoice.noteOn(
+      frequency,
       velocity,
-      now,
-      this.attackTime * TIME_CONSTANT
+      this.waveform,
+      this.attackTime,
+      this.decayTime,
+      this.sustainLevel,
+      this.releaseTime,
+      NOTE_ID++
     );
-    envelope.gain.setTargetAtTime(
-      velocity * this.sustainLevel,
-      now + this.attackTime,
-      this.decayTime * TIME_CONSTANT
-    );
-
-    oscillator.start(now);
-
-    const noteOff = () => {
-      const then = this.audioContext.currentTime;
-      envelope.gain.cancelScheduledValues(then);
-      envelope.gain.setTargetAtTime(0, then, this.releaseTime * TIME_CONSTANT);
-      // Extend time a bit to let exponential tail fall off.
-      oscillator.stop(then + 3.0 * this.releaseTime);
-    };
-
-    return noteOff;
   }
 }

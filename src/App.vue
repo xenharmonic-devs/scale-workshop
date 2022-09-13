@@ -69,7 +69,6 @@ const equaveShift = ref(0);
 const degreeShift = ref(0);
 const heldNotes = reactive(new Map<number, number>());
 const typingActive = ref(true);
-const synth = reactive(new Synth(rootProps.audioContext));
 const midiInput = ref<Input | null>(null);
 const midiOutput = ref<Output | null>(null);
 const midiInputChannels = reactive(new Set([1]));
@@ -81,6 +80,15 @@ const virtualSynth = reactive(new VirtualSynth(rootProps.audioContext));
 const midiVelocityOn = ref(true);
 const midiWhiteMode = ref(false);
 const midiBlackAverage = ref(false);
+// The synth needs to wait for a user gesture to initialize
+const synth = ref<Synth | null>(null);
+// These are synth params that use watchers to relay their values to the synth
+const waveform = ref("semisine");
+const attackTime = ref(0.01);
+const decayTime = ref(0.3);
+const sustainLevel = ref(0.8);
+const releaseTime = ref(0.01);
+const maxPolyphony = ref(6);
 // These are user preferences and are fetched from local storage.
 const newline = ref(UNIX_NEWLINE);
 const colorScheme = ref<"light" | "dark">("light");
@@ -184,11 +192,11 @@ const encodeState = debounce(() => {
     pianoMode: pianoMode.value,
     equaveShift: equaveShift.value,
     degreeShift: degreeShift.value,
-    waveform: synth.waveform,
-    attackTime: synth.attackTime,
-    decayTime: synth.decayTime,
-    sustainLevel: synth.sustainLevel,
-    releaseTime: synth.releaseTime,
+    waveform: waveform.value,
+    attackTime: attackTime.value,
+    decayTime: decayTime.value,
+    sustainLevel: sustainLevel.value,
+    releaseTime: releaseTime.value,
   };
 
   const query = encodeQuery(state) as LocationQuery;
@@ -212,7 +220,11 @@ watch(
     keyboardMode,
     equaveShift,
     degreeShift,
-    synth,
+    waveform,
+    attackTime,
+    decayTime,
+    sustainLevel,
+    releaseTime,
   ],
   encodeState
 );
@@ -248,11 +260,11 @@ router.afterEach((to, from) => {
       updateFromScaleLines(state.scaleLines);
       equaveShift.value = state.equaveShift;
       degreeShift.value = state.degreeShift;
-      synth.waveform = state.waveform;
-      synth.attackTime = state.attackTime;
-      synth.decayTime = state.decayTime;
-      synth.sustainLevel = state.sustainLevel;
-      synth.releaseTime = state.releaseTime;
+      waveform.value = state.waveform;
+      attackTime.value = state.attackTime;
+      decayTime.value = state.decayTime;
+      sustainLevel.value = state.sustainLevel;
+      releaseTime.value = state.releaseTime;
     } catch (error) {
       console.error(`Error parsing version ${query.get("version")} URL`, error);
     }
@@ -302,27 +314,38 @@ const midiOut = computed(() => {
 function sendNoteOn(frequency: number, rawAttack: number) {
   const midiOff = midiOut.value.sendNoteOn(frequency, rawAttack);
 
-  if (audioDestination.value !== null) {
-    // Trigger web audio API synth.
-    const synthOff = synth.noteOn(
-      frequency,
-      rawAttack / 127,
-      audioDestination.value
-    );
-
-    // Trigger virtual synth for per-voice visualization.
-    const virtualOff = virtualSynth.voiceOn(frequency);
-
-    const off = (rawRelease: number) => {
-      midiOff(rawRelease);
-      synthOff();
-      virtualOff();
-    };
-
-    return off;
-  } else {
+  if (audioDestination.value === null) {
     return midiOff;
   }
+
+  // Initialize synth on first user gesture.
+  if (synth.value === null) {
+    rootProps.audioContext.resume();
+    synth.value = new Synth(
+      rootProps.audioContext,
+      audioDestination.value,
+      waveform.value,
+      attackTime.value,
+      decayTime.value,
+      sustainLevel.value,
+      releaseTime.value,
+      maxPolyphony.value
+    );
+  }
+
+  // Trigger web audio API synth.
+  const synthOff = synth.value.noteOn(frequency, rawAttack / 127);
+
+  // Trigger virtual synth for per-voice visualization.
+  const virtualOff = virtualSynth.voiceOn(frequency);
+
+  const off = (rawRelease: number) => {
+    midiOff(rawRelease);
+    synthOff();
+    virtualOff();
+  };
+
+  return off;
 }
 
 // Offset such that default base MIDI note doesn't move
@@ -573,11 +596,11 @@ onMounted(() => {
         updateFromScaleLines(scaleWorkshopOneData.data.split(NEWLINE_TEST));
       }
 
-      synth.waveform = scaleWorkshopOneData.waveform || "semisine";
-      synth.attackTime = scaleWorkshopOneData.attackTime;
-      synth.decayTime = scaleWorkshopOneData.decayTime;
-      synth.sustainLevel = scaleWorkshopOneData.sustainLevel;
-      synth.releaseTime = scaleWorkshopOneData.releaseTime;
+      waveform.value = scaleWorkshopOneData.waveform || "semisine";
+      attackTime.value = scaleWorkshopOneData.attackTime;
+      decayTime.value = scaleWorkshopOneData.decayTime;
+      sustainLevel.value = scaleWorkshopOneData.sustainLevel;
+      releaseTime.value = scaleWorkshopOneData.releaseTime;
     } catch (error) {
       console.error("Error parsing version 1 URL", error);
     }
@@ -652,6 +675,11 @@ onMounted(() => {
   if ("degreeDownCode" in storage) {
     degreeDownCode.value = storage.getItem("degreeDownCode")!;
   }
+
+  // Fetch synth max polyphony
+  if ("maxPolyphony" in storage) {
+    maxPolyphony.value = parseInt(storage.getItem("maxPolyphony")!);
+  }
 });
 
 onUnmounted(() => {
@@ -707,6 +735,52 @@ function panic() {
     midiOutput.value.sendAllNotesOff({
       channels: [...midiOutputChannels.value],
     });
+  }
+}
+
+// Synth parameter watchers
+watch(waveform, (newValue) => {
+  if (synth.value !== null) {
+    synth.value.waveform = newValue;
+  }
+});
+watch(attackTime, (newValue) => {
+  if (synth.value !== null) {
+    synth.value.attackTime = newValue;
+  }
+});
+watch(decayTime, (newValue) => {
+  if (synth.value !== null) {
+    synth.value.decayTime = newValue;
+  }
+});
+watch(sustainLevel, (newValue) => {
+  if (synth.value !== null) {
+    synth.value.sustainLevel = newValue;
+  }
+});
+watch(releaseTime, (newValue) => {
+  if (synth.value !== null) {
+    synth.value.releaseTime = newValue;
+  }
+});
+watch(maxPolyphony, (newValue) => {
+  if (synth.value !== null) {
+    synth.value.maxPolyphony = newValue;
+  }
+});
+
+function setMaxPolyphony(newValue: number) {
+  if (newValue < 1) {
+    newValue = 1;
+  }
+  if (newValue > 128) {
+    newValue = 128;
+  }
+  if (!isNaN(newValue)) {
+    newValue = Math.round(newValue);
+    maxPolyphony.value = newValue;
+    window.localStorage.setItem("maxPolyphony", newValue.toString());
   }
 }
 
@@ -799,7 +873,6 @@ watch(degreeDownCode, (newValue) =>
     :heldNotes="heldNotes"
     :midiInputChannels="midiInputChannels"
     :midiOutputChannels="midiOutputChannels"
-    :synth="synth"
     :virtualSynth="virtualSynth"
     :newline="newline"
     :colorScheme="colorScheme"
@@ -813,6 +886,12 @@ watch(degreeDownCode, (newValue) =>
     :equaveDownCode="equaveDownCode"
     :degreeUpCode="degreeUpCode"
     :degreeDownCode="degreeDownCode"
+    :waveform="waveform"
+    :attackTime="attackTime"
+    :decayTime="decayTime"
+    :sustainLevel="sustainLevel"
+    :releaseTime="releaseTime"
+    :maxPolyphony="maxPolyphony"
     @update:mainVolume="mainVolume = $event"
     @update:scaleName="scaleName = $event"
     @update:scaleLines="updateFromScaleLines"
@@ -842,6 +921,12 @@ watch(degreeDownCode, (newValue) =>
     @update:equaveDownCode="equaveDownCode = $event"
     @update:degreeUpCode="degreeUpCode = $event"
     @update:degreeDownCode="degreeDownCode = $event"
+    @update:waveform="waveform = $event"
+    @update:attackTime="attackTime = $event"
+    @update:decayTime="decayTime = $event"
+    @update:sustainLevel="sustainLevel = $event"
+    @update:releaseTime="releaseTime = $event"
+    @update:maxPolyphony="setMaxPolyphony"
     @panic="panic"
   />
 </template>
