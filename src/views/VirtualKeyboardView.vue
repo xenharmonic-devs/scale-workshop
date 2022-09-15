@@ -16,14 +16,14 @@ defineProps<{
   keyColors: string[];
   noteOn: NoteOnCallback;
   heldNotes: Map<number, number>;
-  virtualKeyboardMode: "isomorphic" | "piano";
+  keyboardMode: "isomorphic" | "piano";
 }>();
 </script>
 
 <template>
   <main>
     <VirtualPiano
-      v-if="virtualKeyboardMode === 'piano'"
+      v-if="keyboardMode === 'piano'"
       :baseIndex="baseMidiNote + equaveShift * scale.size + degreeShift"
       :baseMidiNote="baseMidiNote"
       :keyColors="keyColors"

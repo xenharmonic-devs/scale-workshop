@@ -382,8 +382,8 @@ export type DecodedState = {
   baseMidiNote: number;
   isomorphicHorizontal: number;
   isomorphicVertical: number;
-  keyboardMode: "isomorphic" | "mapped";
-  keyboardMapping: Map<string, number>;
+  keyboardMode: "isomorphic" | "piano";
+  pianoMode: "Asdf" | "QweZxc0" | "QweZxc1";
   equaveShift: number;
   degreeShift: number;
   waveform: string;
@@ -401,7 +401,8 @@ export type EncodedState = {
   m?: string; // (base) Midi note
   h?: string; // (isomorphic) Horizontal
   v?: string; // (isomorphic) Vertical
-  k?: string; // Keyboard mapping
+  k?: string; // Keyboard mode
+  p?: string; // Piano mode
   e?: string; // Equave shift
   d?: string; // Degree shift
   w?: string; // Waveform
@@ -414,7 +415,6 @@ export type EncodedState = {
 export function decodeQuery(
   query: LocationQuery | URLSearchParams
 ): DecodedState {
-  let keyboardMode: "isomorphic" | "mapped" = "isomorphic";
   let get;
   if (query instanceof URLSearchParams) {
     get = (key: string, defaultIfNull: string) => {
@@ -424,15 +424,15 @@ export function decodeQuery(
       }
       return result;
     };
-    if (query.has("k")) {
-      keyboardMode = "mapped";
-    }
   } else {
     get = (key: string, defaultIfNull: string) =>
       getSingle(query, key, defaultIfNull);
-    if ("k" in query) {
-      keyboardMode = "mapped";
-    }
+  }
+  let pianoMode: "Asdf" | "QweZxc0" | "QweZxc1" = "Asdf";
+  if (get("p", "a") === "0") {
+    pianoMode = "QweZxc0";
+  } else if (get("p", "a") === "1") {
+    pianoMode = "QweZxc1";
   }
   return {
     scaleLines: decodeLines(get("l", "")),
@@ -442,10 +442,8 @@ export function decodeQuery(
     baseMidiNote: parseInt(get("m", "1x"), 36),
     isomorphicHorizontal: parseInt(get("h", "1"), 36),
     isomorphicVertical: parseInt(get("v", "5"), 36),
-    keyboardMode,
-    keyboardMapping: decodeKeyMap(
-      get("k", "............-1-1.46.9bd.gi023578acefhj...........")
-    ),
+    keyboardMode: get("k", "i") === "i" ? "isomorphic" : "piano",
+    pianoMode,
     equaveShift: parseInt(get("e", "0"), 36),
     degreeShift: parseInt(get("d", "0"), 36),
     waveform: LETTER_TO_WAVEFORM[get("w", "e")] || "semisine",
@@ -457,6 +455,12 @@ export function decodeQuery(
 }
 
 export function encodeQuery(state: DecodedState): EncodedState {
+  let p = "a";
+  if (state.pianoMode === "QweZxc0") {
+    p = "0";
+  } else if (state.pianoMode === "QweZxc1") {
+    p = "1";
+  }
   const result: EncodedState = {
     n: state.scaleName,
     l: encodeLines(state.scaleLines),
@@ -465,7 +469,8 @@ export function encodeQuery(state: DecodedState): EncodedState {
     m: state.baseMidiNote.toString(36),
     h: state.isomorphicHorizontal.toString(36),
     v: state.isomorphicVertical.toString(36),
-    k: encodeKeyMap(state.keyboardMapping),
+    k: state.keyboardMode === "isomorphic" ? "i" : "p",
+    p,
     e: state.equaveShift.toString(36),
     d: state.degreeShift.toString(36),
     w: WAVEFORM_TO_LETTER[state.waveform],
@@ -474,10 +479,6 @@ export function encodeQuery(state: DecodedState): EncodedState {
     s: millify(state.sustainLevel),
     r: millify(state.releaseTime),
   };
-
-  if (state.keyboardMode === "isomorphic") {
-    delete result.k;
-  }
 
   // The app includes version information so we can safely strip defaults
   if (!result.n?.length) {
@@ -500,6 +501,12 @@ export function encodeQuery(state: DecodedState): EncodedState {
   }
   if (result.v === "5") {
     delete result.v;
+  }
+  if (result.k === "i") {
+    delete result.k;
+  }
+  if (result.p === "a") {
+    delete result.p;
   }
   if (result.e === "0") {
     delete result.e;

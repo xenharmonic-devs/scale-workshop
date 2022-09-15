@@ -22,8 +22,8 @@ const props = defineProps<{
   isomorphicHorizontal: number;
   isomorphicVertical: number;
 
-  keyboardMode: "isomorphic" | "mapped";
-  keyboardMapping: Map<string, number>;
+  keyboardMode: "isomorphic" | "piano";
+  pianoMode: "Asdf" | "QweZxc0" | "QweZxc1";
 
   equaveShift: number;
   degreeShift: number;
@@ -52,7 +52,7 @@ function openTheGates(scale: Scale) {
       isomorphicHorizontal: props.isomorphicHorizontal,
       isomorphicVertical: props.isomorphicVertical,
       keyboardMode: props.keyboardMode,
-      keyboardMapping: props.keyboardMapping,
+      pianoMode: props.pianoMode,
       equaveShift: props.equaveShift,
       degreeShift: props.degreeShift,
 

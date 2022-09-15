@@ -61,9 +61,10 @@ const keyColors = ref([
 ]);
 const isomorphicVertical = ref(5);
 const isomorphicHorizontal = ref(1);
-const keyboardMapping = reactive<Map<string, number>>(new Map());
-mapWhiteAsdfBlackQwerty(keyColors.value, keyboardMapping);
-const keyboardMode = ref<"isomorphic" | "mapped">("isomorphic"); // physical qwerty
+// Keyboard mode affects both physical qwerty and virtual keyboards
+const keyboardMode = ref<"isomorphic" | "piano">("isomorphic");
+// Physical layout mimics a piano layout in one or two layers
+const pianoMode = ref<"Asdf" | "QweZxc0" | "QweZxc1">("Asdf");
 const equaveShift = ref(0);
 const degreeShift = ref(0);
 const heldNotes = reactive(new Map<number, number>());
@@ -85,7 +86,6 @@ const newline = ref(UNIX_NEWLINE);
 const colorScheme = ref<"light" | "dark">("light");
 const centsFractionDigits = ref(3);
 const decimalFractionDigits = ref(5);
-const virtualKeyboardMode = ref<"isomorphic" | "piano">("isomorphic"); // on-screen
 // Special keyboard codes also from local storage.
 const deactivationCode = ref("Backquote");
 const equaveUpCode = ref("NumpadMultiply");
@@ -100,6 +100,35 @@ const frequencies = computed(() =>
   )
 );
 
+const keyboardMapping = computed<Map<string, number>>(() => {
+  const baseIndex =
+    baseMidiNote.value + equaveShift.value * scale.size + degreeShift.value;
+  if (pianoMode.value === "Asdf") {
+    return mapWhiteAsdfBlackQwerty(
+      keyColors.value,
+      baseMidiNote.value,
+      baseIndex
+    );
+  } else if (pianoMode.value === "QweZxc0") {
+    return mapWhiteQweZxcBlack123Asd(
+      keyColors.value,
+      scale.size,
+      baseMidiNote.value,
+      baseIndex,
+      0
+    );
+  } else {
+    return mapWhiteQweZxcBlack123Asd(
+      keyColors.value,
+      scale.size,
+      baseMidiNote.value,
+      baseIndex,
+      1
+    );
+  }
+});
+
+// === State updates ===
 function updateFromScaleLines(lines: string[]) {
   if (arraysEqual(lines, scaleLines.value)) {
     return;
@@ -152,7 +181,7 @@ const encodeState = debounce(() => {
     isomorphicHorizontal: isomorphicHorizontal.value,
     isomorphicVertical: isomorphicVertical.value,
     keyboardMode: keyboardMode.value,
-    keyboardMapping,
+    pianoMode: pianoMode.value,
     equaveShift: equaveShift.value,
     degreeShift: degreeShift.value,
     waveform: synth.waveform,
@@ -181,7 +210,6 @@ watch(
     isomorphicHorizontal,
     isomorphicVertical,
     keyboardMode,
-    keyboardMapping,
     equaveShift,
     degreeShift,
     synth,
@@ -216,11 +244,8 @@ router.afterEach((to, from) => {
       isomorphicHorizontal.value = state.isomorphicHorizontal;
       isomorphicVertical.value = state.isomorphicVertical;
       keyboardMode.value = state.keyboardMode;
+      pianoMode.value = state.pianoMode;
       updateFromScaleLines(state.scaleLines);
-      keyboardMapping.clear();
-      for (const [key, value] of state.keyboardMapping) {
-        keyboardMapping.set(key, value);
-      }
       equaveShift.value = state.equaveShift;
       degreeShift.value = state.degreeShift;
       synth.waveform = state.waveform;
@@ -499,8 +524,8 @@ function typingKeydown(event: CoordinateKeyboardEvent) {
       x * isomorphicHorizontal.value +
       (2 - y) * isomorphicVertical.value;
   } else {
-    if (keyboardMapping.has(event.code)) {
-      index += keyboardMapping.get(event.code)!;
+    if (keyboardMapping.value.has(event.code)) {
+      index = keyboardMapping.value.get(event.code)!;
     } else {
       // No user mapping for the key, bail out
       return emptyKeyup;
@@ -627,12 +652,6 @@ onMounted(() => {
   if ("degreeDownCode" in storage) {
     degreeDownCode.value = storage.getItem("degreeDownCode")!;
   }
-  if ("virtualKeyboardMode" in storage) {
-    const mode = storage.getItem("virtualKeyboardMode");
-    if (mode === "isomorphic" || mode === "piano") {
-      virtualKeyboardMode.value = mode;
-    }
-  }
 });
 
 onUnmounted(() => {
@@ -722,9 +741,6 @@ watch(centsFractionDigits, (newValue) =>
 watch(decimalFractionDigits, (newValue) =>
   window.localStorage.setItem("decimalFractionDigits", newValue.toString())
 );
-watch(virtualKeyboardMode, (newValue) =>
-  window.localStorage.setItem("virtualKeyboardMode", newValue)
-);
 // Store keymaps
 watch(deactivationCode, (newValue) =>
   window.localStorage.setItem("deactivationCode", newValue)
@@ -772,7 +788,7 @@ watch(degreeDownCode, (newValue) =>
     :scale="scale"
     :frequencies="frequencies"
     :keyboardMode="keyboardMode"
-    :keyboardMapping="keyboardMapping"
+    :pianoMode="pianoMode"
     :isomorphicHorizontal="isomorphicHorizontal"
     :isomorphicVertical="isomorphicVertical"
     :equaveShift="equaveShift"
@@ -789,7 +805,6 @@ watch(degreeDownCode, (newValue) =>
     :colorScheme="colorScheme"
     :centsFractionDigits="centsFractionDigits"
     :decimalFractionDigits="decimalFractionDigits"
-    :virtualKeyboardMode="virtualKeyboardMode"
     :midiVelocityOn="midiVelocityOn"
     :midiWhiteMode="midiWhiteMode"
     :midiBlackAverage="midiBlackAverage"
@@ -808,19 +823,13 @@ watch(degreeDownCode, (newValue) =>
     @update:isomorphicVertical="isomorphicVertical = $event"
     @update:isomorphicHorizontal="isomorphicHorizontal = $event"
     @update:keyboardMode="keyboardMode = $event"
+    @update:pianoMode="pianoMode = $event"
     @update:equaveShift="equaveShift = $event"
     @update:degreeShift="degreeShift = $event"
     @update:midiInput="midiInput = $event"
     @update:midiOutput="midiOutput = $event"
     @update:midiInputChannels="updateMidiInputChannels"
     @update:midiOutputChannels="midiOutputChannels = $event"
-    @mapAsdf="mapWhiteAsdfBlackQwerty(keyColors, keyboardMapping)"
-    @mapZxcv0="
-      mapWhiteQweZxcBlack123Asd(keyColors, keyboardMapping, scale.size, 0)
-    "
-    @mapZxcv1="
-      mapWhiteQweZxcBlack123Asd(keyColors, keyboardMapping, scale.size, 1)
-    "
     @update:midiVelocityOn="midiVelocityOn = $event"
     @update:midiWhiteMode="midiWhiteMode = $event"
     @update:midiBlackAverage="midiBlackAverage = $event"
@@ -833,7 +842,6 @@ watch(degreeDownCode, (newValue) =>
     @update:equaveDownCode="equaveDownCode = $event"
     @update:degreeUpCode="degreeUpCode = $event"
     @update:degreeDownCode="degreeDownCode = $event"
-    @update:virtualKeyboardMode="virtualKeyboardMode = $event"
     @panic="panic"
   />
 </template>

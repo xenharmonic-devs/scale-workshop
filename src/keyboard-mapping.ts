@@ -10,27 +10,32 @@ export const ZXCV_ROW = CODES_LAYER_1[3] as string[];
  * Map white keys to the row of keys starting with A, S, D and F
  * while mapping black keys to the row starting with Q, W, E and R.
  * @param keyColors Array containing the strings "white" and "black" in the desired order.
- * The array is assumed to be periodic and other strings/colors are ignored.
- * @param map Map instance to store the result in.
+ * The array is assumed to be periodic and other strings/colors are treated as "white".
+ * @param baseMidiNote Base MIDI note
+ * @param baseIndex Base index that should incorporate equave and degree shifts
+ * The result should be analogous to the virtual piano layout.
  */
 export function mapWhiteAsdfBlackQwerty(
   keyColors: string[],
-  map: Map<string, number>
+  baseMidiNote: number,
+  baseIndex: number
 ) {
-  if (!keyColors.includes("white") || !keyColors.includes("black")) {
-    return;
-  }
+  const map = new Map<string, number>();
 
-  map.clear();
-
-  let colorIndex = 0;
+  let colorIndex = baseIndex - baseMidiNote;
   let whiteIndex = 0;
-  let blackIndex = 1;
-  let mappedIndex = 0;
+  let blackIndex = 0;
+  let mappedIndex = baseIndex;
+
+  if (
+    keyColors[mmod(colorIndex - 1, keyColors.length)].toLowerCase() === "black"
+  ) {
+    map.set(QWERTY_ROW[0], mappedIndex - 1);
+  }
   do {
-    const color = keyColors[mmod(colorIndex++, keyColors.length)];
+    const color = keyColors[mmod(colorIndex++, keyColors.length)].toLowerCase();
     let code: string | undefined;
-    if (color === "white" && whiteIndex < ASDF_ROW.length) {
+    if (color !== "black" && whiteIndex < ASDF_ROW.length) {
       code = ASDF_ROW[whiteIndex++];
       blackIndex = Math.max(blackIndex, whiteIndex);
     }
@@ -43,42 +48,45 @@ export function mapWhiteAsdfBlackQwerty(
     }
   } while (whiteIndex < ASDF_ROW.length || blackIndex < QWERTY_ROW.length);
 
-  if (keyColors[keyColors.length - 1] === "black") {
-    map.set(QWERTY_ROW[0], -1);
-  }
+  return map;
 }
 
 /**
  * Map white keys to the rows containing QWERTY and ZXCV separated by an octave/equave
  * while mapping black keys to the rows with digits and ASDF respectively.
  * @param keyColors Array containing the strings "white" and "black" in the desired order.
- * The array is assumed to be periodic and other strings/colors are ignored.
- * @param map Map instance to store the result in.
+ * The array is assumed to be periodic and other strings/colors are treated as "white".
  * @param scaleSize The size of the scale for calculating the octave shift between white&black courses.
+ * @param baseMidiNote Base MIDI note
+ * @param baseIndex Base index that should incorporate equave and degree shifts
  * @param zxcvIndex The amount to shift the ZXCV row to the right.
  * Expected values are 0 (no shift) and 1 to compensate for the lack of a button left of 'Z' on some keyboards.
  */
 export function mapWhiteQweZxcBlack123Asd(
   keyColors: string[],
-  map: Map<string, number>,
   scaleSize: number,
+  baseMidiNote: number,
+  baseIndex: number,
   zxcvIndex = 1
 ) {
-  if (!keyColors.includes("white") || !keyColors.includes("black")) {
-    return;
-  }
-
-  map.clear();
+  const map = new Map<string, number>();
 
   // Map lower rows
-  let colorIndex = 0;
+  let colorIndex = baseIndex - baseMidiNote;
   let whiteIndex = zxcvIndex;
   let blackIndex = zxcvIndex;
-  let mappedIndex = 0;
+  let mappedIndex = baseIndex;
+
+  if (
+    zxcvIndex === 1 &&
+    keyColors[mmod(colorIndex - 1, keyColors.length)].toLowerCase() === "black"
+  ) {
+    map.set(ASDF_ROW[0], mappedIndex - 1);
+  }
   do {
-    const color = keyColors[mmod(colorIndex++, keyColors.length)];
+    const color = keyColors[mmod(colorIndex++, keyColors.length)].toLowerCase();
     let code: string | undefined;
-    if (color === "white" && whiteIndex < ZXCV_ROW.length) {
+    if (color !== "black" && whiteIndex < ZXCV_ROW.length) {
       code = ZXCV_ROW[whiteIndex++];
       blackIndex = Math.max(blackIndex, whiteIndex - 1);
     }
@@ -91,19 +99,20 @@ export function mapWhiteQweZxcBlack123Asd(
     }
   } while (whiteIndex < ZXCV_ROW.length || blackIndex < ASDF_ROW.length);
 
-  if (zxcvIndex === 1 && keyColors[keyColors.length - 1] === "black") {
-    map.set(ASDF_ROW[0], -1);
-  }
-
   // Map upper rows and octave higher
-  colorIndex = 0;
+  colorIndex = scaleSize + baseIndex - baseMidiNote;
   whiteIndex = 0;
   blackIndex = 1;
-  mappedIndex = scaleSize;
+  mappedIndex = scaleSize + baseIndex;
+  if (
+    keyColors[mmod(colorIndex - 1, keyColors.length)].toLowerCase() === "black"
+  ) {
+    map.set(DIGIT_ROW[0], mappedIndex - 1);
+  }
   do {
-    const color = keyColors[mmod(colorIndex++, keyColors.length)];
+    const color = keyColors[mmod(colorIndex++, keyColors.length)].toLowerCase();
     let code: string | undefined;
-    if (color === "white" && whiteIndex < QWERTY_ROW.length) {
+    if (color !== "black" && whiteIndex < QWERTY_ROW.length) {
       code = QWERTY_ROW[whiteIndex++];
       blackIndex = Math.max(blackIndex, whiteIndex);
     }
@@ -116,7 +125,5 @@ export function mapWhiteQweZxcBlack123Asd(
     }
   } while (whiteIndex < QWERTY_ROW.length || blackIndex < DIGIT_ROW.length);
 
-  if (keyColors[keyColors.length - 1] === "black") {
-    map.set(DIGIT_ROW[0], scaleSize - 1);
-  }
+  return map;
 }

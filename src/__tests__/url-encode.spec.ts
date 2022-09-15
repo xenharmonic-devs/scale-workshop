@@ -92,9 +92,9 @@ describe("URL encoder", () => {
       baseMidiNote: 60,
       isomorphicHorizontal: 1, // default
       isomorphicVertical: 3,
-      keyboardMode: "isomorphic",
-      keyboardMapping: new Map(),
       // All defaults from here
+      keyboardMode: "isomorphic",
+      pianoMode: "Asdf",
       equaveShift: 0,
       degreeShift: 0,
       waveform: "semisine",
@@ -151,20 +151,23 @@ describe("Integer encoder", () => {
 });
 
 describe("Keyboard map encoder", () => {
-  it("can encode the default ASDF map", () => {
-    const keyboardMapping = new Map();
-    mapWhiteAsdfBlackQwerty(decodeKeyColors("~-~~-~-~~-~-"), keyboardMapping);
+  it("can encode the old ASDF map", () => {
+    const keyboardMapping = mapWhiteAsdfBlackQwerty(
+      decodeKeyColors("~-~~-~-~~-~-"),
+      0,
+      0
+    );
     expect(encodeKeyMap(keyboardMapping)).toBe(
       "............-1-1.46.9bd.gi023578acefhj..........."
     );
   });
 
-  it("can encode the default ZXCV map", () => {
-    const keyboardMapping = new Map();
-    mapWhiteQweZxcBlack123Asd(
+  it("can encode the old ZXCV map", () => {
+    const keyboardMapping = mapWhiteQweZxcBlack123Asd(
       decodeKeyColors("~-~~-~-~~-~-"),
-      keyboardMapping,
-      12
+      12,
+      0,
+      0
     );
     expect(encodeKeyMap(keyboardMapping)).toBe(
       "bd.gi.lnp.sucefhjkmoqrtv-1-1.46.9bd.gh.023578acef"
@@ -180,12 +183,15 @@ describe("Keyboard map encoder", () => {
     );
   });
 
-  it("can decode the default ASDF map", () => {
+  it("can decode the old ASDF map", () => {
     const decoded = decodeKeyMap(
       "............-1-1.46.9bd.gi023578acefhj..........."
     );
-    const keyboardMapping: Map<string, number> = new Map();
-    mapWhiteAsdfBlackQwerty(decodeKeyColors("~-~~-~-~~-~-"), keyboardMapping);
+    const keyboardMapping = mapWhiteAsdfBlackQwerty(
+      decodeKeyColors("~-~~-~-~~-~-"),
+      0,
+      0
+    );
     for (const [key, value] of keyboardMapping) {
       expect(decoded.get(key)).toBe(value);
     }
@@ -194,15 +200,15 @@ describe("Keyboard map encoder", () => {
     }
   });
 
-  it("can decode the default ZXCV map", () => {
+  it("can decode the old ZXCV map", () => {
     const decoded = decodeKeyMap(
       "bd.gi.lnp.sucefhjkmoqrtv-1-1.46.9bd.gh.023578acef"
     );
-    const keyboardMapping: Map<string, number> = new Map();
-    mapWhiteQweZxcBlack123Asd(
+    const keyboardMapping = mapWhiteQweZxcBlack123Asd(
       decodeKeyColors("~-~~-~-~~-~-"),
-      keyboardMapping,
-      12
+      12,
+      0,
+      0
     );
     for (const [key, value] of keyboardMapping) {
       expect(decoded.get(key)).toBe(value);

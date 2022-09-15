@@ -10,7 +10,8 @@ const props = defineProps<{
   audioOutput: AudioNode | null;
   synth: Synth;
   mainVolume: number;
-  keyboardMode: "isomorphic" | "mapped";
+  keyboardMode: "isomorphic" | "piano";
+  pianoMode: "Asdf" | "QweZxc0" | "QweZxc1";
   isomorphicHorizontal: number;
   isomorphicVertical: number;
   equaveShift: number;
@@ -26,6 +27,7 @@ const props = defineProps<{
 const emit = defineEmits([
   "update:mainVolume",
   "update:keyboardMode",
+  "update:pianoMode",
   "update:isomorphicHorizontal",
   "update:isomorphicVertical",
   "update:equaveShift",
@@ -35,9 +37,6 @@ const emit = defineEmits([
   "update:equaveDownCode",
   "update:degreeUpCode",
   "update:degreeDownCode",
-  "mapAsdf",
-  "mapZxcv0",
-  "mapZxcv1",
   "panic",
 ]);
 
@@ -61,8 +60,13 @@ const mainVolume = computed({
 });
 const keyboardMode = computed({
   get: () => props.keyboardMode,
-  set: (newValue: "isomorphic" | "mapped") =>
+  set: (newValue: "isomorphic" | "piano") =>
     emit("update:keyboardMode", newValue),
+});
+const pianoMode = computed({
+  get: () => props.pianoMode,
+  set: (newValue: "Asdf" | "QweZxc0" | "QweZxc1") =>
+    emit("update:pianoMode", newValue),
 });
 const isomorphicVertical = computed({
   get: () => props.isomorphicVertical,
@@ -307,23 +311,43 @@ onUnmounted(() => {
             <span>
               <input
                 type="radio"
-                id="mode-mapped"
-                value="mapped"
+                id="mode-piano"
+                value="piano"
                 v-model="keyboardMode"
               />
-              <label for="mode-mapped"> Black&white layers </label>
+              <label for="mode-piano"> Piano-style layers </label>
             </span>
           </div>
-          <template v-if="keyboardMode === 'mapped'">
-            <button @click="$emit('mapAsdf')">
-              Assign ASDF & QWERTY from key colors
-            </button>
-            <button @click="$emit('mapZxcv1')">
-              Assign ZXCV & ASDF + QWERTY & 1234 from key colors
-            </button>
-            <button @click="$emit('mapZxcv0')">
-              Same as above, but lowest course shifted left
-            </button>
+          <template v-if="keyboardMode === 'piano'">
+            <div class="control radio-group">
+              <span>
+                <input
+                  type="radio"
+                  id="mode-asdf"
+                  value="Asdf"
+                  v-model="pianoMode"
+                />
+                <label for="mode-asdf"> ASDF & QWERTY </label>
+              </span>
+              <span>
+                <input
+                  type="radio"
+                  id="mode-qwezxc1"
+                  value="QweZxc1"
+                  v-model="pianoMode"
+                />
+                <label for="mode-qwezxc1"> ZXCV & ASDF + QWERTY & 1234 </label>
+              </span>
+              <span>
+                <input
+                  type="radio"
+                  id="mode-qwezxc0"
+                  value="QweZxc0"
+                  v-model="pianoMode"
+                />
+                <label for="mode-qwezxc0"> ZXCV etc. (shifted left) </label>
+              </span>
+            </div>
           </template>
         </div>
         <h2>Keyboard equave shift</h2>
@@ -336,17 +360,17 @@ onUnmounted(() => {
             <input type="number" v-model="equaveShift" />
           </div>
         </div>
-        <template v-if="keyboardMode === 'isomorphic'">
-          <h2>Keyboard degree shift</h2>
-          <div class="control-group">
-            <p>
-              Shift down/up by one scale degree. (Default shortcut keys: numpad
-              <code>-</code> and <code>+</code>).
-            </p>
-            <div class="control">
-              <input type="number" v-model="degreeShift" />
-            </div>
+        <h2>Keyboard degree shift</h2>
+        <div class="control-group">
+          <p>
+            Shift down/up by one scale degree. (Default shortcut keys: numpad
+            <code>-</code> and <code>+</code>).
+          </p>
+          <div class="control">
+            <input type="number" v-model="degreeShift" />
           </div>
+        </div>
+        <template v-if="keyboardMode === 'isomorphic'">
           <h2>Isomorphic key mapping</h2>
           <p>
             Distance between adjacent keys on the horizontal/vertical axes, in

@@ -7,7 +7,6 @@ const props = defineProps<{
   colorScheme: "light" | "dark";
   centsFractionDigits: number;
   decimalFractionDigits: number;
-  virtualKeyboardMode: "isomorphic" | "piano";
 }>();
 
 const emit = defineEmits([
@@ -33,11 +32,6 @@ const centsFractionDigits = computed({
 const decimalFractionDigits = computed({
   get: () => props.decimalFractionDigits,
   set: (newValue: number) => emit("update:decimalFractionDigits", newValue),
-});
-const virtualKeyboardMode = computed({
-  get: () => props.virtualKeyboardMode,
-  set: (newValue: "isomorphic" | "piano") =>
-    emit("update:virtualKeyboardMode", newValue),
 });
 </script>
 
@@ -86,29 +80,6 @@ const virtualKeyboardMode = computed({
               />
               <label for="scheme-dark"> Dark </label>
             </span>
-          </div>
-          <div class="control-group">
-            <h3>Virtual Keyboard</h3>
-            <div class="control radio-group">
-              <span>
-                <input
-                  type="radio"
-                  id="virtual-isomorphic"
-                  value="isomorphic"
-                  v-model="virtualKeyboardMode"
-                />
-                <label for="virtual-isomorphic"> Isomorphic </label>
-              </span>
-              <span>
-                <input
-                  type="radio"
-                  id="virtual-piano"
-                  value="piano"
-                  v-model="virtualKeyboardMode"
-                />
-                <label for="virtual-piano"> Piano </label>
-              </span>
-            </div>
           </div>
         </div>
       </div>
