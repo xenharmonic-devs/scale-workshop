@@ -231,7 +231,13 @@ onUnmounted(() => {
             step="any"
             v-model="mainVolume"
           />
-          <button @click="emit('panic')">Panic</button>
+          <button
+            @click="emit('panic')"
+            style="max-width: 12rem"
+            title="Stop all sound at once"
+          >
+            Panic
+          </button>
           <div class="control">
             <label for="waveform">Waveform</label>
             <!-- eslint-disable-next-line vue/no-mutating-props -->
