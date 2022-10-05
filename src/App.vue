@@ -761,7 +761,7 @@ watch(degreeDownCode, (newValue) =>
 
 <template>
   <nav id="app-navigation">
-    <ul>
+    <ul id="app-tabs">
       <li>
         <RouterLink to="/about"><strong>Sw</strong></RouterLink>
       </li>
@@ -771,10 +771,15 @@ watch(degreeDownCode, (newValue) =>
       <li><RouterLink to="/synth">Synth</RouterLink></li>
       <li><RouterLink to="/midi">MIDI I/O</RouterLink></li>
       <li><RouterLink to="/prefs">Preferences</RouterLink></li>
+    </ul>
+    <ul id="app-tray">
       <template v-if="typingActive"
-        ><span class="typing-info">KEY</span></template
-      >
-      <template v-else></template>
+        ><li
+          title="When this indicator shows, the synth will respond to computer keypresses. If not showing, then you likely are typing into an input field."
+        >
+          <span class="typing-info">KEY</span>
+        </li></template
+      ><template v-else></template>
     </ul>
   </nav>
   <RouterView
@@ -858,6 +863,12 @@ watch(degreeDownCode, (newValue) =>
 
 nav#app-navigation {
   flex: 0 0 auto;
+  display: flex;
+}
+
+#app-tray {
+  width: 100%;
+  text-align: right;
 }
 
 #app > main {
@@ -889,14 +900,19 @@ nav#app-navigation ul li a {
   cursor: default;
 }
 
-nav#app-navigation ul li a:hover {
+nav#app-navigation ul#app-tabs li a:hover {
   background-color: var(--color-accent-deeper);
 }
 
-nav#app-navigation ul li a.router-link-exact-active,
-nav#app-navigation ul li a.router-link-exact-active:hover {
+nav#app-navigation ul#app-tabs li a.router-link-exact-active,
+nav#app-navigation ul#app-tabs li a.router-link-exact-active:hover {
   background-color: var(--color-background);
   color: var(--color-text);
+}
+
+nav#app-navigation ul#app-tray li {
+  background-color: var(--color-accent-deeper);
+  padding: 0.75rem 1rem;
 }
 
 nav a.router-link-exact-active {
@@ -915,11 +931,6 @@ nav a {
 
 nav a:first-of-type {
   border: 0;
-}
-
-.typing-info {
-  background-color: var(--color-accent-deeper);
-  padding: 0 0.3rem;
 }
 
 .panic a {
