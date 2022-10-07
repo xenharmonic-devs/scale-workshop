@@ -855,15 +855,22 @@ watch(degreeDownCode, (newValue) =>
       <li><RouterLink to="/midi">MIDI I/O</RouterLink></li>
       <li><RouterLink to="/prefs">Preferences</RouterLink></li>
     </ul>
-    <ul id="app-tray">
-      <template v-if="typingActive"
-        ><li
-          title="When this indicator shows, the synth will respond to computer keypresses. If not showing, then you likely are typing into an input field."
-        >
-          <span class="typing-info">KEY</span>
-        </li></template
-      ><template v-else></template>
-    </ul>
+    <div id="app-tray" class="hidden-sm">
+      <ul>
+        <template v-if="typingActive">
+          <li title="Type on your computer keyboard to hear the synth">
+            <span class="typing-info active">Key</span>
+          </li>
+        </template>
+        <template v-else>
+          <li
+            title="Synth will not respond to keypresses until you click outside the input field"
+          >
+            <span class="typing-info">Key</span>
+          </li>
+        </template>
+      </ul>
+    </div>
   </nav>
   <RouterView
     :audioContext="audioContext"
@@ -960,11 +967,6 @@ nav#app-navigation {
   display: flex;
 }
 
-#app-tray {
-  width: 100%;
-  text-align: right;
-}
-
 #app > main {
   flex: 1 1 auto;
   overflow-y: hidden;
@@ -977,7 +979,7 @@ nav#app-navigation {
   max-width: 100%;
   overflow-x: auto;
 }
-nav#app-navigation ul {
+ul#app-tabs {
   padding: 0px;
   margin: 0px;
   white-space: nowrap;
@@ -1004,11 +1006,6 @@ nav#app-navigation ul#app-tabs li a.router-link-exact-active:hover {
   color: var(--color-text);
 }
 
-nav#app-navigation ul#app-tray li {
-  background-color: var(--color-accent-deeper);
-  padding: 0.75rem 1rem;
-}
-
 nav a.router-link-exact-active {
   color: var(--color-text);
 }
@@ -1027,7 +1024,24 @@ nav a:first-of-type {
   border: 0;
 }
 
-.panic a {
-  color: black;
+/* Status indicator tray */
+#app-tray {
+  width: 100%;
+  text-align: right;
+  cursor: default;
+}
+
+#app-tray ul {
+  display: inline-block;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-accent-deeper);
+}
+
+#app-tray ul li {
+  color: var(--color-accent);
+}
+
+#app-tray ul li .active {
+  color: var(--color-accent-text);
 }
 </style>
