@@ -23,6 +23,12 @@ See [Vite Configuration Reference](https://vitejs.dev/config/).
 
 ## Project Setup
 
+Create a local copy of vite config.
+```sh
+cp vite.config.ts.template vite.config.ts
+```
+
+Install project.
 ```sh
 npm install
 ```

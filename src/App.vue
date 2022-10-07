@@ -156,6 +156,14 @@ function updateFromScale(surrogate: Scale) {
   scaleLines.value = scale.toStrings();
 }
 
+// == URL path handling ==
+/**
+ * Strip away base path such as /scaleworkshop-dev/
+ */
+function getPath(url: URL) {
+  return url.pathname.slice(import.meta.env.BASE_URL.length);
+}
+
 // == State encoding ==
 const router = useRouter();
 
@@ -197,7 +205,8 @@ const encodeState = debounce(() => {
   // XXX: There are some sporadic issues with useRoute().fullPath
   // so we use native URL.pathname.
   const url = new URL(window.location.href);
-  router.push({ path: url.pathname, query });
+
+  router.push({ path: getPath(url), query });
 }, 200);
 
 watch(
@@ -550,7 +559,7 @@ onMounted(() => {
   // Special handling for the empty app state so that
   // the browser's back button can undo to the clean state.
   if (![...query.keys()].length) {
-    router.push({ path: url.pathname, query: { version } });
+    router.push({ path: getPath(url), query: { version } });
   }
   // Scale Workshop 1 compatibility
   else if (!query.has("version")) {
