@@ -7,6 +7,7 @@ import { Interval } from "@/interval";
 import ExtendedMonzo from "@/monzo";
 import ScaleLineInput from "@/components/ScaleLineInput.vue";
 import { splitText } from "@/components/modals/tempering-state";
+import { clamp } from "xen-dev-utils";
 
 const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
 
@@ -24,6 +25,10 @@ const degreesString = ref("1 2 3 4 5");
 
 const jumpsElement = ref<HTMLTextAreaElement | null>(null);
 const degreesElement = ref<HTMLTextAreaElement | null>(null);
+
+const safeScaleSize = computed(() =>
+  Math.round(clamp(1, 1024, divisions.value))
+);
 
 const jumps = computed(() =>
   splitText(jumpsString.value).map((token) => parseInt(token))
@@ -49,8 +54,8 @@ watch(degrees, (newValue) => {
 });
 
 function updateFromDivisions() {
-  jumpsString.value = Array(divisions.value).fill("1").join(" ");
-  degreesString.value = [...Array(divisions.value).keys()]
+  jumpsString.value = Array(safeScaleSize.value).fill("1").join(" ");
+  degreesString.value = [...Array(safeScaleSize.value).keys()]
     .map((k) => (k + 1).toString())
     .join(" ");
 }
@@ -84,10 +89,14 @@ function updateFromDegrees() {
 }
 
 function generate() {
+  // Implicit use of safeScaleSize. Note that small subsets of huge EDOs cause no issues.
   const scale = Scale.fromEqualTemperamentSubset(degrees.value, equave.value);
+  // Obtain effective divisions from the scale just generated.
+  const effectiveDivisions =
+    scale.getInterval(0).options.preferredEtDenominator;
   emit(
     "update:scaleName",
-    `${divisions.value} equal divisions of ${equave.value.toString()}`
+    `${effectiveDivisions} equal divisions of ${equave.value.toString()}`
   );
   emit("update:scale", scale);
 }

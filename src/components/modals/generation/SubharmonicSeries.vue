@@ -3,20 +3,23 @@ import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
 import Scale from "@/scale";
 import { ref } from "vue";
 import Modal from "@/components/ModalDialog.vue";
+import { clamp } from "xen-dev-utils";
 const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
 const lowestSubharmonic = ref(8);
 const highestSubharmonic = ref(16);
 function generate() {
-  const numerator = highestSubharmonic.value;
+  const leastDenominator = Math.max(1, Math.round(lowestSubharmonic.value));
+  const numerator = clamp(
+    leastDenominator + 1,
+    leastDenominator + 1000,
+    Math.round(highestSubharmonic.value)
+  );
   const scale = Scale.fromSubharmonicSeries(
     numerator,
-    lowestSubharmonic.value,
+    leastDenominator,
     DEFAULT_NUMBER_OF_COMPONENTS
   );
-  emit(
-    "update:scaleName",
-    `Subharmonics ${lowestSubharmonic.value}-${highestSubharmonic.value}`
-  );
+  emit("update:scaleName", `Subharmonics ${leastDenominator}-${numerator}`);
   emit("update:scale", scale);
 }
 </script>

@@ -506,6 +506,10 @@ export default class Scale {
     return this.variant(intervals as Interval[]);
   }
 
+  head(end: number) {
+    return this.variant(this.intervals.slice(0, end));
+  }
+
   stretch(scalar: number) {
     const intervals = this.intervals.map((interval) =>
       interval.stretch(scalar)

@@ -3,16 +3,18 @@ import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
 import Scale from "@/scale";
 import { ref } from "vue";
 import Modal from "@/components/ModalDialog.vue";
+import { clamp } from "xen-dev-utils";
 const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
 const val = ref(12);
 const equave = ref(2);
 function generate() {
+  const clampedVal = clamp(1, 512, val.value);
   const scale = Scale.fromDwarf(
-    val.value,
+    clampedVal,
     equave.value,
     DEFAULT_NUMBER_OF_COMPONENTS
   );
-  let name = `Dwarf scale ${val.value}`;
+  let name = `Dwarf scale ${clampedVal}`;
   if (equave.value !== 2) {
     name += `<${equave.value}>`;
   }
@@ -30,7 +32,14 @@ function generate() {
       <div class="control-group">
         <div class="control">
           <label for="val">Patent val</label>
-          <input id="val" type="number" min="1" class="control" v-model="val" />
+          <input
+            id="val"
+            type="number"
+            min="1"
+            max="512"
+            class="control"
+            v-model="val"
+          />
         </div>
         <div class="control">
           <label for="equave">Equave</label>

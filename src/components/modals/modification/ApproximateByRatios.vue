@@ -5,6 +5,7 @@ import Modal from "@/components/ModalDialog.vue";
 import {
   approximateOddLimitWithErrors,
   approximatePrimeLimitWithErrors,
+  clamp,
   Fraction,
   getConvergents,
   primeLimit as getPrimeLimit,
@@ -34,21 +35,76 @@ const oddLimit = ref(9);
 const primeLimit = ref(7);
 const maxExponent = ref(2);
 
+const safeOddLimit = computed(() =>
+  clamp(3, 101, 2 * Math.floor(oddLimit.value / 2) + 1)
+);
+const safePrimeLimit = computed(() => {
+  const value = primeLimit.value;
+  if (value < 3) {
+    return 3;
+  }
+  if (value < 5) {
+    return 3;
+  }
+  if (value < 7) {
+    return 5;
+  }
+  if (value < 11) {
+    return 7;
+  }
+  if (value < 13) {
+    return 11;
+  }
+  if (value < 17) {
+    return 13;
+  }
+  if (value < 19) {
+    return 17;
+  }
+  if (value < 23) {
+    return 19;
+  }
+  if (value < 29) {
+    return 23;
+  }
+  if (value > 29) {
+    return 29;
+  }
+  return 3;
+});
+const safeMaxExponent = computed(() => {
+  let maxSafe = 8;
+  if (safePrimeLimit.value > 7) {
+    maxSafe = 6;
+  }
+  if (safePrimeLimit.value > 13) {
+    maxSafe = 3;
+  }
+  if (safePrimeLimit.value >= 29) {
+    maxSafe = 2;
+  }
+  return clamp(1, maxSafe, maxExponent.value);
+});
+
 // Make the number input skip to the next prime when incremented
 function modifyPrimeLimit(event: Event) {
+  const oldValue = primeLimit.value;
   const newValue = parseInt((event.target as HTMLInputElement).value);
   if (isNaN(newValue)) {
     return;
   }
   if (PRIMES.includes(newValue)) {
     primeLimit.value = newValue;
+    return;
   }
   const index = PRIMES.indexOf(primeLimit.value);
-  if (newValue < primeLimit.value && index > 1) {
+  if (newValue < oldValue && index > 1) {
     primeLimit.value = PRIMES[index - 1];
+    return;
   }
-  if (newValue > primeLimit.value && index < PRIMES.length - 1) {
+  if (newValue > oldValue && index < PRIMES.length - 1) {
     primeLimit.value = PRIMES[index + 1];
+    return;
   }
 }
 
@@ -94,7 +150,7 @@ const approximationsWithErrorsAndLimits = computed<Approximation[]>(() => {
   } else if (method.value === "odd") {
     const approximationsAndErrors = approximateOddLimitWithErrors(
       selectedCents,
-      oddLimit.value
+      safeOddLimit.value
     );
     const result: Approximation[] = [];
     approximationsAndErrors.forEach(([fraction, error]) => {
@@ -111,16 +167,16 @@ const approximationsWithErrorsAndLimits = computed<Approximation[]>(() => {
   }
   const approximationsAndErrors = approximatePrimeLimitWithErrors(
     selectedCents,
-    PRIMES.indexOf(primeLimit.value),
-    maxExponent.value,
+    PRIMES.indexOf(safePrimeLimit.value),
+    safeMaxExponent.value,
     Math.min(600, maxError.value),
     MAX_LENGTH
   );
   if (!approximationsAndErrors.length) {
     const [fraction, error] = approximatePrimeLimitWithErrors(
       selectedCents,
-      PRIMES.indexOf(primeLimit.value),
-      maxExponent.value,
+      PRIMES.indexOf(safePrimeLimit.value),
+      safeMaxExponent.value,
       undefined,
       1
     )[0];
@@ -273,7 +329,7 @@ function modifyAndAdvance() {
 
         <div class="control" v-if="method === 'odd'">
           <label for="odd-limit">Odd limit</label>
-          <input type="number" min="3" step="2" v-model="oddLimit" />
+          <input type="number" min="3" max="101" step="2" v-model="oddLimit" />
         </div>
 
         <div class="control" v-if="method === 'prime'">
@@ -281,12 +337,13 @@ function modifyAndAdvance() {
           <input
             type="number"
             min="3"
+            max="29"
             step="2"
             :value="primeLimit"
             @input="modifyPrimeLimit"
           />
           <label for="max-exponent">Maximum exponent</label>
-          <input type="number" min="1" v-model="maxExponent" />
+          <input type="number" min="1" max="8" v-model="maxExponent" />
         </div>
       </div>
     </template>

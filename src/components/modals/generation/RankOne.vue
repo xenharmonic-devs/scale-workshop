@@ -1,4 +1,7 @@
 <script setup lang="ts">
+// This modal is currently unused in the app.
+// TODO: Add sanity checks
+
 import { makeRank1 } from "@/tempering";
 import { ref, watch } from "vue";
 import Modal from "@/components/ModalDialog.vue";

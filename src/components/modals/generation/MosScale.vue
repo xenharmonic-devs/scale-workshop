@@ -21,7 +21,7 @@ import { computed, reactive, ref, watch } from "vue";
 import Modal from "@/components/ModalDialog.vue";
 import ScaleLineInput from "@/components/ScaleLineInput.vue";
 import { Interval } from "@/interval";
-import { gcd } from "xen-dev-utils";
+import { clamp, gcd } from "xen-dev-utils";
 
 const emit = defineEmits([
   "update:scale",
@@ -54,6 +54,17 @@ const equaveString = ref("2/1");
 const previewL = ref(0);
 const previewS = ref(0);
 
+// == Computed state ==
+
+// Sanity enforcement
+const safeNumLarge = computed(() =>
+  clamp(1, 1000, Math.round(numberOfLargeSteps.value))
+);
+const safeNumSmall = computed(() =>
+  clamp(1, 1000, Math.round(numberOfSmallSteps.value))
+);
+const safeSizeLarge = computed(() => Math.round(sizeOfLargeStep.value));
+const safeSizeSmall = computed(() => Math.round(sizeOfSmallStep.value));
 const boundedEdo = computed(() => {
   const value = edo.value;
   if (isNaN(value) || !isFinite(value)) {
@@ -64,6 +75,22 @@ const boundedEdo = computed(() => {
   }
   return Math.round(value);
 });
+
+// Derived sanity
+const numberOfPeriods = computed(() =>
+  Math.abs(gcd(safeNumLarge.value, safeNumSmall.value))
+);
+const upMax = computed(
+  () => safeNumLarge.value + safeNumSmall.value - numberOfPeriods.value
+);
+const safeUp = computed(() =>
+  Math.min(
+    Math.floor(up.value / numberOfPeriods.value) * numberOfPeriods.value,
+    upMax.value
+  )
+);
+
+// Selections
 const edoMap = computed(() => makeEdoMap());
 const edoExtraMap = reactive<Map<number, MosScaleInfo[]>>(new Map());
 const edoList = computed(() => {
@@ -73,23 +100,27 @@ const edoList = computed(() => {
   }
   return edoMap.value.get(edo_)!.concat(edoExtraMap.get(edo_) || []);
 });
+
+// Additional information
 const tamnamsName = computed(() => {
-  const info = tamnamsInfo(numberOfLargeSteps.value, numberOfSmallSteps.value);
+  const info = tamnamsInfo(safeNumLarge.value, safeNumSmall.value);
   if (info?.name === undefined) {
     return "";
   }
   return info.name.split(";")[0];
 });
 const mosModeInfo = computed(() =>
-  modeInfo(numberOfLargeSteps.value, numberOfSmallSteps.value, up.value, true)
+  modeInfo(safeNumLarge.value, safeNumSmall.value, safeUp.value, true)
 );
+
+// Derived state
 const hardness = computed(() =>
-  getHardness(sizeOfLargeStep.value, sizeOfSmallStep.value)
+  getHardness(safeSizeLarge.value, safeSizeSmall.value)
 );
 const hostEd = computed(
   () =>
-    numberOfLargeSteps.value * sizeOfLargeStep.value +
-    numberOfSmallSteps.value * sizeOfSmallStep.value
+    safeNumLarge.value * safeSizeLarge.value +
+    safeNumSmall.value * safeSizeSmall.value
 );
 const ed = computed(() => {
   if (equave.value.equals(octave)) {
@@ -97,13 +128,6 @@ const ed = computed(() => {
   }
   return `${hostEd.value}ED${equaveString.value}`;
 });
-const numberOfPeriods = computed(() =>
-  Math.abs(gcd(numberOfLargeSteps.value, numberOfSmallSteps.value))
-);
-const upMax = computed(
-  () =>
-    numberOfLargeSteps.value + numberOfSmallSteps.value - numberOfPeriods.value
-);
 const previewName = computed(() => {
   const info = tamnamsInfo(previewL.value, previewS.value);
   if (info?.name === undefined) {
@@ -150,21 +174,21 @@ function generate() {
   let steps: number[];
   if (colorMethod.value === "none") {
     steps = mos(
-      numberOfLargeSteps.value,
-      numberOfSmallSteps.value,
-      sizeOfLargeStep.value,
-      sizeOfSmallStep.value,
-      up.value
+      safeNumLarge.value,
+      safeNumSmall.value,
+      safeSizeLarge.value,
+      safeSizeSmall.value,
+      safeUp.value
     );
   } else {
     const generator =
       colorMethod.value === "parent" ? mosWithParent : mosWithDaughter;
     const map = generator(
-      numberOfLargeSteps.value,
-      numberOfSmallSteps.value,
-      sizeOfLargeStep.value,
-      sizeOfSmallStep.value,
-      up.value,
+      safeNumLarge.value,
+      safeNumSmall.value,
+      safeSizeLarge.value,
+      safeSizeSmall.value,
+      safeUp.value,
       colorAccidentals.value === "flat"
     );
     steps = [...map.keys()];
@@ -176,17 +200,14 @@ function generate() {
   }
 
   if (colorMethod.value === "parent") {
-    const parent = parentMos(
-      numberOfLargeSteps.value,
-      numberOfSmallSteps.value
-    );
-    name = `MOS ${numberOfLargeSteps.value}L ${numberOfSmallSteps.value}s (${parent.mosPattern} on white)`;
+    const parent = parentMos(safeNumLarge.value, safeNumSmall.value);
+    name = `MOS ${safeNumLarge.value}L ${safeNumSmall.value}s (${parent.mosPattern} on white)`;
   } else if (colorMethod.value === "daughter") {
     const daughter = daughterMos(
-      numberOfLargeSteps.value,
-      numberOfSmallSteps.value,
-      sizeOfLargeStep.value,
-      sizeOfSmallStep.value
+      safeNumLarge.value,
+      safeNumSmall.value,
+      safeSizeLarge.value,
+      safeSizeSmall.value
     );
     name = "MOS ";
     if (daughter.hardness === "equalized") {
@@ -200,9 +221,9 @@ function generate() {
     } else {
       name += daughter.mosPattern;
     }
-    name += ` (${numberOfLargeSteps.value}L ${numberOfSmallSteps.value}s on white)`;
+    name += ` (${safeNumLarge.value}L ${safeNumSmall.value}s on white)`;
   } else {
-    name = `MOS ${numberOfLargeSteps.value}L ${numberOfSmallSteps.value}s`;
+    name = `MOS ${safeNumLarge.value}L ${safeNumSmall.value}s`;
   }
   emit("update:scaleName", name);
 
@@ -257,6 +278,7 @@ function generate() {
             id="number-of-large-steps"
             type="number"
             min="1"
+            max="1000"
             v-model="numberOfLargeSteps"
           />
         </div>
@@ -266,6 +288,7 @@ function generate() {
             id="number-of-small-steps"
             type="number"
             min="1"
+            max="1000"
             v-model="numberOfSmallSteps"
           />
         </div>
