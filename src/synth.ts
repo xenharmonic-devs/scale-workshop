@@ -57,9 +57,18 @@ export function initializeCustomWaveforms(audioContext: AudioContext) {
   );
 
   // Subgroup optimized waveforms
+  // Name     | Factors
+  // rich     | 2,3,5
+  // slender  | 2,3,7
+  // didacus  | 2,5,7
+  // bohlen   | 3,5,7
+  // glass    | 2,7,11
+  // boethius | 2,3,19
 
   const zeros = new Float32Array(101);
   const rich = new Float32Array(101);
+  const slender = new Float32Array(101);
+  const didacus = new Float32Array(101);
   const bohlen = new Float32Array(101);
   const glass = new Float32Array(101);
   const boethius = new Float32Array(101);
@@ -73,29 +82,40 @@ export function initializeCustomWaveforms(audioContext: AudioContext) {
   ];
 
   lowPrimeHarmonics.forEach((n) => {
-    if (n % 7 && n % 11 && n % 19) {
-      rich[n] = 1 / n;
-    }
-    if (n % 2 && n % 11 && n % 19) {
-      bohlen[n] = 1 / n;
+    const m = 1 / n;
+    if (n % 11 && n % 19) {
+      if (n % 7) {
+        rich[n] = m;
+      }
+      if (n % 5) {
+        slender[n] = m;
+      }
+      if (n % 3) {
+        didacus[n] = m;
+      }
+      if (n % 2) {
+        bohlen[n] = m;
+      }
     }
     if (n % 3 && n % 5 && n % 19) {
       if (n % 7 && n % 11) {
-        glass[n] = 1 / n;
+        glass[n] = m;
       } else {
-        glass[n] = 2 / n;
+        glass[n] = 2 * m;
       }
     }
     if (n % 5 && n % 7 && n % 11) {
       if (n % 19) {
-        boethius[n] = 1 / n;
+        boethius[n] = m;
       } else {
-        boethius[n] = 2 / n;
+        boethius[n] = 2 * m;
       }
     }
   });
 
   CUSTOM_WAVEFORMS.rich = audioContext.createPeriodicWave(zeros, rich);
+  CUSTOM_WAVEFORMS.slender = audioContext.createPeriodicWave(zeros, slender);
+  CUSTOM_WAVEFORMS.didacus = audioContext.createPeriodicWave(zeros, didacus);
   CUSTOM_WAVEFORMS.bohlen = audioContext.createPeriodicWave(zeros, bohlen);
   CUSTOM_WAVEFORMS.glass = audioContext.createPeriodicWave(zeros, glass);
   CUSTOM_WAVEFORMS.boethius = audioContext.createPeriodicWave(zeros, boethius);
