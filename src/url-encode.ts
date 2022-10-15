@@ -320,7 +320,7 @@ function getSingle(query: LocationQuery, key: string, defaultIfNull: string) {
   if (Array.isArray(result)) {
     throw new Error(`Failed to decode key '${key}'`);
   }
-  if (result === null) {
+  if (result == null) {
     return defaultIfNull;
   }
   return result;
