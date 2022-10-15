@@ -3,16 +3,18 @@ import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
 import Scale from "@/scale";
 import { ref } from "vue";
 import Modal from "@/components/ModalDialog.vue";
+import { clamp } from "xen-dev-utils";
 const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
 const guideTone = ref(45);
 const equave = ref(2);
 function generate() {
+  const clampedTone = Math.round(clamp(1, 1000000000, guideTone.value));
   const scale = Scale.fromEulerGenus(
-    guideTone.value,
+    clampedTone,
     equave.value,
     DEFAULT_NUMBER_OF_COMPONENTS
   );
-  let name = `Euler-Fokker genus ${guideTone.value}`;
+  let name = `Euler-Fokker genus ${clampedTone}`;
   if (equave.value !== 2) {
     name += `<${equave.value}>`;
   }
@@ -34,6 +36,7 @@ function generate() {
             id="guide-tone"
             type="number"
             min="1"
+            max="1000000000"
             class="control"
             v-model="guideTone"
           />

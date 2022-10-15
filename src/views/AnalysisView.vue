@@ -6,6 +6,8 @@ import ChordWheel from "@/components/ChordWheel.vue";
 import { computed, ref } from "vue";
 import type { Interval, IntervalOptions } from "@/interval";
 
+const MAX_SCALE_SIZE = 100;
+
 const props = defineProps<{
   scale: Scale;
   virtualSynth: VirtualSynth;
@@ -76,7 +78,7 @@ function formatMatrixCell(interval: Interval) {
 
 const matrix = computed(() => {
   return intervalMatrix(
-    props.scale.mergeOptions({
+    props.scale.head(MAX_SCALE_SIZE).mergeOptions({
       centsFractionDigits: 1,
       decimalFractionDigits: 3,
     })
@@ -91,7 +93,9 @@ const matrix = computed(() => {
       <table>
         <tr>
           <th></th>
-          <th v-for="i of scale.size" :key="i">{{ i }}</th>
+          <th v-for="i of Math.min(scale.size, MAX_SCALE_SIZE)" :key="i">
+            {{ i }}
+          </th>
           <th>({{ scale.size + 1 }})</th>
         </tr>
         <tr v-for="(row, i) of matrix" :key="i">
