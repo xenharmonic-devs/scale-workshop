@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { LocationQuery } from "vue-router";
 import { arraysEqual } from "xen-dev-utils";
 import {
   mapWhiteAsdfBlackQwerty,
@@ -109,6 +110,20 @@ describe("URL encoder", () => {
       c: "~~-~",
       m: "1o",
       v: "3",
+    });
+  });
+});
+
+describe("URL decoder", () => {
+  it("can decode the app state", () => {
+    const state: LocationQuery = {
+      l: "5F4_6F4_7F4_8F4",
+      p: "1",
+    };
+    const decoded = decodeQuery(state);
+    expect(decoded).toMatchObject({
+      scaleLines: ["5/4", "6/4", "7/4", "8/4"],
+      pianoMode: "QweZxc1",
     });
   });
 });
