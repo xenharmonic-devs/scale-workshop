@@ -241,7 +241,12 @@ async function doImport(importerKey: ImporterKey, event: Event) {
             <a href="#" @click="anamarkFile?.click()"><li>Import .tun</li></a>
             <a href="#"><li>Import .mnlgtuns / .mnltuno</li></a>
             <li class="divider"></li>
-            <a href="#" @click="joinedLines = ''; scaleDataArea!.focus()"
+            <a
+              href="#"
+              @click="
+                joinedLines = '';
+                scaleDataArea!.focus();
+              "
               ><li>Clear scale</li></a
             >
             <a href="#" @click="showPresetModal = true"
@@ -254,17 +259,26 @@ async function doImport(importerKey: ImporterKey, event: Event) {
           <ul>
             <a
               href="#"
-              @click="$emit('update:scale', scale.sorted()); scaleDataArea!.focus()"
+              @click="
+                $emit('update:scale', scale.sorted());
+                scaleDataArea!.focus();
+              "
               ><li>Sort ascending</li></a
             >
             <a
               href="#"
-              @click="$emit('update:scale', scale.reduce()); scaleDataArea!.focus()"
+              @click="
+                $emit('update:scale', scale.reduce());
+                scaleDataArea!.focus();
+              "
               ><li>Reduce</li></a
             >
             <a
               href="#"
-              @click="$emit('update:scale', scale.invert()); scaleDataArea!.focus()"
+              @click="
+                $emit('update:scale', scale.invert());
+                scaleDataArea!.focus();
+              "
               ><li>Invert</li></a
             >
             <a href="#" @click="showRotateModal = true"><li>Rotate</li></a>
