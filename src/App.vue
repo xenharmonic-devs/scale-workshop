@@ -239,6 +239,7 @@ watch(
     isomorphicHorizontal,
     isomorphicVertical,
     keyboardMode,
+    pianoMode,
     equaveShift,
     degreeShift,
     waveform,
