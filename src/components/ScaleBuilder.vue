@@ -239,7 +239,6 @@ async function doImport(importerKey: ImporterKey, event: Event) {
             <li class="divider"></li>
             <a href="#" @click="scalaFile?.click()"><li>Import .scl</li></a>
             <a href="#" @click="anamarkFile?.click()"><li>Import .tun</li></a>
-            <a href="#"><li>Import .mnlgtuns / .mnltuno</li></a>
             <li class="divider"></li>
             <a
               href="#"
