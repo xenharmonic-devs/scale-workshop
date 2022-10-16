@@ -62,7 +62,16 @@ const router = createRouter({
       name: "virtualKeyboard",
       component: () => import("../views/VirtualKeyboardView.vue"),
     },
-    // will match everything and put it under `$route.params.pathMatch`
+    // Root aliases mainly for compatibility with old SW1 URLs.
+    {
+      path: "/index.html",
+      redirect: "/",
+    },
+    {
+      path: "/index.htm",
+      redirect: "/",
+    },
+    // 404 route will match everything and put it under `$route.params.pathMatch`
     {
       path: "/:pathMatch(.*)*",
       name: "notFound",
