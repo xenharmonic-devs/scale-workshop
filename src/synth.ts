@@ -174,11 +174,7 @@ class Voice {
     const now = this.audioContext.currentTime;
     this.oscillator.frequency.setValueAtTime(frequency, now);
     this.envelope.gain.setValueAtTime(0, now);
-    this.envelope.gain.setTargetAtTime(
-      velocity,
-      now,
-      attackTime * TIME_CONSTANT
-    );
+    this.envelope.gain.linearRampToValueAtTime(velocity, now + attackTime);
     this.envelope.gain.setTargetAtTime(
       velocity * sustainLevel,
       now + attackTime,
@@ -193,6 +189,14 @@ class Voice {
       this.age = EXPIRED;
       const then = this.audioContext.currentTime;
       this.envelope.gain.cancelScheduledValues(then);
+      // NOTE: Canceling scheduled values doesn't hold intermediate values of linear ramps
+      if (then < now + attackTime) {
+        // Calculate correct linear ramp hold value
+        this.envelope.gain.setValueAtTime(
+          (velocity * (then - now)) / attackTime,
+          then
+        );
+      }
       this.envelope.gain.setTargetAtTime(0, then, releaseTime * TIME_CONSTANT);
     };
 
