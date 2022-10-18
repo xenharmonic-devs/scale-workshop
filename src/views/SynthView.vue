@@ -7,6 +7,7 @@ import { BASIC_WAVEFORMS, CUSTOM_WAVEFORMS } from "@/synth";
 const props = defineProps<{
   audioContext: AudioContext;
   audioOutput: AudioNode | null;
+  audioDelay: number;
   mainVolume: number;
   keyboardMode: "isomorphic" | "piano";
   pianoMode: "Asdf" | "QweZxc0" | "QweZxc1";
@@ -29,6 +30,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits([
+  "update:audioDelay",
   "update:mainVolume",
   "update:keyboardMode",
   "update:pianoMode",
@@ -58,6 +60,18 @@ const remappedKey = ref("");
 const timeDomainVisualizer = ref<any>(null);
 
 const analyser = ref<AnalyserNode | null>(null);
+
+const audioDelay = computed({
+  get: () => props.audioDelay,
+  set(newValue: number) {
+    if (typeof newValue !== "number") {
+      newValue = parseFloat(newValue);
+    }
+    if (!isNaN(newValue)) {
+      emit("update:audioDelay", newValue);
+    }
+  },
+});
 
 const mainVolume = computed({
   get: () => props.mainVolume,
@@ -334,6 +348,16 @@ onUnmounted(() => {
               v-model="maxPolyphony"
             />
           </div>
+          <label for="release">Audio delay (reduce pops)</label>
+          <input
+            id="audio-delay"
+            class="control"
+            type="range"
+            min="0.0"
+            max="0.1"
+            step="any"
+            v-model="audioDelay"
+          />
         </div>
       </div>
       <div class="column keyboard-controls">
