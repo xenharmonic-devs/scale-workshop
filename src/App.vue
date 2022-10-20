@@ -45,6 +45,9 @@ const audioDestination = ref<AudioNode | null>(null);
 // Chromium has some issues with audio nodes as props
 // so we need this extra ref and the associated watcher.
 const mainVolume = ref(0.175);
+// Fix Firefox issues with audioContext.currentTime being in the past using a delay.
+// This is a locally stored user preference, but shown on the Synth tab.
+const audioDelay = ref(0.001);
 
 // === Application state ===
 const scaleName = ref("");
@@ -346,6 +349,7 @@ function sendNoteOn(frequency: number, rawAttack: number) {
     synth.value = new Synth(
       rootProps.audioContext,
       audioDestination.value,
+      audioDelay.value,
       waveform.value,
       attackTime.value,
       decayTime.value,
@@ -680,6 +684,15 @@ onMounted(() => {
 
   // Fetch user preferences
   const storage = window.localStorage;
+  if ("audioDelay" in storage) {
+    const value = storage.getItem("audioDelay");
+    if (value !== null) {
+      audioDelay.value = parseFloat(value);
+      if (isNaN(audioDelay.value)) {
+        audioDelay.value = 0.0;
+      }
+    }
+  }
   if ("newline" in storage) {
     newline.value = storage.getItem("newline")!;
   }
@@ -787,6 +800,11 @@ function panic() {
 }
 
 // Synth parameter watchers
+watch(audioDelay, (newValue) => {
+  if (synth.value !== null) {
+    synth.value.audioDelay = newValue;
+  }
+});
 watch(waveform, (newValue) => {
   if (synth.value !== null) {
     synth.value.waveform = newValue;
@@ -852,6 +870,9 @@ function unpanic() {
 }
 */
 // Store user preferences
+watch(audioDelay, (newValue) =>
+  window.localStorage.setItem("audioDelay", newValue.toString())
+);
 watch(newline, (newValue) => window.localStorage.setItem("newline", newValue));
 watch(colorScheme, (newValue) => {
   window.localStorage.setItem("colorScheme", newValue);
@@ -914,6 +935,7 @@ watch(degreeDownCode, (newValue) =>
   <RouterView
     :audioContext="audioContext"
     :audioOutput="mainGain"
+    :audioDelay="audioDelay"
     :mainVolume="mainVolume"
     :scaleName="scaleName"
     :scaleLines="scaleLines"
@@ -951,6 +973,7 @@ watch(degreeDownCode, (newValue) =>
     :sustainLevel="sustainLevel"
     :releaseTime="releaseTime"
     :maxPolyphony="maxPolyphony"
+    @update:audioDelay="audioDelay = $event"
     @update:mainVolume="mainVolume = $event"
     @update:scaleName="scaleName = $event"
     @update:scaleLines="updateFromScaleLines"
