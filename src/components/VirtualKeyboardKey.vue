@@ -23,12 +23,12 @@ onUnmounted(() => {
   }
 });
 
-function onTouchStart() {
+function start() {
   active.value = true;
   noteOff = props.noteOn();
 }
 
-function onTouchEnd() {
+function end() {
   active.value = false;
   if (noteOff !== null) {
     noteOff();
@@ -36,34 +36,48 @@ function onTouchEnd() {
   }
 }
 
+function onTouchStart(event: TouchEvent) {
+  event.preventDefault();
+  start();
+}
+
+function onTouchEnd(event: TouchEvent) {
+  event.preventDefault();
+  end();
+}
+
 function onMouseDown(event: MouseEvent) {
   if (event.button !== LEFT_MOUSE_BTN) {
     return;
   }
+  event.preventDefault();
   emit("press");
-  onTouchStart();
+  start();
 }
 
 function onMouseUp(event: MouseEvent) {
   if (event.button !== LEFT_MOUSE_BTN) {
     return;
   }
+  event.preventDefault();
   emit("unpress");
-  onTouchEnd();
+  end();
 }
 
-function onMouseEnter() {
+function onMouseEnter(event: MouseEvent) {
   if (!props.isMousePressed) {
     return;
   }
-  onTouchStart();
+  event.preventDefault();
+  start();
 }
 
-function onMouseLeave() {
+function onMouseLeave(event: MouseEvent) {
   if (!props.isMousePressed) {
     return;
   }
-  onTouchEnd();
+  event.preventDefault();
+  end();
 }
 </script>
 
