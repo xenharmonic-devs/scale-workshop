@@ -8,18 +8,9 @@
       height="100"
     />
     <h1>Scale Workshop 2</h1>
-    <p style="margin-bottom: 2rem">
+    <p>
       <em>Because there are more than 12 notes</em>
     </p>
-    <hr />
-    <div class="control-group">
-      <div class="control">
-        <p>
-          With contributions from Sevish, Lumi Pakkanen, Lajos Mészáros and
-          Vincenzo Sicurella
-        </p>
-      </div>
-    </div>
     <div class="control-group">
       <div class="control">
         <a
@@ -37,6 +28,16 @@
           >Report an issue</a
         >
       </div>
+    </div>
+    <hr />
+    <div id="contributors">
+      <h2>Contributors</h2>
+      <p>
+        Sevish - <i>UI/UX designer</i><br />
+        Lumi Pakkanen - <i>lead developer</i><br />
+        Vincenzo Sicurella - <i>developer</i><br />
+        Lajos Mészáros - <i>developer</i>
+      </p>
     </div>
   </div>
 </template>
@@ -56,5 +57,9 @@ hr {
 }
 .about > * {
   max-width: 30rem;
+}
+#contributors h2 {
+  border: unset;
+  text-align: center;
 }
 </style>
