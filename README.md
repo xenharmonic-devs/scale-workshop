@@ -113,7 +113,7 @@ Please base any work on `main` branch, and make pull requests against `main` as 
 * Feature: Approximate by ratios using odd- and prime-limits
 * Feature: Temper modifier for converting scales in just intonation to lower ranks
 * Feature: Convert intervals to different types
-* Feature: New interval type: monzo e.g `[-4 4 1>` = 2<sup>-4</sup>·3<sup>4</sup>·5<sup>1</sup> = 81/80
+* Feature: New interval type: monzo e.g `[-4 4 -1>` = 2<sup>-4</sup>·3<sup>4</sup>·5<sup>-1</sup> = 81/80
 * Feature: New interval type: composite e.g `3/2 - 1.995` ≈ 700.0 cents
 * Feature: Analysis - Interval matrix (modes)
 * Feature: Analysis - Visualize currently played chord as otonal or utonal concentric cogs
