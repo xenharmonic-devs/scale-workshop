@@ -1,6 +1,9 @@
 // Exponential approach conversion, smaller value results in more eager envelopes
 const TIME_CONSTANT = 0.5;
 
+// Detune/pitch bend smoothing, higher values smooth more and respond slower
+const DETUNE_TIME_CONSTANT = 0.01;
+
 // Large but finite number to signify voices that are off
 const EXPIRED = 10000;
 
@@ -136,6 +139,9 @@ class Voice {
   oscillator: OscillatorNode;
   envelope: GainNode;
   log: (msg: string) => void;
+  currentBend: number;
+  bendRangeUp: number;
+  bendRangeDown: number;
   noteId: number;
   voiceId: number;
 
@@ -150,6 +156,8 @@ class Voice {
     this.oscillator = this.audioContext.createOscillator();
     this.envelope = this.audioContext.createGain();
     this.oscillator.connect(this.envelope).connect(destination);
+    // Omitting audio delay here is intentional.
+    // The transition from actual silence to zero gain shouldn't cause any audible pops.
     const now = this.audioContext.currentTime;
     this.envelope.gain.setValueAtTime(0, now);
     this.oscillator.start(now);
@@ -160,8 +168,22 @@ class Voice {
 
     this.log = log;
 
+    this.currentBend = 0.0;
+    this.bendRangeUp = 200.0;
+    this.bendRangeDown = 200.0;
+
     this.noteId = 0;
     this.voiceId = VOICE_ID++;
+  }
+
+  get detune() {
+    if (this.currentBend > 0) {
+      return this.bendRangeUp * this.currentBend;
+    }
+    if (this.currentBend < 0) {
+      return this.bendRangeDown * this.currentBend;
+    }
+    return 0.0;
   }
 
   noteOn(
@@ -173,6 +195,8 @@ class Voice {
     decayTime: number,
     sustainLevel: number,
     releaseTime: number,
+    bendRangeUp: number,
+    bendRangeDown: number,
     noteId: number
   ) {
     this.log(
@@ -180,6 +204,9 @@ class Voice {
     );
     this.age = 0;
     this.noteId = noteId;
+
+    this.bendRangeUp = bendRangeUp;
+    this.bendRangeDown = bendRangeDown;
 
     if (BASIC_WAVEFORMS.includes(waveform)) {
       this.oscillator.type = waveform as OscillatorType;
@@ -194,6 +221,7 @@ class Voice {
       }`
     );
     this.oscillator.frequency.setValueAtTime(frequency, now);
+    this.oscillator.detune.setValueAtTime(this.detune, now);
     this.envelope.gain.setValueAtTime(0, now);
     this.envelope.gain.linearRampToValueAtTime(velocity, now + attackTime);
     this.envelope.gain.setTargetAtTime(
@@ -209,7 +237,7 @@ class Voice {
         return;
       }
       this.age = EXPIRED;
-      const then = this.audioContext.currentTime;
+      const then = this.audioContext.currentTime + audioDelay;
       this.log(`Voice ${this.voiceId}: Off time = ${then}`);
       this.envelope.gain.cancelScheduledValues(then);
       // NOTE: Canceling scheduled values doesn't hold intermediate values of linear ramps
@@ -224,6 +252,16 @@ class Voice {
     };
 
     return noteOff;
+  }
+
+  pitchBend(audioDelay: number, amount: number) {
+    const now = this.audioContext.currentTime + audioDelay;
+    this.currentBend = amount;
+    const detune = this.detune;
+    this.log(
+      `Voice ${this.voiceId}: pitch bend = ${amount} resulting in detune = ${detune}, time = ${now}`
+    );
+    this.oscillator.detune.setTargetAtTime(detune, now, DETUNE_TIME_CONSTANT);
   }
 
   dispose() {
@@ -293,7 +331,12 @@ export class Synth {
     this.setPolyphony(value);
   }
 
-  noteOn(frequency: number, velocity: number) {
+  noteOn(
+    frequency: number,
+    velocity: number,
+    bendRangeUp: number,
+    bendRangeDown: number
+  ) {
     // Allocate voices based on age.
     // Boils down to:
     // a) Pick the oldest released voice.
@@ -318,7 +361,14 @@ export class Synth {
       this.decayTime,
       this.sustainLevel,
       this.releaseTime,
+      bendRangeUp,
+      bendRangeDown,
       NOTE_ID++
     );
+  }
+
+  // Bend the pitch of all voices based on their individual configurations
+  pitchBend(amount: number) {
+    this.voices.forEach((voice) => voice.pitchBend(this.audioDelay, amount));
   }
 }

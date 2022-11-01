@@ -27,6 +27,7 @@ const props = defineProps<{
   sustainLevel: number;
   releaseTime: number;
   maxPolyphony: number;
+  pitchBendDepthCents: number;
 }>();
 
 const emit = defineEmits([
@@ -49,10 +50,12 @@ const emit = defineEmits([
   "update:sustainLevel",
   "update:releaseTime",
   "update:maxPolyphony",
+  "update:pitchBendDepthCents",
   "mapAsdf",
   "mapZxcv0",
   "mapZxcv1",
   "panic",
+  "pitchBend",
 ]);
 
 const remappedKey = ref("");
@@ -176,6 +179,13 @@ const maxPolyphony = computed({
   },
 });
 
+const pitchBendDepthCents = computed({
+  get: () => props.pitchBendDepthCents,
+  set(newValue: number) {
+    emit("update:pitchBendDepthCents", newValue);
+  },
+});
+
 const strokeStyle = computed(() => {
   // Add dependency.
   props.colorScheme;
@@ -227,6 +237,20 @@ function assignCode(event: KeyboardEvent) {
   }
 }
 
+function pitchBend(event: Event) {
+  const amount = parseFloat((event.target as HTMLInputElement).value);
+  if (!isNaN(amount)) {
+    emit("pitchBend", amount);
+  }
+}
+
+function resetBend(event: Event) {
+  (event.target as HTMLInputElement).value = "0";
+  emit("pitchBend", 0.0);
+}
+
+// TODO: Set pitch-bend depth or scale awareness
+
 onMounted(() => {
   if (props.audioOutput !== null) {
     analyser.value = props.audioContext.createAnalyser();
@@ -262,8 +286,30 @@ onUnmounted(() => {
           />
         </div>
         <div class="control-group">
+          <label for="pitc-bend">Pitch bend</label>
+          <input
+            id="pitch-bend"
+            class="control"
+            type="range"
+            value="0"
+            min="-1"
+            max="1"
+            step="any"
+            @input="pitchBend"
+            @mouseup="resetBend"
+          />
+          <label for="pitch-bend-depth">Pitch bend depth (cents)</label>
+          <input
+            id="pitch-bend-depth"
+            class="control"
+            type="number"
+            min="0"
+            step="0.1"
+            v-model="pitchBendDepthCents"
+          />
           <label for="volume">Main volume</label>
           <input
+            id="volume"
             class="control"
             type="range"
             min="0"

@@ -89,6 +89,11 @@ const virtualSynth = reactive(new VirtualSynth(rootProps.audioContext));
 const midiVelocityOn = ref(true);
 // The synth needs to wait for a user gesture to initialize
 const synth = ref<Synth | null>(null);
+// Synth pitch bend depth is set on each note on
+// TODO: Implement scale-aware pitch bend
+const pitchBendMode = ref<"constant" | "scaleDegrees">("constant");
+const pitchBendDepthCents = ref(200.0);
+const pitchBendDepthDegrees = ref(1);
 // These are synth params that use watchers to relay their values to the synth
 const waveform = ref("semisine");
 const attackTime = ref(0.01);
@@ -360,7 +365,12 @@ function sendNoteOn(frequency: number, rawAttack: number) {
   }
 
   // Trigger web audio API synth.
-  const synthOff = synth.value.noteOn(frequency, rawAttack / 127);
+  const synthOff = synth.value.noteOn(
+    frequency,
+    rawAttack / 127,
+    pitchBendDepthCents.value,
+    pitchBendDepthCents.value
+  );
 
   // Trigger virtual synth for per-voice visualization.
   const virtualOff = virtualSynth.voiceOn(frequency);
@@ -439,6 +449,7 @@ function midiNoteOn(index: number, rawAttack: number) {
     return (rawRelease: number) => {};
   }
 
+  // TODO: Calculate frequencies of nearby scale degrees for advanced pitch bend
   const noteOff = sendNoteOn(frequency, rawAttack);
   return (rawRelease: number) => {
     if (!midiVelocityOn.value) {
@@ -473,6 +484,9 @@ watch(midiInput, (newValue, oldValue) => {
   if (newValue !== null) {
     newValue.addListener("noteon", midiIn.noteOn.bind(midiIn));
     newValue.addListener("noteoff", midiIn.noteOff.bind(midiIn));
+    newValue.addListener("pitchbend", (event) =>
+      pitchBend(event.value as number)
+    );
 
     // Pass everything else through and distrubute among the channels
     newValue.addListener("midimessage", (event) => {
@@ -521,6 +535,11 @@ function keyboardNoteOn(index: number) {
 // === Typing keyboard state ===
 function windowKeydownOrUp(event: KeyboardEvent | MouseEvent) {
   const target = event.target;
+  // console.log(target);
+  if (target instanceof HTMLInputElement && target.type === "range") {
+    typingActive.value = true;
+    return;
+  }
   if (
     target instanceof HTMLTextAreaElement ||
     target instanceof HTMLInputElement ||
@@ -799,6 +818,12 @@ function panic() {
   }
 }
 
+function pitchBend(amount: number) {
+  if (synth.value !== null) {
+    synth.value.pitchBend(amount);
+  }
+}
+
 // Synth parameter watchers
 watch(audioDelay, (newValue) => {
   if (synth.value !== null) {
@@ -973,6 +998,7 @@ watch(degreeDownCode, (newValue) =>
     :sustainLevel="sustainLevel"
     :releaseTime="releaseTime"
     :maxPolyphony="maxPolyphony"
+    :pitchBendDepthCents="pitchBendDepthCents"
     @update:audioDelay="audioDelay = $event"
     @update:mainVolume="mainVolume = $event"
     @update:scaleName="scaleName = $event"
@@ -1008,7 +1034,9 @@ watch(degreeDownCode, (newValue) =>
     @update:sustainLevel="sustainLevel = $event"
     @update:releaseTime="releaseTime = $event"
     @update:maxPolyphony="setMaxPolyphony"
+    @update:pitchBendDepthCents="pitchBendDepthCents = $event"
     @panic="panic"
+    @pitchBend="pitchBend($event)"
   />
 </template>
 
