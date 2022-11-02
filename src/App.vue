@@ -299,24 +299,33 @@ router.afterEach((to, from) => {
 // === Tuning table highlighting ===
 // We use hacks to bypass Vue state management for real-time gains
 function tuningTableKeyOn(index: number) {
-  if ("TUNING_TABLE_ROWS" in window && index >= 0 && index < 128) {
-    const tuningTableRow = (window as any).TUNING_TABLE_ROWS[index];
-    if (tuningTableRow?._rawValue) {
-      tuningTableRow._rawValue.classList.add("active");
-      tuningTableRow.heldKeys++;
+  if (index >= 0 && index < 128) {
+    let tuningTableRow = (window as any).TUNING_TABLE_ROWS[index];
+    if (tuningTableRow === undefined) {
+      tuningTableRow = { heldKeys: 0, element: null };
     }
+    tuningTableRow.heldKeys++;
+    if (tuningTableRow.element?._rawValue) {
+      tuningTableRow.element._rawValue.classList.add("active");
+    }
+    (window as any).TUNING_TABLE_ROWS[index] = tuningTableRow;
   }
   // Virtual keyboard state is too complex so we take the performance hit.
   heldNotes.set(index, (heldNotes.get(index) || 0) + 1);
 }
 
 function tuningTableKeyOff(index: number) {
-  if ("TUNING_TABLE_ROWS" in window && index >= 0 && index < 128) {
-    const tuningTableRow = (window as any).TUNING_TABLE_ROWS[index];
-    if (tuningTableRow?._rawValue) {
-      if (!--tuningTableRow.heldKeys) {
-        tuningTableRow._rawValue.classList.remove("active");
+  if (index >= 0 && index < 128) {
+    let tuningTableRow = (window as any).TUNING_TABLE_ROWS[index];
+    if (tuningTableRow === undefined) {
+      tuningTableRow = { heldKeys: 0, element: null };
+    }
+    tuningTableRow.heldKeys--;
+    if (tuningTableRow.element?._rawValue) {
+      if (!tuningTableRow.heldKeys) {
+        tuningTableRow.element._rawValue.classList.remove("active");
       }
+      (window as any).TUNING_TABLE_ROWS[index] = tuningTableRow;
     }
   }
   heldNotes.set(index, (heldNotes.get(index) || 1) - 1);
