@@ -15,6 +15,9 @@ audioContext.suspend();
 // Custom waveforms need to be initialized only once.
 initializeCustomWaveforms(audioContext);
 
+// Hack to bypass Vue state management for real-time gains in table row highlighting.
+(window as any).TUNING_TABLE_ROWS = Array(128);
+
 const app = createApp(App, { audioContext });
 
 app.use(router);
