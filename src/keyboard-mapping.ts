@@ -6,6 +6,19 @@ export const QWERTY_ROW = CODES_LAYER_1[1].slice(1) as string[];
 export const ASDF_ROW = CODES_LAYER_1[2].slice(1) as string[];
 export const ZXCV_ROW = CODES_LAYER_1[3] as string[];
 
+function analyzeColors(keyColors: string[]) {
+  let hasWhite = false;
+  let hasBlack = false;
+  for (const color of keyColors) {
+    if (color.toLowerCase() === "black") {
+      hasBlack = true;
+    } else {
+      hasWhite = true;
+    }
+  }
+  return { hasWhite, hasBlack };
+}
+
 /**
  * Map white keys to the row of keys starting with A, S, D and F
  * while mapping black keys to the row starting with Q, W, E and R.
@@ -20,6 +33,8 @@ export function mapWhiteAsdfBlackQwerty(
   baseMidiNote: number,
   baseIndex: number
 ) {
+  const { hasWhite, hasBlack } = analyzeColors(keyColors);
+
   const map = new Map<string, number>();
 
   let colorIndex = baseIndex - baseMidiNote;
@@ -46,7 +61,10 @@ export function mapWhiteAsdfBlackQwerty(
     if (code !== undefined) {
       map.set(code, mappedIndex++);
     }
-  } while (whiteIndex < ASDF_ROW.length || blackIndex < QWERTY_ROW.length);
+  } while (
+    (hasWhite && whiteIndex < ASDF_ROW.length) ||
+    (hasBlack && blackIndex < QWERTY_ROW.length)
+  );
 
   return map;
 }
@@ -69,6 +87,8 @@ export function mapWhiteQweZxcBlack123Asd(
   baseIndex: number,
   zxcvIndex = 1
 ) {
+  const { hasWhite, hasBlack } = analyzeColors(keyColors);
+
   const map = new Map<string, number>();
 
   // Map lower rows
@@ -97,7 +117,10 @@ export function mapWhiteQweZxcBlack123Asd(
     if (code !== undefined) {
       map.set(code, mappedIndex++);
     }
-  } while (whiteIndex < ZXCV_ROW.length || blackIndex < ASDF_ROW.length);
+  } while (
+    (hasWhite && whiteIndex < ZXCV_ROW.length) ||
+    (hasBlack && blackIndex < ASDF_ROW.length)
+  );
 
   // Map upper rows and octave higher
   colorIndex = scaleSize + baseIndex - baseMidiNote;
@@ -123,7 +146,10 @@ export function mapWhiteQweZxcBlack123Asd(
     if (code !== undefined) {
       map.set(code, mappedIndex++);
     }
-  } while (whiteIndex < QWERTY_ROW.length || blackIndex < DIGIT_ROW.length);
+  } while (
+    (hasWhite && whiteIndex < QWERTY_ROW.length) ||
+    (hasBlack && blackIndex < DIGIT_ROW.length)
+  );
 
   return map;
 }
