@@ -14,13 +14,8 @@ import {
 } from "@/constants";
 import { ScaleWorkshopOneData } from "@/scale-workshop-one";
 import type { Input, Output } from "webmidi";
-import {
-  bendRangeInSemitones,
-  computeWhiteIndices,
-  MidiIn,
-  midiNoteInfo,
-  MidiOut,
-} from "@/midi";
+import { computeWhiteIndices } from "@/midi";
+import { MidiIn, midiKeyInfo, MidiOut } from "xen-midi";
 import { Keyboard, type CoordinateKeyboardEvent } from "@/keyboard";
 import { decodeQuery, encodeQuery, type DecodedState } from "@/url-encode";
 import { debounce } from "@/utils";
@@ -349,9 +344,9 @@ function getFrequency(index: number) {
   }
 }
 
-const midiOut = computed(() => {
-  return new MidiOut(midiOutput.value as Output, midiOutputChannels.value);
-});
+const midiOut = computed(
+  () => new MidiOut(midiOutput.value as Output, midiOutputChannels.value)
+);
 
 function sendNoteOn(frequency: number, rawAttack: number) {
   const midiOff = midiOut.value.sendNoteOn(frequency, rawAttack);
@@ -394,14 +389,17 @@ function sendNoteOn(frequency: number, rawAttack: number) {
 // Offset such that default base MIDI note doesn't move
 const WHITE_MODE_OFFSET = 69 - 40;
 
-function midiNoteOn(index: number, rawAttack: number) {
+function midiNoteOn(index: number, rawAttack?: number) {
+  if (rawAttack === undefined) {
+    rawAttack = 80;
+  }
   let frequency = frequencies.value[index];
   if (!midiVelocityOn.value) {
     rawAttack = 80;
   }
 
   // Store state to ensure consistent note off.
-  const info = midiNoteInfo(index);
+  const info = midiKeyInfo(index);
   const whiteMode = midiWhiteMode.value;
   const indices = whiteIndices.value;
 
@@ -453,11 +451,14 @@ function midiNoteOn(index: number, rawAttack: number) {
 
   if (isNaN(frequency)) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    return (rawRelease: number) => {};
+    return (rawRelease?: number) => {};
   }
 
   const noteOff = sendNoteOn(frequency, rawAttack);
-  return (rawRelease: number) => {
+  return (rawRelease?: number) => {
+    if (rawRelease === undefined) {
+      rawRelease = 80;
+    }
     if (!midiVelocityOn.value) {
       rawRelease = 80;
     }
@@ -485,11 +486,10 @@ const RESERVED_MESSAGES = ["noteon", "noteoff", "pitchbend"];
 
 watch(midiInput, (newValue, oldValue) => {
   if (oldValue !== null) {
-    oldValue.removeListener();
+    midiIn.unlisten(oldValue as Input);
   }
   if (newValue !== null) {
-    newValue.addListener("noteon", midiIn.noteOn.bind(midiIn));
-    newValue.addListener("noteoff", midiIn.noteOff.bind(midiIn));
+    midiIn.listen(newValue as Input);
 
     // Pass everything else through and distrubute among the channels
     newValue.addListener("midimessage", (event) => {
@@ -514,15 +514,6 @@ watch(midiInput, (newValue, oldValue) => {
     });
   }
 });
-
-function sendPitchBendRange() {
-  const output = midiOutput.value;
-  if (output !== null) {
-    midiOutputChannels.value.forEach((channel) => {
-      output.channels[channel].sendPitchBendRange(bendRangeInSemitones, 0);
-    });
-  }
-}
 
 // === Virtual and typing keyboard ===
 function keyboardNoteOn(index: number) {
@@ -811,9 +802,6 @@ watch(mainVolume, (newValue) => {
     0.01
   );
 });
-
-watch(midiOutput, sendPitchBendRange);
-watch(midiOutputChannels, sendPitchBendRange);
 
 function updateMidiInputChannels(newValue: Set<number>) {
   midiInputChannels.clear();
