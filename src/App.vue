@@ -364,7 +364,8 @@ function sendNoteOn(frequency: number, rawAttack: number) {
       decayTime.value,
       sustainLevel.value,
       releaseTime.value,
-      maxPolyphony.value
+      maxPolyphony.value,
+      console.log
     );
   }
 
@@ -583,7 +584,7 @@ function windowKeyup(event: KeyboardEvent) {
 }
 
 // === Typing keyboard input ===
-const typingKeyboard = new Keyboard();
+const typingKeyboard = new Keyboard(false, console.log);
 
 function emptyKeyup() {}
 
