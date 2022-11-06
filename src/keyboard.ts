@@ -3,6 +3,9 @@ Split the keyboard into xy-planes along a z-coordinate for different contiguous 
 */
 
 const ORIGIN_LAYER_0 = 0;
+/**
+ * Key codes for the row consisting of Esc and FN keys.
+ */
 export const CODES_LAYER_0 = [
   [
     "Escape",
@@ -22,6 +25,9 @@ export const CODES_LAYER_0 = [
 ];
 
 const ORIGIN_LAYER_1 = -1;
+/**
+ * Key codes for the rows containing the digits, qwerty, asdf and zxcv.
+ */
 export const CODES_LAYER_1 = [
   [
     "Backquote",
@@ -84,12 +90,18 @@ export const CODES_LAYER_1 = [
 ];
 
 const ORIGIN_LAYER_2 = 0;
+/**
+ * Key codes for the cluster of keys with Page Up/Down.
+ */
 export const CODES_LAYER_2 = [
   ["Insert", "Home", "PageUp"],
   ["Delete", "End", "PageDown"],
 ];
 
 const ORIGIN_LAYER_3 = 0;
+/**
+ * Key codes for the numpad.
+ */
 export const CODES_LAYER_3 = [
   ["NumLock", "NumpadDivide", "NumpadMultiply", "NumpadSubtract"],
   ["Numpad7", "Numpad8", "Numpad9", "NumpadAdd"],
@@ -98,6 +110,9 @@ export const CODES_LAYER_3 = [
   ["Numpad0", null, "NumpadDecimal"],
 ];
 
+/**
+ * Mapping from key codes to coordinates of input device geometry.
+ */
 export const COORDS_BY_CODE: Map<string, number[]> = new Map();
 CODES_LAYER_0.forEach((row, y) =>
   row.forEach((code, x) => COORDS_BY_CODE.set(code, [ORIGIN_LAYER_0 + x, y, 0]))
@@ -120,6 +135,9 @@ CODES_LAYER_3.forEach((row, y) => {
   });
 });
 
+/**
+ * Keyboard event with a key code and coordinates if the device geometry can be figured out with any confidence.
+ */
 export type CoordinateKeyboardEvent = {
   code: string;
   coordinates?: number[];
@@ -128,10 +146,10 @@ export type CoordinateKeyboardEvent = {
 type KeyupCallback = () => void;
 type KeydownCallback = (event: CoordinateKeyboardEvent) => KeyupCallback;
 
-/*
-Keyboard that filters out repeated keydown events and normalizes keycodes
-to coordinates. The Shift keys toggle 'sustain'.
-*/
+/**
+ * Keyboard event listener that filters out repeated keydown events and normalizes keycodes to coordinates.
+ * The Shift keys toggle 'sustain'.
+ */
 export class Keyboard {
   keydownCallbacks: KeydownCallback[];
   keyupCallbacks: Map<string, KeyupCallback>;
@@ -140,8 +158,14 @@ export class Keyboard {
   stickyKeys: Set<string>;
   private _keydown?: (event: KeyboardEvent) => void;
   private _keyup?: (event: KeyboardEvent) => void;
+  log: (msg: string) => void;
 
-  constructor(autobind = false) {
+  /**
+   * Construct a new keyboard event listener.
+   * @param autobind Start listening to "keydown" and "keyup" events immediately.
+   * @param log Logging function.
+   */
+  constructor(autobind = false, log?: (msg: string) => void) {
     this.keydownCallbacks = [];
     this.keyupCallbacks = new Map();
     this.activeKeys = new Set();
@@ -154,8 +178,18 @@ export class Keyboard {
       window.addEventListener("keydown", this._keydown);
       window.addEventListener("keyup", this._keyup);
     }
+
+    if (log === undefined) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      this.log = (msg: string) => {};
+    } else {
+      this.log = log;
+    }
   }
 
+  /**
+   * Stop listening to "keydown" and "keyup" events if constructed with `autobind = true`.
+   */
   dispose() {
     if (this._keydown) {
       window.removeEventListener("keydown", this._keydown);
@@ -165,48 +199,70 @@ export class Keyboard {
     }
   }
 
+  /**
+   * Register a listener for processed keydown events.
+   * @param listener Function to call when a new key is pressed.
+   */
   addKeydownListener(listener: KeydownCallback) {
     this.keydownCallbacks.push(listener);
   }
 
+  /**
+   * Unregister a listener for processed keydown events.
+   * @param listener Callback registered with {@link Keyboard.addKeydownListener}.
+   */
   removeEventListener(listener: KeydownCallback) {
     this.keydownCallbacks.splice(this.keydownCallbacks.indexOf(listener), 1);
   }
 
-  fireKeydown(event: CoordinateKeyboardEvent) {
+  private fireKeydown(event: CoordinateKeyboardEvent) {
     event.coordinates = COORDS_BY_CODE.get(event.code);
     const unresolvedKeyupCallback = this.keyupCallbacks.get(event.code);
     if (unresolvedKeyupCallback !== undefined) {
-      console.warn("Unresolved keyup detected");
+      this.log(`Firing unresolved keyup with ${event.code}`);
       unresolvedKeyupCallback();
     }
+    this.log(
+      `Firing keydown listeners with ${event.code} @ ${event.coordinates}`
+    );
     this.keydownCallbacks.forEach((callback) =>
       this.keyupCallbacks.set(event.code, callback(event))
     );
   }
 
-  fireKeyup(event: CoordinateKeyboardEvent) {
+  private fireKeyup(event: CoordinateKeyboardEvent) {
     const callback = this.keyupCallbacks.get(event.code);
     this.keyupCallbacks.delete(event.code);
-    if (callback !== undefined) {
+    if (callback === undefined) {
+      this.log(`Keyup for ${event.code} had been orphaned`);
+    } else {
+      this.log(`Firing keyup with ${event.code}`);
       callback();
     }
   }
 
+  /**
+   * Listener to be registered with `window.addEventListener("keydown", ...)`.
+   * @param event Keyboard event of a key being pressed down.
+   */
   keydown(event: KeyboardEvent) {
+    this.log(`${event.code} keydown received`);
     if (event.ctrlKey || event.altKey || event.metaKey || event.repeat) {
+      this.log(`${event.code} keydown filtered out`);
       return;
     }
     // The pending state isn't strictly necessary as we filter out repeated events,
     // but it's kept in case event.repeat isn't 100% reliable.
     if (event.key == "Shift") {
       for (const code of this.activeKeys) {
+        this.log(`Adding ${code} to pending state due to a 'Shift' press`);
         this.pendingKeys.add(code);
       }
       return;
     }
 
     if (this.stickyKeys.has(event.code)) {
+      this.log(`Stricky toggle for ${event.code}`);
       this.activeKeys.delete(event.code);
       this.stickyKeys.delete(event.code);
       this.pendingKeys.delete(event.code);
@@ -215,16 +271,22 @@ export class Keyboard {
     }
 
     if (this.pendingKeys.has(event.code)) {
+      this.log(`${event.code} is pending`);
       return;
     }
 
     if (this.activeKeys.has(event.code)) {
+      this.log(`${event.code} is already active`);
       return;
     }
 
     if (COORDS_BY_CODE.has(event.code)) {
+      this.log(`Adding ${event.code} to active state`);
       this.activeKeys.add(event.code);
       if (event.shiftKey) {
+        this.log(
+          `Adding ${event.code} to pending state due to being pressed with 'Shift'`
+        );
         this.pendingKeys.add(event.code);
       }
       this.fireKeydown(event);
@@ -232,15 +294,25 @@ export class Keyboard {
     }
   }
 
+  /**
+   * Listener to be registered with `window.addEventListener("keyup", ...)`.
+   * @param event Keyboard event of a pressed key being released.
+   */
   keyup(event: KeyboardEvent) {
+    this.log(`${event.code} keyup received`);
     if (event.shiftKey && this.activeKeys.has(event.code)) {
+      this.log(
+        `Sticking ${event.code} due being released while 'Shift' is pressed`
+      );
       this.stickyKeys.add(event.code);
     }
     if (this.pendingKeys.has(event.code)) {
+      this.log(`Promoting ${event.code} from pending to sticky`);
       this.pendingKeys.delete(event.code);
       this.stickyKeys.add(event.code);
     }
     if (this.stickyKeys.has(event.code)) {
+      this.log(`Not firing keyup due to ${event.code} being sticky`);
       return;
     }
 
@@ -249,9 +321,14 @@ export class Keyboard {
       this.fireKeyup(event);
       return;
     }
+    this.log(`${event.code} keyup fell through`);
   }
 
+  /**
+   * Release keys sustained due to being pressed with 'Shift'.
+   */
   deactivate() {
+    this.log(`Releasing all sustained and active keys`);
     this.pendingKeys.clear();
     this.stickyKeys.clear();
     for (const code of this.activeKeys.keys()) {
