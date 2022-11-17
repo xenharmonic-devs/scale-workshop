@@ -10,18 +10,18 @@ describe("Scala importer", () => {
       "1/8-schisma temperament, Helmholtz",
       " 12",
       "!",
-      " 91.44607",
+      " 91.44607 C#",
       " 203.42157",
       " 294.86764",
-      " 5/4",
+      " 5/4 E",
       " 498.28921",
       " 589.73529",
       " 701.71079",
       " 793.15686",
       " 884.60293",
-      " 996.57843",
+      "     996.57843",
       " 1088.02450",
-      " 2/1",
+      " 2 C",
     ].join("\n");
 
     const importer = new ScalaImporter();
@@ -32,5 +32,7 @@ describe("Scala importer", () => {
     expect(scale.getMonzo(1).toCents()).toBeCloseTo(91.44607);
 
     expect(scale.getMonzo(4).valueOf()).toBe(1.25);
+
+    expect(scale.getMonzo(12).valueOf()).toBe(2);
   });
 });

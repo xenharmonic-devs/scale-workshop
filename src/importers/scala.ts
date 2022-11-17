@@ -14,11 +14,12 @@ export class ScalaImporter extends TextImporter {
       if (!line.length) {
         return;
       }
+      line = line.split(/\s/)[0];
       const lineType = getLineType(line);
       if (lineType === LINE_TYPE.INVALID) {
         throw new Error(`Failed to parse line ${line}`);
       }
-      intervals.push(parseLine(line));
+      intervals.push(parseLine(line, undefined, undefined, true));
     });
     const scale = Scale.fromIntervalArray(intervals);
     return { scale };
