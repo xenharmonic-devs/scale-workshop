@@ -11,6 +11,7 @@
 
   --color-heading: #000;
   --color-text: #000;
+  --color-text-mute: #777;
 
   --color-accent: #008080;
   --color-accent-text: #fff;
@@ -41,6 +42,7 @@
 
   --color-heading: #fff;
   --color-text: #fff;
+  --color-text-mute: #555;
 
   --color-accent: #008080;
   --color-accent-text: #fff;
