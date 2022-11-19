@@ -5,14 +5,18 @@ import type { VirtualSynth } from "@/virtual-synth";
 import ChordWheel from "@/components/ChordWheel.vue";
 import { computed, ref } from "vue";
 import type { Interval, IntervalOptions } from "@/interval";
+import JustIntonationLattice from "@/components/JustIntonationLattice.vue";
 
 const MAX_SCALE_SIZE = 100;
 
 const props = defineProps<{
   scale: Scale;
+  keyColors: string[];
   virtualSynth: VirtualSynth;
   colorScheme: "light" | "dark";
 }>();
+
+const activeTab = ref<"info" | "matrix" | "wheels" | "lattice">("info");
 
 const cellFormat = ref<"best" | "cents" | "decimal">("best");
 const trailLongevity = ref(70);
@@ -88,57 +92,105 @@ const matrix = computed(() => {
 
 <template>
   <main>
-    <h2>Interval matrix (modes)</h2>
-    <div class="control-group interval-matrix">
-      <table>
-        <tr>
-          <th></th>
-          <th v-for="i of Math.min(scale.size, MAX_SCALE_SIZE)" :key="i">
-            {{ i }}
-          </th>
-          <th>({{ scale.size + 1 }})</th>
-        </tr>
-        <tr v-for="(row, i) of matrix" :key="i">
-          <th>{{ formatMatrixCell(scale.getInterval(i)) }}</th>
-          <td v-for="(name, j) of row" :key="j">{{ name }}</td>
-        </tr>
-      </table>
+    <nav>
+      <ul>
+        <li>
+          <a
+            :class="{ active: activeTab === 'info' }"
+            @click="activeTab = 'info'"
+            href="#"
+            >Info</a
+          >
+        </li>
+        <li>
+          <a
+            :class="{ active: activeTab === 'matrix' }"
+            @click="activeTab = 'matrix'"
+            href="#"
+            >Matrix/Modes</a
+          >
+        </li>
+        <li>
+          <a
+            :class="{ active: activeTab === 'wheels' }"
+            @click="activeTab = 'wheels'"
+            href="#"
+            >Chord Wheels</a
+          >
+        </li>
+        <li>
+          <a
+            :class="{ active: activeTab === 'lattice' }"
+            @click="activeTab = 'lattice'"
+            href="#"
+            >Lattice</a
+          >
+        </li>
+      </ul>
+    </nav>
+    <div v-if="activeTab === 'info'">
+      <h2>Scale Information</h2>
+      <p>Sure looks like a scale with {{ scale.size }} notes.</p>
     </div>
-    <div class="control-group">
-      <div class="control radio-group">
-        <label>Display intervals in matrix as</label>
-        <span>
-          <input
-            type="radio"
-            id="format-best"
-            value="best"
-            v-model="cellFormat"
-          />
-          <label for="format-best"> Default </label>
-        </span>
-
-        <span>
-          <input
-            type="radio"
-            id="format-cents"
-            value="cents"
-            v-model="cellFormat"
-          />
-          <label for="format-cents"> Cents </label>
-        </span>
-
-        <span>
-          <input
-            type="radio"
-            id="format-decimal"
-            value="decimal"
-            v-model="cellFormat"
-          />
-          <label for="format-decimal"> Decimal ratio </label>
-        </span>
+    <div v-if="activeTab === 'lattice'">
+      <h2>Lattice</h2>
+      <div class="square">
+        <JustIntonationLattice :scale="scale" :keyColors="keyColors" />
       </div>
     </div>
-    <div class="columns-container">
+    <div v-if="activeTab === 'matrix'">
+      <h2>Interval matrix (modes)</h2>
+      <div class="control-group interval-matrix">
+        <table>
+          <tr>
+            <th></th>
+            <th v-for="i of Math.min(scale.size, MAX_SCALE_SIZE)" :key="i">
+              {{ i }}
+            </th>
+            <th>({{ scale.size + 1 }})</th>
+          </tr>
+          <tr v-for="(row, i) of matrix" :key="i">
+            <th>{{ formatMatrixCell(scale.getInterval(i)) }}</th>
+            <td v-for="(name, j) of row" :key="j">{{ name }}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="control-group">
+        <div class="control radio-group">
+          <label>Display intervals in matrix as</label>
+          <span>
+            <input
+              type="radio"
+              id="format-best"
+              value="best"
+              v-model="cellFormat"
+            />
+            <label for="format-best"> Default </label>
+          </span>
+
+          <span>
+            <input
+              type="radio"
+              id="format-cents"
+              value="cents"
+              v-model="cellFormat"
+            />
+            <label for="format-cents"> Cents </label>
+          </span>
+
+          <span>
+            <input
+              type="radio"
+              id="format-decimal"
+              value="decimal"
+              v-model="cellFormat"
+            />
+            <label for="format-decimal"> Decimal ratio </label>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div v-if="activeTab === 'wheels'" class="columns-container">
       <div class="column">
         <h2>Otonal chord</h2>
         <div class="control-group">
@@ -225,7 +277,74 @@ const matrix = computed(() => {
 /* View */
 main {
   padding: 1rem;
+  padding-top: 0.2rem;
   overflow-y: auto !important;
+}
+
+nav {
+  flex: 0 0 auto;
+  display: flex;
+  border: 1;
+}
+
+/* Navigation tabs */
+nav {
+  background-color: var(--color-accent);
+  color: white;
+  max-width: 100%;
+  overflow-x: auto;
+  border-style: solid;
+  border-color: var(--color-border);
+  border-width: 1px;
+}
+ul {
+  padding: 0px;
+  margin: 0px;
+  white-space: nowrap;
+}
+li {
+  list-style-type: none;
+  display: inline-block;
+}
+li a {
+  display: inline-block;
+  padding: 0.75rem 1rem;
+  color: white;
+  text-decoration: none;
+  cursor: default;
+}
+
+li a:hover {
+  background-color: var(--color-accent-deeper);
+}
+
+li a.active,
+li a.active:hover {
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+nav a.active {
+  color: var(--color-text);
+}
+
+nav a.active:hover {
+  background-color: transparent;
+}
+
+nav a {
+  display: inline-block;
+  padding: 0 1rem;
+  border-left: 1px solid var(--color-border);
+}
+
+nav a:first-of-type {
+  border: 0;
+}
+
+.square {
+  width: 60vw;
+  height: 60vw;
 }
 
 /* Interval matrix */
