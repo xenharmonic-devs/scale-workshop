@@ -16,6 +16,16 @@
         "categories":
         [
             "traditional"
+        ],
+        "keyColors":
+        [
+            "gray",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white"
         ]
     },
     "slendro":
@@ -33,6 +43,14 @@
         "categories":
         [
             "traditional"
+        ],
+        "keyColors":
+        [
+            "gray",
+            "white",
+            "white",
+            "white",
+            "white"
         ]
     },
     "ragabageshri":
@@ -52,6 +70,16 @@
         [
             "traditional",
             "just intonation"
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "white",
+            "white",
+            "white",
+            "black",
+            "white"
         ]
     },
     "ragabhairavi":
@@ -72,6 +100,17 @@
         [
             "traditional",
             "just intonation"
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "white",
+            "gray",
+            "gray",
+            "white",
+            "gray",
+            "gray"
         ]
     },
     "ragakafi":
@@ -91,6 +130,16 @@
         [
             "traditional",
             "just intonation"
+        ],
+        "keyColors":
+        [
+            "white",
+            "white",
+            "white",
+            "white",
+            "white",
+            "black",
+            "white"
         ]
     },
     "ragatodi":
@@ -110,6 +159,16 @@
         [
             "traditional",
             "just intonation"
+        ],
+        "keyColors":
+        [
+            "white",
+            "white",
+            "white",
+            "black",
+            "white",
+            "white",
+            "black"
         ]
     },
     "ragayaman":
@@ -129,6 +188,16 @@
         [
             "traditional",
             "just intonation"
+        ],
+        "keyColors":
+        [
+            "white",
+            "white",
+            "gray",
+            "black",
+            "white",
+            "white",
+            "black"
         ]
     },
     "22shruti":
@@ -163,6 +232,31 @@
         [
             "traditional",
             "just intonation"
+        ],
+        "keyColors":
+        [
+            "white",
+            "white",
+            "black",
+            "blue",
+            "white",
+            "white",
+            "black",
+            "blue",
+            "white",
+            "white",
+            "black",
+            "blue",
+            "white",
+            "white",
+            "white",
+            "black",
+            "blue",
+            "white",
+            "white",
+            "black",
+            "blue",
+            "white"
         ]
     },
     "hirajoshi":
@@ -174,11 +268,19 @@
             "337.",
             "683.",
             "790.",
-            "2/1"
+            "1200."
         ],
         "categories":
         [
             "traditional"
+        ],
+        "keyColors":
+        [
+            "gray",
+            "white",
+            "white",
+            "white",
+            "white"
         ]
     },
     "balafon":
@@ -198,6 +300,16 @@
         "categories":
         [
             "traditional"
+        ],
+        "keyColors":
+        [
+            "gray",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white"
         ]
     },
     "balafon2":
@@ -212,11 +324,21 @@
             "724.",
             "890.",
             "1029.",
-            "2/1"
+            "1200."
         ],
         "categories":
         [
             "traditional"
+        ],
+        "keyColors":
+        [
+            "gray",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white"
         ]
     },
     "balafon3":
@@ -236,6 +358,16 @@
         "categories":
         [
             "traditional"
+        ],
+        "keyColors":
+        [
+            "gray",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white"
         ]
     },
     "balafon4":
@@ -255,6 +387,16 @@
         "categories":
         [
             "traditional"
+        ],
+        "keyColors":
+        [
+            "gray",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white"
         ]
     },
     "balafon5":
@@ -274,6 +416,16 @@
         "categories":
         [
             "traditional"
+        ],
+        "keyColors":
+        [
+            "gray",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white"
         ]
     },
     "balafon6":
@@ -293,6 +445,16 @@
         "categories":
         [
             "traditional"
+        ],
+        "keyColors":
+        [
+            "gray",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white"
         ]
     },
     "balafon7":
@@ -305,11 +467,19 @@
             "370.",
             "685.",
             "903.",
-            "2/1"
+            "1200."
         ],
         "categories":
         [
             "traditional"
+        ],
+        "keyColors":
+        [
+            "gray",
+            "white",
+            "white",
+            "white",
+            "white"
         ]
     },
     "5edo":
@@ -328,6 +498,14 @@
         [
             "traditional",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "gray",
+            "white",
+            "white",
+            "white",
+            "white"
         ]
     },
     "7edo":
@@ -348,6 +526,16 @@
         [
             "traditional",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "white",
+            "white",
+            "white",
+            "black",
+            "white"
         ]
     },
     "archytasdiatonic":
@@ -367,6 +555,16 @@
         [
             "traditional",
             "just intonation"
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "white",
+            "white",
+            "white",
+            "black",
+            "white"
         ]
     },
     "archytasenharmonic":
@@ -386,6 +584,16 @@
         [
             "traditional",
             "just intonation"
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "gray",
+            "white",
+            "white",
+            "black",
+            "gray"
         ]
     },
     "didymuschromatic":
@@ -405,6 +613,16 @@
         [
             "traditional",
             "just intonation"
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "gray",
+            "white",
+            "white",
+            "black",
+            "gray"
         ]
     },
     "ptolemydiatonicditoniaion":
@@ -424,6 +642,16 @@
         [
             "traditional",
             "just intonation"
+        ],
+        "keyColors":
+        [
+            "gray",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white"
         ]
     },
     "ptolemydiatonichemiolion":
@@ -443,6 +671,16 @@
         [
             "traditional",
             "just intonation"
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "gray",
+            "white",
+            "white",
+            "black",
+            "gray"
         ]
     },
     "pythagorean":
@@ -467,7 +705,24 @@
         [
             "traditional",
             "just intonation"
-        ]
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "white",
+            "black"
+        ],
+        "baseMidiNote": 67,
+        "baseFrequency": 391
     },
     "werckmeisteriii":
     {
@@ -490,7 +745,24 @@
         "categories":
         [
             "traditional"
-        ]
+        ],
+        "keyColors":
+        [
+            "white",
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "white",
+            "black"
+        ],
+        "baseMidiNote": 64,
+        "baseFrequency": 329
     },
     "young1799":
     {
@@ -513,7 +785,24 @@
         "categories":
         [
             "traditional"
-        ]
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "white",
+            "black"
+        ],
+        "baseMidiNote": 67,
+        "baseFrequency": 392
     },
     "12edo":
     {
@@ -537,6 +826,21 @@
         [
             "traditional",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "white",
+            "black"
         ]
     },
     "partch43":
@@ -591,6 +895,52 @@
         "categories":
         [
             "just intonation"
+        ],
+        "keyColors":
+        [
+            "white",
+            "green",
+            "pink",
+            "teal",
+            "green",
+            "plum",
+            "black",
+            "yellow",
+            "white",
+            "red",
+            "blue",
+            "white",
+            "green",
+            "pink",
+            "yellow",
+            "black",
+            "red",
+            "blue",
+            "white",
+            "green",
+            "pink",
+            "teal",
+            "orange",
+            "plum",
+            "yellow",
+            "white",
+            "red",
+            "blue",
+            "black",
+            "green",
+            "plum",
+            "yellow",
+            "white",
+            "red",
+            "blue",
+            "white",
+            "green",
+            "black",
+            "pink",
+            "yellow",
+            "orange",
+            "plum",
+            "yellow"
         ]
     },
     "carlossuperjust":
@@ -611,9 +961,26 @@
             "15/8",
             "2/1"
         ],
+        "baseFrequency": 264,
+        "baseMidiNote": 60,
         "categories":
         [
             "just intonation"
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "white",
+            "black",
+            "gray",
+            "white",
+            "black",
+            "white",
+            "black",
+            "gray",
+            "black",
+            "gray"
         ]
     },
     "gradycentaur":
@@ -640,6 +1007,21 @@
         "categories":
         [
             "just intonation"
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "white",
+            "black",
+            "gray",
+            "white",
+            "black",
+            "white",
+            "black",
+            "gray",
+            "black",
+            "gray"
         ]
     },
     "gradycentauras":
@@ -661,9 +1043,26 @@
             "15/8",
             "2/1"
         ],
+        "baseFrequency": 264,
+        "baseMidiNote": 60,
         "categories":
         [
             "just intonation"
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "gray",
+            "black",
+            "gray",
+            "white",
+            "black",
+            "white",
+            "black",
+            "gray",
+            "black",
+            "gray"
         ]
     },
     "gradycentaurah":
@@ -685,9 +1084,26 @@
             "15/8",
             "2/1"
         ],
+        "baseFrequency": 264,
+        "baseMidiNote": 60,
         "categories":
         [
             "just intonation"
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "white",
+            "black",
+            "gray",
+            "white",
+            "black",
+            "white",
+            "black",
+            "gray",
+            "black",
+            "gray"
         ]
     },
     "11machine6":
@@ -706,6 +1122,15 @@
         [
             "MOS",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "black",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white"
         ]
     },
     "13glacial7":
@@ -725,6 +1150,16 @@
         [
             "MOS",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "black",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white"
         ]
     },
     "13father8":
@@ -745,6 +1180,17 @@
         [
             "MOS",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "black",
+            "white",
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "white"
         ]
     },
     "15blackwood10":
@@ -767,6 +1213,11 @@
         [
             "MOS",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "white",
+            "black"
         ]
     },
     "16mavila7":
@@ -786,6 +1237,16 @@
         [
             "MOS",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "white",
+            "white",
+            "black",
+            "white",
+            "white",
+            "white",
+            "black"
         ]
     },
     "17superpyth12":
@@ -810,6 +1271,21 @@
         [
             "MOS",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "white",
+            "black"
         ]
     },
     "17rast":
@@ -828,6 +1304,16 @@
         "categories":
         [
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "white",
+            "white",
+            "black",
+            "white",
+            "white",
+            "white",
+            "black"
         ]
     },
     "22porcupine8":
@@ -848,6 +1334,17 @@
         [
             "MOS",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "black",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white"
         ]
     },
     "22orwell9":
@@ -869,6 +1366,18 @@
         [
             "MOS",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "black",
+            "white"
         ]
     },
     "22pajara12":
@@ -893,6 +1402,15 @@
         [
             "MOS",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "black",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white"
         ]
     },
     "26lemba10":
@@ -915,6 +1433,14 @@
         [
             "MOS",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "white",
+            "white",
+            "black",
+            "white",
+            "black"
         ]
     },
     "26flattone12":
@@ -939,7 +1465,24 @@
         [
             "MOS",
             "equal temperament"
-        ]
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "white",
+            "black"
+        ],
+        "baseMidiNote": 60,
+        "baseFrequency": 265
     },
     "31meantone19":
     {
@@ -970,6 +1513,28 @@
         [
             "MOS",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "white"
         ]
     },
     "46sensi11":
@@ -993,6 +1558,20 @@
         [
             "MOS",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "black",
+            "white",
+            "white",
+            "white",
+            "black",
+            "white",
+            "white",
+            "white",
+            "black",
+            "white",
+            "white"
         ]
     },
     "362barbados9":
@@ -1014,6 +1593,18 @@
         [
             "MOS",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "white",
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "black"
         ]
     },
     "bohlenpierceeq":
@@ -1039,6 +1630,22 @@
         [
             "non-octave",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "white",
+            "white",
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "white"
         ]
     },
     "bohlenpierceji":
@@ -1064,6 +1671,22 @@
         [
             "non-octave",
             "just intonation"
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "white",
+            "white",
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "white"
         ]
     },
     "carlosalpha":
@@ -1085,6 +1708,18 @@
         [
             "non-octave",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "white",
+            "white",
+            "white",
+            "black",
+            "white",
+            "white",
+            "white",
+            "white",
+            "black"
         ]
     },
     "carlosbeta":
@@ -1108,6 +1743,20 @@
         [
             "non-octave",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "black",
+            "white"
         ]
     },
     "carlosgamma":
@@ -1140,6 +1789,29 @@
         [
             "non-octave",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "white",
+            "black"
         ]
     },
     "65cet":
@@ -1153,6 +1825,10 @@
         [
             "non-octave",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "white"
         ]
     },
     "88cet":
@@ -1166,6 +1842,10 @@
         [
             "non-octave",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "white"
         ]
     },
     "blackdye":
@@ -1190,6 +1870,19 @@
             "GO",
             "MV4",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "white",
+            "white",
+            "white",
+            "black",
+            "white"
         ]
     },
     "diasem":
@@ -1213,7 +1906,21 @@
             "MV3",
             "GO",
             "equal temperament"
-        ]
+        ],
+        "keyColors":
+        [
+            "white",
+            "white",
+            "black",
+            "white",
+            "white",
+            "white",
+            "black",
+            "white",
+            "white"
+        ],
+        "baseMidiNote": 71,
+        "baseFrequency": 493
     },
     "zarlino":
     {
@@ -1234,7 +1941,19 @@
             "MV3",
             "GO",
             "equal temperament"
-        ]
+        ],
+        "keyColors":
+        [
+            "gray",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white",
+            "white"
+        ],
+        "baseMidiNote": 65,
+        "baseFrequency": 355
     },
     "superzarlino":
     {
@@ -1265,6 +1984,26 @@
             "MV3",
             "GO",
             "equal temperament"
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "gray",
+            "white",
+            "black",
+            "gray",
+            "white",
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "gray",
+            "white"
         ]
     },
     "marveldene":
@@ -1290,6 +2029,21 @@
         [
             "TE",
             "rank 3"
+        ],
+        "keyColors":
+        [
+            "white",
+            "gray",
+            "black",
+            "gray",
+            "black",
+            "white",
+            "gray",
+            "white",
+            "gray",
+            "black",
+            "white",
+            "black"
         ]
     },
     "meantone":
@@ -1316,6 +2070,21 @@
             "MOS",
             "CTE",
             "rank 2"
+        ],
+        "keyColors":
+        [
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "white",
+            "black",
+            "white",
+            "black"
         ]
     },
     "orgone":
@@ -1337,6 +2106,16 @@
             "MOS",
             "POTE",
             "rank 2"
+        ],
+        "keyColors":
+        [
+            "white",
+            "white",
+            "black",
+            "white",
+            "black",
+            "white",
+            "black"
         ]
     }
 }

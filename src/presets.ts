@@ -1,3 +1,4 @@
+import { autoKeyColors } from "@/utils";
 import PRESETS from "@/presets.json";
 
 type PresetFragment = {
@@ -17,6 +18,7 @@ export type Preset = {
   categories: string[];
   baseFrequency: number;
   baseMidiNote: number;
+  keyColors: string[];
 };
 
 export type PresetGroup = {
@@ -34,6 +36,10 @@ function normalized(id: string): Preset {
   result.baseFrequency = result.baseFrequency || 440;
   result.baseMidiNote =
     result.baseMidiNote === undefined ? 69 : result.baseMidiNote;
+  result.keyColors =
+    result.keyColors === undefined
+      ? autoKeyColors(result.lines.length)
+      : result.keyColors;
   return result;
 }
 
