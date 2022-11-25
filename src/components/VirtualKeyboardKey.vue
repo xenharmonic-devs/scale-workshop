@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { LEFT_MOUSE_BTN } from "@/constants";
-import { onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 
 type NoteOff = () => void;
 type NoteOnCallback = () => NoteOff;
@@ -16,12 +16,6 @@ const active = ref(false);
 const emit = defineEmits(["press", "unpress"]);
 
 let noteOff: NoteOff | null = null;
-
-onUnmounted(() => {
-  if (noteOff !== null) {
-    noteOff();
-  }
-});
 
 function start() {
   active.value = true;
@@ -60,6 +54,12 @@ function onMouseUp(event: MouseEvent) {
     return;
   }
   event.preventDefault();
+}
+
+function onWindowMouseUp(event: MouseEvent) {
+  if (event.button !== LEFT_MOUSE_BTN) {
+    return;
+  }
   emit("unpress");
   end();
 }
@@ -79,6 +79,17 @@ function onMouseLeave(event: MouseEvent) {
   event.preventDefault();
   end();
 }
+
+onMounted(() => {
+  window.addEventListener("mouseup", onWindowMouseUp);
+});
+
+onUnmounted(() => {
+  if (noteOff !== null) {
+    noteOff();
+  }
+  window.removeEventListener("mouseup", onWindowMouseUp);
+});
 </script>
 
 <template>
