@@ -42,7 +42,7 @@ export function getTestData(appTitle: string) {
       "3486784401/3276800000",
       "2/1",
     ],
-    date: new Date("February 22, 2022 20:22"),
+    date: new Date("2022-02-22T20:22Z"),
   };
   return params;
 }
