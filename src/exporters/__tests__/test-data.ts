@@ -1,7 +1,5 @@
 import type { ExporterParams } from "../base";
-import ExtendedMonzo from "../../monzo";
-import { Interval } from "../../interval";
-import Scale from "../../scale";
+import { ExtendedMonzo, Interval, Scale } from "scale-workshop-core";
 import { Fraction } from "xen-dev-utils";
 
 export function getTestData(appTitle: string) {
@@ -21,7 +19,7 @@ export function getTestData(appTitle: string) {
       ExtendedMonzo.fromFraction(new Fraction(81, 80), 3).mul(5),
       "ratio"
     ),
-    new Interval(ExtendedMonzo.fromNumber(2, 3), "ratio"),
+    new Interval(ExtendedMonzo.fromFraction(2, 3), "ratio"),
   ];
   const scale = Scale.fromIntervalArray(intervals);
   const params: ExporterParams = {

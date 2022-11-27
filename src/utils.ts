@@ -1,53 +1,11 @@
+import { parseChord } from "scale-workshop-core";
 import { computed, type ComputedRef } from "vue";
-import { Fraction, gcd, mmod } from "xen-dev-utils";
+import { gcd, mmod } from "xen-dev-utils";
+import { DEFAULT_NUMBER_OF_COMPONENTS } from "./constants";
 
-export function isSafeFraction(fraction: Fraction) {
-  return (
-    fraction.n <= Number.MAX_SAFE_INTEGER &&
-    fraction.d <= Number.MAX_SAFE_INTEGER
-  );
-}
-
-export function fractionToString(
-  fraction: Fraction,
-  preferredNumerator?: number,
-  preferredDenominator?: number
-) {
-  const numerator = fraction.n * fraction.s;
-  if (preferredNumerator === undefined) {
-    if (
-      preferredDenominator === undefined ||
-      fraction.d === preferredDenominator
-    ) {
-      return `${numerator}/${fraction.d}`;
-    }
-    if (preferredDenominator % fraction.d === 0) {
-      const multiplier = preferredDenominator / fraction.d;
-      return `${numerator * multiplier}/${fraction.d * multiplier}`;
-    }
-    return `${numerator}/${fraction.d}`;
-  }
-  if (fraction.n === preferredNumerator) {
-    return `${numerator}/${fraction.d}`;
-  }
-  if (preferredNumerator % fraction.n === 0) {
-    const multiplier = preferredNumerator / fraction.n;
-    return `${numerator * multiplier}/${fraction.d * multiplier}`;
-  }
-  return `${numerator}/${fraction.d}`;
-}
-
-// Extra support for negative denominators
-export function stringToNumeratorDenominator(input: string): [number, number] {
-  const slashes = input.match(/\//g);
-  if (slashes && slashes.length > 1) {
-    throw new Error("Too many slashes for a fraction");
-  }
-  if (slashes === null) {
-    return [parseInt(input), 1];
-  }
-  const [numerator, denominator] = input.split("/");
-  return [parseInt(numerator), parseInt(denominator)];
+export function parseChordInput(input: string) {
+  const separator = input.includes(":") ? ":" : /\s/;
+  return parseChord(input, DEFAULT_NUMBER_OF_COMPONENTS, separator);
 }
 
 export function debounce(func: (...args: any[]) => void, timeout = 300) {

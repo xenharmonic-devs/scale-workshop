@@ -1,6 +1,7 @@
 // Component state used by RankOne, RankTwo and TemperScale
 
-import { computedAndError, fractionToString } from "@/utils";
+import { computedAndError } from "@/utils";
+import { fractionToString } from "scale-workshop-core";
 import { Subgroup, type TuningOptions } from "temperaments";
 import { computed, ref, watch, type Ref } from "vue";
 

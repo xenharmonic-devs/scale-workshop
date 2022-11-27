@@ -6,11 +6,14 @@ import {
   useRouter,
   type LocationQuery,
 } from "vue-router";
-import { NEWLINE_TEST, NUMBER_OF_NOTES, UNIX_NEWLINE } from "@/constants";
+import {
+  DEFAULT_NUMBER_OF_COMPONENTS,
+  NEWLINE_TEST,
+  NUMBER_OF_NOTES,
+  UNIX_NEWLINE,
+} from "@/constants";
 import { ScaleWorkshopOneData } from "@/scale-workshop-one";
 import type { Input, Output } from "webmidi";
-import Scale from "@/scale";
-import { parseLine } from "@/parser";
 import {
   bendRangeInSemitones,
   computeWhiteIndices,
@@ -22,7 +25,6 @@ import { Keyboard, type CoordinateKeyboardEvent } from "@/keyboard";
 import { decodeQuery, encodeQuery, type DecodedState } from "@/url-encode";
 import { debounce } from "@/utils";
 import { version } from "../package.json";
-import type { Interval } from "@/interval";
 import { arraysEqual } from "xen-dev-utils";
 import {
   mapWhiteAsdfBlackQwerty,
@@ -30,6 +32,7 @@ import {
 } from "./keyboard-mapping";
 import { VirtualSynth } from "./virtual-synth";
 import { Synth } from "@/synth";
+import { Interval, parseLine, Scale } from "scale-workshop-core";
 
 // === Root props and audio ===
 const rootProps = defineProps<{
@@ -52,7 +55,9 @@ const audioDelay = ref(0.001);
 // === Application state ===
 const scaleName = ref("");
 const scaleLines = ref<string[]>([]);
-const scale = reactive(Scale.fromIntervalArray([parseLine("1/1")]));
+const scale = reactive(
+  Scale.fromIntervalArray([parseLine("1/1", DEFAULT_NUMBER_OF_COMPONENTS)])
+);
 const baseMidiNote = ref(69);
 const keyColors = ref([
   "white",
@@ -160,12 +165,12 @@ function updateFromScaleLines(lines: string[]) {
   const intervals: Interval[] = [];
   lines.forEach((line) => {
     try {
-      const interval = parseLine(line);
+      const interval = parseLine(line, DEFAULT_NUMBER_OF_COMPONENTS);
       intervals.push(interval);
     } catch {}
   });
   if (!intervals.length) {
-    intervals.push(parseLine("1/1"));
+    intervals.push(parseLine("1/1", DEFAULT_NUMBER_OF_COMPONENTS));
   }
 
   const surrogate = Scale.fromIntervalArray(intervals);

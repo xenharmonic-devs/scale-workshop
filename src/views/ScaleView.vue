@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ScaleBuilder from "@/components/ScaleBuilder.vue";
-import type Scale from "@/scale";
+import type { Scale } from "scale-workshop-core";
 
 defineProps<{
   scaleName: string;

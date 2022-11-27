@@ -1,6 +1,6 @@
 import { APP_TITLE } from "@/constants";
-import { fractionToString } from "@/utils";
 import { BaseExporter, type ExporterParams } from "@/exporters/base";
+import { fractionToString } from "scale-workshop-core";
 
 export class ScalaSclExporter extends BaseExporter {
   static maxInteger = 2147483647;

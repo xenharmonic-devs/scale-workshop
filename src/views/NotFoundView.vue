@@ -4,9 +4,9 @@
  */
 
 import OctaplexPortal from "@/components/modals/generation/SummonOctaplex.vue";
-import type Scale from "@/scale";
 import type { Synth } from "@/synth";
 import { encodeQuery } from "@/url-encode";
+import type { Scale } from "scale-workshop-core";
 import { nextTick, ref } from "vue";
 import { useRouter, type LocationQuery } from "vue-router";
 import { version } from "../../package.json";

@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 
-import ExtendedMonzo from "../monzo";
 import {
   Mapping,
   makeRank1,
@@ -9,9 +8,8 @@ import {
   mosPatternsRank2FromCommas,
   mosPatternsRank2FromVals,
 } from "../tempering";
-import Scale from "../scale";
-import { Interval } from "../interval";
 import { arraysEqual, Fraction, valueToCents } from "xen-dev-utils";
+import { ExtendedMonzo, Interval, Scale } from "scale-workshop-core";
 
 describe("Temperament Mapping", () => {
   it("calculates POTE meantone", () => {
@@ -21,7 +19,7 @@ describe("Temperament Mapping", () => {
       ExtendedMonzo.fromFraction(new Fraction(81, 80), 3),
       "ratio"
     );
-    const octave = new Interval(ExtendedMonzo.fromNumber(2, 3), "ratio");
+    const octave = new Interval(ExtendedMonzo.fromFraction(2, 3), "ratio");
     const fifth = new Interval(
       ExtendedMonzo.fromFraction(new Fraction(3, 2), 3),
       "ratio"
@@ -35,7 +33,7 @@ describe("Temperament Mapping", () => {
     const impureMapping = Mapping.fromCommas(["81/80"], 3, "2.3.5", {
       temperEquaves: true,
     });
-    const octave = new Interval(ExtendedMonzo.fromNumber(2, 3), "ratio");
+    const octave = new Interval(ExtendedMonzo.fromFraction(2, 3), "ratio");
     expect(impureMapping.apply(octave).totalCents()).greaterThan(1200);
 
     const mapping = impureMapping.pureOctaves();
@@ -57,7 +55,7 @@ describe("Temperament Mapping", () => {
   it("can temper out multiple commas", () => {
     const miracle = Mapping.fromCommas(["225/224", "1029/1024"], 4);
 
-    const octave = new Interval(ExtendedMonzo.fromNumber(2, 4), "ratio");
+    const octave = new Interval(ExtendedMonzo.fromFraction(2, 4), "ratio");
     const marvelComma = new Interval(
       ExtendedMonzo.fromFraction(new Fraction(225, 224), 4),
       "ratio"
@@ -88,7 +86,7 @@ describe("Temperament Mapping", () => {
     const tet12 = Mapping.fromCommas(["81/80", "128/125"], 3, undefined, {
       temperEquaves: true,
     });
-    const octave = new Interval(ExtendedMonzo.fromNumber(2, 3), "ratio");
+    const octave = new Interval(ExtendedMonzo.fromFraction(2, 3), "ratio");
     const syntonicComma = new Interval(
       ExtendedMonzo.fromFraction(new Fraction(81, 80), 3),
       "ratio"
@@ -114,7 +112,7 @@ describe("Temperament Mapping", () => {
     const breed = Mapping.fromCommas(["2401/2400"], 4, 7, {
       temperEquaves: true,
     });
-    const octave = new Interval(ExtendedMonzo.fromNumber(2, 4), "ratio");
+    const octave = new Interval(ExtendedMonzo.fromFraction(2, 4), "ratio");
     const breedsma = new Interval(
       ExtendedMonzo.fromFraction(new Fraction(2401, 2400), 4),
       "ratio"
@@ -142,7 +140,7 @@ describe("Temperament Mapping", () => {
 
   it("can construct POTE mavila from a list of vals", () => {
     const mavila = Mapping.fromVals([9, 16], 4, "2.3.5");
-    const octave = new Interval(ExtendedMonzo.fromNumber(2, 4), "ratio");
+    const octave = new Interval(ExtendedMonzo.fromFraction(2, 4), "ratio");
     const pelogicComma = new Interval(
       ExtendedMonzo.fromFraction(new Fraction(135, 128), 4),
       "ratio"
@@ -175,7 +173,7 @@ describe("Temperament Mapping", () => {
       ExtendedMonzo.fromFraction(new Fraction(126, 125), 4),
       "ratio"
     );
-    const octave = new Interval(ExtendedMonzo.fromNumber(2, 4), "ratio");
+    const octave = new Interval(ExtendedMonzo.fromFraction(2, 4), "ratio");
     const tritave = new Interval(
       ExtendedMonzo.fromFraction(new Fraction(3, 1), 4),
       "ratio"
@@ -218,7 +216,7 @@ describe("Temperament Mapping", () => {
   it("can be applied to scales", () => {
     const porkypine = Mapping.fromCommas(["55/54", "100/99"], 5, "2.3.5.11");
 
-    const octave = new Interval(ExtendedMonzo.fromNumber(2, 5), "ratio");
+    const octave = new Interval(ExtendedMonzo.fromFraction(2, 5), "ratio");
     const neutralSecond = new Interval(
       ExtendedMonzo.fromFraction(new Fraction(12, 11), 5),
       "ratio"

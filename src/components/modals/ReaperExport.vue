@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import ReaperExporter from "@/exporters/reaper";
-import type Scale from "@/scale";
 import { sanitizeFilename } from "@/utils";
 import { ref } from "vue";
 import Modal from "@/components/ModalDialog.vue";
+import type { Scale } from "scale-workshop-core";
 
 const props = defineProps<{
   newline: string;

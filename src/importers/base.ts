@@ -1,4 +1,4 @@
-import type Scale from "@/scale";
+import type { Scale } from "scale-workshop-core";
 
 export type ImportResult = {
   scale: Scale;

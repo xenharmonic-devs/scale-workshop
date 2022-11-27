@@ -1,7 +1,11 @@
-import { NEWLINE_TEST } from "@/constants";
-import { getLineType, LINE_TYPE, parseLine } from "@/parser";
-import Scale from "@/scale";
-import type { Interval } from "@/interval";
+import { DEFAULT_NUMBER_OF_COMPONENTS, NEWLINE_TEST } from "@/constants";
+import {
+  getLineType,
+  LINE_TYPE,
+  parseLine,
+  Interval,
+  Scale,
+} from "scale-workshop-core";
 import { TextImporter, type ImportResult } from "@/importers/base";
 
 export class AnaMarkImporter extends TextImporter {
@@ -65,7 +69,7 @@ export class AnaMarkImporter extends TextImporter {
       if (lineType === LINE_TYPE.INVALID) {
         throw new Error(`Failed to parse line ${line}`);
       }
-      intervals.push(parseLine(line));
+      intervals.push(parseLine(line, DEFAULT_NUMBER_OF_COMPONENTS));
     });
     const scale = Scale.fromIntervalArray(intervals);
 

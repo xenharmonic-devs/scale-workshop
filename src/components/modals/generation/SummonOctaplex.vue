@@ -2,12 +2,9 @@
 import { ref, watch } from "vue";
 import Modal from "@/components/ModalDialog.vue";
 import ScaleLineInput from "@/components/ScaleLineInput.vue";
-import { parseChordInput } from "@/parser";
-import Scale from "@/scale";
-import { Interval } from "@/interval";
-import ExtendedMonzo from "@/monzo";
 import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
-import { computedAndError } from "@/utils";
+import { computedAndError, parseChordInput } from "@/utils";
+import { ExtendedMonzo, Interval, Scale } from "scale-workshop-core";
 
 const props = defineProps<{
   show: boolean;
@@ -15,7 +12,7 @@ const props = defineProps<{
 
 const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
 const octave = new Interval(
-  ExtendedMonzo.fromNumber(2, DEFAULT_NUMBER_OF_COMPONENTS),
+  ExtendedMonzo.fromFraction(2, DEFAULT_NUMBER_OF_COMPONENTS),
   "ratio"
 );
 const basisString = ref("3 5 7 11");

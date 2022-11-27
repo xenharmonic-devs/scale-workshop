@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { parseLine } from "@/parser";
-import type { Interval } from "@/interval";
+import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
 import { computedAndError } from "@/utils";
+import { parseLine, type Interval } from "scale-workshop-core";
 import { ref, watch } from "vue";
 
 const props = defineProps<{
@@ -15,10 +15,10 @@ const emit = defineEmits(["update:value", "update:modelValue"]);
 const element = ref<HTMLInputElement | null>(null);
 const defaultValue =
   props.defaultValue === undefined
-    ? parseLine(props.modelValue || "1/1")
+    ? parseLine(props.modelValue || "1/1", DEFAULT_NUMBER_OF_COMPONENTS)
     : props.defaultValue;
 const [value, error] = computedAndError(
-  () => parseLine(props.modelValue),
+  () => parseLine(props.modelValue, DEFAULT_NUMBER_OF_COMPONENTS),
   defaultValue
 );
 watch(value, (newValue) => emit("update:value", newValue), { immediate: true });

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type Scale from "@/scale";
 import { ref } from "vue";
 import Modal from "@/components/ModalDialog.vue";
+import type { Scale } from "scale-workshop-core";
 
 const props = defineProps<{
   scale: Scale;

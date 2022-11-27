@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import type Scale from "@/scale";
 import { onMounted, ref } from "vue";
 import Modal from "@/components/ModalDialog.vue";
-import type { IntervalOptions, IntervalType } from "@/interval";
 import { Fraction } from "xen-dev-utils";
+import type { IntervalOptions, IntervalType, Scale } from "scale-workshop-core";
 
 const props = defineProps<{
   scale: Scale;

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, reactive } from "vue";
 import Modal from "@/components/ModalDialog.vue";
-import type Scale from "@/scale";
+import type { Scale } from "scale-workshop-core";
 
 const props = defineProps<{
   scale: Scale;
@@ -49,7 +49,9 @@ function initialize() {
 }
 
 function modify() {
-  emit("update:scale", props.scale.subset(selected));
+  const subset = [...selected.values()];
+  subset.sort((a, b) => a - b);
+  emit("update:scale", props.scale.subset(subset));
 }
 </script>
 

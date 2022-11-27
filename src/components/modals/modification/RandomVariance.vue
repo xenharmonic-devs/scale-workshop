@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type Scale from "@/scale";
 import { computed, ref } from "vue";
 import Modal from "@/components/ModalDialog.vue";
+import type { Scale } from "scale-workshop-core";
 
 const EPSILON = 1e-6;
 

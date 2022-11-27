@@ -31,9 +31,9 @@ import ConvertModal from "@/components/modals/modification/ConvertType.vue";
 import ApproximateBySubharmonicsModal from "@/components/modals/modification/ApproximateBySubharmonics.vue";
 import ApproximateByRatiosModal from "@/components/modals/modification/ApproximateByRatios.vue";
 import { presets, presetsByGroup } from "@/presets";
-import type Scale from "@/scale";
 import { importFile, type ImporterKey } from "@/importers";
 import { mtof } from "xen-dev-utils";
+import type { Scale } from "scale-workshop-core";
 
 const props = defineProps<{
   scaleName: string;

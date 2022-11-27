@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
-import type Scale from "@/scale";
 import { Mapping } from "@/tempering";
 import { ref, watch } from "vue";
 import Modal from "@/components/ModalDialog.vue";
 import { makeState, splitText } from "@/components/modals/tempering-state";
 import { PRIME_CENTS } from "xen-dev-utils";
+import type { Scale } from "scale-workshop-core";
 
 const props = defineProps<{
   scale: Scale;

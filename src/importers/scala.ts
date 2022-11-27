@@ -1,8 +1,12 @@
-import { NEWLINE_TEST } from "@/constants";
-import { getLineType, LINE_TYPE, parseLine } from "@/parser";
-import Scale from "@/scale";
-import type { Interval } from "@/interval";
+import { DEFAULT_NUMBER_OF_COMPONENTS, NEWLINE_TEST } from "@/constants";
 import { TextImporter, type ImportResult } from "@/importers/base";
+import {
+  getLineType,
+  LINE_TYPE,
+  parseLine,
+  Scale,
+  type Interval,
+} from "scale-workshop-core";
 
 export class ScalaImporter extends TextImporter {
   parseText(input: string): ImportResult {
@@ -19,7 +23,9 @@ export class ScalaImporter extends TextImporter {
       if (lineType === LINE_TYPE.INVALID) {
         throw new Error(`Failed to parse line ${line}`);
       }
-      intervals.push(parseLine(line, undefined, undefined, true));
+      intervals.push(
+        parseLine(line, DEFAULT_NUMBER_OF_COMPONENTS, undefined, true)
+      );
     });
     const scale = Scale.fromIntervalArray(intervals);
     return { scale };

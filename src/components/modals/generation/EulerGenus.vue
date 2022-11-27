@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
-import Scale from "@/scale";
 import { ref } from "vue";
 import Modal from "@/components/ModalDialog.vue";
 import { clamp } from "xen-dev-utils";
+import { Scale } from "scale-workshop-core";
 const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
 const guideTone = ref(45);
 const equave = ref(2);
