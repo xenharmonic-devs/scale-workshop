@@ -521,6 +521,15 @@ function keyboardNoteOn(index: number) {
 // === Typing keyboard state ===
 function windowKeydownOrUp(event: KeyboardEvent | MouseEvent) {
   const target = event.target;
+  // Keep typing activated while adjusting sliders
+  if (
+    target instanceof HTMLInputElement &&
+    ["range", "radio", "checkbox"].includes(target.type)
+  ) {
+    typingActive.value = true;
+    return;
+  }
+  // Disable typing for other types of input elements
   if (
     target instanceof HTMLTextAreaElement ||
     target instanceof HTMLInputElement ||
