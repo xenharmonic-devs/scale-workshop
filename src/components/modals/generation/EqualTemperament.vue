@@ -7,6 +7,11 @@ import { splitText } from "@/components/modals/tempering-state";
 import { clamp } from "xen-dev-utils";
 import { ExtendedMonzo, Interval, Scale } from "scale-workshop-core";
 
+const props = defineProps<{
+  centsFractionDigits: number;
+  decimalFractionDigits: number;
+}>();
+
 const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
 
 const octave = new Interval(
@@ -21,12 +26,23 @@ const equave = ref(octave);
 const jumpsString = ref("1 1 1 1 1");
 const degreesString = ref("1 2 3 4 5");
 
-const jumpsElement = ref<HTMLTextAreaElement | null>(null);
-const degreesElement = ref<HTMLTextAreaElement | null>(null);
+const divisionsElement = ref<HTMLInputElement | null>(null);
+
+const singleStepOnly = computed(
+  () => divisions.value !== Math.round(divisions.value) || divisions.value < 1
+);
 
 const safeScaleSize = computed(() =>
   Math.round(clamp(1, 1024, divisions.value))
 );
+
+watch(divisions, (newValue) => {
+  if (isNaN(newValue) || newValue === 0) {
+    divisionsElement.value!.setCustomValidity("Step size is zero");
+  } else {
+    divisionsElement.value!.setCustomValidity("");
+  }
+});
 
 const jumps = computed(() =>
   splitText(jumpsString.value).map((token) => parseInt(token))
@@ -35,27 +51,16 @@ const degrees = computed(() =>
   splitText(degreesString.value).map((token) => parseInt(token))
 );
 
-watch(jumps, (newValue) => {
-  if (newValue.includes(NaN)) {
-    jumpsElement.value!.setCustomValidity("Step size not an integer");
-  } else {
-    jumpsElement.value!.setCustomValidity("");
-  }
-});
-
-watch(degrees, (newValue) => {
-  if (newValue.includes(NaN)) {
-    degreesElement.value!.setCustomValidity("Degree not an integer");
-  } else {
-    degreesElement.value!.setCustomValidity("");
-  }
-});
-
 function updateFromDivisions() {
-  jumpsString.value = Array(safeScaleSize.value).fill("1").join(" ");
-  degreesString.value = [...Array(safeScaleSize.value).keys()]
-    .map((k) => (k + 1).toString())
-    .join(" ");
+  if (singleStepOnly.value) {
+    jumpsString.value = "";
+    degreesString.value = "";
+  } else {
+    jumpsString.value = Array(safeScaleSize.value).fill("1").join(" ");
+    degreesString.value = [...Array(safeScaleSize.value).keys()]
+      .map((k) => (k + 1).toString())
+      .join(" ");
+  }
 }
 
 function updateFromJumps() {
@@ -87,16 +92,37 @@ function updateFromDegrees() {
 }
 
 function generate() {
-  // Implicit use of safeScaleSize. Note that small subsets of huge EDOs cause no issues.
-  const scale = Scale.fromEqualTemperamentSubset(degrees.value, equave.value);
-  // Obtain effective divisions from the scale just generated.
-  const effectiveDivisions =
-    scale.getInterval(0).options.preferredEtDenominator;
-  emit(
-    "update:scaleName",
-    `${effectiveDivisions} equal divisions of ${equave.value.toString()}`
-  );
-  emit("update:scale", scale);
+  const lineOptions = {
+    centsFractionDigits: props.centsFractionDigits,
+    decimalFractionDigits: props.decimalFractionDigits,
+  };
+  if (singleStepOnly.value) {
+    const stepCents = equave.value.totalCents() / divisions.value;
+    const scale = Scale.fromIntervalArray([
+      new Interval(
+        ExtendedMonzo.fromCents(stepCents, DEFAULT_NUMBER_OF_COMPONENTS),
+        "cents",
+        undefined,
+        lineOptions
+      ),
+    ]);
+    emit("update:scaleName", `${scale.equave.name} cET`);
+    emit("update:scale", scale);
+  } else {
+    // Implicit use of safeScaleSize. Note that small subsets of huge EDOs cause no issues.
+    const scale = Scale.fromEqualTemperamentSubset(
+      degrees.value,
+      equave.value.mergeOptions(lineOptions)
+    );
+    // Obtain effective divisions from the scale just generated.
+    const effectiveDivisions =
+      scale.getInterval(0).options.preferredEtDenominator;
+    emit(
+      "update:scaleName",
+      `${effectiveDivisions} equal divisions of ${equave.value.toString()}`
+    );
+    emit("update:scale", scale);
+  }
 }
 </script>
 
@@ -110,28 +136,33 @@ function generate() {
         <div class="control">
           <label for="divisions">Number of divisions</label>
           <input
+            ref="divisionsElement"
             id="divisions"
             type="number"
-            min="1"
+            step="any"
             v-model="divisions"
             @input="updateFromDivisions"
           />
         </div>
         <div class="control">
-          <label for="jumps">Relative steps</label>
+          <label for="jumps" :class="{ disabled: singleStepOnly }"
+            >Relative steps</label
+          >
           <textarea
-            ref="jumpsElement"
             id="jumps"
             v-model="jumpsString"
+            :disabled="singleStepOnly"
             @input="updateFromJumps"
           ></textarea>
         </div>
         <div class="control">
-          <label for="degrees">Absolute degrees</label>
+          <label for="degrees" :class="{ disabled: singleStepOnly }"
+            >Absolute degrees</label
+          >
           <textarea
-            ref="degreesElement"
             id="degrees"
             v-model="degreesString"
+            :disabled="singleStepOnly"
             @input="updateFromDegrees"
           ></textarea>
         </div>
@@ -147,3 +178,9 @@ function generate() {
     </template>
   </Modal>
 </template>
+
+<style scoped>
+label.disabled {
+  color: var(--color-text-mute);
+}
+</style>
