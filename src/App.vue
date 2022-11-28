@@ -118,8 +118,9 @@ const degreeDownCode = ref("NumpadSubtract");
 
 // === Computed state ===
 const frequencies = computed(() =>
-  [...Array(NUMBER_OF_NOTES).keys()].map((i) =>
-    scale.getFrequency(i - baseMidiNote.value)
+  scale.getFrequencyRange(
+    -baseMidiNote.value,
+    NUMBER_OF_NOTES - baseMidiNote.value
   )
 );
 
