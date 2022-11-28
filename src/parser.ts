@@ -347,9 +347,11 @@ function parseComposite(
 export function parseLine(
   input: string,
   numberOfComponents = DEFAULT_NUMBER_OF_COMPONENTS,
-  options?: IntervalOptions
+  options?: IntervalOptions,
+  admitBareNumbers = false
 ): Interval {
-  switch (getLineType(input)) {
+  const lineType = getLineType(input);
+  switch (lineType) {
     case LINE_TYPE.CENTS:
       return parseCents(input, numberOfComponents, options);
     case LINE_TYPE.DECIMAL:
@@ -365,6 +367,9 @@ export function parseLine(
     case LINE_TYPE.COMPOSITE:
       return parseComposite(input, numberOfComponents, options);
     default:
+      if (admitBareNumbers && lineType === LINE_TYPE.NUMBER) {
+        return parseNumber(input, numberOfComponents, options);
+      }
       throw new Error(`Failed to parse ${input}`);
   }
 }
