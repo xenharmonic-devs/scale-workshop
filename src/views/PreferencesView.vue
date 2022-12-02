@@ -7,6 +7,7 @@ const props = defineProps<{
   colorScheme: "light" | "dark";
   centsFractionDigits: number;
   decimalFractionDigits: number;
+  showVirtualQwerty: boolean;
 }>();
 
 const emit = defineEmits([
@@ -15,6 +16,7 @@ const emit = defineEmits([
   "update:centsFractionDigits",
   "update:decimalFractionDigits",
   "update:virtualKeyboardMode",
+  "update:showVirtualQwerty",
 ]);
 
 const newline = computed({
@@ -32,6 +34,10 @@ const centsFractionDigits = computed({
 const decimalFractionDigits = computed({
   get: () => props.decimalFractionDigits,
   set: (newValue: number) => emit("update:decimalFractionDigits", newValue),
+});
+const showVirtualQwerty = computed({
+  get: () => props.showVirtualQwerty,
+  set: (newValue: boolean) => emit("update:showVirtualQwerty", newValue),
 });
 </script>
 
@@ -54,6 +60,17 @@ const decimalFractionDigits = computed({
               </option>
               <option :value="UNIX_NEWLINE">Unix (Mac/Linux)</option>
             </select>
+          </div>
+        </div>
+        <h2>Advanced</h2>
+        <div class="control-group">
+          <div class="control checkbox-container">
+            <input
+              id="virtual-qwerty"
+              type="checkbox"
+              v-model="showVirtualQwerty"
+            />
+            <label for="virtual-qwerty"> Virtual QWERTY in top menu</label>
           </div>
         </div>
       </div>

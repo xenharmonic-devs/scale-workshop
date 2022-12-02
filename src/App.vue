@@ -109,6 +109,8 @@ const newline = ref(UNIX_NEWLINE);
 const colorScheme = ref<"light" | "dark">("light");
 const centsFractionDigits = ref(3);
 const decimalFractionDigits = ref(5);
+const showVirtualQwerty = ref(false);
+
 // Special keyboard codes also from local storage.
 const deactivationCode = ref("Backquote");
 const equaveUpCode = ref("NumpadMultiply");
@@ -746,6 +748,9 @@ onMounted(() => {
       storage.getItem("decimalFractionDigits")!
     );
   }
+  if ("showVirtualQwerty" in storage) {
+    showVirtualQwerty.value = storage.getItem("showVirtualQwerty") === "true";
+  }
 
   // Fetch special key map
   if ("deactivationCode" in storage) {
@@ -895,6 +900,9 @@ watch(centsFractionDigits, (newValue) =>
 watch(decimalFractionDigits, (newValue) =>
   window.localStorage.setItem("decimalFractionDigits", newValue.toString())
 );
+watch(showVirtualQwerty, (newValue) =>
+  window.localStorage.setItem("showVirtualQwerty", newValue.toString())
+);
 // Store keymaps
 watch(deactivationCode, (newValue) =>
   window.localStorage.setItem("deactivationCode", newValue)
@@ -922,6 +930,9 @@ watch(degreeDownCode, (newValue) =>
       <li><RouterLink to="/">Build Scale</RouterLink></li>
       <li><RouterLink to="/analysis">Analysis</RouterLink></li>
       <li><RouterLink to="/vk">Virtual Keyboard</RouterLink></li>
+      <li v-if="showVirtualQwerty">
+        <RouterLink to="/qwerty">Virtual QWERTY</RouterLink>
+      </li>
       <li><RouterLink to="/synth">Synth</RouterLink></li>
       <li><RouterLink to="/midi">MIDI I/O</RouterLink></li>
       <li><RouterLink to="/prefs">Preferences</RouterLink></li>
@@ -984,6 +995,9 @@ watch(degreeDownCode, (newValue) =>
     :sustainLevel="sustainLevel"
     :releaseTime="releaseTime"
     :maxPolyphony="maxPolyphony"
+    :typingKeyboard="typingKeyboard"
+    :keyboardMapping="keyboardMapping"
+    :showVirtualQwerty="showVirtualQwerty"
     @update:audioDelay="audioDelay = $event"
     @update:mainVolume="mainVolume = $event"
     @update:scaleName="scaleName = $event"
@@ -1008,6 +1022,7 @@ watch(degreeDownCode, (newValue) =>
     @update:colorScheme="colorScheme = $event"
     @update:centsFractionDigits="centsFractionDigits = $event"
     @update:decimalFractionDigits="decimalFractionDigits = $event"
+    @update:showVirtualQwerty="showVirtualQwerty = $event"
     @update:deactivationCode="deactivationCode = $event"
     @update:equaveUpCode="equaveUpCode = $event"
     @update:equaveDownCode="equaveDownCode = $event"
