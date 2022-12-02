@@ -913,6 +913,7 @@ watch(degreeDownCode, (newValue) =>
       <li><RouterLink to="/">Build Scale</RouterLink></li>
       <li><RouterLink to="/analysis">Analysis</RouterLink></li>
       <li><RouterLink to="/vk">Virtual Keyboard</RouterLink></li>
+      <li><RouterLink to="/yt">YouTube</RouterLink></li>
       <li><RouterLink to="/synth">Synth</RouterLink></li>
       <li><RouterLink to="/midi">MIDI I/O</RouterLink></li>
       <li><RouterLink to="/prefs">Preferences</RouterLink></li>
@@ -975,6 +976,8 @@ watch(degreeDownCode, (newValue) =>
     :sustainLevel="sustainLevel"
     :releaseTime="releaseTime"
     :maxPolyphony="maxPolyphony"
+    :typingKeyboard="typingKeyboard"
+    :keyboardMapping="keyboardMapping"
     @update:audioDelay="audioDelay = $event"
     @update:mainVolume="mainVolume = $event"
     @update:scaleName="scaleName = $event"
