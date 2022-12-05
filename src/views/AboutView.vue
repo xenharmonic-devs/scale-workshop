@@ -33,8 +33,8 @@
     <div id="contributors">
       <h2>Contributors</h2>
       <p>
-        Sevish - <i>UI/UX designer</i><br />
         Lumi Pakkanen - <i>lead developer</i><br />
+        Sevish - <i>UI/UX designer</i><br />
         Vincenzo Sicurella - <i>developer</i><br />
         Lajos Mészáros - <i>developer</i><br />
         Forrest Cahoon - <i>developer</i>
