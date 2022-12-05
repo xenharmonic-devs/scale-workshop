@@ -18,14 +18,13 @@ const element = ref<HTMLTableRowElement | null>(null);
 // Application state is not suited for real-time display
 // se we use hacks to bypass it.
 onMounted(() => {
-  let rows;
-  if ("TUNING_TABLE_ROWS" in window) {
-    rows = (window as any).TUNING_TABLE_ROWS;
-  } else {
-    rows = (window as any).TUNING_TABLE_ROWS = Array(128);
+  const rows = (window as any).TUNING_TABLE_ROWS;
+  const heldKeys = rows[props.index]?.heldKeys || 0;
+  rows[props.index] = { heldKeys, element };
+
+  if (heldKeys) {
+    (element as any)._rawValue.classList.add("active");
   }
-  (element as any).heldKeys = 0;
-  rows[props.index] = element;
 
   const isMediumOrLarger = window.matchMedia(
     "screen and (min-width: 600px)"
