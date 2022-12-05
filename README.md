@@ -100,6 +100,13 @@ Please base any work on `main` branch, and make pull requests against `main` as 
 
 ## Changelog
 
+### 2.0.1
+* Feature: The synth can now be played while manipulating slider, radio or checkbox inputs
+* Bug fix: Scala import wouldn't read plain numbers and didn't ignore line comments
+* Bug fix: Using a piano-style layout in all-white/all-black could crash the app
+* Bug fix: Tuning table rows were highlighting inconsistently
+* Bug fix: Virtual keys got stuck when a click was released outside the virtual keyboard
+
 ### 2.0.0
 * Project update: Application rewritten from the ground up. Scale Workshop is now powered by Vue.
 * Feature: Equal temperament now supports subsets when generating scales
