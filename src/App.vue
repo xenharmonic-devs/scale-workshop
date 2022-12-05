@@ -797,6 +797,9 @@ function panic() {
       channels: [...midiOutputChannels.value],
     });
   }
+  if (synth.value !== null) {
+    synth.value.allNotesOff();
+  }
 }
 
 // Synth parameter watchers
@@ -850,25 +853,6 @@ function setMaxPolyphony(newValue: number) {
   }
 }
 
-// Code for hard panic if needed in the future.
-/*
-function hardPanic() {
-  console.warn("Cutting all audio!");
-  typingKeyboad.deactivate();
-  midiIn.deactivate();
-  if (midiOutput.value !== null) {
-    midiOutput.value.sendAllNotesOff();
-    midiOutput.value.sendAllSoundOff();
-    midiOutput.value.sendStop();
-  }
-  rootProps.audioContext.suspend();
-}
-
-function unpanic() {
-  console.log("Resuming audio.");
-  rootProps.audioContext.resume();
-}
-*/
 // Store user preferences
 watch(audioDelay, (newValue) =>
   window.localStorage.setItem("audioDelay", newValue.toString())

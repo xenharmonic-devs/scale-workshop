@@ -138,6 +138,7 @@ class Voice {
   log: (msg: string) => void;
   noteId: number;
   voiceId: number;
+  lastNoteOff?: () => void;
 
   constructor(
     audioContext: AudioContext,
@@ -203,7 +204,7 @@ class Voice {
     );
 
     const noteOff = () => {
-      // Do nothing if the voice has been stolen.
+      // Do nothing if the voice has been stolen or already released.
       if (this.noteId !== noteId) {
         this.log(`Voice ${this.voiceId} had been stolen. Ignoring note off`);
         return;
@@ -221,7 +222,12 @@ class Voice {
         );
       }
       this.envelope.gain.setTargetAtTime(0, then, releaseTime * TIME_CONSTANT);
+
+      // We're done here.
+      this.noteId = -1;
     };
+
+    this.lastNoteOff = noteOff;
 
     return noteOff;
   }
@@ -320,5 +326,13 @@ export class Synth {
       this.releaseTime,
       NOTE_ID++
     );
+  }
+
+  allNotesOff() {
+    for (const voice of this.voices) {
+      if (voice.lastNoteOff !== undefined) {
+        voice.lastNoteOff();
+      }
+    }
   }
 }
