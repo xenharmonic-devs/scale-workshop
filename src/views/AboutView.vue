@@ -36,7 +36,8 @@
         Sevish - <i>UI/UX designer</i><br />
         Lumi Pakkanen - <i>lead developer</i><br />
         Vincenzo Sicurella - <i>developer</i><br />
-        Lajos Mészáros - <i>developer</i>
+        Lajos Mészáros - <i>developer</i><br />
+        Forrest Cahoon - <i>developer</i>
       </p>
     </div>
   </div>
