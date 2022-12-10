@@ -14,6 +14,7 @@ import {
 } from "moment-of-symmetry";
 import { computed, ref, watch } from "vue";
 import Modal from "@/components/ModalDialog.vue";
+import PeriodCircle from "@/components/PeriodCircle.vue";
 import { makeState } from "@/components/modals/tempering-state";
 import { computedAndError, gapKeyColors } from "@/utils";
 import ScaleLineInput from "@/components/ScaleLineInput.vue";
@@ -21,6 +22,7 @@ import { ExtendedMonzo, Interval, parseLine, Scale } from "scale-workshop-core";
 
 const props = defineProps<{
   centsFractionDigits: number;
+  scale: Scale;
 }>();
 
 const MAX_SIZE = 128;
@@ -34,7 +36,7 @@ const emit = defineEmits([
 ]);
 
 // === Component state ===
-const method = ref<"generator" | "vals" | "commas">("generator");
+const method = ref<"generator" | "vals" | "commas" | "circle">("generator");
 const error = ref("");
 const state = makeState(method);
 // method: "generator"
@@ -50,6 +52,9 @@ const commasString = state.commasString;
 const size = ref(7);
 const up = ref(5);
 const numPeriods = ref(1);
+// method: "circle"
+const periodStretch = ref("0");
+const generatorFineCents = ref("0");
 // Generic
 const subgroupString = state.subgroupString;
 const subgroupError = state.subgroupError;
@@ -110,7 +115,7 @@ const [mosPatterns, mosPatternsError] = computedAndError(() => {
       MAX_LENGTH,
       options.value
     );
-  } else {
+  } else if (method.value === "commas") {
     // Don't show error in the default configuration
     if (!commas.value.length) {
       return [];
@@ -126,10 +131,68 @@ const [mosPatterns, mosPatternsError] = computedAndError(() => {
       MAX_LENGTH,
       options.value
     );
+  } else {
+    return expensiveMosPatterns.value;
   }
 }, []);
 
+const circlePeriodCents = computed(() => {
+  const stretch = parseFloat(periodStretch.value);
+  if (isNaN(stretch)) {
+    return period.value.totalCents();
+  }
+  return period.value.totalCents() * Math.exp(stretch);
+});
+
+const circleGeneratorCents = computed(() => {
+  const fine = parseFloat(generatorFineCents.value);
+  if (isNaN(fine)) {
+    return generator.value.totalCents();
+  }
+  return generator.value.totalCents() + fine;
+});
+
+const generatorsPerPeriod = computed({
+  get: () => size.value / numPeriods.value,
+  set: (newValue) => {
+    const oldDown = down.value;
+    size.value = newValue * numPeriods.value;
+    // Attempt to preserve "down" rather than "up".
+    // It makes more sense that circle generators are appended in the positive direction.
+    up.value = Math.max(0, upMax.value - oldDown);
+  },
+});
+
 // === Watchers ===
+
+// Consolidate circle method's fine tuning to hard values when changing "tabs"
+function consolidateCircle() {
+  const options = { centsFractionDigits: props.centsFractionDigits };
+  period.value = new Interval(
+    ExtendedMonzo.fromCents(
+      circlePeriodCents.value,
+      DEFAULT_NUMBER_OF_COMPONENTS
+    ),
+    "cents"
+  ).mergeOptions(options);
+  periodString.value = period.value.toString();
+  generator.value = new Interval(
+    ExtendedMonzo.fromCents(
+      circleGeneratorCents.value,
+      DEFAULT_NUMBER_OF_COMPONENTS
+    ),
+    "cents"
+  ).mergeOptions(options);
+  generatorString.value = generator.value.toString();
+  periodStretch.value = "0";
+  generatorFineCents.value = "0";
+}
+
+watch(method, (_, oldValue) => {
+  if (oldValue === "circle") {
+    consolidateCircle();
+  }
+});
 
 // Force scale size and generator stack to align with the multi-MOS
 watch(numPeriods, (newValue) => {
@@ -160,6 +223,11 @@ watch(subgroupError, (newValue) =>
 
 watch(
   [vals, commas, subgroup, options],
+  () => (expensiveMosPatterns.value = [])
+);
+
+watch(
+  [periodStretch, generatorFineCents],
   () => (expensiveMosPatterns.value = [])
 );
 
@@ -194,13 +262,22 @@ function calculateExpensiveMosPattern() {
         MAX_LENGTH,
         options.value
       );
-    } else {
+    } else if (method.value === "commas") {
       expensiveMosPatterns.value = mosPatternsRank2FromCommas(
         commas.value,
         subgroup.value,
         MAX_SIZE,
         MAX_LENGTH,
         options.value
+      );
+    } else {
+      // Please note that the button to initiate this calculation is not included in the UI due to lack of screen space.
+      // The functionality is retained in case we ever tweak the UI.
+      expensiveMosPatterns.value = getMosPatterns(
+        circleGeneratorCents.value / circlePeriodCents.value,
+        numPeriods.value,
+        MAX_SIZE,
+        MAX_LENGTH
       );
     }
   } catch (error) {
@@ -214,7 +291,7 @@ function calculateExpensiveMosPattern() {
 
 function selectMosSize(mosSize: number) {
   size.value = mosSize;
-  if (method.value !== "generator") {
+  if (method.value === "vals" || method.value === "commas") {
     let params: Rank2Params;
     if (method.value === "vals") {
       params = makeRank2FromVals(
@@ -251,15 +328,29 @@ function selectMosSize(mosSize: number) {
   }
 }
 
+function updateCircleGenerator(value: number) {
+  generator.value = new Interval(
+    ExtendedMonzo.fromCents(value, DEFAULT_NUMBER_OF_COMPONENTS),
+    "cents"
+  ).mergeOptions({ centsFractionDigits: props.centsFractionDigits });
+  generatorString.value = generator.value.toString();
+  generatorFineCents.value = "0";
+  expensiveMosPatterns.value = [];
+}
+
 function generate() {
   // Clear error for the next time the modal is opened
   error.value = "";
   try {
+    if (method.value === "circle") {
+      consolidateCircle();
+    }
     const lineOptions = { centsFractionDigits: props.centsFractionDigits };
     let size_ = size.value;
     let down_ = down.value;
     const n = numPeriods.value;
-    if (colorMethod.value === "gaps") {
+    // The option to fill in colors is not shown in circle UI so it's ignored here.
+    if (colorMethod.value === "gaps" && method.value !== "circle") {
       const colors = Array(n)
         .fill(
           gapKeyColors(
@@ -300,7 +391,11 @@ function generate() {
 </script>
 
 <template>
-  <Modal @confirm="generate" @cancel="$emit('cancel')">
+  <Modal
+    extraStyle="width: 30rem"
+    @confirm="generate"
+    @cancel="$emit('cancel')"
+  >
     <template #header>
       <h2>Generate rank 2 temperament</h2>
     </template>
@@ -337,6 +432,16 @@ function generate() {
                 v-model="method"
               />
               <label for="method-commas"> Comma list </label>
+            </span>
+
+            <span>
+              <input
+                type="radio"
+                id="method-circle"
+                value="circle"
+                v-model="method"
+              />
+              <label for="method-circle"> Circle</label>
             </span>
           </div>
         </div>
@@ -450,28 +555,78 @@ function generate() {
           </div>
         </div>
 
-        <div :class="{ error: mosPatternsError.length }">
-          <strong>MOS sizes</strong>
-          <span v-show="mosPatternsError.length">⚠</span>
-        </div>
-        <div class="btn-group" v-if="mosPatterns.length">
-          <button
-            v-for="(mosInfo, i) of mosPatterns"
-            :key="i"
-            @mouseenter="previewMosPattern = mosInfo.mosPattern"
-            @mouseleave="previewMosPattern = ''"
-            @click="selectMosSize(mosInfo.size)"
-          >
-            {{ mosInfo.size }}
-          </button>
-        </div>
-        <div class="btn-group" v-else>
-          <button @click="calculateExpensiveMosPattern">
-            Calculate MOS sizes...
-          </button>
+        <div class="control-group" v-show="method === 'circle'">
+          <div class="square">
+            <PeriodCircle
+              :scale="scale"
+              :generatorCents="circleGeneratorCents"
+              :periodCents="circlePeriodCents"
+              :size="generatorsPerPeriod"
+              :up="up / numPeriods"
+              @update:generatorCents="updateCircleGenerator"
+            />
+          </div>
+          <div class="control">
+            <label for="period-stretch">Period stretch</label>
+            <input
+              class="wide-range"
+              type="range"
+              id="period-stretch"
+              step="any"
+              min="-0.05"
+              max="0.05"
+              v-model="periodStretch"
+            />
+            <label for="generator-fine-tune">Generator fine-tune</label>
+            <input
+              class="wide-range"
+              type="range"
+              id="generator-fine-tune"
+              step="any"
+              min="-5"
+              max="5"
+              v-model="generatorFineCents"
+            />
+          </div>
         </div>
 
-        <div class="control-group">
+        <template v-if="method !== 'circle'">
+          <div :class="{ error: mosPatternsError.length }">
+            <strong>MOS sizes</strong>
+            <span v-show="mosPatternsError.length">⚠</span>
+          </div>
+          <div class="btn-group" v-if="mosPatterns.length">
+            <button
+              v-for="(mosInfo, i) of mosPatterns"
+              :key="i"
+              @mouseenter="previewMosPattern = mosInfo.mosPattern"
+              @mouseleave="previewMosPattern = ''"
+              @click="selectMosSize(mosInfo.size)"
+            >
+              {{ mosInfo.size }}
+            </button>
+          </div>
+          <div class="btn-group" v-else>
+            <button @click="calculateExpensiveMosPattern">
+              Calculate MOS sizes...
+            </button>
+          </div>
+        </template>
+        <div class="control-group" v-else>
+          <div class="control">
+            <label for="generators-per-period">Generators per period</label>
+            <input
+              id="generators-per-period"
+              type="number"
+              min="1"
+              max="999"
+              step="1"
+              v-model="generatorsPerPeriod"
+            />
+          </div>
+        </div>
+
+        <div class="control-group" v-if="method !== 'circle'">
           <div class="control radio-group">
             <label>Generate key colors</label>
             <span>
@@ -571,7 +726,12 @@ function generate() {
     </template>
     <template #footer>
       <div class="btn-group">
-        <button @click="generate" :disabled="method !== 'generator'">OK</button>
+        <button
+          @click="generate"
+          :disabled="method === 'vals' || method === 'commas'"
+        >
+          OK
+        </button>
         <button @click="$emit('cancel')">Cancel</button>
         <span class="error" v-show="error.length">⚠</span>
         <i>{{ previewMosPattern }}</i>
@@ -579,3 +739,27 @@ function generate() {
     </template>
   </Modal>
 </template>
+
+<style scoped>
+.square {
+  position: relative;
+  width: 95%;
+  overflow: hidden;
+}
+.square::before {
+  content: "";
+  display: block;
+  padding-top: 100%;
+}
+.square :first-child {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.wide-range {
+  width: 100%;
+}
+</style>
