@@ -84,48 +84,62 @@ const blackKeys = computed(() => {
 
 const isMousePressed = ref(false);
 
-function onTouchEnd(index: number) {
+function start(index: number) {
+  noteOffs.set(index, props.noteOn(index));
+}
+
+function end(index: number) {
   if (noteOffs.has(index)) {
     noteOffs.get(index)!();
     noteOffs.delete(index);
   }
 }
 
-function onTouchStart(index: number) {
-  // Make sure that we start a new note.
-  onTouchEnd(index);
+function onTouchEnd(event: TouchEvent, index: number) {
+  event.preventDefault();
+  end(index);
+}
 
-  noteOffs.set(index, props.noteOn(index));
+function onTouchStart(event: TouchEvent, index: number) {
+  event.preventDefault();
+  // Make sure that we start a new note.
+  end(index);
+
+  start(index);
 }
 
 function onMouseDown(event: MouseEvent, index: number) {
   if (event.button !== LEFT_MOUSE_BTN) {
     return;
   }
+  event.preventDefault();
   isMousePressed.value = true;
-  onTouchStart(index);
+  start(index);
 }
 
 function onMouseUp(event: MouseEvent, index: number) {
   if (event.button !== LEFT_MOUSE_BTN) {
     return;
   }
+  event.preventDefault();
   isMousePressed.value = false;
-  onTouchEnd(index);
+  end(index);
 }
 
-function onMouseEnter(index: number) {
+function onMouseEnter(event: MouseEvent, index: number) {
   if (!isMousePressed.value) {
     return;
   }
-  onTouchStart(index);
+  event.preventDefault();
+  start(index);
 }
 
-function onMouseLeave(index: number) {
+function onMouseLeave(event: MouseEvent, index: number) {
   if (!isMousePressed.value) {
     return;
   }
-  onTouchEnd(index);
+  event.preventDefault();
+  end(index);
 }
 
 function windowMouseUp(event: MouseEvent) {
@@ -153,13 +167,13 @@ onUnmounted(() => {
     <rect
       v-for="(key, i) of whiteKeys"
       :key="i"
-      @touchstart="onTouchStart(key.index)"
-      @touchend="onTouchEnd(key.index)"
-      @touchcancel="onTouchEnd(key.index)"
+      @touchstart="onTouchStart($event, key.index)"
+      @touchend="onTouchEnd($event, key.index)"
+      @touchcancel="onTouchEnd($event, key.index)"
       @mousedown="onMouseDown($event, key.index)"
       @mouseup="onMouseUp($event, key.index)"
-      @mouseenter="onMouseEnter(key.index)"
-      @mouseleave="onMouseLeave(key.index)"
+      @mouseenter="onMouseEnter($event, key.index)"
+      @mouseleave="onMouseLeave($event, key.index)"
       :class="{ white: true, active: (heldNotes.get(key.index) || 0) > 0 }"
       :x="4 * key.x - 2 * key.left + '%'"
       y="20%"
@@ -170,13 +184,13 @@ onUnmounted(() => {
     <rect
       v-for="(key, i) of blackKeys"
       :key="i"
-      @touchstart="onTouchStart(key.index)"
-      @touchend="onTouchEnd(key.index)"
-      @touchcancel="onTouchEnd(key.index)"
+      @touchstart="onTouchStart($event, key.index)"
+      @touchend="onTouchEnd($event, key.index)"
+      @touchcancel="onTouchEnd($event, key.index)"
       @mousedown="onMouseDown($event, key.index)"
       @mouseup="onMouseUp($event, key.index)"
-      @mouseenter="onMouseEnter(key.index)"
-      @mouseleave="onMouseLeave(key.index)"
+      @mouseenter="onMouseEnter($event, key.index)"
+      @mouseleave="onMouseLeave($event, key.index)"
       :class="{ black: true, active: (heldNotes.get(key.index) || 0) > 0 }"
       :x="4 * key.x + '%'"
       y="20%"
