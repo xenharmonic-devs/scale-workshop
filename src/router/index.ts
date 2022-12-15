@@ -62,6 +62,11 @@ const router = createRouter({
       name: "virtualKeyboard",
       component: () => import("../views/VirtualKeyboardView.vue"),
     },
+    {
+      path: "/yt",
+      name: "youTube",
+      component: () => import("../views/YouTubeView.vue"),
+    },
     // Root aliases mainly for compatibility with old SW1 URLs.
     {
       path: "/index.html",
