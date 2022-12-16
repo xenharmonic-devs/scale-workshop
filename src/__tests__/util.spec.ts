@@ -5,7 +5,6 @@ import {
   formatExponential,
   formatHertz,
   gapKeyColors,
-  stringToNumeratorDenominator,
 } from "../utils";
 
 function naiveExponential(x: number, fractionDigits = 3) {
@@ -84,17 +83,5 @@ describe("Gap key color algorithm", () => {
     expect(colors.join(" ")).toBe(
       "white black white black white white black white black white black white"
     );
-  });
-});
-
-describe("Fraction parser", () => {
-  it("Supports negative denominators", () => {
-    const [numerator, denominator] = stringToNumeratorDenominator("-3/-6");
-    expect(numerator).toBe(-3);
-    expect(denominator).toBe(-6);
-  });
-
-  it("throws an error with multiple slashes", () => {
-    expect(() => stringToNumeratorDenominator("1/-2/3")).toThrow();
   });
 });

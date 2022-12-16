@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import VirtualKeyboard from "@/components/VirtualKeyboard.vue";
 import VirtualPiano from "@/components/VirtualPiano.vue";
-import type Scale from "@/scale";
+import type { Scale } from "scale-workshop-core";
 
 type NoteOff = () => void;
 type NoteOnCallback = (index: number) => NoteOff;

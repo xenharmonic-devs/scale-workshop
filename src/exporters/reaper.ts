@@ -1,8 +1,11 @@
-import ExtendedMonzo from "@/monzo";
-import { getLineType, LINE_TYPE } from "@/parser";
-import { fractionToString } from "@/utils";
 import { BaseExporter, type ExporterParams } from "@/exporters/base";
-import { Interval } from "@/interval";
+import {
+  ExtendedMonzo,
+  getLineType,
+  Interval,
+  LINE_TYPE,
+  fractionToString,
+} from "scale-workshop-core";
 import { mmod } from "xen-dev-utils";
 
 export default class ReaperExporter extends BaseExporter {
@@ -29,7 +32,7 @@ export default class ReaperExporter extends BaseExporter {
       ),
       "cents"
     );
-    let lineTypes: LINE_TYPE[];
+    let lineTypes: (LINE_TYPE | "frequency")[];
     if (format === "name") {
       lineTypes = [];
       for (let i = 0; i < scale.size; ++i) {
@@ -40,7 +43,7 @@ export default class ReaperExporter extends BaseExporter {
       lineTypes = Array(scale.size).fill(LINE_TYPE.CENTS);
     }
     if (format === "frequency") {
-      lineTypes = Array(scale.size).fill(LINE_TYPE.FREQUENCY);
+      lineTypes = Array(scale.size).fill("frequency");
     }
     if (format === "decimal") {
       lineTypes = Array(scale.size).fill(LINE_TYPE.DECIMAL);
@@ -87,7 +90,7 @@ export default class ReaperExporter extends BaseExporter {
           case LINE_TYPE.N_OF_EDO:
             file += scale.getInterval(index).equalTemperamentString();
             break;
-          case LINE_TYPE.FREQUENCY:
+          case "frequency":
             file += scale.getFrequency(index).toFixed(digits);
             break;
           case LINE_TYPE.INVALID:

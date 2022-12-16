@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type Scale from "@/scale";
 import { computed } from "vue";
 import TuningTableRow from "@/components/TuningTableRow.vue";
 import { mmod } from "xen-dev-utils";
+import type { Scale } from "scale-workshop-core";
 
 const props = defineProps<{
   scale: Scale;

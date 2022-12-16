@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type Scale from "@/scale";
 import { computed, ref, watch } from "vue";
 import Modal from "@/components/ModalDialog.vue";
 import {
@@ -12,10 +11,13 @@ import {
   PRIMES,
   valueToCents,
 } from "xen-dev-utils";
-import { Interval } from "@/interval";
-import ExtendedMonzo from "@/monzo";
-import { fractionToString } from "@/utils";
 import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
+import {
+  fractionToString,
+  ExtendedMonzo,
+  Interval,
+  type Scale,
+} from "scale-workshop-core";
 
 const MAX_LENGTH = 128;
 

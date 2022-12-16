@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type Scale from "@/scale";
+import type { Scale } from "scale-workshop-core";
 import { computed } from "vue";
 import { mmod } from "xen-dev-utils";
 

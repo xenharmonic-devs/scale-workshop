@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { intervalMatrix } from "@/analysis";
-import type Scale from "@/scale";
 import type { VirtualSynth } from "@/virtual-synth";
 import ChordWheel from "@/components/ChordWheel.vue";
 import { computed, ref } from "vue";
-import type { Interval, IntervalOptions } from "@/interval";
+import type { Interval, IntervalOptions, Scale } from "scale-workshop-core";
 
 const MAX_SCALE_SIZE = 100;
 

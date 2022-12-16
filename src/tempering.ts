@@ -10,14 +10,13 @@ import {
   type JipOrLimit,
 } from "temperaments";
 import { DEFAULT_NUMBER_OF_COMPONENTS } from "./constants";
-import Scale from "./scale";
-import { Interval } from "./interval";
 import {
   PRIME_CENTS,
   valueToCents,
   type FractionValue,
   type Monzo,
 } from "xen-dev-utils";
+import { Interval, Scale } from "scale-workshop-core";
 
 export class Mapping {
   vector: number[];

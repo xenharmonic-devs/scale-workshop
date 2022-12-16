@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import Modal from "@/components/ModalDialog.vue";
-import { parseChordInput } from "@/parser";
-import Scale from "@/scale";
+import { parseChordInput } from "@/utils";
+import { Scale } from "scale-workshop-core";
 
 const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
 

@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
-import ExtendedMonzo from "@/monzo";
-import { parseLine } from "@/parser";
-import Scale from "@/scale";
 import {
   makeRank2FromVals,
   makeRank2FromCommas,
@@ -20,7 +17,7 @@ import Modal from "@/components/ModalDialog.vue";
 import { makeState } from "@/components/modals/tempering-state";
 import { computedAndError, gapKeyColors } from "@/utils";
 import ScaleLineInput from "@/components/ScaleLineInput.vue";
-import { Interval } from "@/interval";
+import { ExtendedMonzo, Interval, parseLine, Scale } from "scale-workshop-core";
 
 const props = defineProps<{
   centsFractionDigits: number;
@@ -41,9 +38,9 @@ const method = ref<"generator" | "vals" | "commas">("generator");
 const error = ref("");
 const state = makeState(method);
 // method: "generator"
-const generator = ref(parseLine("3/2"));
+const generator = ref(parseLine("3/2", DEFAULT_NUMBER_OF_COMPONENTS));
 const generatorString = ref("");
-const period = ref(parseLine("2/1"));
+const period = ref(parseLine("2/1", DEFAULT_NUMBER_OF_COMPONENTS));
 const periodString = ref("2/1");
 // method: "vals"
 const valsString = state.valsString;

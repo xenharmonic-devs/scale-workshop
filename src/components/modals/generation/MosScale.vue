@@ -1,8 +1,6 @@
 Interval
 <script setup lang="ts">
 import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
-import ExtendedMonzo from "@/monzo";
-import Scale from "@/scale";
 import {
   allForEdo,
   anyForEdo,
@@ -20,8 +18,8 @@ import {
 import { computed, reactive, ref, watch } from "vue";
 import Modal from "@/components/ModalDialog.vue";
 import ScaleLineInput from "@/components/ScaleLineInput.vue";
-import { Interval } from "@/interval";
 import { clamp, gcd } from "xen-dev-utils";
+import { ExtendedMonzo, Interval, Scale } from "scale-workshop-core";
 
 const emit = defineEmits([
   "update:scale",
@@ -31,7 +29,7 @@ const emit = defineEmits([
 ]);
 
 const octave = new Interval(
-  ExtendedMonzo.fromNumber(2, DEFAULT_NUMBER_OF_COMPONENTS),
+  ExtendedMonzo.fromFraction(2, DEFAULT_NUMBER_OF_COMPONENTS),
   "ratio"
 );
 

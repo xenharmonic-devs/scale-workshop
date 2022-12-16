@@ -1,7 +1,15 @@
-import Scale from "@/scale";
-import { LINE_TYPE, getLineType, parseLine } from "@/parser";
-import { NEWLINE_TEST, UNIX_NEWLINE } from "@/constants";
-import type { Interval } from "@/interval";
+import {
+  DEFAULT_NUMBER_OF_COMPONENTS,
+  NEWLINE_TEST,
+  UNIX_NEWLINE,
+} from "@/constants";
+import {
+  getLineType,
+  LINE_TYPE,
+  parseLine,
+  Scale,
+  type Interval,
+} from "scale-workshop-core";
 
 // decodes HTML entities
 function decodeHTML(input: string): string {
@@ -119,7 +127,7 @@ export class ScaleWorkshopOneData {
       if (lineType === LINE_TYPE.INVALID) {
         throw new Error(`Failed to parse line ${line}`);
       }
-      intervals.push(parseLine(line));
+      intervals.push(parseLine(line, DEFAULT_NUMBER_OF_COMPONENTS));
     });
     const scale = Scale.fromIntervalArray(intervals, this.freq);
     return scale;
