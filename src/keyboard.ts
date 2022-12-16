@@ -134,7 +134,7 @@ to coordinates. The Shift keys toggle 'sustain'.
 */
 export class Keyboard {
   keydownCallbacks: KeydownCallback[];
-  keyupCallbacks: Map<string, KeyupCallback>;
+  keyupCallbacks: Map<string, KeyupCallback[]>;
   activeKeys: Set<string>;
   pendingKeys: Set<string>;
   stickyKeys: Set<string>;
@@ -175,22 +175,22 @@ export class Keyboard {
 
   fireKeydown(event: CoordinateKeyboardEvent) {
     event.coordinates = COORDS_BY_CODE.get(event.code);
-    const unresolvedKeyupCallback = this.keyupCallbacks.get(event.code);
-    if (unresolvedKeyupCallback !== undefined) {
+    const keyupCallbacks = this.keyupCallbacks.get(event.code) || [];
+    for (const callback of keyupCallbacks) {
       console.warn("Unresolved keyup detected");
-      unresolvedKeyupCallback();
+      callback();
     }
     this.keydownCallbacks.forEach((callback) =>
-      this.keyupCallbacks.set(event.code, callback(event))
+      keyupCallbacks.push(callback(event))
     );
+    this.keyupCallbacks.set(event.code, keyupCallbacks);
   }
 
   fireKeyup(event: CoordinateKeyboardEvent) {
-    const callback = this.keyupCallbacks.get(event.code);
-    this.keyupCallbacks.delete(event.code);
-    if (callback !== undefined) {
+    for (const callback of this.keyupCallbacks.get(event.code) || []) {
       callback();
     }
+    this.keyupCallbacks.delete(event.code);
   }
 
   keydown(event: KeyboardEvent) {
