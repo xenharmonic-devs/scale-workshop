@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive } from "vue";
-import { Input, Output, WebMidi } from "webmidi";
+import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
+import { Input, Output, WebMidi, type MessageEvent } from "webmidi";
 
 const props = defineProps<{
   midiInput: Input | null;
@@ -22,6 +22,9 @@ const emit = defineEmits([
 
 const inputs = reactive<Input[]>([]);
 const outputs = reactive<Output[]>([]);
+const inputHighlights = reactive<Set<number>>(new Set());
+const stopHighlights = ref<() => void>(() => {});
+
 const midiVelocityOn = computed({
   get: () => props.midiVelocityOn,
   set: (newValue) => emit("update:midiVelocityOn", newValue),
@@ -31,12 +34,23 @@ const midiWhiteMode = computed({
   set: (newValue) => emit("update:midiWhiteMode", newValue),
 });
 
+function highlightMidiChannel(event: MessageEvent) {
+  inputHighlights.add(event.message.channel);
+  setTimeout(() => inputHighlights.delete(event.message.channel), 500);
+}
+
 function selectMidiInput(event: Event) {
   const id = (event!.target as HTMLSelectElement).value;
+  stopHighlights.value();
   if (id === "no-midi-input") {
     emit("update:midiInput", null);
+    stopHighlights.value = () => {};
   } else {
-    emit("update:midiInput", WebMidi.getInputById(id));
+    const input = WebMidi.getInputById(id);
+    emit("update:midiInput", input);
+    input.addListener("midimessage", highlightMidiChannel);
+    stopHighlights.value = () =>
+      input.removeListener("midimessage", highlightMidiChannel);
   }
 }
 
@@ -93,6 +107,17 @@ onMounted(async () => {
     // XXX: Webmidi doesn't expose this state change correctly so we'll have to use a time out hack.
     setTimeout(refreshMidi, 500);
   };
+
+  if (props.midiInput !== null) {
+    const input = props.midiInput;
+    input.addListener("midimessage", highlightMidiChannel);
+    stopHighlights.value = () =>
+      input.removeListener("midimessage", highlightMidiChannel);
+  }
+});
+
+onUnmounted(() => {
+  stopHighlights.value();
 });
 </script>
 
@@ -121,7 +146,9 @@ onMounted(async () => {
           <div class="control channels-wrapper">
             <label>Input channels</label>
             <span v-for="channel in 16" :key="channel">
-              <label>{{ " " + channel + " " }}</label>
+              <label :class="{ active: inputHighlights.has(channel) }">{{
+                " " + channel + " "
+              }}</label>
               <input
                 type="checkbox"
                 :value="channel"
@@ -253,5 +280,9 @@ div.channels-wrapper span {
   display: flex;
   flex-flow: column;
   text-align: center;
+}
+
+.active {
+  background-color: greenyellow;
 }
 </style>
