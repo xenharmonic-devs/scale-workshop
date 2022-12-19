@@ -635,11 +635,11 @@ function typingKeydown(event: CoordinateKeyboardEvent) {
 
 // === Lifecycle ===
 onMounted(() => {
-  window.addEventListener("keydown", windowKeydown);
   window.addEventListener("keyup", windowKeyup);
   window.addEventListener("keydown", windowKeydownOrUp);
   window.addEventListener("keyup", windowKeydownOrUp);
   window.addEventListener("mousedown", windowKeydownOrUp);
+  window.addEventListener("keydown", windowKeydown);
   typingKeyboard.addKeydownListener(typingKeydown);
 
   const url = new URL(window.location.href);
