@@ -11,6 +11,7 @@ import {
   NEWLINE_TEST,
   NUMBER_OF_NOTES,
   UNIX_NEWLINE,
+  WHITE_MODE_OFFSET,
 } from "@/constants";
 import { ScaleWorkshopOneData } from "@/scale-workshop-one";
 import type { Input, Output } from "webmidi";
@@ -385,9 +386,6 @@ function sendNoteOn(frequency: number, rawAttack: number) {
 
   return off;
 }
-
-// Offset such that default base MIDI note doesn't move
-const WHITE_MODE_OFFSET = 69 - 40;
 
 function midiNoteOn(index: number, rawAttack?: number) {
   if (rawAttack === undefined) {
