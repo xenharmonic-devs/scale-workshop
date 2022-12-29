@@ -29,6 +29,7 @@ type VirtualBlackKey = {
 
 const NUM_KEYS = 30;
 
+// TODO: Include touch indices too.
 const noteOffs: Map<number, NoteOff> = new Map();
 
 const whiteKeys = computed(() => {

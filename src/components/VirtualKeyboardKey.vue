@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { LEFT_MOUSE_BTN } from "@/constants";
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, reactive, ref } from "vue";
 
 type NoteOff = () => void;
 type NoteOnCallback = () => NoteOff;
@@ -15,29 +15,35 @@ const active = ref(false);
 
 const emit = defineEmits(["press", "unpress"]);
 
-let noteOff: NoteOff | null = null;
+const noteOffs: Map<number, NoteOff> = reactive(new Map());
 
-function start() {
+function start(index = -1) {
   active.value = true;
-  noteOff = props.noteOn();
+  noteOffs.set(index, props.noteOn());
 }
 
-function end() {
-  active.value = false;
-  if (noteOff !== null) {
-    noteOff();
-    noteOff = null;
+function end(index = -1) {
+  if (noteOffs.has(index)) {
+    noteOffs.get(index)!();
+    noteOffs.delete(index);
+  }
+  if (noteOffs.size === 0) {
+    active.value = false;
   }
 }
 
 function onTouchStart(event: TouchEvent) {
   event.preventDefault();
-  start();
+  for (const touch of event.changedTouches) {
+    start(touch.identifier);
+  }
 }
 
 function onTouchEnd(event: TouchEvent) {
   event.preventDefault();
-  end();
+  for (const touch of event.changedTouches) {
+    end(touch.identifier);
+  }
 }
 
 function onMouseDown(event: MouseEvent) {
@@ -85,8 +91,8 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  if (noteOff !== null) {
-    noteOff();
+  for (const off of noteOffs.values()) {
+    off();
   }
   window.removeEventListener("mouseup", onWindowMouseUp);
 });
