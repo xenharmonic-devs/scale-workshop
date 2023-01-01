@@ -16,3 +16,10 @@ export const LEFT_MOUSE_BTN = 0;
 
 // Offset such that default base MIDI note doesn't move in "simple" white mode.
 export const WHITE_MODE_OFFSET = 69 - 40;
+
+// === Sanity limits for tempering ===
+
+// Anything larger than this isn't evaluated interactively
+export const MAX_INTERACTIVE_SUBGROUP_SIZE = 6;
+// Anything larger than this uses O(n²) methods (if available) instead of O(exp(n))
+export const MAX_GEO_SUBGROUP_SIZE = 9;
