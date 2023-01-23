@@ -21,7 +21,7 @@
     "vue-router": "^4.1.5",
     "webmidi": "^3.0.21",
     "xen-dev-utils": "^0.1.2",
-    "scale-workshop-core": "github:xenharmonic-devs/scale-workshop-core#v0.0.1"
+    "scale-workshop-core": "github:xenharmonic-devs/scale-workshop-core#v0.0.4"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",
