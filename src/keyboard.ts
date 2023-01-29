@@ -223,6 +223,7 @@ export class Keyboard {
     }
 
     if (COORDS_BY_CODE.has(event.code)) {
+      event.preventDefault(); // Stops Firefox from intercepting '/' for Quick Find
       this.activeKeys.add(event.code);
       if (event.shiftKey) {
         this.pendingKeys.add(event.code);
