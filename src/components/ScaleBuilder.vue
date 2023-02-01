@@ -179,6 +179,8 @@ const subsetModal = ref<any>(null);
 const scalaFile = ref<HTMLInputElement | null>(null);
 const anamarkFile = ref<HTMLInputElement | null>(null);
 
+const exportTextClipboard = ref("Copy this scale's unique URL to clipboard");
+
 async function doImport(importerKey: ImporterKey, event: Event) {
   const result = await importFile(importerKey, event);
   emit("update:scaleLines", result.scale.toStrings());
@@ -188,6 +190,14 @@ async function doImport(importerKey: ImporterKey, event: Event) {
   if (result.baseMidiNote !== undefined) {
     emit("update:baseMidiNote", result.baseMidiNote);
   }
+}
+
+function copyToClipboard() {
+  window.navigator.clipboard.writeText(window.location.href);
+  exportTextClipboard.value = "[Copied URL to clipboard]";
+  window.setTimeout(() => {
+    exportTextClipboard.value = "Copy this scale's unique URL to clipboard";
+  }, 5000);
 }
 </script>
 
@@ -397,16 +407,9 @@ async function doImport(importerKey: ImporterKey, event: Event) {
     />
     <div class="column exporters">
       <h2>Export current settings</h2>
-      <a
-        href="#"
-        class="btn"
-        @click="
-          showShareUrlModal = true;
-          shareUrlModal.initialize();
-        "
-      >
+      <a href="#" class="btn" @click="copyToClipboard">
         <p><strong>Share scale</strong></p>
-        <p>Copy this scale's unique URL for convenient sharing</p>
+        <p>{{ exportTextClipboard }}</p>
       </a>
       <a href="#" class="btn" @click="doExport('anamarkv1')">
         <p><strong>AnaMark v1 tuning (.tun)</strong></p>
@@ -481,6 +484,17 @@ async function doImport(importerKey: ImporterKey, event: Event) {
       <a href="#" class="btn" @click="showReaperExportModal = true">
         <p><strong>Reaper note name map (.txt)</strong></p>
         <p>Displays custom note names on Reaper's piano roll</p>
+      </a>
+      <a
+        href="#"
+        class="btn"
+        @click="
+          showShareUrlModal = true;
+          shareUrlModal.initialize();
+        "
+      >
+        <p><strong>Share scale (email etc.)</strong></p>
+        <p>Conveniently share this scale's unique URL</p>
       </a>
     </div>
   </div>
