@@ -60,7 +60,8 @@ function formatMatrixCell(interval: Interval) {
     return interval.centsString();
   }
   if (cellFormat.value === "decimal") {
-    return interval.decimalString();
+    // Consistent with tuning table localization.
+    return interval.decimalString().replace(",", ".");
   }
 
   // Monzos are too long.
