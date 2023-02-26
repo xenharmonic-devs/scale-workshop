@@ -562,6 +562,9 @@ function windowKeydown(event: KeyboardEvent) {
     return;
   }
 
+  // Disable browser specific features like quick find on Firefox
+  event.preventDefault();
+
   // The key left of Digit1 releases sustained keys
   if (event.code === deactivationCode.value) {
     typingKeyboard.deactivate();
