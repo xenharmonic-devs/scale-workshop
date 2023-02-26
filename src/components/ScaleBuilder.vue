@@ -530,6 +530,7 @@ function copyToClipboard() {
     <RankTwoModal
       :show="showRankTwoModal"
       :centsFractionDigits="centsFractionDigits"
+      :scale="scale"
       @update:scaleName="emit('update:scaleName', $event)"
       @update:scale="
         showRankTwoModal = false;
