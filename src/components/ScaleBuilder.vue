@@ -148,6 +148,7 @@ function selectPreset() {
   emit("update:scaleLines", preset.lines);
   emit("update:baseFrequency", preset.baseFrequency);
   emit("update:baseMidiNote", preset.baseMidiNote);
+  emit("update:keyColors", preset.keyColors);
 }
 
 const showEqualTemperamentModal = ref(false);
