@@ -28,6 +28,7 @@ import RandomVarianceModal from "@/components/modals/modification/RandomVariance
 import TemperModal from "@/components/modals/modification/TemperScale.vue";
 import EqualizeModal from "@/components/modals/modification/EqualizeScale.vue";
 import ConvertModal from "@/components/modals/modification/ConvertType.vue";
+import OffsetModal from "@/components/modals/modification/MergeOffset.vue";
 import ApproximateBySubharmonicsModal from "@/components/modals/modification/ApproximateBySubharmonics.vue";
 import ApproximateByRatiosModal from "@/components/modals/modification/ApproximateByRatios.vue";
 import { presets, presetsByGroup } from "@/presets";
@@ -171,6 +172,7 @@ const showApproximateByHarmonicsModal = ref(false);
 const showApproximateBySubharmonicsModal = ref(false);
 const showTemperModal = ref(false);
 const showEqualizeModal = ref(false);
+const showOffsetModal = ref(false);
 const showConvertModal = ref(false);
 const showApproximateByRatiosModal = ref(false);
 
@@ -317,6 +319,9 @@ function copyToClipboard() {
             >
             <a href="#" @click="showEqualizeModal = true"><li>Equalize</li></a>
             <a href="#" @click="showTemperModal = true"><li>Temper</li></a>
+            <a href="#" @click="showOffsetModal = true"
+              ><li>Merge offset</li></a
+            >
             <a href="#" @click="showConvertModal = true"
               ><li>Convert interval values</li></a
             >
@@ -775,6 +780,16 @@ function copyToClipboard() {
       @cancel="showTemperModal = false"
       :scale="scale"
       :centsFractionDigits="centsFractionDigits"
+    />
+
+    <OffsetModal
+      :show="showOffsetModal"
+      @update:scale="
+        showOffsetModal = false;
+        emit('update:scale', $event);
+      "
+      @cancel="showOffsetModal = false"
+      :scale="scale"
     />
 
     <ConvertModal
