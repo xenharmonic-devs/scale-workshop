@@ -1,5 +1,7 @@
 import { createHash } from "crypto";
 import type { JSZipObject } from "jszip";
+import { DEFAULT_NUMBER_OF_COMPONENTS } from "../../constants";
+import { Scale } from "scale-workshop-core";
 import { describe, it, expect } from "vitest";
 
 import { MnlgtunsExporter, MnlgtunoExporter } from "../korg";
@@ -7,6 +9,40 @@ import { MnlgtunsExporter, MnlgtunoExporter } from "../korg";
 import { getTestData } from "./test-data";
 
 describe("Korg exporters", () => {
+  it("can export a scale encountered while debugging issue #393", async () => {
+    const params = getTestData("Korg 'logue exporter unit test");
+    params.baseMidiNote = 60;
+    params.scale = Scale.fromSubharmonicSeries(
+      24,
+      12,
+      DEFAULT_NUMBER_OF_COMPONENTS,
+      256
+    );
+
+    const exporter = new MnlgtunsExporter(params);
+    const [zip, fileType] = exporter.getFileContents();
+
+    expect(fileType).toBe(".mnlgtuns");
+
+    // Await inside forEach doesn't reach vitest so we unpack
+    const files: [string, JSZipObject][] = [];
+    zip.forEach((path, file) => {
+      files.push([path, file]);
+    });
+
+    // Generated zipfiles have timestamps that interfere with testing so we extract the contents
+    for (let i = 0; i < files.length; ++i) {
+      const [path, file] = files[i];
+      if (path.endsWith("bin")) {
+        const content = await file.async("uint8array");
+        expect(createHash("sha256").update(content).digest("base64")).toBe(
+          "/st0f/90q1FNXxNnw2S+SCFeu9TkbXIydn85+qrqnrg="
+        );
+      }
+      // Other contents didn't seem to have issues so we ignore them here.
+    }
+  });
+
   it("can handle all line types (mnlgtuns)", async () => {
     const params = getTestData("Korg 'logue exporter unit test v0.0.0");
     const exporter = new MnlgtunsExporter(params);
@@ -26,7 +62,7 @@ describe("Korg exporters", () => {
       if (path.endsWith("bin")) {
         const content = await file.async("uint8array");
         expect(createHash("sha256").update(content).digest("base64")).toBe(
-          "uuwCgV4PYizHsTL1D8ST8Msxb6rPhcCKONeGCtw2sGQ="
+          "nuHoVQKeaJlIHrNsaAcxFfoepmtzy+NN48LcfoU4fqE="
         );
       } else {
         const content = await file.async("string");
@@ -64,7 +100,7 @@ describe("Korg exporters", () => {
       if (path.endsWith("bin")) {
         const content = await file.async("uint8array");
         expect(createHash("sha256").update(content).digest("base64")).toBe(
-          "02IsbILhm1WdhAR2l5rdvbDLD9/uL5/o7OYQECwMlhY="
+          "dQWlBBzfHE/LLvEhmAQqM1AppQg5YsoQ2GQbK6KTUeM="
         );
       } else {
         const content = await file.async("string");

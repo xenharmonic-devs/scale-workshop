@@ -109,15 +109,20 @@ class KorgExporter extends BaseExporter {
       KORG.mnlg.refA.val +
       valueToCents(scale.baseFrequency / KORG.mnlg.refA.freq);
 
-    // offset cents array for binary conversion
-    let centsTable = [];
+    // This should be similar to Scale Workshop 1 tuning_table.freq
+    const frequencies = scale.getFrequencyRange(
+      -baseMidiNote,
+      KORG.mnlg.scaleSize - baseMidiNote
+    );
+    // This should be similar to Scale Workshop 1 tuning_table.cents
+    const centss = frequencies.map((freq: number) =>
+      frequencyToCentOffset(freq, scale.baseFrequency)
+    );
 
-    for (let i = 0; i < KORG.mnlg.scaleSize; ++i) {
-      const cents =
-        frequencyToCentOffset(scale.getFrequency(i - baseMidiNote)) +
-        refOffsetCents;
-      centsTable.push(Math.round(cents * 1000) / 1000); // Round to 3 decimals
-    }
+    // offset cents array for binary conversion (rounded to 3 decimals)
+    let centsTable = centss.map(
+      (cents: number) => Math.round((cents + refOffsetCents) * 1000) / 1000
+    );
 
     if (!this.useScaleFormat) {
       // normalize around root, truncate to 12 notes, and wrap flattened Cs
