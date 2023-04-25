@@ -100,6 +100,22 @@ Please base any work on `main` branch, and make pull requests against `main` as 
 
 ## Changelog
 
+## 2.1.0
+* Feature: New *Modify scale* option for merging an offset copy with the scale
+* Feature: On-screen QWERTY keyboard now available if enabled in the *Preferences* tab.
+* Feature: Loading preset scales now assigns corresponding key colors as well
+* Feature: Replaced top export with simple URL copy to clipboard
+* Feature: Rank-2 scales can now be manipulated interactively by clicking on the period circle in a new tab inside the modal for *New scale → Rank-2 temperament*
+* Refactoring: Core functionality now at [scale-workshop-core](https://github.com/xenharmonic-devs/scale-workshop-core) for better reusability
+* Refactoring: Utility packages [xen-dev-utils](https://www.npmjs.com/package/xen-dev-utils), [moment-of-symmetry](https://www.npmjs.com/package/moment-of-symmetry) and [temperaments](https://www.npmjs.com/package/temperaments) are now sourced from npm.
+* Bug fix: Decimal dots in the interval matrix is now consistent with the tunng table
+* Bug fix: Touching the screen in piano layout played multiple notes in unison
+* Bug fix: Typing out text in some of the scale creation modals made sound
+* Bug fix: Disable browser specific features like quick find on Firefox
+* Regression: Korg 'logue exports have been fixed to match Scale Workshop 1
+* Optimization: Tuning table frequencies are computed using a faster strategy
+* Documentation: Better documentation and logging support for the class that handles keyboard input
+
 ### 2.0.1
 * Feature: The synth can now be played while manipulating slider, radio or checkbox inputs
 * Bug fix: Scala import wouldn't read plain numbers and didn't ignore line comments
