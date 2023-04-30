@@ -11,15 +11,7 @@ const LEFT_ANGLE_BRACKET = "L";
 const RIGHT_ANGLE_BRACKET = "R";
 const LEFT_SQUARE_BRACKET = "Q";
 const PLUS = "P";
-
-const FRACTION_RE = new RegExp(FRACTION, "g");
-const COMMA_RE = new RegExp(COMMA, "g");
-const BACKSLASH_RE = new RegExp(BACKSLASH, "g");
-const SPACE_RE = new RegExp(SPACE, "g");
-const LEFT_ANGLE_BRACKET_RE = new RegExp(LEFT_ANGLE_BRACKET, "g");
-const RIGHT_ANGLE_BRACKET_RE = new RegExp(RIGHT_ANGLE_BRACKET, "g");
-const LEFT_SQUARE_BRACKET_RE = new RegExp(LEFT_SQUARE_BRACKET, "g");
-const PLUS_RE = new RegExp(PLUS, "g");
+const ESCAPE = "E";
 
 // Color shorhands
 const BLACK = "-";
@@ -32,6 +24,13 @@ function isDigit(character: string) {
 
 function isBase36Digit(character: string) {
   return isDigit(character) || /[a-z]/.test(character);
+}
+
+function escapeCharacter(character: string) {
+  if (isBase36Digit(character)) {
+    return ESCAPE + character;
+  }
+  return character;
 }
 
 function encodeDigits(digits: string, keepZero: boolean) {
@@ -81,6 +80,17 @@ function decodeDigits(digits: string) {
 
 function encodeLine(scaleLine: string) {
   scaleLine = scaleLine
+    .replace(ESCAPE, ESCAPE + ESCAPE)
+    .replace(FRACTION, ESCAPE + FRACTION)
+    .replace(COMMA, ESCAPE + COMMA)
+    .replace(BACKSLASH, ESCAPE + BACKSLASH)
+    .replace(SPACE, ESCAPE + SPACE)
+    .replace(LEFT_ANGLE_BRACKET, ESCAPE + LEFT_ANGLE_BRACKET)
+    .replace(RIGHT_ANGLE_BRACKET, ESCAPE + RIGHT_ANGLE_BRACKET)
+    .replace(LEFT_SQUARE_BRACKET, ESCAPE + LEFT_SQUARE_BRACKET)
+    .replace(PLUS, ESCAPE + PLUS);
+
+  scaleLine = scaleLine
     .replace(/\//g, FRACTION)
     .replace(/,/g, COMMA)
     .replace(/\\/g, BACKSLASH)
@@ -100,7 +110,7 @@ function encodeLine(scaleLine: string) {
       result += encodeDigits(currentNumber, !".,".includes(lastNondigit));
       currentNumber = "";
       lastNondigit = character;
-      result += character;
+      result += escapeCharacter(character);
     }
   });
   return result + encodeDigits(currentNumber, !".,".includes(lastNondigit));
@@ -109,26 +119,48 @@ function encodeLine(scaleLine: string) {
 function decodeLine(encoded: string) {
   let result = "";
   let currentNumber = "";
+  let passNext = false;
   [...encoded].forEach((character) => {
+    if (passNext) {
+      result += character;
+      passNext = false;
+      return;
+    }
+    if (character === ESCAPE) {
+      passNext = true;
+      return;
+    }
+
     if (isBase36Digit(character)) {
       currentNumber += character;
     } else {
       result += decodeDigits(currentNumber);
       currentNumber = "";
-      result += character;
+
+      if (character === FRACTION) {
+        result += "/";
+      } else if (character === COMMA) {
+        result += ",";
+      } else if (character === BACKSLASH) {
+        result += "\\";
+      } else if (character === SPACE) {
+        result += " ";
+      } else if (character === LEFT_ANGLE_BRACKET) {
+        result += "<";
+      } else if (character === RIGHT_ANGLE_BRACKET) {
+        result += ">";
+      } else if (character === LEFT_SQUARE_BRACKET) {
+        result += "[";
+      } else if (character === PLUS) {
+        result += "+";
+      } else {
+        result += character;
+      }
     }
   });
   result += decodeDigits(currentNumber);
 
-  return result
-    .replace(FRACTION_RE, "/")
-    .replace(COMMA_RE, ",")
-    .replace(BACKSLASH_RE, "\\")
-    .replace(SPACE_RE, " ")
-    .replace(LEFT_ANGLE_BRACKET_RE, "<")
-    .replace(RIGHT_ANGLE_BRACKET_RE, ">")
-    .replace(LEFT_SQUARE_BRACKET_RE, "[")
-    .replace(PLUS_RE, "+");
+  return result;
 }
 
 export function encodeLines(scaleLines: string[]) {
