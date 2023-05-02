@@ -8,6 +8,7 @@ const props = defineProps<{
   centsFractionDigits: number;
   decimalFractionDigits: number;
   showVirtualQwerty: boolean;
+  midiOctaveOffset: number;
 }>();
 
 const emit = defineEmits([
@@ -17,6 +18,7 @@ const emit = defineEmits([
   "update:decimalFractionDigits",
   "update:virtualKeyboardMode",
   "update:showVirtualQwerty",
+  "update:midiOctaveOffset",
 ]);
 
 const newline = computed({
@@ -38,6 +40,10 @@ const decimalFractionDigits = computed({
 const showVirtualQwerty = computed({
   get: () => props.showVirtualQwerty,
   set: (newValue: boolean) => emit("update:showVirtualQwerty", newValue),
+});
+const midiOctaveOffset = computed({
+  get: () => props.midiOctaveOffset,
+  set: (newValue: number) => emit("update:midiOctaveOffset", newValue),
 });
 </script>
 
@@ -97,6 +103,16 @@ const showVirtualQwerty = computed({
               />
               <label for="scheme-dark"> Dark </label>
             </span>
+          </div>
+          <div class="control">
+            <label for="midiOctaveOffset">MIDI octave offset</label>
+            <input
+              id="midiOctaveOffset"
+              type="number"
+              class="control"
+              step="1"
+              v-model="midiOctaveOffset"
+            />
           </div>
         </div>
       </div>

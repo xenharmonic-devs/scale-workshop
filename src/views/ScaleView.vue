@@ -14,6 +14,8 @@ defineProps<{
   centsFractionDigits: number;
   decimalFractionDigits: number;
   newline: string;
+
+  midiOctaveOffset: number;
 }>();
 
 defineEmits([
@@ -38,6 +40,7 @@ defineEmits([
       :centsFractionDigits="centsFractionDigits"
       :decimalFractionDigits="decimalFractionDigits"
       :newline="newline"
+      :midiOctaveOffset="midiOctaveOffset"
       @update:scaleName="$emit('update:scaleName', $event)"
       @update:scaleLines="$emit('update:scaleLines', $event)"
       @update:scale="$emit('update:scale', $event)"

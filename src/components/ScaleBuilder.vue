@@ -50,6 +50,8 @@ const props = defineProps<{
   centsFractionDigits: number;
   decimalFractionDigits: number;
   newline: string;
+
+  midiOctaveOffset: number;
 }>();
 
 const emit = defineEmits([
@@ -373,7 +375,9 @@ function copyToClipboard() {
             step="1"
             v-model="baseMidiNote"
           />
-          <span>{{ midiNoteNumberToName(baseMidiNote) }}</span>
+          <span>{{
+            midiNoteNumberToName(baseMidiNote, props.midiOctaveOffset)
+          }}</span>
         </div>
 
         <!-- This control is for the 3rd field that is found at the top of kbm files -->
