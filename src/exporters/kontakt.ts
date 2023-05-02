@@ -30,7 +30,7 @@ export default class KontaktExporter extends BaseExporter {
       "MIDI note " +
       baseMidiNote.toString() +
       " (" +
-      midiNoteNumberToName(baseMidiNote) +
+      midiNoteNumberToName(baseMidiNote, this.params.midiOctaveOffset) +
       ") = " +
       this.params.scale.baseFrequency.toString() +
       " Hz" +

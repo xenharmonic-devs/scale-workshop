@@ -31,6 +31,7 @@ export function getTestData(appTitle: string) {
     appTitle,
     description: "A scale for testing if the exporter works",
     baseMidiNote: 69,
+    midiOctaveOffset: 0,
     lines: [
       "100.",
       "4\\5",

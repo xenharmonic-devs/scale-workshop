@@ -46,7 +46,7 @@ export default class DeflemaskExporter extends BaseExporter {
         continue;
 
       // convert note number to note name
-      let name = midiNoteNumberToName(noteNumber);
+      let name = midiNoteNumberToName(noteNumber, this.params.midiOctaveOffset);
       name = name.length == 2 ? name.slice(0, 1) + "-" + name.slice(1) : name;
 
       // convert cents offset to hex where -100c=00, 0c=80, 100c=FF

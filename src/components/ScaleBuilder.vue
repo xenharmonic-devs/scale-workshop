@@ -131,6 +131,7 @@ function doExport(exporter: ExporterKey) {
     scale: props.scale,
     filename: sanitizeFilename(props.scaleName),
     baseMidiNote: props.baseMidiNote,
+    midiOctaveOffset: props.midiOctaveOffset,
     description: props.scaleName,
     lines: props.scaleLines,
     appTitle: APP_TITLE,
