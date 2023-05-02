@@ -28,7 +28,12 @@ import {
 } from "./keyboard-mapping";
 import { VirtualSynth } from "./virtual-synth";
 import { Synth } from "@/synth";
-import { Interval, parseLine, Scale } from "scale-workshop-core";
+import {
+  Interval,
+  parseLine,
+  Scale,
+  type IntervalOptions,
+} from "scale-workshop-core";
 
 // === Root props and audio ===
 const rootProps = defineProps<{
@@ -163,14 +168,18 @@ function updateFromScaleLines(lines: string[]) {
   }
   scaleLines.value = lines;
   const intervals: Interval[] = [];
+  const options: IntervalOptions = {
+    centsFractionDigits: centsFractionDigits.value,
+    decimalFractionDigits: decimalFractionDigits.value,
+  };
   lines.forEach((line) => {
     try {
-      const interval = parseLine(line, DEFAULT_NUMBER_OF_COMPONENTS);
+      const interval = parseLine(line, DEFAULT_NUMBER_OF_COMPONENTS, options);
       intervals.push(interval);
     } catch {}
   });
   if (!intervals.length) {
-    intervals.push(parseLine("1/1", DEFAULT_NUMBER_OF_COMPONENTS));
+    intervals.push(parseLine("1/1", DEFAULT_NUMBER_OF_COMPONENTS, options));
   }
 
   const surrogate = Scale.fromIntervalArray(intervals);
