@@ -19,6 +19,9 @@ let noteOff: NoteOff | null = null;
 
 function start() {
   active.value = true;
+  if (noteOff !== null) {
+    noteOff();
+  }
   noteOff = props.noteOn();
 }
 
