@@ -33,6 +33,7 @@ import {
   parseLine,
   Scale,
   type IntervalOptions,
+  reverseParseScale,
 } from "scale-workshop-core";
 
 // === Root props and audio ===
@@ -190,7 +191,7 @@ function updateFromScaleLines(lines: string[]) {
 function updateFromScale(surrogate: Scale) {
   scale.intervals = surrogate.intervals;
   scale.equave = surrogate.equave;
-  scaleLines.value = scale.toStrings();
+  scaleLines.value = reverseParseScale(scale);
 }
 
 // == URL path handling ==
