@@ -3,7 +3,12 @@ import { intervalMatrix } from "@/analysis";
 import type { VirtualSynth } from "@/virtual-synth";
 import ChordWheel from "@/components/ChordWheel.vue";
 import { computed, ref } from "vue";
-import type { Interval, IntervalOptions, Scale } from "scale-workshop-core";
+import {
+  reverseParseInterval,
+  type Interval,
+  type IntervalOptions,
+  type Scale,
+} from "scale-workshop-core";
 
 const MAX_SCALE_SIZE = 100;
 
@@ -73,7 +78,8 @@ function formatMatrixCell(interval: Interval) {
     return interval.centsString();
   }
   // If we're here the name should faithfully represent the interval.
-  return interval.name;
+  // Reverse parsing takes care of obscure corner cases.
+  return reverseParseInterval(interval);
 }
 
 const matrix = computed(() => {
