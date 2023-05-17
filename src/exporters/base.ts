@@ -26,6 +26,9 @@ export class BaseExporter {
     raw = false,
     mimeType = "application/octet-stream,"
   ) {
+    alert("Doing SW 1 save");
+    (window as any).save_file_sw_1(filename, contents, raw, mimeType);
+    /*
     const link = document.createElement("a");
     link.download = filename;
 
@@ -40,5 +43,6 @@ export class BaseExporter {
     link.dispatchEvent(
       new MouseEvent("click", { bubbles: true, cancelable: true, view: window })
     );
+    */
   }
 }

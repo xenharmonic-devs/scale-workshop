@@ -17,6 +17,21 @@
   </head>
   <body>
     <div id="app"></div>
+    <script>
+      function save_file_sw_1(filename, contents, raw, mimeType = 'application/octet-stream,') {
+        const link = document.createElement('a')
+        link.download = filename
+
+        if (raw === true) {
+          const blob = new Blob([contents], { type: 'application/octet-stream' })
+          link.href = window.URL.createObjectURL(blob)
+        } else {
+          link.href = 'data:' + mimeType + encodeURIComponent(contents)
+        }
+
+        link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window })) // opens save dialog
+      }
+    </script>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
