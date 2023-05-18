@@ -26,7 +26,7 @@ export class BaseExporter {
     raw = false,
     mimeType = "application/octet-stream,"
   ) {
-    alert("Doing SW 1 save");
+    alert("Doing SW 1 save " + filename + " " + mimeType + " " + JSON.stringify(contents));
     (window as any).save_file_sw_1(filename, contents, raw, mimeType);
     /*
     const link = document.createElement("a");

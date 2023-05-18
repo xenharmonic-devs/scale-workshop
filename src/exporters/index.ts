@@ -29,6 +29,6 @@ export type ExporterKey = keyof typeof EXPORTERS;
 
 export function exportFile(exporter: ExporterKey, params: ExporterParams) {
   const instance = new EXPORTERS[exporter](params);
-  alert("Saving instance");
+  alert("Saving instance " + exporter);
   instance.saveFile();
 }

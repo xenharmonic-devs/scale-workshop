@@ -120,7 +120,6 @@ function autoFrequency() {
 }
 
 function doExport(exporter: ExporterKey) {
-  alert("Compiling export params");
   const params = {
     newline: props.newline,
     name: props.scaleName,
@@ -134,7 +133,7 @@ function doExport(exporter: ExporterKey) {
     date: new Date(),
   };
 
-  alert("Exporting file");
+  alert("Exporting file " + JSON.stringify(params));
   exportFile(exporter, params);
 }
 
