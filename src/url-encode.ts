@@ -427,6 +427,10 @@ export type DecodedState = {
   decayTime: number;
   sustainLevel: number;
   releaseTime: number;
+  pingPongDelayTime: number;
+  pingPongFeedback: number;
+  pingPongSeparation: number;
+  pingPongGain: number;
 };
 
 export type EncodedState = {
@@ -446,6 +450,10 @@ export type EncodedState = {
   y?: string; // decaY time
   s?: string; // Sustain level
   r?: string; // Release time
+  t?: string; // Ping pong delay time
+  b?: string; // Ping pong feedback
+  i?: string; // Ping pong stereo separation
+  g?: string; // Ping pong gain
 };
 
 export function decodeQuery(
@@ -487,6 +495,10 @@ export function decodeQuery(
     decayTime: unmillify(get("y", "8c")),
     sustainLevel: unmillify(get("s", "m8")),
     releaseTime: unmillify(get("r", "a")),
+    pingPongDelayTime: unmillify(get("t", "8c")),
+    pingPongFeedback: unmillify(get("b", "m8")),
+    pingPongSeparation: unmillify(get("i", "rs")),
+    pingPongGain: unmillify(get("g", "0")),
   };
 }
 
@@ -514,6 +526,10 @@ export function encodeQuery(state: DecodedState): EncodedState {
     y: millify(state.decayTime),
     s: millify(state.sustainLevel),
     r: millify(state.releaseTime),
+    t: millify(state.pingPongDelayTime),
+    b: millify(state.pingPongFeedback),
+    i: millify(state.pingPongSeparation),
+    g: millify(state.pingPongGain),
   };
 
   // The app includes version information so we can safely strip defaults
@@ -564,6 +580,18 @@ export function encodeQuery(state: DecodedState): EncodedState {
   }
   if (result.r === "a") {
     delete result.r;
+  }
+  if (result.t === "8c") {
+    delete result.t;
+  }
+  if (result.b === "m8") {
+    delete result.b;
+  }
+  if (result.i === "rs") {
+    delete result.i;
+  }
+  if (result.g === "0") {
+    delete result.g;
   }
 
   return result;

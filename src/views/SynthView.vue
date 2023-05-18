@@ -27,6 +27,10 @@ const props = defineProps<{
   sustainLevel: number;
   releaseTime: number;
   maxPolyphony: number;
+  pingPongDelayTime: number;
+  pingPongFeedback: number;
+  pingPongSeparation: number;
+  pingPongGain: number;
 }>();
 
 const emit = defineEmits([
@@ -49,6 +53,10 @@ const emit = defineEmits([
   "update:sustainLevel",
   "update:releaseTime",
   "update:maxPolyphony",
+  "update:pingPongDelayTime",
+  "update:pingPongFeedback",
+  "update:pingPongSeparation",
+  "update:pingPongGain",
   "mapAsdf",
   "mapZxcv0",
   "mapZxcv1",
@@ -173,6 +181,54 @@ const maxPolyphony = computed({
   get: () => props.maxPolyphony,
   set(newValue: number) {
     emit("update:maxPolyphony", newValue);
+  },
+});
+
+const pingPongDelayTime = computed({
+  get: () => props.pingPongDelayTime,
+  set(newValue: number) {
+    if (typeof newValue !== "number") {
+      newValue = parseFloat(newValue);
+    }
+    if (!isNaN(newValue)) {
+      emit("update:pingPongDelayTime", newValue);
+    }
+  },
+});
+
+const pingPongFeedback = computed({
+  get: () => props.pingPongFeedback,
+  set(newValue: number) {
+    if (typeof newValue !== "number") {
+      newValue = parseFloat(newValue);
+    }
+    if (!isNaN(newValue)) {
+      emit("update:pingPongFeedback", newValue);
+    }
+  },
+});
+
+const pingPongSeparation = computed({
+  get: () => props.pingPongSeparation,
+  set(newValue: number) {
+    if (typeof newValue !== "number") {
+      newValue = parseFloat(newValue);
+    }
+    if (!isNaN(newValue)) {
+      emit("update:pingPongSeparation", newValue);
+    }
+  },
+});
+
+const pingPongGain = computed({
+  get: () => props.pingPongGain,
+  set(newValue: number) {
+    if (typeof newValue !== "number") {
+      newValue = parseFloat(newValue);
+    }
+    if (!isNaN(newValue)) {
+      emit("update:pingPongGain", newValue);
+    }
   },
 });
 
@@ -348,7 +404,53 @@ onUnmounted(() => {
               v-model="maxPolyphony"
             />
           </div>
-          <label for="release">Audio delay (reduce pops)</label>
+          <hr />
+          <label>Delay Effect</label>
+          <label for="ping-pong-delay-time"
+            >Delay time ({{ Math.floor(pingPongDelayTime * 1000) }} ms)</label
+          >
+          <input
+            id="ping-pong-delay-time"
+            class="control"
+            type="range"
+            min="0.01"
+            max="5.0"
+            step="any"
+            v-model="pingPongDelayTime"
+          />
+          <label for="ping-pong-feedback">Feedback gain</label>
+          <input
+            id="ping-pong-feedback"
+            class="control"
+            type="range"
+            min="0.0"
+            max="1.0"
+            step="any"
+            v-model="pingPongFeedback"
+          />
+          <label for="ping-pong-separation">Stereo separation</label>
+          <input
+            id="ping-pong-separation"
+            class="control"
+            type="range"
+            min="0.0"
+            max="1.0"
+            step="any"
+            v-model="pingPongSeparation"
+          />
+          <label for="ping-pong-gain">Mix</label>
+          <input
+            id="ping-pong-gain"
+            class="control"
+            type="range"
+            min="0.0"
+            max="1.0"
+            step="any"
+            v-model="pingPongGain"
+          />
+          <hr />
+          <label>Advanced</label>
+          <label for="audio-delay">Audio delay (reduce pops)</label>
           <input
             id="audio-delay"
             class="control"
