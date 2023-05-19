@@ -75,6 +75,12 @@ export function formatHertz(frequency: number, fractionDigits = 3) {
   }
 
   // Submultiples
+  if (magnitude < 1e-27) {
+    return (frequency * 1e30).toFixed(fractionDigits) + "qHz";
+  }
+  if (magnitude < 1e-24) {
+    return (frequency * 1e27).toFixed(fractionDigits) + "rHz";
+  }
   if (magnitude < 1e-21) {
     return (frequency * 1e24).toFixed(fractionDigits) + "yHz";
   }
@@ -101,11 +107,17 @@ export function formatHertz(frequency: number, fractionDigits = 3) {
   }
 
   // Too large. Use scientific notation.
-  if (magnitude > 1e28) {
+  if (magnitude > 1e34) {
     return formatExponential(frequency) + "Hz";
   }
 
   // Multiples
+  if (magnitude > 1e30) {
+    return (frequency * 1e-30).toFixed(fractionDigits) + "QHz";
+  }
+  if (magnitude > 1e27) {
+    return (frequency * 1e-27).toFixed(fractionDigits) + "RHz";
+  }
   if (magnitude > 1e24) {
     return (frequency * 1e-24).toFixed(fractionDigits) + "YHz";
   }
