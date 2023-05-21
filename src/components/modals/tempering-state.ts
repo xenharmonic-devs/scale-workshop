@@ -1,19 +1,15 @@
 // Component state used by RankOne, RankTwo and TemperScale
 
-import { computedAndError } from "@/utils";
+import { computedAndError, parseChordInput, splitText } from "@/utils";
 import { fractionToString } from "scale-workshop-core";
 import { Subgroup, type TuningOptions } from "temperaments";
 import { computed, ref, watch, type Ref } from "vue";
 
-// Split text values separated by whitespace, pipes, amps, semicolons or commas.
-export function splitText(text: string) {
-  return text
-    .replace(/\s/g, ",")
-    .replace(/\|/g, ",")
-    .replace(/&/g, ",")
-    .replace(/;/g, ",")
-    .split(",")
-    .filter((token) => token.length);
+// Split text into (non-extended) monzos
+function splitCommas(text: string) {
+  return parseChordInput(text).map((interval) =>
+    interval.monzo.vector.map((component) => component.valueOf())
+  );
 }
 
 export function makeState(method: Ref, subgroupStringDefault = "") {
@@ -32,7 +28,8 @@ export function makeState(method: Ref, subgroupStringDefault = "") {
   // === Computed state ===
   const vals = computed(() => splitText(valsString.value));
 
-  const commas = computed(() => splitText(commasString.value));
+  const rawCommas = computed(() => splitText(commasString.value));
+  const commas = computed(() => splitCommas(commasString.value));
 
   const subgroupDefault = new Subgroup(subgroupStringDefault || []);
   const [subgroup, subgroupError] = computedAndError(() => {
@@ -105,6 +102,7 @@ export function makeState(method: Ref, subgroupStringDefault = "") {
     tempering,
     constraintsString,
     vals,
+    rawCommas,
     commas,
     subgroup,
     weights,

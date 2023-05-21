@@ -3,9 +3,9 @@ import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
 import { computed, ref, watch } from "vue";
 import Modal from "@/components/ModalDialog.vue";
 import ScaleLineInput from "@/components/ScaleLineInput.vue";
-import { splitText } from "@/components/modals/tempering-state";
 import { clamp } from "xen-dev-utils";
 import { ExtendedMonzo, Interval, Scale } from "scale-workshop-core";
+import { splitText } from "@/utils";
 
 const props = defineProps<{
   centsFractionDigits: number;
