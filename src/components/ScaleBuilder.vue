@@ -8,6 +8,7 @@ import { sanitizeFilename, midiNoteNumberToName } from "@/utils";
 import { exportFile, type ExporterKey } from "@/exporters";
 import Modal from "@/components/ModalDialog.vue";
 import ReaperExportModal from "@/components/modals/ReaperExport.vue";
+import MtsSysexExportModal from "@/components/modals/MtsSysexExport.vue";
 import ShareUrlModal from "@/components/modals/ShareUrl.vue";
 import EqualTemperamentModal from "@/components/modals/generation/EqualTemperament.vue";
 import HarmonicSeriesModal from "@/components/modals/generation/HarmonicSeries.vue";
@@ -137,6 +138,7 @@ function doExport(exporter: ExporterKey) {
 }
 
 const showReaperExportModal = ref(false);
+const showMtsSysexExportModal = ref(false);
 const showShareUrlModal = ref(false);
 const shareUrlModal = ref<any>(null);
 
@@ -491,6 +493,10 @@ function copyToClipboard() {
         <p><strong>Reaper note name map (.txt)</strong></p>
         <p>Displays custom note names on Reaper's piano roll</p>
       </a>
+      <a href="#" class="btn" @click="showMtsSysexExportModal = true">
+        <p><strong>MTS Sysex Bulk Tuning Dump (.syx)</strong></p>
+        <p>Binary data dump of a Bulk Tuning Dump SysEx message</p>
+      </a>
       <a
         href="#"
         class="btn"
@@ -526,6 +532,16 @@ function copyToClipboard() {
       :show="showReaperExportModal"
       @confirm="showReaperExportModal = false"
       @cancel="showReaperExportModal = false"
+      :newline="props.newline"
+      :scaleName="scaleName"
+      :baseMidiNote="baseMidiNote"
+      :scale="scale"
+    />
+
+    <MtsSysexExportModal
+      :show="showMtsSysexExportModal"
+      @confirm="$event => showMtsSysexExportModal = false"
+      @cancel="$event => showMtsSysexExportModal = false"
       :newline="props.newline"
       :scaleName="scaleName"
       :baseMidiNote="baseMidiNote"
