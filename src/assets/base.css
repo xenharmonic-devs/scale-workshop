@@ -231,6 +231,9 @@ ul.btn-group, .btn-dropdown-group ul {
 .control select {
   flex-grow: 1;
 }
+.control input.half {
+  flex-grow: 0.25 !important;
+}
 .control.checkbox-container {
   flex-flow: unset;
 }
@@ -251,7 +254,7 @@ ul.btn-group, .btn-dropdown-group ul {
   }
 }
 
-/* UI element - expandable secion */
+/* UI element - expandable section */
 .section::after {
   content: " ▼";
   font-size: 0.5rem;
@@ -273,4 +276,25 @@ ul.btn-group, .btn-dropdown-group ul {
 p.section {
   font-weight: bold;
   cursor: pointer;
+}
+
+/* UI element - question mark with tooltip on hover */
+span.info-question {
+  border-radius: 50%;
+  border-width: 2px;
+  border-style: solid;
+  padding-left: 4px;
+  padding-right: 4px;
+  font-size: smaller;
+
+  transition: 0.3s ease;
+}
+span.info-question::after {
+  content: '?';
+}
+span.info-question:hover {
+  background: white;
+  color: black;
+  border-color: white;
+  transition: all 0.3s ease;
 }

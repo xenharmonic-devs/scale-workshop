@@ -20,7 +20,7 @@
     "vue": "^3.2.33",
     "vue-router": "^4.1.5",
     "webmidi": "^3.0.21",
-    "xen-dev-utils": "^0.1.2",
+    "xen-dev-utils": "github:xenharmonic-devs/xen-dev-utils#mts-methods",
     "scale-workshop-core": "github:xenharmonic-devs/scale-workshop-core#v0.0.1"
   },
   "devDependencies": {

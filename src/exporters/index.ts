@@ -8,6 +8,7 @@ import MaxMSPExporter from "@/exporters/max-msp";
 import PureDataExporter from "@/exporters/pure-data";
 import { ScalaSclExporter, ScalaKbmExporter } from "@/exporters/scala";
 import SoniccoutureExporter from "@/exporters/soniccouture";
+import MtsSysexExporter from "@/exporters/mts-sysex";
 
 const EXPORTERS = {
   anamarkv1: AnaMarkV1Exporter,
@@ -22,6 +23,7 @@ const EXPORTERS = {
   sytrus: SytrusExporter,
   mnlgtuns: MnlgtunsExporter,
   mnlgtuno: MnlgtunoExporter,
+  mtsSysex: MtsSysexExporter,
   deflemask: DeflemaskExporter,
 };
 
