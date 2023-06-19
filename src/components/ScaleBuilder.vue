@@ -7,7 +7,9 @@ import { APP_TITLE } from "@/constants";
 import { sanitizeFilename, midiNoteNumberToName } from "@/utils";
 import { exportFile, type ExporterKey } from "@/exporters";
 import Modal from "@/components/ModalDialog.vue";
-import ReaperExportModal from "@/components/modals/ReaperExport.vue";
+import ReaperExportModal from "@/components/modals/export/ReaperExport.vue";
+import MtsSysexExportModal from "@/components/modals/export/MtsSysexExport.vue";
+import KorgExportModal from "@/components/modals/export/KorgExport.vue";
 import ShareUrlModal from "@/components/modals/ShareUrl.vue";
 import EqualTemperamentModal from "@/components/modals/generation/EqualTemperament.vue";
 import HarmonicSeriesModal from "@/components/modals/generation/HarmonicSeries.vue";
@@ -136,7 +138,9 @@ function doExport(exporter: ExporterKey) {
   exportFile(exporter, params);
 }
 
+const showKorgExportModal = ref(false);
 const showReaperExportModal = ref(false);
+const showMtsSysexExportModal = ref(false);
 const showShareUrlModal = ref(false);
 const shareUrlModal = ref<any>(null);
 
@@ -473,15 +477,10 @@ function copyToClipboard() {
         <p><strong>Sytrus pitch map (.fnv)</strong></p>
         <p>Envelope state file for the pitch envelope in Image-Line Sytrus</p>
       </a>
-      <a href="#" class="btn" @click="doExport('mnlgtuns')">
-        <p><strong>Korg 'logue user scale (.mnlgtuns)</strong></p>
-        <p>Single scale for Korg 'logue Sound Librarian.</p>
-        <p>Full tuning of all MIDI notes</p>
-      </a>
-      <a href="#" class="btn" @click="doExport('mnlgtuno')">
-        <p><strong>Korg 'logue user octave (.mnlgtuno)</strong></p>
-        <p>Single scale for Korg 'logue Sound Librarian.</p>
-        <p>Only supports octave-repeating scales with 12 intervals</p>
+      <a href="#" class="btn" @click="showKorgExportModal = true">
+        <p><strong>Korg Sound Librarian scale (.mnlgtuns + others)</strong></p>
+        <p>Tuning formats for use with Monologue, Minilogue,</p>
+        <p>Minilogue XD, and Prologue synthesizers</p>
       </a>
       <a href="#" class="btn" @click="doExport('deflemask')">
         <p><strong>Deflemask reference (.txt)</strong></p>
@@ -490,6 +489,10 @@ function copyToClipboard() {
       <a href="#" class="btn" @click="showReaperExportModal = true">
         <p><strong>Reaper note name map (.txt)</strong></p>
         <p>Displays custom note names on Reaper's piano roll</p>
+      </a>
+      <a href="#" class="btn" @click="showMtsSysexExportModal = true">
+        <p><strong>MTS Sysex Bulk Tuning Dump (.syx)</strong></p>
+        <p>Binary data of a Bulk Tuning Dump SysEx message</p>
       </a>
       <a
         href="#"
@@ -522,10 +525,30 @@ function copyToClipboard() {
   />
 
   <Teleport to="body">
+    <KorgExportModal
+      :show="showKorgExportModal"
+      @confirm="showKorgExportModal = false"
+      @cancel="showKorgExportModal = false"
+      :newline="props.newline"
+      :scaleName="scaleName"
+      :baseMidiNote="baseMidiNote"
+      :scale="scale"
+    />
+
     <ReaperExportModal
       :show="showReaperExportModal"
       @confirm="showReaperExportModal = false"
       @cancel="showReaperExportModal = false"
+      :newline="props.newline"
+      :scaleName="scaleName"
+      :baseMidiNote="baseMidiNote"
+      :scale="scale"
+    />
+
+    <MtsSysexExportModal
+      :show="showMtsSysexExportModal"
+      @confirm="showMtsSysexExportModal = false"
+      @cancel="showMtsSysexExportModal = false"
       :newline="props.newline"
       :scaleName="scaleName"
       :baseMidiNote="baseMidiNote"

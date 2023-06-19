@@ -3,7 +3,6 @@ import { AnaMarkV1Exporter, AnaMarkV2Exporter } from "@/exporters/anamark";
 import DeflemaskExporter from "@/exporters/deflemask";
 import { HarmorExporter, SytrusExporter } from "@/exporters/image-line";
 import KontaktExporter from "@/exporters/kontakt";
-import { MnlgtunoExporter, MnlgtunsExporter } from "@/exporters/korg";
 import MaxMSPExporter from "@/exporters/max-msp";
 import PureDataExporter from "@/exporters/pure-data";
 import { ScalaSclExporter, ScalaKbmExporter } from "@/exporters/scala";
@@ -20,8 +19,6 @@ const EXPORTERS = {
   soniccouture: SoniccoutureExporter,
   harmor: HarmorExporter,
   sytrus: SytrusExporter,
-  mnlgtuns: MnlgtunsExporter,
-  mnlgtuno: MnlgtunoExporter,
   deflemask: DeflemaskExporter,
 };
 
