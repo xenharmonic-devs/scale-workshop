@@ -11,17 +11,5 @@ export const WINDOWS_NEWLINE = "\r\n";
 
 export const NUMBER_OF_NOTES = 128;
 
-// Korg specific constants for exporters and importers
-export const KORG = {
-  programmer: "ScaleWorkshop",
-  mnlg: {
-    octaveSize: 12,
-    scaleSize: 128,
-    maxCents: 12800,
-    refA: { val: 6900, ind: 69, freq: 440.0 },
-    refC: { val: 6000, ind: 60, freq: 261.6255653 },
-  },
-};
-
 // Browser interaction
 export const LEFT_MOUSE_BTN = 0;

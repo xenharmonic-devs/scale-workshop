@@ -7,6 +7,7 @@ import { APP_TITLE } from "@/constants";
 import { sanitizeFilename, midiNoteNumberToName } from "@/utils";
 import { exportFile, type ExporterKey } from "@/exporters";
 import Modal from "@/components/ModalDialog.vue";
+import KorgExportModal from "@/components/modals/KorgExport.vue";
 import ReaperExportModal from "@/components/modals/ReaperExport.vue";
 import MtsSysexExportModal from "@/components/modals/MtsSysexExport.vue";
 import ShareUrlModal from "@/components/modals/ShareUrl.vue";
@@ -137,6 +138,7 @@ function doExport(exporter: ExporterKey) {
   exportFile(exporter, params);
 }
 
+const showKorgExportModal = ref(false);
 const showReaperExportModal = ref(false);
 const showMtsSysexExportModal = ref(false);
 const showShareUrlModal = ref(false);
@@ -475,15 +477,10 @@ function copyToClipboard() {
         <p><strong>Sytrus pitch map (.fnv)</strong></p>
         <p>Envelope state file for the pitch envelope in Image-Line Sytrus</p>
       </a>
-      <a href="#" class="btn" @click="doExport('mnlgtuns')">
-        <p><strong>Korg 'logue user scale (.mnlgtuns)</strong></p>
-        <p>Single scale for Korg 'logue Sound Librarian.</p>
-        <p>Full tuning of all MIDI notes</p>
-      </a>
-      <a href="#" class="btn" @click="doExport('mnlgtuno')">
-        <p><strong>Korg 'logue user octave (.mnlgtuno)</strong></p>
-        <p>Single scale for Korg 'logue Sound Librarian.</p>
-        <p>Only supports octave-repeating scales with 12 intervals</p>
+      <a href="#" class="btn" @click="showKorgExportModal = true">
+        <p><strong>Korg Sound Librarian scale (.mnlgtuns + others)</strong></p>
+        <p>Tuning formats for use with Monologue, Minilogue,</p>
+        <p>Minilogue XD, and Prologue synthesizers</p>
       </a>
       <a href="#" class="btn" @click="doExport('deflemask')">
         <p><strong>Deflemask reference (.txt)</strong></p>
@@ -528,6 +525,16 @@ function copyToClipboard() {
   />
 
   <Teleport to="body">
+    <KorgExportModal
+      :show="showKorgExportModal"
+      @confirm="showKorgExportModal = false"
+      @cancel="showKorgExportModal = false"
+      :newline="props.newline"
+      :scaleName="scaleName"
+      :baseMidiNote="baseMidiNote"
+      :scale="scale"
+    />
+
     <ReaperExportModal
       :show="showReaperExportModal"
       @confirm="showReaperExportModal = false"
