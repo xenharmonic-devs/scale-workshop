@@ -18,7 +18,7 @@ const models = [
   KorgModels.MONOLOGUE,
   KorgModels.MINILOGUE,
   KorgModels.MINILOGUE_XD,
-  KorgModels.PROLOGUE
+  KorgModels.PROLOGUE,
 ];
 
 const modelName = ref("minilogue");
@@ -37,7 +37,11 @@ function doExport() {
     baseMidiNote: props.baseMidiNote,
   };
 
-  const exporter = new KorgExporter(params, modelName.value, useScaleFormat.value);
+  const exporter = new KorgExporter(
+    params,
+    modelName.value,
+    useScaleFormat.value
+  );
   exporter.saveFile();
 
   emit("confirm");
@@ -54,28 +58,24 @@ function doExport() {
         <div class="control">
           <label for="modelName">Synth Model</label>
           <select id="modelName" v-model="modelName">
-            <option 
-              v-for="name of models" 
-              :key="name" 
-              :value="name"
-              >
-                {{ getKorgModelInfo(name).title }}
+            <option v-for="name of models" :key="name" :value="name">
+              {{ getKorgModelInfo(name).title }}
             </option>
           </select>
         </div>
         <div id="format" class="control radio-group">
           <label for="format">Tuning Format</label>
           <label>
-            <input type="radio" :value="true" v-model="useScaleFormat"/>
+            <input type="radio" :value="true" v-model="useScaleFormat" />
             &nbsp;Scale (128-note table)
           </label>
           <label>
-            <input type="radio" :value="false" v-model="useScaleFormat"/>
+            <input type="radio" :value="false" v-model="useScaleFormat" />
             &nbsp;Octave (12-note table, octave repeating with fixed C)
           </label>
         </div>
         <p>
-          <label>Export Format: </label> 
+          <label>Export Format: </label>
           {{ fileTypePreview }}
         </p>
       </div>

@@ -2,12 +2,12 @@ import { frequencyToMtsBytes } from "xen-dev-utils";
 import { BaseExporter, type ExporterParams } from "./base";
 
 export function frequencyTableToBinaryData(
-  frequencyTableIn: number[]): Uint8Array {
-
+  frequencyTableIn: number[]
+): Uint8Array {
   const dataSize = frequencyTableIn.length * 3;
   const data = new Uint8Array(dataSize);
   let dataIndex = 0;
-  frequencyTableIn.forEach((f:number) => {
+  frequencyTableIn.forEach((f: number) => {
     const bytes = frequencyToMtsBytes(f);
     data[dataIndex] = bytes[0];
     data[dataIndex + 1] = bytes[1];
@@ -19,10 +19,10 @@ export function frequencyTableToBinaryData(
 }
 
 export function getSysexChecksum(data: number[]): number {
-    const checksum = 
-        data.filter((byte:number) => byte >= 0 && byte < 128)
-        .reduce((sum:number, byte:number) => sum ^ byte, 0xff);
-    return checksum & 0x7f;
+  const checksum = data
+    .filter((byte: number) => byte >= 0 && byte < 128)
+    .reduce((sum: number, byte: number) => sum ^ byte, 0xff);
+  return checksum & 0x7f;
 }
 
 export default class MtsSysexExporter extends BaseExporter {
@@ -34,7 +34,6 @@ export default class MtsSysexExporter extends BaseExporter {
   }
 
   buildSysexDump() {
-
     if (this.params.presetIndex === undefined)
       throw new Error("No preset index defined");
 
@@ -45,24 +44,26 @@ export default class MtsSysexExporter extends BaseExporter {
 
     let name = this.params.name ?? "";
     while (name.length < 16) {
-        name += " ";
+      name += " ";
     }
 
-    const nameData = 
-      Array.from(name)
-      .map((char:string) => char.charCodeAt(0));
+    const nameData = Array.from(name).map((char: string) => char.charCodeAt(0));
 
-    const data:number[] = [];
+    const data: number[] = [];
     data.push(
-      0xf0, 0x7e, // SysEx header
-      0x00, 0x08, 0x01, // protocol IDs
+      0xf0,
+      0x7e, // SysEx header
+      0x00,
+      0x08,
+      0x01, // protocol IDs
       presetIndex,
       ...nameData
     );
 
     const frequencies = scale.getFrequencyRange(
       -baseMidiNote,
-      128 - baseMidiNote);
+      128 - baseMidiNote
+    );
 
     const scaleData = frequencyTableToBinaryData(frequencies);
     data.push(...scaleData);

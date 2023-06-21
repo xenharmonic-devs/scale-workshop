@@ -547,8 +547,8 @@ function copyToClipboard() {
 
     <MtsSysexExportModal
       :show="showMtsSysexExportModal"
-      @confirm="$event => showMtsSysexExportModal = false"
-      @cancel="$event => showMtsSysexExportModal = false"
+      @confirm="($event) => (showMtsSysexExportModal = false)"
+      @cancel="($event) => (showMtsSysexExportModal = false)"
       :newline="props.newline"
       :scaleName="scaleName"
       :baseMidiNote="baseMidiNote"
