@@ -45,16 +45,16 @@ function doExport() {
 <template>
   <Modal @confirm="doExport" @cancel="$emit('cancel')">
     <template #header>
-      <h2>Export MTS Sysex Bulk Tuning Dump</h2>
+      <h2>Export MTS Bulk Tuning Dump</h2>
     </template>
     <template #body>
       <div class="control-group">
         <div class="control">
-          <label for="name">Name</label>
+          <label for="name">Name (16-character limit)</label>
           <input id="name" v-model="name" />
         </div>
-        <div class="Preset Index">
-          <label for="preset-index">Preset Index</label>
+        <div class="control">
+          <label for="preset-index">Preset Index (Refer to your synth's manual for a valid range)</label>
           <input type="number" id="preset-index" v-model="presetIndex" />
         </div>
       </div>
