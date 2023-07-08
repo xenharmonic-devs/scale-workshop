@@ -1,101 +1,134 @@
-import { KORG } from "@/constants";
 import JSZip from "jszip";
 import { BaseExporter, type ExporterParams } from "@/exporters/base";
-import {
-  clamp,
-  frequencyToCentOffset,
-  mmod,
-  valueToCents,
-} from "xen-dev-utils";
+import { mtof } from "xen-dev-utils";
+import { frequencyTableToBinaryData } from "./mts-sysex";
 
-// This exporter converts tuning data into a zip-compressed file for use with Korg's
-// 'logue Sound Librarian software, supporting their 'logue series of synthesizers.
-// While this exporter preserves accuracy as much as possible, the Sound Librarian software
-// unforunately truncates cent values to 1 cent precision. It's unknown whether the tuning accuracy
-// from this exporter is written to the synthesizer and used in the synthesis.
-class KorgExporter extends BaseExporter {
+// This exporter converts tuning data into a zip-compressed file for use with
+// Korg's Sound Librarian software, supporting their 'logue series of synthesizers.
+// The zip contains a small amount of metadata and a binary file containing a
+// tuning table that follows the MTS Bulk Tuning Dump specification.
+// The Sound Librarian software falls a bit short of being suitable for
+// advanced tuning specifications by ignoring KBM files and truncating to
+// 1 cent precision. Since the MTS tuning specifications support 0.0061 cent
+// precision with arbitrary mapping, this exporter intends to fully utilize the
+// capabilities of the 'logue tuning implementation. However it has not been
+// strictly tested if the additional precision is employed in the synthesis.
+
+export enum KorgModels {
+  MONOLOGUE = "monologue",
+  MINILOGUE = "minilogue",
+  MINILOGUE_XD = "miniloguexd",
+  PROLOGUE = "prologue",
+}
+
+export const KORG_MODEL_INFO = {
+  [KorgModels.MONOLOGUE]: {
+    name: "monologue",
+    title: "Monologue",
+    scale: ".molgtuns",
+    octave: ".molgtuno",
+  },
+  [KorgModels.MINILOGUE]: {
+    name: "minilogue",
+    title: "Minilogue",
+    scale: ".mnlgtuns",
+    octave: ".mnlgtuno",
+  },
+  [KorgModels.MINILOGUE_XD]: {
+    name: "minilogue xd",
+    title: "Minilogue XD",
+    scale: ".mnlgxdtuns",
+    octave: ".mnlgxdtuno",
+  },
+  [KorgModels.PROLOGUE]: {
+    name: "prologue",
+    title: "Prologue",
+    scale: ".prlgtuns",
+    octave: ".prlgtuno",
+  },
+};
+
+const OCTAVE_SIZE = 12;
+const SCALE_SIZE = 128;
+
+export function getKorgModelInfo(modelName: string) {
+  switch (modelName) {
+    case "minilogue":
+      return KORG_MODEL_INFO[KorgModels.MINILOGUE];
+    case "miniloguexd":
+      return KORG_MODEL_INFO[KorgModels.MINILOGUE_XD];
+    case "monologue":
+      return KORG_MODEL_INFO[KorgModels.MONOLOGUE];
+    case "prologue":
+      return KORG_MODEL_INFO[KorgModels.PROLOGUE];
+    default:
+      throw new Error("Unknown Korg model name");
+  }
+}
+
+export class KorgExporter extends BaseExporter {
   params: ExporterParams;
+  modelName: string;
   useScaleFormat: boolean;
 
-  constructor(params: ExporterParams, useScaleFormat: boolean) {
+  constructor(
+    params: ExporterParams,
+    modelName: string,
+    useScaleFormat: boolean
+  ) {
     super();
     this.params = params;
+    this.modelName = modelName;
     this.useScaleFormat = useScaleFormat;
   }
 
-  centsTableToMnlgBinary(centsTableIn: number[]) {
-    const dataSize = centsTableIn.length * 3;
-    const data = new Uint8Array(dataSize);
-    let dataIndex = 0;
-    centsTableIn.forEach((c) => {
-      // restrict to valid values
-      const cents = clamp(0, KORG.mnlg.maxCents, c);
+  getTuningInfoXml(model: string, programmer = "Scale Workshop", comment = "") {
+    const format = getKorgModelInfo(model);
+    const name = format.name;
+    const tagName = name.replace(" ", "").toLowerCase();
 
-      const semitones = cents / 100.0;
-      const microtones = Math.trunc(semitones);
-
-      const u16a = new Uint16Array([
-        Math.round(0x8000 * (semitones - microtones)),
-      ]);
-      const u8a = new Uint8Array(u16a.buffer);
-
-      data[dataIndex] = microtones;
-      data[dataIndex + 1] = u8a[1];
-      data[dataIndex + 2] = u8a[0];
-      dataIndex += 3;
-    });
-    return data;
-  }
-
-  getMnlgtunTuningInfoXML(programmer: string, comment: string) {
-    // Builds an XML file necessary for the .mnlgtun file format
     const rootName = this.useScaleFormat
-      ? "minilogue_TuneScaleInformation"
-      : "minilogue_TuneOctInformation";
-    const xml = document.implementation.createDocument(null, rootName);
+      ? `${tagName}_TuneScaleInformation`
+      : `${tagName}_TuneOctInformation`;
 
-    const Programmer = xml.createElement("Programmer");
-    Programmer.textContent = programmer;
-    xml.documentElement.appendChild(Programmer);
-
-    const Comment = xml.createElement("Comment");
-    Comment.textContent = comment;
-    xml.documentElement.appendChild(Comment);
+    const xml =
+      `<?xml version="1.0" encoding="UTF-8"?>\n` +
+      "\n" +
+      `<${rootName}>\n` +
+      `  <Programmer>${programmer}</Programmer>\n` +
+      `  <Comment>${comment}</Comment>\n` +
+      `</${rootName}>\n`;
 
     return xml;
   }
 
-  getMnlgtunFileInfoXML(product = "minilogue") {
-    // Builds an XML file necessary for the .mnlgtun file format
-    const rootName = "KorgMSLibrarian_Data";
-    const xml = document.implementation.createDocument(null, rootName);
+  getFileInfoXml(model: string) {
+    const format = getKorgModelInfo(model);
 
-    const Product = xml.createElement("Product");
-    Product.textContent = product;
-    xml.documentElement.appendChild(Product);
+    const [
+      numTuneScaleData,
+      numTuneOctData,
+      fileNameHeader,
+      dataName,
+      binName,
+    ] = this.useScaleFormat
+      ? ["1", "0", "TunS_000.TunS_", "TuneScaleData", "TuneScaleBinary"]
+      : ["0", "1", "TunO_000.TunO_", "TuneOctData", "TuneOctBinary"];
 
-    const Contents = xml.createElement("Contents");
-    Contents.setAttribute("NumProgramData", "0");
-    Contents.setAttribute("NumPresetInformation", "0");
-    Contents.setAttribute("NumTuneScaleData", this.useScaleFormat ? "1" : "0");
-    Contents.setAttribute("NumTuneOctData", this.useScaleFormat ? "0" : "1");
-
-    const [fileNameHeader, dataName, binName] = this.useScaleFormat
-      ? ["TunS_000.TunS_", "TuneScaleData", "TuneScaleBinary"]
-      : ["TunO_000.TunO_", "TuneOctData", "TuneOctBinary"];
-
-    const TuneData = xml.createElement(dataName);
-
-    const Information = xml.createElement("Information");
-    Information.textContent = fileNameHeader + "info";
-    TuneData.appendChild(Information);
-
-    const BinData = xml.createElement(binName);
-    BinData.textContent = fileNameHeader + "bin";
-    TuneData.appendChild(BinData);
-
-    Contents.appendChild(TuneData);
-    xml.documentElement.appendChild(Contents);
+    const xml =
+      `<?xml version="1.0" encoding="UTF-8"?>\n` +
+      "\n" +
+      "<KorgMSLibrarian_Data>\n" +
+      `  <Product>${format.name}</Product>\n` +
+      '  <Contents NumProgramData="0" NumPresetInformation="0" ' +
+      `NumTuneScaleData="${numTuneScaleData}"\n` +
+      `            NumTuneOctData="${numTuneOctData}">\n` +
+      `    <${dataName}>\n` +
+      `      <Information>${fileNameHeader}info</Information>\n` +
+      `      <${binName}>${fileNameHeader}bin</${binName}>\n` +
+      `    </${dataName}>\n` +
+      "  </Contents>\n" +
+      "</KorgMSLibrarian_Data>\n";
 
     return xml;
   }
@@ -104,53 +137,51 @@ class KorgExporter extends BaseExporter {
     const scale = this.params.scale;
     const baseMidiNote = this.params.baseMidiNote;
 
-    // the index of the table that's equal to the baseNote should have the following value
-    const refOffsetCents =
-      KORG.mnlg.refA.val +
-      valueToCents(scale.baseFrequency / KORG.mnlg.refA.freq);
-
-    // This should be similar to Scale Workshop 1 tuning_table.freq
-    const frequencies = scale.getFrequencyRange(
+    let frequencies = scale.getFrequencyRange(
       -baseMidiNote,
-      KORG.mnlg.scaleSize - baseMidiNote
-    );
-    // This should be similar to Scale Workshop 1 tuning_table.cents
-    const centss = frequencies.map((freq: number) =>
-      frequencyToCentOffset(freq, scale.baseFrequency)
-    );
-
-    // offset cents array for binary conversion (rounded to 3 decimals)
-    let centsTable = centss.map(
-      (cents: number) => Math.round((cents + refOffsetCents) * 1000) / 1000
+      SCALE_SIZE - baseMidiNote
     );
 
     if (!this.useScaleFormat) {
-      // normalize around root, truncate to 12 notes, and wrap flattened Cs
-      const cNote =
-        Math.floor(baseMidiNote / KORG.mnlg.octaveSize) * KORG.mnlg.octaveSize;
-      centsTable = centsTable
-        .slice(cNote, cNote + KORG.mnlg.octaveSize)
-        .map((cents) => mmod(cents - KORG.mnlg.refC.val, KORG.mnlg.maxCents));
+      // Normalize to lowest definable pitch, C = 0 "cents"
+      // Choose C below base MIDI note
+      const cNote = Math.trunc(baseMidiNote / OCTAVE_SIZE) * OCTAVE_SIZE;
+
+      const rootFreq = mtof(0);
+      const octaveFreq = mtof(12);
+
+      const cRatio = rootFreq / frequencies[cNote];
+      frequencies = frequencies
+        .slice(cNote, cNote + OCTAVE_SIZE)
+        .map((f: number) => {
+          // Wrap all frequencies to within first octave
+          let fnorm = f * cRatio;
+          if (fnorm > octaveFreq) {
+            const y = -Math.trunc(Math.log2(fnorm / rootFreq));
+            fnorm = fnorm * Math.pow(2, y);
+          }
+          return fnorm;
+        });
     }
 
-    // convert to binary
-    const binaryData = this.centsTableToMnlgBinary(centsTable);
+    const binaryData = frequencyTableToBinaryData(frequencies);
 
     // prepare files for zipping
-    const tuningInfo = this.getMnlgtunTuningInfoXML(
+    const format = getKorgModelInfo(this.modelName);
+    const tuningInfo = this.getTuningInfoXml(
+      this.modelName,
       "ScaleWorkshop",
-      this.params.name!
+      this.params.name ?? ""
     );
-    const fileInfo = this.getMnlgtunFileInfoXML();
+    const fileInfo = this.getFileInfoXml(this.modelName);
     const [fileNameHeader, fileType] = this.useScaleFormat
-      ? ["TunS_000.TunS_", ".mnlgtuns"]
-      : ["TunO_000.TunO_", ".mnlgtuno"];
+      ? ["TunS_000.TunS_", format.scale]
+      : ["TunO_000.TunO_", format.octave];
 
-    // build zip
     const zip = new JSZip();
     zip.file(fileNameHeader + "bin", binaryData);
-    zip.file(fileNameHeader + "info", tuningInfo.documentElement.outerHTML);
-    zip.file("FileInformation.xml", fileInfo.documentElement.outerHTML);
+    zip.file(fileNameHeader + "info", tuningInfo);
+    zip.file("FileInformation.xml", fileInfo);
     return [zip, fileType];
   }
 
@@ -163,17 +194,5 @@ class KorgExporter extends BaseExporter {
       false,
       "application/zip;base64,"
     );
-  }
-}
-
-export class MnlgtunsExporter extends KorgExporter {
-  constructor(params: ExporterParams) {
-    super(params, true);
-  }
-}
-
-export class MnlgtunoExporter extends KorgExporter {
-  constructor(params: ExporterParams) {
-    super(params, false);
   }
 }
