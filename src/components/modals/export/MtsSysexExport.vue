@@ -4,6 +4,7 @@ import { sanitizeFilename } from "@/utils";
 import { ref } from "vue";
 import Modal from "@/components/ModalDialog.vue";
 import type { Scale } from "scale-workshop-core";
+import { clamp } from "xen-dev-utils";
 
 const props = defineProps<{
   newline: string;
@@ -18,12 +19,16 @@ function clampName(name: string): string {
   return name.slice(0, 16);
 }
 
+function clampPreset(index: number): number {
+  return clamp(0, 127, index);
+}
+
 // Rarely implemented parameters
 // const deviceId = ref(0);
-// const bank = ref(0);
+// const bank = ref(0); (only for message 0x0804)
 
-const presetIndex = ref(0);
 const name = ref(clampName(props.scaleName));
+const presetIndex = ref(clampPreset(0));
 
 function doExport() {
   const params = {
@@ -75,6 +80,8 @@ function doExport() {
             type="number"
             id="preset-index"
             v-model="presetIndex"
+            min="0"
+            max="127"
           />
         </div>
       </div>

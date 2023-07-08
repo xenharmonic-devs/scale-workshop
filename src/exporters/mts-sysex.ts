@@ -1,4 +1,4 @@
-import { frequencyToMtsBytes } from "xen-dev-utils";
+import { clamp, frequencyToMtsBytes } from "xen-dev-utils";
 import { BaseExporter, type ExporterParams } from "./base";
 
 export function frequencyTableToBinaryData(
@@ -33,21 +33,39 @@ export default class MtsSysexExporter extends BaseExporter {
     this.params = params;
   }
 
-  buildSysexDump() {
-    if (this.params.presetIndex === undefined)
-      throw new Error("No preset index defined");
-
+  getBulkTuningData() {
     const scale = this.params.scale;
     const baseMidiNote = this.params.baseMidiNote;
 
-    const presetIndex = this.params.presetIndex & 0x7f;
+    const frequencies = scale.getFrequencyRange(
+      -baseMidiNote,
+      128 - baseMidiNote
+    );
 
+    const scaleData = frequencyTableToBinaryData(frequencies);
+    return scaleData;
+  }
+
+  getNameData() {
     let name = this.params.name ?? "";
     while (name.length < 16) {
       name += " ";
     }
 
-    const nameData = Array.from(name).map((char: string) => char.charCodeAt(0));
+    const nameData = Array.from(name)
+      .slice(0, 16)
+      .map((char: string) => char.charCodeAt(0));
+    return nameData;
+  }
+
+  buildSysExDump() {
+    if (this.params.presetIndex === undefined)
+      throw new Error("No preset index defined");
+
+    const presetIndex = clamp(0, 0x7f, this.params.presetIndex);
+
+    const nameData = this.getNameData();
+    const scaleData = this.getBulkTuningData();
 
     const data: number[] = [];
     data.push(
@@ -57,17 +75,9 @@ export default class MtsSysexExporter extends BaseExporter {
       0x08,
       0x01, // protocol IDs
       presetIndex,
-      ...nameData
+      ...nameData,
+      ...scaleData
     );
-
-    const frequencies = scale.getFrequencyRange(
-      -baseMidiNote,
-      128 - baseMidiNote
-    );
-
-    const scaleData = frequencyTableToBinaryData(frequencies);
-    data.push(...scaleData);
-
     const checksum = getSysexChecksum(data);
     data.push(checksum);
     data.push(0xf7);
@@ -76,7 +86,7 @@ export default class MtsSysexExporter extends BaseExporter {
   }
 
   saveFile() {
-    const sysexDump = this.buildSysexDump();
+    const sysexDump = this.buildSysExDump();
     super.saveFile(this.params.filename + ".syx", sysexDump, true);
   }
 }
