@@ -194,6 +194,9 @@ const exportTextClipboard = ref("Copy this scale's unique URL to clipboard");
 async function doImport(importerKey: ImporterKey, event: Event) {
   const result = await importFile(importerKey, event);
   emit("update:scaleLines", result.scale.toStrings());
+  if (importerKey != "scalascl") {
+    emit("update:baseFrequency", result.scale.baseFrequency);
+  }
   if (result.name !== undefined) {
     emit("update:scaleName", result.name);
   }
