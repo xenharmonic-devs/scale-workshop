@@ -280,6 +280,9 @@ p.section {
 
 /* UI element - question mark with tooltip on hover */
 span.info-question {
+  background: var(--color-background);
+  color: var(--color-text);
+  border-color: var(--color-text);
   border-radius: 50%;
   border-width: 2px;
   border-style: solid;
@@ -293,8 +296,7 @@ span.info-question::after {
   content: '?';
 }
 span.info-question:hover {
-  background: white;
-  color: black;
-  border-color: white;
+  background: var(--color-text);
+  color: var(--color-background);
   transition: all 0.3s ease;
 }
