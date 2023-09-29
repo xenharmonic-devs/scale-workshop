@@ -238,3 +238,24 @@ export function computedAndError<T>(
   const error = computed(() => valueAndError.value[1]);
   return [value, error];
 }
+
+// Calculates euclidean distance for monzos, as it assumes that if points are not of the same dimension, then the missing dimensions have a value of zero.
+export function monzoEuclideanDistance(
+  equavePrimeIndex: number,
+  point1: number[],
+  point2: number[]
+): number {
+  // Ensure that both points have the same dimension
+  const maxDimension = Math.max(point1.length, point2.length);
+  // Pad the shorter point with zeroes to match the longer point's dimension
+  const point1_ = point1.concat(Array(maxDimension - point1.length).fill(0));
+  const point2_ = point2.concat(Array(maxDimension - point2.length).fill(0));
+
+  const distance = Math.hypot(
+    ...point1_.map((coord1, index) => {
+      return index === equavePrimeIndex ? 0 : point2_[index] - coord1;
+    })
+  );
+
+  return distance;
+}

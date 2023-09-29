@@ -929,6 +929,7 @@ watch(degreeDownCode, (newValue) =>
       </li>
       <li><RouterLink to="/">Build Scale</RouterLink></li>
       <li><RouterLink to="/analysis">Analysis</RouterLink></li>
+      <li><RouterLink to="/lattice">Lattice</RouterLink></li>
       <li><RouterLink to="/vk">Virtual Keyboard</RouterLink></li>
       <li v-if="showVirtualQwerty">
         <RouterLink to="/qwerty">Virtual QWERTY</RouterLink>

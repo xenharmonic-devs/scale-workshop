@@ -37,7 +37,9 @@
         Sevish - <i>UI/UX designer</i><br />
         Vincenzo Sicurella - <i>developer</i><br />
         Lajos Mészáros - <i>developer</i><br />
-        Forrest Cahoon - <i>developer</i>
+        Forrest Cahoon - <i>developer</i> <br />
+        Videco - <i>developer</i> <br />
+        Kraig Grady - <i>lattice advisor</i>
       </p>
     </div>
   </div>
