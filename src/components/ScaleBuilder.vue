@@ -18,6 +18,7 @@ import ApproximateByHarmonicsModal from '@/components/modals/modification/Approx
 import SubharmonicSeriesModal from '@/components/modals/generation/SubharmonicSeries.vue'
 import EnumerateChordModal from '@/components/modals/generation/EnumerateChord.vue'
 import CpsModal from '@/components/modals/generation/CombinationProductSet.vue'
+import HistoricalModal from '@/components/modals/generation/HistoricalScale.vue'
 import CrossPolytopeModal from '@/components/modals/generation/CrossPolytope.vue'
 import LatticeModal from '@/components/modals/generation/SpanLattice.vue'
 import EulerGenusModal from '@/components/modals/generation/EulerGenus.vue'
@@ -162,6 +163,7 @@ const showEulerGenusModal = ref(false)
 const showDwarfModal = ref(false)
 const showRankTwoModal = ref(false)
 const showCrossPolytopeModal = ref(false)
+const showHistoricalModal = ref(false)
 
 const showRotateModal = ref(false)
 const showSubsetModal = ref(false)
@@ -250,6 +252,7 @@ function updateScaleAndHideModals(scale: Scale) {
   showDwarfModal.value = false
   showCrossPolytopeModal.value = false
   showLatticeModal.value = false
+  showHistoricalModal.value = false
   showRotateModal.value = false
   showSubsetModal.value = false
   showStretchModal.value = false
@@ -291,6 +294,7 @@ function confirmPreset() {
             <a href="#" @click="showEnumerateChordModal = true"><li>Enumerate chord</li></a>
             <a href="#" @click="showCpsModal = true"><li>Combination product set</li></a>
             <a href="#" @click="showMosModal = true"><li>Moment of symmetry scale</li></a>
+            <a href="#" @click="showHistoricalModal = true"><li>Historical temperament</li></a>
             <a href="#" @click="showEulerGenusModal = true"><li>Euler-Fokker genus</li></a>
             <a href="#" @click="showDwarfModal = true"><li>Dwarf scale</li></a>
             <a href="#" @click="showCrossPolytopeModal = true"><li>Cross-polytope</li></a>
@@ -538,6 +542,17 @@ function confirmPreset() {
       @update:scale="updateScaleAndHideModals"
       @update:keyColors="emit('update:keyColors', $event)"
       @cancel="showRankTwoModal = false"
+    />
+
+    <HistoricalModal
+      :show="showHistoricalModal"
+      :centsFractionDigits="centsFractionDigits"
+      @update:scaleName="emit('update:scaleName', $event)"
+      @update:scale="updateScaleAndHideModals"
+      @update:baseFrequency="emit('update:baseFrequency', $event)"
+      @update:baseMidiNote="emit('update:baseMidiNote', $event)"
+      @update:keyColors="emit('update:keyColors', $event)"
+      @cancel="showHistoricalModal = false"
     />
 
     <ShareUrlModal

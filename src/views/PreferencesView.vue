@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { UNIX_NEWLINE, WINDOWS_NEWLINE } from '@/constants'
-import { computed } from 'vue'
+import type { AccidentalStyle } from '@/utils'
+import { ref, computed, watch } from 'vue'
 
 const props = defineProps<{
   newline: string
@@ -45,6 +46,12 @@ const midiOctaveOffset = computed({
   get: () => props.midiOctaveOffset,
   set: (newValue: number) => emit('update:midiOctaveOffset', newValue)
 })
+
+// Lazy developer here hoping to move to Pinia, so I won't drill this back to App.vue
+const accidentalPreference = ref<AccidentalStyle>(
+  (localStorage.getItem('accidentalPreference') as AccidentalStyle) ?? 'double'
+)
+watch(accidentalPreference, (newValue) => localStorage.setItem('accidentalPreference', newValue))
 </script>
 
 <template>
@@ -97,6 +104,36 @@ const midiOctaveOffset = computed({
               step="1"
               v-model="midiOctaveOffset"
             />
+          </div>
+          <h3>Accidentals</h3>
+          <div class="control radio-group">
+            <span>
+              <input
+                type="radio"
+                id="accidentals-double"
+                value="double"
+                v-model="accidentalPreference"
+              />
+              <label for="accidentals-double"> Double 𝄫/𝄪</label>
+            </span>
+            <span>
+              <input
+                type="radio"
+                id="accidentals-single"
+                value="single"
+                v-model="accidentalPreference"
+              />
+              <label for="accidentals-single"> Single ♭♭/♯♯</label>
+            </span>
+            <span>
+              <input
+                type="radio"
+                id="accidentals-ascii"
+                value="ASCII"
+                v-model="accidentalPreference"
+              />
+              <label for="accidentals-single"> ASCII bb/##</label>
+            </span>
           </div>
         </div>
       </div>
