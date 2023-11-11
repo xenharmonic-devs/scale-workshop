@@ -6,13 +6,14 @@
       <em>Because there are more than 12 notes</em>
     </p>
     <div class="control-group">
-      <div class="control">
+      <div class="control centered">
         <a
           class="btn"
           href="https://github.com/xenharmonic-devs/scale-workshop/wiki"
           target="_blank"
           >User guide</a
         >
+        <a class="btn" href="https://discord.gg/9nFzvpHJWn">Discord</a>
         <a class="btn" href="https://github.com/xenharmonic-devs/scale-workshop">GitHub</a>
         <a class="btn" href="https://github.com/xenharmonic-devs/scale-workshop/issues"
           >Report an issue</a
@@ -36,13 +37,16 @@
   </div>
 </template>
 
-<style>
+<style scoped>
 .about {
   height: 100vh;
   padding: 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+}
+.centered {
   justify-content: center;
 }
 hr {
