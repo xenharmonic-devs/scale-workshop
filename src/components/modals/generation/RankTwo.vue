@@ -2,6 +2,8 @@
 import {
   DEFAULT_NUMBER_OF_COMPONENTS,
   MAX_INTERACTIVE_SUBGROUP_SIZE,
+  FIFTH,
+  OCTAVE,
 } from "@/constants";
 import {
   makeRank2FromVals,
@@ -21,7 +23,7 @@ import PeriodCircle from "@/components/PeriodCircle.vue";
 import { makeState } from "@/components/modals/tempering-state";
 import { computedAndError, gapKeyColors } from "@/utils";
 import ScaleLineInput from "@/components/ScaleLineInput.vue";
-import { ExtendedMonzo, Interval, parseLine, Scale } from "scale-workshop-core";
+import { ExtendedMonzo, Interval, Scale } from "scale-workshop-core";
 
 const props = defineProps<{
   centsFractionDigits: number;
@@ -43,9 +45,9 @@ const method = ref<"generator" | "vals" | "commas" | "circle">("generator");
 const error = ref("");
 const state = makeState(method);
 // method: "generator"
-const generator = ref(parseLine("3/2", DEFAULT_NUMBER_OF_COMPONENTS));
+const generator = ref(FIFTH);
 const generatorString = ref("");
-const period = ref(parseLine("2/1", DEFAULT_NUMBER_OF_COMPONENTS));
+const period = ref(OCTAVE);
 const periodString = ref("2/1");
 // method: "vals"
 const valsString = state.valsString;
@@ -457,6 +459,7 @@ function generate() {
               placeholder="3/2"
               v-model="generatorString"
               @update:value="generator = $event"
+              :defaultValue="FIFTH"
             />
             <button @click="flipGenerator">Flip to {{ opposite }}</button>
           </div>
@@ -465,8 +468,10 @@ function generate() {
             <label for="period">Period</label>
             <ScaleLineInput
               id="period"
+              placeholder="2/1"
               v-model="periodString"
               @update:value="period = $event"
+              :defaultValue="OCTAVE"
             />
           </div>
 

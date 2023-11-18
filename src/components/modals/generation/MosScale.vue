@@ -1,6 +1,6 @@
 Interval
 <script setup lang="ts">
-import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
+import { OCTAVE } from "@/constants";
 import {
   allForEdo,
   anyForEdo,
@@ -19,7 +19,7 @@ import { computed, reactive, ref, watch } from "vue";
 import Modal from "@/components/ModalDialog.vue";
 import ScaleLineInput from "@/components/ScaleLineInput.vue";
 import { clamp, gcd } from "xen-dev-utils";
-import { ExtendedMonzo, Interval, Scale } from "scale-workshop-core";
+import { Scale } from "scale-workshop-core";
 
 const emit = defineEmits([
   "update:scale",
@@ -28,18 +28,13 @@ const emit = defineEmits([
   "cancel",
 ]);
 
-const octave = new Interval(
-  ExtendedMonzo.fromFraction(2, DEFAULT_NUMBER_OF_COMPONENTS),
-  "ratio"
-);
-
 // State required to generate MOS
 const numberOfLargeSteps = ref(5);
 const numberOfSmallSteps = ref(2);
 const sizeOfLargeStep = ref(2);
 const sizeOfSmallStep = ref(1);
 const up = ref(5);
-const equave = ref(octave);
+const equave = ref(OCTAVE);
 
 // State for key colors
 const colorMethod = ref<"none" | "parent" | "daughter">("none");
@@ -121,7 +116,7 @@ const hostEd = computed(
     safeNumSmall.value * safeSizeSmall.value
 );
 const ed = computed(() => {
-  if (equave.value.equals(octave)) {
+  if (equave.value.equals(OCTAVE)) {
     return `${hostEd.value}EDO`;
   }
   return `${hostEd.value}ED${equaveString.value}`;
@@ -211,7 +206,7 @@ function generate() {
     if (daughter.hardness === "equalized") {
       const equaveSteps = steps[steps.length - 1];
       name += `${equaveSteps}ED`;
-      if (equave.value.equals(octave)) {
+      if (equave.value.equals(OCTAVE)) {
         name += "O";
       } else {
         name += equave.value.toString();
@@ -323,6 +318,7 @@ function generate() {
             id="equave"
             @update:value="equave = $event"
             v-model="equaveString"
+            :defaultValue="OCTAVE"
           />
         </div>
         <div class="control radio-group">

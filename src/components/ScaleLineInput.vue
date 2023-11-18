@@ -6,23 +6,36 @@ import { ref, watch } from "vue";
 
 const props = defineProps<{
   modelValue: string;
+  defaultValue: Interval;
   placeholder?: string;
-  defaultValue?: Interval;
 }>();
 
 const emit = defineEmits(["update:value", "update:modelValue"]);
 
 const element = ref<HTMLInputElement | null>(null);
-const defaultValue =
-  props.defaultValue === undefined
-    ? parseLine(props.modelValue || "1/1", DEFAULT_NUMBER_OF_COMPONENTS)
-    : props.defaultValue;
 const [value, error] = computedAndError(
   () => parseLine(props.modelValue, DEFAULT_NUMBER_OF_COMPONENTS),
-  defaultValue
+  props.defaultValue
 );
 watch(value, (newValue) => emit("update:value", newValue), { immediate: true });
-watch(error, (newError) => element.value!.setCustomValidity(newError));
+watch(
+  element,
+  (newElement) => {
+    if (newElement) {
+      newElement.setCustomValidity(error.value);
+    }
+  },
+  { immediate: true }
+);
+watch(
+  error,
+  (newError) => {
+    if (element.value) {
+      element.value.setCustomValidity(newError);
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <template>

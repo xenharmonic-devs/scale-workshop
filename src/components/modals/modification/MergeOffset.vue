@@ -2,16 +2,21 @@
 import { ref } from "vue";
 import Modal from "@/components/ModalDialog.vue";
 import ScaleLineInput from "@/components/ScaleLineInput.vue";
-import { parseLine, type Scale } from "scale-workshop-core";
+import { ExtendedMonzo, Interval, type Scale } from "scale-workshop-core";
 import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
 
 const props = defineProps<{
   scale: Scale;
 }>();
 
+const THIRD = new Interval(
+  ExtendedMonzo.fromFraction("5/4", DEFAULT_NUMBER_OF_COMPONENTS),
+  "ratio"
+);
+
 const emit = defineEmits(["update:scale", "cancel"]);
 
-const offset = ref(parseLine("5/4", DEFAULT_NUMBER_OF_COMPONENTS));
+const offset = ref(THIRD);
 const offsetString = ref("");
 // Overflow = "none" is too similar to "reduce" to be included in the UI.
 const overflowType = ref<"none" | "intuitive" | "filter" | "reduce">("filter");
@@ -56,6 +61,7 @@ function modify() {
             id="offset"
             placeholder="5/4"
             v-model="offsetString"
+            :defaultValue="THIRD"
             @update:value="offset = $event"
           />
         </div>

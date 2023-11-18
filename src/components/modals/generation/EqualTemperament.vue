@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
+import { DEFAULT_NUMBER_OF_COMPONENTS, OCTAVE } from "@/constants";
 import { computed, ref, watch } from "vue";
 import Modal from "@/components/ModalDialog.vue";
 import ScaleLineInput from "@/components/ScaleLineInput.vue";
@@ -14,14 +14,9 @@ const props = defineProps<{
 
 const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
 
-const octave = new Interval(
-  ExtendedMonzo.fromFraction(2, DEFAULT_NUMBER_OF_COMPONENTS),
-  "ratio"
-);
-
 const divisions = ref(5);
 const equaveString = ref("2/1");
-const equave = ref(octave);
+const equave = ref(OCTAVE);
 
 const jumpsString = ref("1 1 1 1 1");
 const degreesString = ref("1 2 3 4 5");
@@ -172,6 +167,7 @@ function generate() {
             id="equave"
             @update:value="equave = $event"
             v-model="equaveString"
+            :defaultValue="OCTAVE"
           />
         </div>
       </div>
