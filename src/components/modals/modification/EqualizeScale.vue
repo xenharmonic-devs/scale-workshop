@@ -1,20 +1,46 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import Modal from "@/components/ModalDialog.vue";
-import type { Scale } from "scale-workshop-core";
+import { Scale } from "scale-workshop-core";
+import { alignCents, misalignment } from "@/analysis";
 
 const props = defineProps<{
   scale: Scale;
+  centsFractionDigits: number;
 }>();
 
 const emit = defineEmits(["update:scale", "cancel"]);
 
 const divisions = ref(22);
 
+const pitches = computed(() =>
+  props.scale.intervals.map((i) => i.totalCents())
+);
+
+const gridCents = computed(
+  () => props.scale.equave.totalCents() / divisions.value
+);
+
+const rootedError = computed(() =>
+  misalignment(pitches.value, gridCents.value)
+);
+
+const minimax = computed(() => alignCents(pitches.value, gridCents.value));
+
 function modify() {
   emit(
     "update:scale",
     props.scale.approximateEqualTemperament(divisions.value)
+  );
+}
+
+function modifyMinimax() {
+  emit(
+    "update:scale",
+    Scale.fromEqualTemperamentSubset(
+      minimax.value.degrees.slice(1).concat([divisions.value]),
+      props.scale.equave
+    )
   );
 }
 </script>
@@ -40,6 +66,15 @@ function modify() {
             v-model="divisions"
           />
         </div>
+      </div>
+      <p>Rooted error: {{ rootedError.toFixed(centsFractionDigits) }}</p>
+      <p>Minimax error: {{ minimax.error.toFixed(centsFractionDigits) }}</p>
+    </template>
+    <template #footer>
+      <div class="btn-group">
+        <button @click="modify">Rooted</button>
+        <button @click="modifyMinimax">Minimax</button>
+        <button @click="$emit('cancel')">Cancel</button>
       </div>
     </template>
   </Modal>

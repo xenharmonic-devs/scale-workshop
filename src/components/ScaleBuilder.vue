@@ -769,6 +769,7 @@ function copyToClipboard() {
       "
       @cancel="showEqualizeModal = false"
       :scale="scale"
+      :centsFractionDigits="centsFractionDigits"
     />
 
     <TemperModal

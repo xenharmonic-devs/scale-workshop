@@ -39,7 +39,8 @@
         Lajos Mészáros - <i>developer</i><br />
         Forrest Cahoon - <i>developer</i> <br />
         Videco - <i>developer</i> <br />
-        Kraig Grady - <i>lattice advisor</i>
+        Kraig Grady - <i>lattice advisor</i> <br />
+        Ben Lampert - <i>developer</i>
       </p>
     </div>
   </div>
