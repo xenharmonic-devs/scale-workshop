@@ -14,14 +14,14 @@
   },
   "dependencies": {
     "jszip": "^3.10.1",
-    "moment-of-symmetry": "^0.3.1",
+    "moment-of-symmetry": "^0.3.2",
     "qs": "^6.11.0",
-    "temperaments": "^0.4.0",
+    "scale-workshop-core": "github:xenharmonic-devs/scale-workshop-core#v0.0.5",
+    "temperaments": "^0.4.5",
     "vue": "^3.2.33",
     "vue-router": "^4.1.5",
     "webmidi": "^3.0.21",
-    "xen-dev-utils": "^0.1.2",
-    "scale-workshop-core": "github:xenharmonic-devs/scale-workshop-core#v0.0.1"
+    "xen-dev-utils": "^0.1.4"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",
