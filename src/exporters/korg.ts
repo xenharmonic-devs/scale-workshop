@@ -1,7 +1,8 @@
 import JSZip from "jszip";
 import { BaseExporter, type ExporterParams } from "@/exporters/base";
-import { mtof } from "xen-dev-utils";
+import { Fraction, mtof } from "xen-dev-utils";
 import { frequencyTableToBinaryData } from "./mts-sysex";
+import { ExtendedMonzo, Interval, Scale } from "scale-workshop-core";
 
 // This exporter converts tuning data into a zip-compressed file for use with
 // Korg's Sound Librarian software, supporting their 'logue series of synthesizers.
@@ -48,8 +49,14 @@ export const KORG_MODEL_INFO = {
   },
 };
 
-const OCTAVE_SIZE = 12;
-const SCALE_SIZE = 128;
+export enum KorgExporterError {
+  OCTAVE_INVALID_EQUAVE = "Scale equave must be exactly 2/1 for the 12-note Octave format.",
+  OCTAVE_INVALID_SIZE = "Scale must comprise of exactly 12 intervals for the 12-note Octave format.",
+  OCTAVE_INVALID_INTERVAL = "Scale cannot contain intervals below unison or above an octave for the 12-note Octave format.",
+}
+
+const OCTAVE_FORMAT_SIZE = 12;
+const SCALE_FORMAT_SIZE = 128;
 
 export function getKorgModelInfo(modelName: string) {
   switch (modelName) {
@@ -69,17 +76,52 @@ export function getKorgModelInfo(modelName: string) {
 export class KorgExporter extends BaseExporter {
   params: ExporterParams;
   modelName: string;
-  useScaleFormat: boolean;
+  useOctaveFormat: boolean;
 
   constructor(
     params: ExporterParams,
     modelName: string,
-    useScaleFormat: boolean
+    useOctaveFormat: boolean
   ) {
     super();
     this.params = params;
     this.modelName = modelName;
-    this.useScaleFormat = useScaleFormat;
+    this.useOctaveFormat = useOctaveFormat;
+
+    if (this.useOctaveFormat) {
+      const errorMessage = KorgExporter.getOctaveFormatErrorMessage(
+        params.scale
+      );
+      if (errorMessage !== "") throw new Error(errorMessage);
+    }
+  }
+
+  static getOctaveFormatErrorMessage(scale: Scale): string {
+    const octave = new Interval(
+      ExtendedMonzo.fromFraction(new Fraction(2, 1), 3),
+      "ratio"
+    );
+
+    if (scale.equave.compare(octave) !== 0) {
+      return KorgExporterError.OCTAVE_INVALID_EQUAVE;
+    }
+
+    if (scale.intervals.length !== 12) {
+      return KorgExporterError.OCTAVE_INVALID_SIZE;
+    }
+
+    const unison = new Interval(
+      ExtendedMonzo.fromFraction(new Fraction(1, 1), 3),
+      "ratio"
+    );
+
+    for (const interval of scale.intervals) {
+      if (interval.compare(unison) < 0 || interval.compare(octave) > 0) {
+        return KorgExporterError.OCTAVE_INVALID_INTERVAL;
+      }
+    }
+
+    return "";
   }
 
   getTuningInfoXml(model: string, programmer = "Scale Workshop", comment = "") {
@@ -87,9 +129,9 @@ export class KorgExporter extends BaseExporter {
     const name = format.name;
     const tagName = name.replace(" ", "").toLowerCase();
 
-    const rootName = this.useScaleFormat
-      ? `${tagName}_TuneScaleInformation`
-      : `${tagName}_TuneOctInformation`;
+    const rootName = this.useOctaveFormat
+      ? `${tagName}_TuneOctInformation`
+      : `${tagName}_TuneScaleInformation`;
 
     const xml =
       `<?xml version="1.0" encoding="UTF-8"?>\n` +
@@ -111,9 +153,9 @@ export class KorgExporter extends BaseExporter {
       fileNameHeader,
       dataName,
       binName,
-    ] = this.useScaleFormat
-      ? ["1", "0", "TunS_000.TunS_", "TuneScaleData", "TuneScaleBinary"]
-      : ["0", "1", "TunO_000.TunO_", "TuneOctData", "TuneOctBinary"];
+    ] = this.useOctaveFormat
+      ? ["0", "1", "TunO_000.TunO_", "TuneOctData", "TuneOctBinary"]
+      : ["1", "0", "TunS_000.TunS_", "TuneScaleData", "TuneScaleBinary"];
 
     const xml =
       `<?xml version="1.0" encoding="UTF-8"?>\n` +
@@ -137,31 +179,18 @@ export class KorgExporter extends BaseExporter {
     const scale = this.params.scale;
     const baseMidiNote = this.params.baseMidiNote;
 
-    let frequencies = scale.getFrequencyRange(
-      -baseMidiNote,
-      SCALE_SIZE - baseMidiNote
-    );
-
-    if (!this.useScaleFormat) {
-      // Normalize to lowest definable pitch, C = 0 "cents"
-      // Choose C below base MIDI note
-      const cNote = Math.trunc(baseMidiNote / OCTAVE_SIZE) * OCTAVE_SIZE;
-
+    let frequencies: number[];
+    if (this.useOctaveFormat) {
       const rootFreq = mtof(0);
-      const octaveFreq = mtof(12);
-
-      const cRatio = rootFreq / frequencies[cNote];
-      frequencies = frequencies
-        .slice(cNote, cNote + OCTAVE_SIZE)
-        .map((f: number) => {
-          // Wrap all frequencies to within first octave
-          let fnorm = f * cRatio;
-          if (fnorm > octaveFreq) {
-            const y = -Math.trunc(Math.log2(fnorm / rootFreq));
-            fnorm = fnorm * Math.pow(2, y);
-          }
-          return fnorm;
-        });
+      const transposeRatio = rootFreq / scale.baseFrequency;
+      frequencies = scale
+        .getFrequencyRange(0, OCTAVE_FORMAT_SIZE)
+        .map((f: number) => f * transposeRatio);
+    } else {
+      frequencies = scale.getFrequencyRange(
+        -baseMidiNote,
+        SCALE_FORMAT_SIZE - baseMidiNote
+      );
     }
 
     const binaryData = frequencyTableToBinaryData(frequencies);
@@ -174,9 +203,9 @@ export class KorgExporter extends BaseExporter {
       this.params.name ?? ""
     );
     const fileInfo = this.getFileInfoXml(this.modelName);
-    const [fileNameHeader, fileType] = this.useScaleFormat
-      ? ["TunS_000.TunS_", format.scale]
-      : ["TunO_000.TunO_", format.octave];
+    const [fileNameHeader, fileType] = this.useOctaveFormat
+      ? ["TunO_000.TunO_", format.octave]
+      : ["TunS_000.TunS_", format.scale];
 
     const zip = new JSZip();
     zip.file(fileNameHeader + "bin", binaryData);
