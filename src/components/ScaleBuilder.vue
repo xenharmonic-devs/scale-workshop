@@ -7,9 +7,9 @@ import { APP_TITLE } from "@/constants";
 import { sanitizeFilename, midiNoteNumberToName } from "@/utils";
 import { exportFile, type ExporterKey } from "@/exporters";
 import Modal from "@/components/ModalDialog.vue";
-import KorgExportModal from "@/components/modals/export/KorgExport.vue";
 import ReaperExportModal from "@/components/modals/export/ReaperExport.vue";
 import MtsSysexExportModal from "@/components/modals/export/MtsSysexExport.vue";
+import KorgExportModal from "@/components/modals/export/KorgExport.vue";
 import ShareUrlModal from "@/components/modals/ShareUrl.vue";
 import EqualTemperamentModal from "@/components/modals/generation/EqualTemperament.vue";
 import HarmonicSeriesModal from "@/components/modals/generation/HarmonicSeries.vue";
@@ -492,7 +492,7 @@ function copyToClipboard() {
       </a>
       <a href="#" class="btn" @click="showMtsSysexExportModal = true">
         <p><strong>MTS Sysex Bulk Tuning Dump (.syx)</strong></p>
-        <p>Binary data dump of a Bulk Tuning Dump SysEx message</p>
+        <p>Binary data of a Bulk Tuning Dump SysEx message</p>
       </a>
       <a
         href="#"
@@ -547,8 +547,8 @@ function copyToClipboard() {
 
     <MtsSysexExportModal
       :show="showMtsSysexExportModal"
-      @confirm="($event) => (showMtsSysexExportModal = false)"
-      @cancel="($event) => (showMtsSysexExportModal = false)"
+      @confirm="showMtsSysexExportModal = false"
+      @cancel="showMtsSysexExportModal = false"
       :newline="props.newline"
       :scaleName="scaleName"
       :baseMidiNote="baseMidiNote"

@@ -22,6 +22,11 @@
 
   --color-error: red;
 
+  /* Mimic Bootstrap alert with 'danger' variant */ 
+  --color-alert-danger: rgba(104, 35, 39, 1.0);
+  --color-alert-danger-background: rgba(243, 216, 218, 1.0);
+  --color-alert-danger-border: rgba(239, 199, 204, 1.0);
+
   --section-gap: 160px;
   --base-font-size: 15px;
   --base-line-height: 1.5;
@@ -231,6 +236,9 @@ ul.btn-group, .btn-dropdown-group ul {
 .control select {
   flex-grow: 1;
 }
+.control input.half {
+  flex-grow: 0.25 !important;
+}
 .control.checkbox-container {
   flex-flow: unset;
 }
@@ -251,7 +259,7 @@ ul.btn-group, .btn-dropdown-group ul {
   }
 }
 
-/* UI element - expandable secion */
+/* UI element - expandable section */
 .section::after {
   content: " ▼";
   font-size: 0.5rem;
@@ -273,4 +281,40 @@ ul.btn-group, .btn-dropdown-group ul {
 p.section {
   font-weight: bold;
   cursor: pointer;
+}
+
+/* UI element - question mark with tooltip on hover */
+span.info-question {
+  background: var(--color-background);
+  color: var(--color-text);
+  border-color: var(--color-text);
+  border-radius: 50%;
+  border-width: 2px;
+  border-style: solid;
+  padding-left: 4px;
+  padding-right: 4px;
+  font-size: smaller;
+
+  transition: 0.3s ease;
+}
+span.info-question::after {
+  content: '?';
+}
+span.info-question:hover {
+  background: var(--color-text);
+  color: var(--color-background);
+  transition: all 0.3s ease;
+}
+
+/* Padded box for displaying UI feedback message */
+div.alert-box-danger {
+  background: var(--color-alert-danger-background);
+  border-width: 1px;
+  border-radius: 1%;
+  border-style: solid;
+  border-color: var(--color-alert-danger-border);
+  padding: 8px;
+}
+p.alert-message-danger {
+  color: var(--color-alert-danger);
 }

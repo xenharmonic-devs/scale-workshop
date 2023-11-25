@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import MtsSysexExporter from "@/exporters/mts-sysex";
 import { sanitizeFilename } from "@/utils";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import Modal from "@/components/ModalDialog.vue";
 import type { Scale } from "scale-workshop-core";
 import { clamp } from "xen-dev-utils";
@@ -15,20 +15,37 @@ const props = defineProps<{
 
 const emit = defineEmits(["confirm", "cancel"]);
 
-function clampName(name: string): string {
-  return name.slice(0, 16);
-}
-
-function clampPreset(index: number): number {
-  return clamp(0, 127, index);
-}
-
 // Rarely implemented parameters
 // const deviceId = ref(0);
 // const bank = ref(0); (only for message 0x0804)
 
+function clampName(name: string): string {
+  return name.slice(0, 16);
+}
+
 const name = ref(clampName(props.scaleName));
-const presetIndex = ref(clampPreset(0));
+
+function nameInputCallback(nameInput: string): void {
+  name.value = clampName(nameInput);
+}
+
+watch(
+  () => props.scaleName,
+  (newName) => nameInputCallback(newName),
+  { immediate: true }
+);
+
+function formatPresetIndex(input: string): string {
+  const number = parseInt(input.replace(/\D/g, ""));
+  if (Number.isNaN(number)) return "0";
+  return String(clamp(0, 127, number));
+}
+
+const presetIndex = ref("0");
+
+function presetIndexInputCallback(indexInput: string): void {
+  presetIndex.value = formatPresetIndex(indexInput);
+}
 
 function doExport() {
   const params = {
@@ -37,7 +54,7 @@ function doExport() {
     filename: sanitizeFilename(props.scaleName),
     baseMidiNote: props.baseMidiNote,
     name: name.value,
-    presetIndex: presetIndex.value,
+    presetIndex: parseInt(presetIndex.value),
   };
 
   const exporter = new MtsSysexExporter(params);
@@ -61,7 +78,7 @@ function doExport() {
             type="text"
             id="name"
             v-model="name"
-            maxlength="16"
+            @input="nameInputCallback(name)"
           />
         </div>
         <div class="control">
@@ -72,43 +89,17 @@ function doExport() {
               class="info-question"
               title="Refer to your synth's manual for a valid range"
             >
-              ?
             </span>
           </label>
           <input
             class="half"
-            type="number"
             id="preset-index"
+            type="text"
             v-model="presetIndex"
-            min="0"
-            max="127"
+            @input="presetIndexInputCallback(presetIndex)"
           />
         </div>
       </div>
     </template>
   </Modal>
 </template>
-
-<style>
-input.half {
-  flex-grow: 0.25 !important;
-}
-
-span.info-question {
-  border-radius: 50%;
-  border-width: 2px;
-  border-style: solid;
-  padding-left: 4px;
-  padding-right: 4px;
-  font-size: smaller;
-
-  transition: 0.3s ease;
-}
-
-span.info-question:hover {
-  background: white;
-  color: black;
-  border-color: white;
-  transition: all 0.3s ease;
-}
-</style>
