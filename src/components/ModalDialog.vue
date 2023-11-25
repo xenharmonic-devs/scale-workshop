@@ -7,6 +7,7 @@ const props = defineProps({
     default: "",
     type: String,
   },
+  okDisabled: Boolean,
 });
 
 const emit = defineEmits(["confirm", "cancel"]);
@@ -84,7 +85,9 @@ watch(
           <div class="modal-footer">
             <slot name="footer">
               <div class="btn-group">
-                <button @click="$emit('confirm')">OK</button>
+                <button @click="$emit('confirm')" :disabled="okDisabled">
+                  OK
+                </button>
                 <button @click="$emit('cancel')">Cancel</button>
               </div>
             </slot>
