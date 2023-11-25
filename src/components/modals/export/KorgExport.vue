@@ -22,11 +22,20 @@ const models = [
 ];
 
 const modelName = ref("minilogue");
-const useScaleFormat = ref(true);
+const useOctaveFormat = ref(false);
+
+const dialogErrorMessage = computed(() => {
+  if (useOctaveFormat.value) {
+    const message = KorgExporter.getOctaveFormatErrorMessage(props.scale);
+    if (message.length > 0) return message;
+  }
+  // Can check for other errors here...
+  return String();
+});
 
 const fileTypePreview = computed(() => {
   const format = getKorgModelInfo(modelName.value);
-  return useScaleFormat.value ? format.scale : format.octave;
+  return useOctaveFormat.value ? format.octave : format.scale;
 });
 
 function doExport() {
@@ -40,7 +49,7 @@ function doExport() {
   const exporter = new KorgExporter(
     params,
     modelName.value,
-    useScaleFormat.value
+    useOctaveFormat.value
   );
   exporter.saveFile();
 
@@ -49,7 +58,11 @@ function doExport() {
 </script>
 
 <template>
-  <Modal @confirm="doExport" @cancel="$emit('cancel')">
+  <Modal
+    @confirm="doExport"
+    @cancel="$emit('cancel')"
+    :ok-disabled="dialogErrorMessage.length > 0"
+  >
     <template #header>
       <h2>Export Korg Sound Librarian scale</h2>
     </template>
@@ -66,11 +79,11 @@ function doExport() {
         <div id="format" class="control radio-group">
           <label for="format">Tuning Format</label>
           <label>
-            <input type="radio" :value="true" v-model="useScaleFormat" />
+            <input type="radio" :value="false" v-model="useOctaveFormat" />
             &nbsp;Scale (128-note table)
           </label>
           <label>
-            <input type="radio" :value="false" v-model="useScaleFormat" />
+            <input type="radio" :value="true" v-model="useOctaveFormat" />
             &nbsp;Octave (12-note table, octave repeating with fixed C)
           </label>
         </div>
@@ -78,6 +91,11 @@ function doExport() {
           <label>Export Format: </label>
           {{ fileTypePreview }}
         </p>
+        <div class="alert-box-danger" v-if="dialogErrorMessage.length > 0">
+          <p class="alert-message-danger">
+            {{ dialogErrorMessage }}
+          </p>
+        </div>
       </div>
     </template>
   </Modal>
