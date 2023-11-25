@@ -22,6 +22,11 @@
 
   --color-error: red;
 
+  /* Mimic Bootstrap alert with 'danger' variant */ 
+  --color-alert-danger: rgba(104, 35, 39, 1.0);
+  --color-alert-danger-background: rgba(243, 216, 218, 1.0);
+  --color-alert-danger-border: rgba(239, 199, 204, 1.0);
+
   --section-gap: 160px;
   --base-font-size: 15px;
   --base-line-height: 1.5;
@@ -299,4 +304,17 @@ span.info-question:hover {
   background: var(--color-text);
   color: var(--color-background);
   transition: all 0.3s ease;
+}
+
+/* Padded box for displaying UI feedback message */
+div.alert-box-danger {
+  background: var(--color-alert-danger-background);
+  border-width: 1px;
+  border-radius: 1%;
+  border-style: solid;
+  border-color: var(--color-alert-danger-border);
+  padding: 8px;
+}
+p.alert-message-danger {
+  color: var(--color-alert-danger);
 }
