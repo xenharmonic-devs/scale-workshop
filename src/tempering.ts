@@ -18,6 +18,18 @@ import {
 } from "xen-dev-utils";
 import { Interval, Scale } from "scale-workshop-core";
 
+export function toPrimeMapping(mapping: number[], subgroup: Subgroup) {
+  const result = subgroup.toPrimeMapping(mapping);
+
+  while (result.length > DEFAULT_NUMBER_OF_COMPONENTS) {
+    result.pop();
+  }
+  while (result.length < DEFAULT_NUMBER_OF_COMPONENTS) {
+    result.push(PRIME_CENTS[result.length]);
+  }
+  return result as number[];
+}
+
 export class Mapping {
   vector: number[];
 

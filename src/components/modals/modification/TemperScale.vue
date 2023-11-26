@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
-import { Mapping, stretchToEdo } from "@/tempering";
+import {
+  DEFAULT_NUMBER_OF_COMPONENTS,
+  MAX_GEO_SUBGROUP_SIZE,
+} from "@/constants";
+import { Mapping, stretchToEdo, toPrimeMapping } from "@/tempering";
 import { computed, ref, watch } from "vue";
 import Modal from "@/components/ModalDialog.vue";
 import { makeState, splitText } from "@/components/modals/tempering-state";
 import { add, Fraction, PRIME_CENTS } from "xen-dev-utils";
-import { mapByVal, resolveMonzo } from "temperaments";
+import { mapByVal, resolveMonzo, tenneyVals, vanishCommas } from "temperaments";
 import {
   ExtendedMonzo,
   Interval,
@@ -47,6 +50,10 @@ const commas = state.commas;
 const subgroup = state.subgroup;
 const options = state.options;
 const edoUnavailable = computed(() => vals.value.length !== 1);
+
+const constraintsDisabled = computed(
+  () => subgroup.value.basis.length > MAX_GEO_SUBGROUP_SIZE
+);
 
 watch(subgroupError, (newValue) =>
   subgroupInput.value!.setCustomValidity(newValue)
@@ -128,19 +135,57 @@ function modify() {
         }
         mapping = new Mapping(vector.slice(0, DEFAULT_NUMBER_OF_COMPONENTS));
       } else if (method.value === "vals") {
-        mapping = Mapping.fromVals(
-          vals.value,
-          DEFAULT_NUMBER_OF_COMPONENTS,
-          subgroup.value,
-          options.value
-        );
+        if (constraintsDisabled.value) {
+          // Subgroup is too large to use geometric methods. Use O(n²) projection instead.
+          const weights = options.value.weights;
+          // True constraints are not supported so CTE is interpreted as POTE.
+          const temperEquaves =
+            options.value.temperEquaves && tempering.value !== "CTE";
+          const jip = subgroup.value.jip();
+          const valVectors = vals.value.map((val) =>
+            subgroup.value.fromWarts(val)
+          );
+          let mappingVector = tenneyVals(valVectors, jip, weights);
+          if (!temperEquaves) {
+            mappingVector = mappingVector.map(
+              (m) => (jip[0] * m) / mappingVector[0]
+            );
+          }
+          mapping = new Mapping(toPrimeMapping(mappingVector, subgroup.value));
+        } else {
+          mapping = Mapping.fromVals(
+            vals.value,
+            DEFAULT_NUMBER_OF_COMPONENTS,
+            subgroup.value,
+            options.value
+          );
+        }
       } else {
-        mapping = Mapping.fromCommas(
-          commas.value,
-          DEFAULT_NUMBER_OF_COMPONENTS,
-          subgroup.value,
-          options.value
-        );
+        if (constraintsDisabled.value) {
+          // Subgroup is too large to use geometric methods. Use O(n) gradient descent instead.
+          // True constraints are not supported so CTE is interpreted as pure equaves.
+          const temperEquaves =
+            options.value.temperEquaves && tempering.value !== "CTE";
+          const weights = options.value.weights;
+          const jip = subgroup.value.jip();
+          const commaMonzos = commas.value.map(
+            (comma) => subgroup.value.toMonzoAndResidual(comma)[0]
+          );
+          const mappingVector = vanishCommas(
+            commaMonzos,
+            jip,
+            weights,
+            temperEquaves
+          );
+          mapping = new Mapping(toPrimeMapping(mappingVector, subgroup.value));
+        } else {
+          mapping = Mapping.fromCommas(
+            commas.value,
+            DEFAULT_NUMBER_OF_COMPONENTS,
+            subgroup.value,
+            options.value
+          );
+        }
       }
       emit(
         "update:scale",
@@ -300,6 +345,7 @@ function modify() {
                 id="tempering-CTE"
                 value="CTE"
                 @focus="error = ''"
+                :disabled="constraintsDisabled"
                 v-model="tempering"
               />
               <label for="tempering-CTE"> CTE </label>
@@ -311,6 +357,7 @@ function modify() {
             <textarea
               id="constraints"
               @focus="error = ''"
+              :disabled="constraintsDisabled"
               v-model="constraintsString"
             ></textarea>
           </div>

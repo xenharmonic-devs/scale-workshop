@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
+import {
+  DEFAULT_NUMBER_OF_COMPONENTS,
+  MAX_INTERACTIVE_SUBGROUP_SIZE,
+} from "@/constants";
 import {
   makeRank2FromVals,
   makeRank2FromCommas,
@@ -105,7 +108,7 @@ const [mosPatterns, mosPatternsError] = computedAndError(() => {
       return [];
     }
     // Huge subgroups get too expensive to evaluate interactively
-    if (subgroup.value.basis.length > 6) {
+    if (subgroup.value.basis.length > MAX_INTERACTIVE_SUBGROUP_SIZE) {
       return expensiveMosPatterns.value;
     }
     return mosPatternsRank2FromVals(
@@ -121,7 +124,7 @@ const [mosPatterns, mosPatternsError] = computedAndError(() => {
       return [];
     }
     // Huge subgroups get too expensive to evaluate interactively
-    if (subgroup.value.basis.length > 6) {
+    if (subgroup.value.basis.length > MAX_INTERACTIVE_SUBGROUP_SIZE) {
       return expensiveMosPatterns.value;
     }
     return mosPatternsRank2FromCommas(

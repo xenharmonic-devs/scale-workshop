@@ -7,9 +7,40 @@ import {
   makeRank2FromVals,
   mosPatternsRank2FromCommas,
   mosPatternsRank2FromVals,
+  toPrimeMapping,
 } from "../tempering";
-import { arraysEqual, Fraction, valueToCents } from "xen-dev-utils";
+import {
+  arraysEqual,
+  Fraction,
+  PRIME_CENTS,
+  valueToCents,
+} from "xen-dev-utils";
 import { ExtendedMonzo, Interval, Scale } from "scale-workshop-core";
+import { Subgroup } from "temperaments";
+import { DEFAULT_NUMBER_OF_COMPONENTS } from "../constants";
+
+describe("Prime map converter", () => {
+  it("does (almost) nothing in 5-limit JI", () => {
+    const fiveLimit = PRIME_CENTS.slice(0, 3);
+    const mapping = toPrimeMapping(fiveLimit, new Subgroup(5));
+    expect(mapping[0]).toBeCloseTo(fiveLimit[0]);
+    expect(mapping[1]).toBeCloseTo(fiveLimit[1]);
+    expect(mapping[2]).toBeCloseTo(fiveLimit[2]);
+    expect(mapping.length).toBe(DEFAULT_NUMBER_OF_COMPONENTS);
+    expect(mapping[3]).toBeCloseTo(PRIME_CENTS[3]);
+  });
+
+  it("converts a mapping in 2.3.13/5 to 2.3.5.7.11.13...", () => {
+    const original = [1200, 1901, 1654];
+    const mapping = toPrimeMapping(original, new Subgroup("2.3.13/5"));
+    expect(mapping[0]).toBeCloseTo(1200);
+    expect(mapping[1]).toBeCloseTo(1901);
+    expect(mapping[3]).toBeCloseTo(PRIME_CENTS[3]);
+    expect(mapping[4]).toBeCloseTo(PRIME_CENTS[4]);
+    expect(mapping[5] - mapping[2]).toBeCloseTo(1654);
+    expect(mapping[6]).toBeCloseTo(PRIME_CENTS[6]);
+  });
+});
 
 describe("Temperament Mapping", () => {
   it("calculates POTE meantone", () => {
