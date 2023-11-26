@@ -112,6 +112,18 @@ describe("URL encoder", () => {
       v: "3",
     });
   });
+
+  it("can escape invalid lines", () => {
+    const lines = ["3/2", "foo", "BAR", "2/1"];
+    expect(encodeLines(lines)).toBe("3F2_EfEoEo_EBAER_2F1");
+  });
+
+  it("can decode invalid lines", () => {
+    const expected = ["3/2", "foo", "BAR", "2/1"];
+    expect(
+      arraysEqual(decodeLines("3F2_EfEoEo_EBAER_2F1"), expected)
+    ).toBeTruthy();
+  });
 });
 
 describe("URL decoder", () => {
