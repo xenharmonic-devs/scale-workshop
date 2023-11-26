@@ -24,7 +24,7 @@ export class ScalaImporter extends TextImporter {
         throw new Error(`Failed to parse line ${line}`);
       }
       intervals.push(
-        parseLine(line, DEFAULT_NUMBER_OF_COMPONENTS, undefined, true)
+        parseLine(line, DEFAULT_NUMBER_OF_COMPONENTS, undefined, true, false)
       );
     });
     const scale = Scale.fromIntervalArray(intervals);
