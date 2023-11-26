@@ -3,9 +3,15 @@ import { computed, type ComputedRef } from "vue";
 import { gcd, mmod } from "xen-dev-utils";
 import { DEFAULT_NUMBER_OF_COMPONENTS } from "./constants";
 
+// Split at whitespace, pipes, amps, colons, semicolons and commas
+export const SEPARATOR_RE = /\s|\||&|:|;|,/;
+
+export function splitText(text: string) {
+  return text.split(SEPARATOR_RE).filter((token) => token.length);
+}
+
 export function parseChordInput(input: string) {
-  const separator = input.includes(":") ? ":" : /\s/;
-  return parseChord(input, DEFAULT_NUMBER_OF_COMPONENTS, separator);
+  return parseChord(input, DEFAULT_NUMBER_OF_COMPONENTS, SEPARATOR_RE);
 }
 
 export function debounce(func: (...args: any[]) => void, timeout = 300) {

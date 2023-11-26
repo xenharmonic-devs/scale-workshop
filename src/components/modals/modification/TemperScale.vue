@@ -6,7 +6,7 @@ import {
 import { Mapping, stretchToEdo, toPrimeMapping } from "@/tempering";
 import { computed, ref, watch } from "vue";
 import Modal from "@/components/ModalDialog.vue";
-import { makeState, splitText } from "@/components/modals/tempering-state";
+import { makeState } from "@/components/modals/tempering-state";
 import { add, Fraction, PRIME_CENTS } from "xen-dev-utils";
 import { mapByVal, resolveMonzo, tenneyVals, vanishCommas } from "temperaments";
 import {
@@ -15,6 +15,7 @@ import {
   Scale,
   type IntervalOptions,
 } from "scale-workshop-core";
+import { splitText } from "@/utils";
 
 const props = defineProps<{
   scale: Scale;
@@ -46,6 +47,7 @@ const constraintsString = state.constraintsString;
 
 // === Computed state ===
 const vals = state.vals;
+const rawCommas = state.rawCommas;
 const commas = state.commas;
 const subgroup = state.subgroup;
 const options = state.options;
@@ -168,7 +170,7 @@ function modify() {
             options.value.temperEquaves && tempering.value !== "CTE";
           const weights = options.value.weights;
           const jip = subgroup.value.jip();
-          const commaMonzos = commas.value.map(
+          const commaMonzos = rawCommas.value.map(
             (comma) => subgroup.value.toMonzoAndResidual(comma)[0]
           );
           const mappingVector = vanishCommas(
