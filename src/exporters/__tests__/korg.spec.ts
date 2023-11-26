@@ -1,10 +1,10 @@
 import { createHash } from "crypto";
 import type { JSZipObject } from "jszip";
 import { DEFAULT_NUMBER_OF_COMPONENTS } from "../../constants";
-import { Scale } from "scale-workshop-core";
+import { ExtendedMonzo, Interval, Scale } from "scale-workshop-core";
 import { describe, it, expect } from "vitest";
 
-import { MnlgtunsExporter, MnlgtunoExporter } from "../korg";
+import { KorgExporter, KorgModels, KorgExporterError } from "../korg";
 
 import { getTestData } from "./test-data";
 
@@ -19,7 +19,7 @@ describe("Korg exporters", () => {
       256
     );
 
-    const exporter = new MnlgtunsExporter(params);
+    const exporter = new KorgExporter(params, KorgModels.MINILOGUE, false);
     const [zip, fileType] = exporter.getFileContents();
 
     expect(fileType).toBe(".mnlgtuns");
@@ -36,7 +36,7 @@ describe("Korg exporters", () => {
       if (path.endsWith("bin")) {
         const content = await file.async("uint8array");
         expect(createHash("sha256").update(content).digest("base64")).toBe(
-          "/st0f/90q1FNXxNnw2S+SCFeu9TkbXIydn85+qrqnrg="
+          "LvpKRSKkPVHun2VShSXSBx5zWy52voZcZGduTSVmeEY="
         );
       }
       // Other contents didn't seem to have issues so we ignore them here.
@@ -45,7 +45,8 @@ describe("Korg exporters", () => {
 
   it("can handle all line types (mnlgtuns)", async () => {
     const params = getTestData("Korg 'logue exporter unit test v0.0.0");
-    const exporter = new MnlgtunsExporter(params);
+
+    const exporter = new KorgExporter(params, KorgModels.MINILOGUE, false);
     const [zip, fileType] = exporter.getFileContents();
 
     expect(fileType).toBe(".mnlgtuns");
@@ -62,17 +63,17 @@ describe("Korg exporters", () => {
       if (path.endsWith("bin")) {
         const content = await file.async("uint8array");
         expect(createHash("sha256").update(content).digest("base64")).toBe(
-          "nuHoVQKeaJlIHrNsaAcxFfoepmtzy+NN48LcfoU4fqE="
+          "z7mQ6pS8tVYimN2B5V3WIgN7NR4lFMwrlIjxKJkWEss="
         );
       } else {
         const content = await file.async("string");
         if (path === "TunS_000.TunS_info") {
           expect(content).toBe(
-            "<minilogue_TuneScaleInformation><Programmer>ScaleWorkshop</Programmer><Comment>Test Scale</Comment></minilogue_TuneScaleInformation>"
+            '<?xml version="1.0" encoding="UTF-8"?>\n\n<minilogue_TuneScaleInformation>\n  <Programmer>ScaleWorkshop</Programmer>\n  <Comment>Test Scale</Comment>\n</minilogue_TuneScaleInformation>\n'
           );
         } else {
           expect(content).toBe(
-            '<KorgMSLibrarian_Data><Product>minilogue</Product><Contents NumProgramData="0" NumPresetInformation="0" NumTuneScaleData="1" NumTuneOctData="0"><TuneScaleData><Information>TunS_000.TunS_info</Information><TuneScaleBinary>TunS_000.TunS_bin</TuneScaleBinary></TuneScaleData></Contents></KorgMSLibrarian_Data>'
+            '<?xml version="1.0" encoding="UTF-8"?>\n\n<KorgMSLibrarian_Data>\n  <Product>minilogue</Product>\n  <Contents NumProgramData="0" NumPresetInformation="0" NumTuneScaleData="1"\n            NumTuneOctData="0">\n    <TuneScaleData>\n      <Information>TunS_000.TunS_info</Information>\n      <TuneScaleBinary>TunS_000.TunS_bin</TuneScaleBinary>\n    </TuneScaleData>\n  </Contents>\n</KorgMSLibrarian_Data>\n'
           );
         }
       }
@@ -81,9 +82,78 @@ describe("Korg exporters", () => {
     return;
   });
 
+  it("throws error if 12-note octave tuning is selected, but equave is not 2/1", () => {
+    const params = getTestData("Korg 'logue exporter unit test v0.0.0");
+    params.scale.equave = new Interval(
+      ExtendedMonzo.fromCents(100.0, 3),
+      "cents"
+    );
+    expect(
+      () => new KorgExporter(params, KorgModels.MINILOGUE, true)
+    ).toThrowError(KorgExporterError.OCTAVE_INVALID_EQUAVE);
+  });
+
+  it("throws error if 12-note octave tuning is selected, but scale does not have 12 notes", () => {
+    const params = getTestData("Korg 'logue exporter unit test v0.0.0");
+    expect(
+      () => new KorgExporter(params, KorgModels.MINILOGUE, true)
+    ).toThrowError(KorgExporterError.OCTAVE_INVALID_SIZE);
+  });
+
+  it("throws error if 12-note octave tuning is selected, but scale contains an interval that is below unison", () => {
+    const params = getTestData("Korg 'logue exporter unit test v0.0.0");
+    params.scale.intervals.splice(
+      1,
+      0,
+      new Interval(ExtendedMonzo.fromCents(-500.0, 3), "cents")
+    );
+
+    // Make sure there's 12 notes in the test scale
+    while (params.scale.intervals.length < 12)
+      params.scale.intervals.splice(
+        1,
+        0,
+        new Interval(ExtendedMonzo.fromCents(100.0, 3), "cents")
+      );
+
+    expect(
+      () => new KorgExporter(params, KorgModels.MINILOGUE, true)
+    ).toThrowError(KorgExporterError.OCTAVE_INVALID_INTERVAL);
+  });
+
+  it("throws error if 12-note octave tuning is selected, but scale contains an interval that is greater than an octave", () => {
+    const params = getTestData("Korg 'logue exporter unit test v0.0.0");
+    params.scale.intervals.splice(
+      1,
+      0,
+      new Interval(ExtendedMonzo.fromCents(1300.0, 3), "cents")
+    );
+
+    // Make sure there's 12 notes in the test scale
+    while (params.scale.intervals.length < 12)
+      params.scale.intervals.splice(
+        1,
+        0,
+        new Interval(ExtendedMonzo.fromCents(100.0, 3), "cents")
+      );
+
+    expect(
+      () => new KorgExporter(params, KorgModels.MINILOGUE, true)
+    ).toThrowError(KorgExporterError.OCTAVE_INVALID_INTERVAL);
+  });
+
   it("can handle all line types (mnlgtuno)", async () => {
     const params = getTestData("Korg 'logue exporter unit test v0.0.0");
-    const exporter = new MnlgtunoExporter(params);
+
+    // Make sure there's 12 notes in the test scale
+    while (params.scale.intervals.length < 12)
+      params.scale.intervals.splice(
+        1,
+        0,
+        new Interval(ExtendedMonzo.fromCents(100.0, 3), "cents")
+      );
+
+    const exporter = new KorgExporter(params, KorgModels.MINILOGUE, true);
     const [zip, fileType] = exporter.getFileContents();
 
     expect(fileType).toBe(".mnlgtuno");
@@ -100,17 +170,17 @@ describe("Korg exporters", () => {
       if (path.endsWith("bin")) {
         const content = await file.async("uint8array");
         expect(createHash("sha256").update(content).digest("base64")).toBe(
-          "dQWlBBzfHE/LLvEhmAQqM1AppQg5YsoQ2GQbK6KTUeM="
+          "XwQptSiZLUa8LL/41LEeN1fUNvFr8GUptkga2k+tYJE="
         );
       } else {
         const content = await file.async("string");
         if (path === "TunO_000.TunO_info") {
           expect(content).toBe(
-            "<minilogue_TuneOctInformation><Programmer>ScaleWorkshop</Programmer><Comment>Test Scale</Comment></minilogue_TuneOctInformation>"
+            '<?xml version="1.0" encoding="UTF-8"?>\n\n<minilogue_TuneOctInformation>\n  <Programmer>ScaleWorkshop</Programmer>\n  <Comment>Test Scale</Comment>\n</minilogue_TuneOctInformation>\n'
           );
         } else {
           expect(content).toBe(
-            '<KorgMSLibrarian_Data><Product>minilogue</Product><Contents NumProgramData="0" NumPresetInformation="0" NumTuneScaleData="0" NumTuneOctData="1"><TuneOctData><Information>TunO_000.TunO_info</Information><TuneOctBinary>TunO_000.TunO_bin</TuneOctBinary></TuneOctData></Contents></KorgMSLibrarian_Data>'
+            '<?xml version="1.0" encoding="UTF-8"?>\n\n<KorgMSLibrarian_Data>\n  <Product>minilogue</Product>\n  <Contents NumProgramData="0" NumPresetInformation="0" NumTuneScaleData="0"\n            NumTuneOctData="1">\n    <TuneOctData>\n      <Information>TunO_000.TunO_info</Information>\n      <TuneOctBinary>TunO_000.TunO_bin</TuneOctBinary>\n    </TuneOctData>\n  </Contents>\n</KorgMSLibrarian_Data>\n'
           );
         }
       }

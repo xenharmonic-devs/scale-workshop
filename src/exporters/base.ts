@@ -17,6 +17,7 @@ export type ExporterParams = {
   centsRoot?: number;
   displayPeriod?: boolean;
   integratePeriod?: boolean;
+  presetIndex?: number;
 };
 
 export class BaseExporter {
