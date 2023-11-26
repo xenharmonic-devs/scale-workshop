@@ -248,3 +248,50 @@ export function makeRank2FromCommas(
   }
   return makeRank2(temperament, size, options);
 }
+
+export function stretchToEdo(
+  interval: Interval,
+  steps: number,
+  edo: number
+): Interval;
+export function stretchToEdo(scale: Scale, steps: number[], edo: number): Scale;
+export function stretchToEdo(
+  intervalOrScale: Interval | Scale,
+  steps: number | number[],
+  edo: number
+): Interval | Scale {
+  if (intervalOrScale instanceof Interval) {
+    if (Array.isArray(steps)) {
+      throw new Error("Steps must be a single number");
+    }
+    const interval = intervalOrScale;
+    const monzo = interval.monzo;
+    const totalCents = monzo.totalCents();
+    if (!totalCents) {
+      return interval;
+    }
+    const targetCents = (1200.0 * steps) / edo + monzo.cents;
+    const tempered = monzo.stretch(targetCents / totalCents);
+    return new Interval(
+      tempered,
+      interval.type,
+      interval.name,
+      interval.options
+    );
+  }
+  if (!Array.isArray(steps)) {
+    throw new Error("Steps must be an array of numbers");
+  }
+  const scale = intervalOrScale;
+  if (steps.length !== scale.size + 1) {
+    throw new Error("Steps must align with the scale");
+  }
+  const intervals = scale.intervals.map((interval, i) =>
+    stretchToEdo(interval, steps[i], edo)
+  );
+  return new Scale(
+    intervals,
+    stretchToEdo(scale.equave, steps[steps.length - 1], edo),
+    scale.baseFrequency
+  );
+}

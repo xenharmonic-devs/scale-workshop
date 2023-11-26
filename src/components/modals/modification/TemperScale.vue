@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
-import { Mapping } from "@/tempering";
-import { ref, watch } from "vue";
+import { Mapping, stretchToEdo } from "@/tempering";
+import { computed, ref, watch } from "vue";
 import Modal from "@/components/ModalDialog.vue";
 import { makeState, splitText } from "@/components/modals/tempering-state";
-import { PRIME_CENTS } from "xen-dev-utils";
-import type { Scale } from "scale-workshop-core";
+import { add, Fraction, PRIME_CENTS } from "xen-dev-utils";
+import { mapByVal, resolveMonzo } from "temperaments";
+import {
+  ExtendedMonzo,
+  Interval,
+  Scale,
+  type IntervalOptions,
+} from "scale-workshop-core";
 
 const props = defineProps<{
   scale: Scale;
@@ -22,6 +28,7 @@ const state = makeState(method);
 const mappingString = ref("1200, 1897.2143, 2788.8573");
 // method: "vals"
 const valsString = state.valsString;
+const convertToEdoSteps = ref(false);
 // medhod: "commas"
 const commasString = state.commasString;
 // Generic
@@ -39,6 +46,7 @@ const vals = state.vals;
 const commas = state.commas;
 const subgroup = state.subgroup;
 const options = state.options;
+const edoUnavailable = computed(() => vals.value.length !== 1);
 
 watch(subgroupError, (newValue) =>
   subgroupInput.value!.setCustomValidity(newValue)
@@ -46,38 +54,101 @@ watch(subgroupError, (newValue) =>
 
 // === Methods ===
 
+// Expand out the residual in the `ExtendedMonzo` and ignore cents offsets
+function toLongMonzo(monzo: ExtendedMonzo) {
+  const base = resolveMonzo(monzo.residual);
+  return add(
+    base,
+    monzo.vector.map((component) => component.valueOf())
+  );
+}
+
 function modify() {
   try {
-    let mapping: Mapping;
-    if (method.value === "mapping") {
-      const vector = splitText(mappingString.value).map((component) =>
-        parseFloat(component)
+    if (
+      method.value === "vals" &&
+      !edoUnavailable.value &&
+      !subgroupString.value.length
+    ) {
+      const monzos = [...Array(props.scale.size + 1).keys()].map((i) =>
+        toLongMonzo(props.scale.getMonzo(i))
       );
-      while (vector.length < DEFAULT_NUMBER_OF_COMPONENTS) {
-        vector.push(PRIME_CENTS[vector.length]);
+      const octave = new Fraction(2);
+      monzos.push(resolveMonzo(octave));
+      const steps = mapByVal(monzos, vals.value[0]);
+      const edo = steps.pop();
+      let scale: Scale;
+      if (convertToEdoSteps.value) {
+        const options: IntervalOptions = {
+          preferredEtDenominator: edo,
+          preferredEtEquave: octave,
+        };
+        const equave = new Interval(
+          ExtendedMonzo.fromEqualTemperament(
+            new Fraction(steps.pop()!, edo),
+            octave,
+            DEFAULT_NUMBER_OF_COMPONENTS
+          ),
+          "equal temperament",
+          undefined,
+          options
+        );
+        scale = new Scale(
+          steps.map(
+            (step) =>
+              new Interval(
+                ExtendedMonzo.fromEqualTemperament(
+                  new Fraction(step, edo),
+                  octave,
+                  DEFAULT_NUMBER_OF_COMPONENTS
+                ),
+                "equal temperament",
+                undefined,
+                options
+              )
+          ),
+          equave,
+          props.scale.baseFrequency
+        );
+      } else {
+        scale = stretchToEdo(props.scale, steps, edo!);
       }
-      mapping = new Mapping(vector.slice(0, DEFAULT_NUMBER_OF_COMPONENTS));
-    } else if (method.value === "vals") {
-      mapping = Mapping.fromVals(
-        vals.value,
-        DEFAULT_NUMBER_OF_COMPONENTS,
-        subgroup.value,
-        options.value
+      emit(
+        "update:scale",
+        scale.mergeOptions({ centsFractionDigits: props.centsFractionDigits })
       );
     } else {
-      mapping = Mapping.fromCommas(
-        commas.value,
-        DEFAULT_NUMBER_OF_COMPONENTS,
-        subgroup.value,
-        options.value
+      let mapping: Mapping;
+      if (method.value === "mapping") {
+        const vector = splitText(mappingString.value).map((component) =>
+          parseFloat(component)
+        );
+        while (vector.length < DEFAULT_NUMBER_OF_COMPONENTS) {
+          vector.push(PRIME_CENTS[vector.length]);
+        }
+        mapping = new Mapping(vector.slice(0, DEFAULT_NUMBER_OF_COMPONENTS));
+      } else if (method.value === "vals") {
+        mapping = Mapping.fromVals(
+          vals.value,
+          DEFAULT_NUMBER_OF_COMPONENTS,
+          subgroup.value,
+          options.value
+        );
+      } else {
+        mapping = Mapping.fromCommas(
+          commas.value,
+          DEFAULT_NUMBER_OF_COMPONENTS,
+          subgroup.value,
+          options.value
+        );
+      }
+      emit(
+        "update:scale",
+        mapping
+          .apply(props.scale)
+          .mergeOptions({ centsFractionDigits: props.centsFractionDigits })
       );
     }
-    emit(
-      "update:scale",
-      mapping
-        .apply(props.scale)
-        .mergeOptions({ centsFractionDigits: props.centsFractionDigits })
-    );
   } catch (error_) {
     if (error_ instanceof Error) {
       error.value = error_.message;
@@ -149,6 +220,21 @@ function modify() {
               @focus="error = ''"
               v-model="valsString"
             />
+          </div>
+          <div class="control" v-show="method === 'vals'">
+            <div class="radio-group">
+              <span>
+                <input
+                  type="checkbox"
+                  id="edo-steps"
+                  :disabled="edoUnavailable"
+                  v-model="convertToEdoSteps"
+                />
+                <label for="edo-steps" :class="{ disabled: edoUnavailable }">
+                  Convert to edo-steps</label
+                >
+              </span>
+            </div>
           </div>
 
           <div class="control" v-show="method === 'commas'">
@@ -249,3 +335,9 @@ function modify() {
     </template>
   </Modal>
 </template>
+
+<style>
+.disabled {
+  color: var(--color-text-mute);
+}
+</style>
