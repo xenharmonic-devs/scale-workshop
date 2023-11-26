@@ -158,10 +158,19 @@ function draw(time: DOMHighResTimeStamp) {
   // Render numbers indicating the implied enumerated chord.
   ctx.font = `${size / 10}px sans-serif`;
   ctx.fillStyle = props.textColor;
+  let text;
   if (props.type === "otonal") {
-    ctx.fillText(chord.join(":"), size / 10, size / 10);
+    text = chord.join(":");
   } else {
-    ctx.fillText("1/(" + chord.join(":") + ")", size / 5, size / 10);
+    text = "1/(" + chord.join(":") + ")";
+  }
+  const textWidth = ctx.measureText(text).width;
+  if (textWidth * 10 < width * 8) {
+    ctx.fillText(text, size / 10, size / 10);
+  } else {
+    const fontSize = (size / 11) * (width / textWidth);
+    ctx.font = `${fontSize}px sans-serif`;
+    ctx.fillText(text, size / 20, size / 10);
   }
 
   animationFrame = window.requestAnimationFrame(draw);
