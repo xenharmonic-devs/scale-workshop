@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
+import { midiKeyInfo } from "xen-midi";
 
-import { computeWhiteIndices, midiNoteInfo } from "../midi";
+import { computeWhiteIndices } from "../midi";
 
 describe("White key to white color mapper", () => {
   it("reproduces a chromatic scale in the default (A minor) configuration", () => {
@@ -20,7 +21,7 @@ describe("White key to white color mapper", () => {
     ]);
 
     for (let index = 69; index < 69 + 12; index++) {
-      const info = midiNoteInfo(index);
+      const info = midiKeyInfo(index);
       if (info.whiteNumber === undefined) {
         expect(map[info.sharpOf] + 1).toBe(index);
       } else {
@@ -46,7 +47,7 @@ describe("White key to white color mapper", () => {
     ]);
 
     for (let index = 60; index < 60 + 12; index++) {
-      const info = midiNoteInfo(index);
+      const info = midiKeyInfo(index);
       if (info.whiteNumber === undefined) {
         expect(map[info.sharpOf] + 1).toBe(index);
       } else {
