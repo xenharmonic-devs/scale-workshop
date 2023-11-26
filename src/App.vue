@@ -236,6 +236,14 @@ const encodeState = debounce(() => {
   router.push({ path: getPath(url), query });
 }, 200);
 
+watch(baseMidiNote, (newValue) => {
+  if (isNaN(newValue)) {
+    baseMidiNote.value = 69;
+  } else if (Math.round(newValue) != newValue) {
+    baseMidiNote.value = Math.round(newValue);
+  }
+});
+
 watch(
   [
     scaleName,
