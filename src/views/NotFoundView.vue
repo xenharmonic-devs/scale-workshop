@@ -32,6 +32,11 @@ const props = defineProps<{
   decayTime: number;
   sustainLevel: number;
   releaseTime: number;
+
+  pingPongDelayTime: number;
+  pingPongFeedback: number;
+  pingPongSeparation: number;
+  pingPongGain: number;
 }>();
 
 const emit = defineEmits(["update:scale", "update:scaleName"]);
@@ -64,6 +69,11 @@ function openTheGates(scale: Scale) {
       decayTime: props.decayTime,
       sustainLevel: props.sustainLevel,
       releaseTime: props.releaseTime,
+
+      pingPongDelayTime: props.pingPongDelayTime,
+      pingPongFeedback: props.pingPongFeedback,
+      pingPongSeparation: props.pingPongSeparation,
+      pingPongGain: props.pingPongGain,
     };
 
     const query = encodeQuery(state) as LocationQuery;

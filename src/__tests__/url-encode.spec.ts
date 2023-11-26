@@ -103,6 +103,10 @@ describe("URL encoder", () => {
       decayTime: 0.3,
       sustainLevel: 0.8,
       releaseTime: 0.01,
+      pingPongDelayTime: 0.3,
+      pingPongFeedback: 0.8,
+      pingPongSeparation: 1.0,
+      pingPongGain: 0.0,
     };
     const encoded = encodeQuery(state);
     expect(encoded).toMatchObject({

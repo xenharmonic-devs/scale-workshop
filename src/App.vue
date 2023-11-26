@@ -27,7 +27,7 @@ import {
   mapWhiteQweZxcBlack123Asd,
 } from "./keyboard-mapping";
 import { VirtualSynth } from "./virtual-synth";
-import { Synth } from "@/synth";
+import { PingPongDelay, Synth } from "@/synth";
 import {
   Interval,
   parseLine,
@@ -106,6 +106,13 @@ const maxPolyphony = ref(6);
 const midiWhiteMode = ref<"off" | "simple" | "blackAverage" | "keyColors">(
   "off"
 );
+// Stereo ping pong delay and associated params
+const pingPongDelay = new PingPongDelay(rootProps.audioContext);
+const pingPongGainNode = rootProps.audioContext.createGain();
+const pingPongDelayTime = ref(0.3);
+const pingPongFeedback = ref(0.8);
+const pingPongSeparation = ref(1);
+const pingPongGain = ref(0);
 // These are user preferences and are fetched from local storage.
 const newline = ref(UNIX_NEWLINE);
 const colorScheme = ref<"light" | "dark">("light");
@@ -235,6 +242,10 @@ const encodeState = debounce(() => {
     decayTime: decayTime.value,
     sustainLevel: sustainLevel.value,
     releaseTime: releaseTime.value,
+    pingPongDelayTime: pingPongDelayTime.value,
+    pingPongFeedback: pingPongFeedback.value,
+    pingPongSeparation: pingPongSeparation.value,
+    pingPongGain: pingPongGain.value,
   };
 
   const query = encodeQuery(state) as LocationQuery;
@@ -273,6 +284,10 @@ watch(
     decayTime,
     sustainLevel,
     releaseTime,
+    pingPongDelayTime,
+    pingPongFeedback,
+    pingPongSeparation,
+    pingPongGain,
   ],
   encodeState
 );
@@ -313,6 +328,10 @@ router.afterEach((to, from) => {
       decayTime.value = state.decayTime;
       sustainLevel.value = state.sustainLevel;
       releaseTime.value = state.releaseTime;
+      pingPongDelayTime.value = state.pingPongDelayTime;
+      pingPongFeedback.value = state.pingPongFeedback;
+      pingPongSeparation.value = state.pingPongSeparation;
+      pingPongGain.value = state.pingPongGain;
     } catch (error) {
       console.error(`Error parsing version ${query.get("version")} URL`, error);
     }
@@ -700,6 +719,8 @@ onMounted(() => {
   const gain = ctx.createGain();
   gain.gain.setValueAtTime(mainVolume.value, ctx.currentTime);
   gain.connect(ctx.destination);
+  gain.connect(pingPongDelay.destination);
+  pingPongDelay.connect(pingPongGainNode).connect(ctx.destination);
   mainGain.value = gain;
 
   const lowpass = ctx.createBiquadFilter();
@@ -879,6 +900,39 @@ watch(maxPolyphony, (newValue) => {
   }
 });
 
+// Ping pong delay parameter watchers
+watch(
+  pingPongDelayTime,
+  (newValue) => {
+    pingPongDelay.delayTime = newValue;
+  },
+  { immediate: true }
+);
+watch(
+  pingPongFeedback,
+  (newValue) => {
+    pingPongDelay.feedback = newValue;
+  },
+  { immediate: true }
+);
+watch(
+  pingPongSeparation,
+  (newValue) => {
+    pingPongDelay.separation = newValue;
+  },
+  { immediate: true }
+);
+watch(
+  pingPongGain,
+  (newValue) => {
+    pingPongGainNode.gain.setValueAtTime(
+      newValue,
+      rootProps.audioContext.currentTime
+    );
+  },
+  { immediate: true }
+);
+
 function setMaxPolyphony(newValue: number) {
   if (newValue < 1) {
     newValue = 1;
@@ -1007,6 +1061,10 @@ watch(degreeDownCode, (newValue) =>
     :sustainLevel="sustainLevel"
     :releaseTime="releaseTime"
     :maxPolyphony="maxPolyphony"
+    :pingPongDelayTime="pingPongDelayTime"
+    :pingPongFeedback="pingPongFeedback"
+    :pingPongSeparation="pingPongSeparation"
+    :pingPongGain="pingPongGain"
     :typingKeyboard="typingKeyboard"
     :keyboardMapping="keyboardMapping"
     :showVirtualQwerty="showVirtualQwerty"
@@ -1048,6 +1106,10 @@ watch(degreeDownCode, (newValue) =>
     @update:sustainLevel="sustainLevel = $event"
     @update:releaseTime="releaseTime = $event"
     @update:maxPolyphony="setMaxPolyphony"
+    @update:pingPongDelayTime="pingPongDelayTime = $event"
+    @update:pingPongFeedback="pingPongFeedback = $event"
+    @update:pingPongSeparation="pingPongSeparation = $event"
+    @update:pingPongGain="pingPongGain = $event"
     @panic="panic"
   />
 </template>
