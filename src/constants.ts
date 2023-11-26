@@ -1,3 +1,4 @@
+import { ExtendedMonzo, Interval } from "scale-workshop-core";
 import { version } from "../package.json";
 
 // GLOBALS
@@ -23,3 +24,13 @@ export const WHITE_MODE_OFFSET = 69 - 40;
 export const MAX_INTERACTIVE_SUBGROUP_SIZE = 6;
 // Anything larger than this uses O(n²) methods (if available) instead of O(exp(n))
 export const MAX_GEO_SUBGROUP_SIZE = 9;
+
+// Some often used intervals
+export const OCTAVE = new Interval(
+  ExtendedMonzo.fromFraction(2, DEFAULT_NUMBER_OF_COMPONENTS),
+  "ratio"
+);
+export const FIFTH = new Interval(
+  ExtendedMonzo.fromFraction("3/2", DEFAULT_NUMBER_OF_COMPONENTS),
+  "ratio"
+);

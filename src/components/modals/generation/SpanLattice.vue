@@ -2,7 +2,7 @@
 import { reactive, ref, watch } from "vue";
 import Modal from "@/components/ModalDialog.vue";
 import ScaleLineInput from "@/components/ScaleLineInput.vue";
-import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
+import { DEFAULT_NUMBER_OF_COMPONENTS, OCTAVE } from "@/constants";
 import { computedAndError, parseChordInput } from "@/utils";
 import { makeState } from "@/components/modals/tempering-state";
 import Temperament from "temperaments";
@@ -20,11 +20,6 @@ const props = defineProps<{
 
 const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
 
-const octave = new Interval(
-  ExtendedMonzo.fromFraction(2, DEFAULT_NUMBER_OF_COMPONENTS),
-  "ratio"
-);
-
 const method = ref<"generators" | "vals" | "commas">("generators");
 const state = makeState(method);
 // method: "vals"
@@ -35,7 +30,7 @@ const commasString = state.commasString;
 const basisString = ref("");
 const dimensions = reactive<number[]>([]);
 const equaveString = ref("2/1");
-const equave = ref(octave);
+const equave = ref(OCTAVE);
 // Generic
 const subgroupString = state.subgroupString;
 const subgroupError = state.subgroupError;
@@ -126,7 +121,7 @@ function generate() {
     if (basis.value.length === 0) {
       name = "Lattice (unison";
     }
-    if (!equave.value.equals(octave)) {
+    if (!equave.value.equals(OCTAVE)) {
       name += ` over ${equave.value.toString()}`;
     }
     name += ")";
@@ -215,6 +210,7 @@ function generate() {
               id="equave"
               @update:value="equave = $event"
               v-model="equaveString"
+              :defaultValue="OCTAVE"
             />
           </div>
         </div>

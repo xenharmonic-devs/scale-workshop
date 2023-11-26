@@ -2,9 +2,9 @@
 import { computed, ref, watch } from "vue";
 import Modal from "@/components/ModalDialog.vue";
 import ScaleLineInput from "@/components/ScaleLineInput.vue";
-import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
+import { OCTAVE } from "@/constants";
 import { computedAndError, parseChordInput } from "@/utils";
-import { ExtendedMonzo, Interval, Scale } from "scale-workshop-core";
+import { Scale } from "scale-workshop-core";
 
 const props = defineProps<{
   show: boolean;
@@ -12,16 +12,11 @@ const props = defineProps<{
 
 const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
 
-const octave = new Interval(
-  ExtendedMonzo.fromFraction(2, DEFAULT_NUMBER_OF_COMPONENTS),
-  "ratio"
-);
-
 const factorsString = ref("");
 const numElements = ref(2);
 const addUnity = ref(false);
 const equaveString = ref("2/1");
-const equave = ref(octave);
+const equave = ref(OCTAVE);
 
 const factorsElement = ref<HTMLInputElement | null>(null);
 const [factors, factorsError] = computedAndError(() => {
@@ -53,7 +48,7 @@ function generate() {
     if (addUnity.value) {
       name += " with 1/1";
     }
-    if (!equave.value.equals(octave)) {
+    if (!equave.value.equals(OCTAVE)) {
       name += ` over ${equave.value.toString()}`;
     }
     name += ")";
@@ -108,6 +103,7 @@ function generate() {
             id="equave"
             @update:value="equave = $event"
             v-model="equaveString"
+            :defaultValue="OCTAVE"
           />
         </div>
       </div>
