@@ -579,6 +579,8 @@ function copyToClipboard() {
 
     <EqualTemperamentModal
       :show="showEqualTemperamentModal"
+      :centsFractionDigits="centsFractionDigits"
+      :decimalFractionDigits="decimalFractionDigits"
       @update:scaleName="emit('update:scaleName', $event)"
       @update:scale="
         showEqualTemperamentModal = false;
