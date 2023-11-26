@@ -106,6 +106,7 @@ const colorScheme = ref<"light" | "dark">("light");
 const centsFractionDigits = ref(3);
 const decimalFractionDigits = ref(5);
 const showVirtualQwerty = ref(false);
+const midiOctaveOffset = ref(-1);
 
 // Special keyboard codes also from local storage.
 const deactivationCode = ref("Backquote");
@@ -748,6 +749,9 @@ onMounted(() => {
   if ("showVirtualQwerty" in storage) {
     showVirtualQwerty.value = storage.getItem("showVirtualQwerty") === "true";
   }
+  if ("midiOctaveOffset" in storage) {
+    midiOctaveOffset.value = parseInt(storage.getItem("midiOctaveOffset")!);
+  }
 
   // Fetch special key map
   if ("deactivationCode" in storage) {
@@ -897,6 +901,9 @@ watch(decimalFractionDigits, (newValue) =>
 watch(showVirtualQwerty, (newValue) =>
   window.localStorage.setItem("showVirtualQwerty", newValue.toString())
 );
+watch(midiOctaveOffset, (newValue) =>
+  window.localStorage.setItem("midiOctaveOffset", newValue.toString())
+);
 // Store keymaps
 watch(deactivationCode, (newValue) =>
   window.localStorage.setItem("deactivationCode", newValue)
@@ -993,6 +1000,7 @@ watch(degreeDownCode, (newValue) =>
     :typingKeyboard="typingKeyboard"
     :keyboardMapping="keyboardMapping"
     :showVirtualQwerty="showVirtualQwerty"
+    :midiOctaveOffset="midiOctaveOffset"
     @update:audioDelay="audioDelay = $event"
     @update:mainVolume="mainVolume = $event"
     @update:scaleName="scaleName = $event"
@@ -1018,6 +1026,7 @@ watch(degreeDownCode, (newValue) =>
     @update:centsFractionDigits="centsFractionDigits = $event"
     @update:decimalFractionDigits="decimalFractionDigits = $event"
     @update:showVirtualQwerty="showVirtualQwerty = $event"
+    @update:midiOctaveOffset="midiOctaveOffset = $event"
     @update:deactivationCode="deactivationCode = $event"
     @update:equaveUpCode="equaveUpCode = $event"
     @update:equaveDownCode="equaveDownCode = $event"

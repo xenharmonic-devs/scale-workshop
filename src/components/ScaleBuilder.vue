@@ -50,6 +50,8 @@ const props = defineProps<{
   centsFractionDigits: number;
   decimalFractionDigits: number;
   newline: string;
+
+  midiOctaveOffset: number;
 }>();
 
 const emit = defineEmits([
@@ -129,6 +131,7 @@ function doExport(exporter: ExporterKey) {
     scale: props.scale,
     filename: sanitizeFilename(props.scaleName),
     baseMidiNote: props.baseMidiNote,
+    midiOctaveOffset: props.midiOctaveOffset,
     description: props.scaleName,
     lines: props.scaleLines,
     appTitle: APP_TITLE,
@@ -373,7 +376,9 @@ function copyToClipboard() {
             step="1"
             v-model="baseMidiNote"
           />
-          <span>{{ midiNoteNumberToName(baseMidiNote) }}</span>
+          <span>{{
+            midiNoteNumberToName(baseMidiNote, props.midiOctaveOffset)
+          }}</span>
         </div>
 
         <!-- This control is for the 3rd field that is found at the top of kbm files -->

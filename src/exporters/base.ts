@@ -5,6 +5,7 @@ export type ExporterParams = {
   scale: Scale;
   filename: string;
   baseMidiNote: number;
+  midiOctaveOffset: number;
   name?: string;
   scaleUrl?: string;
   description?: string;
