@@ -1,14 +1,23 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
-import { Input, Output, WebMidi, type MessageEvent } from "webmidi";
+import {
+  Input,
+  Output,
+  WebMidi,
+  type NoteMessageEvent,
+  type MessageEvent,
+} from "webmidi";
+import MidiPiano from "@/components/MidiPiano.vue";
 
 const props = defineProps<{
+  baseMidiNote: number;
   midiInput: Input | null;
   midiOutput: Output | null;
   midiInputChannels: Set<number>;
   midiOutputChannels: Set<number>;
   midiVelocityOn: boolean;
   midiWhiteMode: "off" | "simple" | "blackAverage" | "keyColors";
+  keyColors: string[];
 }>();
 
 const emit = defineEmits([
@@ -25,6 +34,9 @@ const outputs = reactive<Output[]>([]);
 const inputHighlights = reactive<Set<number>>(new Set());
 const stopHighlights = ref<() => void>(() => {});
 
+const activeKeys = reactive<Set<number>>(new Set());
+const stopActivations = ref<() => void>(() => {});
+
 const midiVelocityOn = computed({
   get: () => props.midiVelocityOn,
   set: (newValue) => emit("update:midiVelocityOn", newValue),
@@ -39,6 +51,18 @@ function highlightMidiChannel(event: MessageEvent) {
   setTimeout(() => inputHighlights.delete(event.message.channel), 500);
 }
 
+function activateKey(event: NoteMessageEvent) {
+  if (props.midiInputChannels.has(event.message.channel)) {
+    activeKeys.add(event.note.number);
+  }
+}
+
+function deactivateKey(event: NoteMessageEvent) {
+  if (props.midiInputChannels.has(event.message.channel)) {
+    activeKeys.delete(event.note.number);
+  }
+}
+
 function selectMidiInput(event: Event) {
   const id = (event!.target as HTMLSelectElement).value;
   stopHighlights.value();
@@ -51,6 +75,20 @@ function selectMidiInput(event: Event) {
     input.addListener("midimessage", highlightMidiChannel);
     stopHighlights.value = () =>
       input.removeListener("midimessage", highlightMidiChannel);
+  }
+  stopActivations.value();
+  if (id === "no-midi-input") {
+    emit("update:midiInput", null);
+    stopActivations.value = () => {};
+  } else {
+    const input = WebMidi.getInputById(id);
+    emit("update:midiInput", input);
+    input.addListener("noteon", activateKey);
+    input.addListener("noteoff", deactivateKey);
+    stopActivations.value = () => {
+      input.removeListener("noteon", activateKey);
+      input.removeListener("noteoff", deactivateKey);
+    };
   }
 }
 
@@ -113,11 +151,19 @@ onMounted(async () => {
     input.addListener("midimessage", highlightMidiChannel);
     stopHighlights.value = () =>
       input.removeListener("midimessage", highlightMidiChannel);
+
+    input.addListener("noteon", activateKey);
+    input.addListener("noteoff", deactivateKey);
+    stopActivations.value = () => {
+      input.removeListener("noteon", activateKey);
+      input.removeListener("noteoff", deactivateKey);
+    };
   }
 });
 
 onUnmounted(() => {
   stopHighlights.value();
+  stopActivations.value();
 });
 </script>
 
@@ -205,6 +251,14 @@ onUnmounted(() => {
             </span>
           </div>
         </div>
+        <div class="piano-container">
+          <MidiPiano
+            :baseMidiNote="baseMidiNote"
+            :midiWhiteMode="midiWhiteMode"
+            :keyColors="keyColors"
+            :activeKeys="activeKeys"
+          />
+        </div>
       </div>
       <div class="column midi-controls">
         <h2>MIDI Output</h2>
@@ -284,5 +338,8 @@ div.channels-wrapper span {
 
 .active {
   background-color: greenyellow;
+}
+div.piano-container {
+  height: 50%;
 }
 </style>
