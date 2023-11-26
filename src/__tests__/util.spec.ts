@@ -59,6 +59,18 @@ describe("Hertz formatter", () => {
   it("supports megahertz", () => {
     expect(formatHertz(123.456e6)).toBe("123.456MHz");
   });
+
+  it("supports ronnahertz", () => {
+    expect(formatHertz(123.456e27)).toBe("123.456RHz");
+  });
+
+  it("falls back to exponential format for unreasonably large frequencies", () => {
+    expect(formatHertz(1.23456e40)).toBe("1.235e+40Hz");
+  });
+
+  it("zeros out with unreasonably small frequencies", () => {
+    expect(formatHertz(1.23456e-40)).toBe("0.000qHz");
+  });
 });
 
 describe("Auto key color algorithm", () => {
