@@ -105,10 +105,10 @@ export function utonalFundamental(frequencies: number[], maxDivisor = 23) {
 // Interval matrix a.k.a the modes of a scale
 export function intervalMatrix(scale: Scale) {
   const result = [];
-  const degrees = [...Array(scale.size + 1).keys()];
+  const columns = [...Array(scale.size + 1).keys()];
   for (let i = 0; i < scale.size; ++i) {
     const mode = scale.rotate(i);
-    result.push(degrees.map((j) => mode.getInterval(j)));
+    result.push(columns.map((j) => mode.getInterval(j)));
   }
   return result;
 }
