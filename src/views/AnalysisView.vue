@@ -19,6 +19,7 @@ const props = defineProps<{
 }>();
 
 const cellFormat = ref<"best" | "cents" | "decimal">("best");
+const indexing = ref(0);
 const trailLongevity = ref(70);
 const maxOtonalRoot = ref(16);
 const maxUtonalRoot = ref(23);
@@ -100,9 +101,9 @@ const matrix = computed(() => {
         <tr>
           <th></th>
           <th v-for="i of Math.min(scale.size, MAX_SCALE_SIZE)" :key="i">
-            {{ i }}
+            {{ i - 1 + indexing }}
           </th>
-          <th>({{ scale.size + 1 }})</th>
+          <th>({{ scale.size + indexing }})</th>
         </tr>
         <tr v-for="(row, i) of matrix" :key="i">
           <th>{{ formatMatrixCell(scale.getInterval(i)) }}</th>
@@ -141,6 +142,28 @@ const matrix = computed(() => {
             v-model="cellFormat"
           />
           <label for="format-decimal"> Decimal ratio </label>
+        </span>
+      </div>
+      <div class="control radio-group">
+        <label>Interval indexing</label>
+        <span>
+          <input
+            type="radio"
+            id="indexing-zero"
+            value=0
+            v-model="indexing"
+          />
+          <label for="indexing-zero"> 0-indexing (default) </label>
+        </span>
+        
+        <span>
+          <input
+            type="radio"
+            id="indexing-one"
+            value=1
+            v-model="indexing"
+          />
+          <label for="indexing-one"> 1-indexing </label>
         </span>
       </div>
     </div>
