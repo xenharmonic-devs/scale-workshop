@@ -144,7 +144,7 @@ const matrix = computed(() => {
         </span>
       </div>
       <div class="control radio-group">
-        <label>Indexing</label>
+        <label>Interval indexing</label>
         <span>
           <input
             type="radio"
