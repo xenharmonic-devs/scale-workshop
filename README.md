@@ -4,7 +4,7 @@
 
 ## Description
 
-[Scale Workshop](http://sevish.com/scaleworkshop/) allows you to design microtonal scales and play them in your web browser. Export your scales for use with VST instruments. Convert Scala files to various tuning formats.
+[Scale Workshop](https://scaleworkshop.plainsound.org/) allows you to design microtonal scales and play them in your web browser. Export your scales for use with VST instruments. Convert Scala files to various tuning formats.
 
 ## Frequently Asked Questions
 
@@ -33,7 +33,7 @@ Scale data should be entered in to the large text field labeled ‘Scale data’
 * To specify an interval in cents, include a . in the line e.g. `701.9` or `1200.`
 * To specify n steps out of m-EDO, write it in the format `n\m`
 * To specify arbitrary EDJI values, write it in the format `n\m<p/q>`
-* To specify a decimal ratio, include a , in the line e.g. `1,5` or `1,25`
+* To specify a decimal ratio, include a , in the line e.g. `1,5` or `3,14159`
 * To specify a [monzo](https://en.xen.wiki/w/Monzo) enclose the exponents inside a square bracket and a closing angle bracket e.g. `[-1 1 0>`
 * You can combine intervals using + e.g. `4/3 + 1.23`
 
@@ -86,9 +86,13 @@ Please [create a bug report](https://github.com/xenharmonic-devs/scale-workshop/
 
 ### Where is the project hosted
 
-* Stable releases are at https://sevish.com/scaleworkshop/
-* Release candidates are at https://sevish.com/scaleworkshop-dev/
+* Stable releases are at https://scaleworkshop.plainsound.org/
+* Slow-cycle stable releases are at https://sevish.com/scaleworkshop/
 * Nightly snapshots are deployed to https://scaleworkshop.lumipakkanen.com/
+
+#### Archived versions
+* Version 2.1.0 https://sevish.com/scaleworkshop-dev/
+* Version 1.5 https://sevish.com/scaleworkshop1/
 
 ## Documentation
 
@@ -99,6 +103,43 @@ User documentation is hosted on Github in the [project wiki](https://github.com/
 Please base any work on `main` branch, and make pull requests against `main` as well. There is no separate development branch. Releases will be denoted using git tags.
 
 ## Changelog
+
+
+## 2.2.1
+ * Feature: Stretch scale to match a specified interval
+ * Feature: Merge an offset copy of the scale with the original
+ * Feature: On-screen QWERTY keyboard (for playing) can now be enabled in the preferences
+ * Feature: Light-weight algorithms for tempering in extremely large just intonation subgroups
+ * Feature: Visualize how the various MIDI mappings assign scale degrees
+ * Feature: Implement visual MIDI channel indicators
+ * Feature: Interprete non-integer equal temperaments as cET
+ * Feature: Implement basic reverb using a ping-pong delay
+ * Feature: Implement new metric prefixes from quecto to quetta
+ * Standardization: Rename reference pitch to A4
+ * Bug fix: Text inputs no longer disappears when filled with invalid intervals
+ * Bug fix: Import base frequency from Anamark v2 tunings
+ * Bug fix: Support monzo syntax in most modal dialogs that accept intervals
+ * Bug fix: Show values that more accurately represent the scale in the interval matrix
+ * Bug fix: Respect the preferred number of signifying digits when manipulating the scale
+ * Bug fix: Make sure that the text always fits in the chord wheels on the Analysis tab
+ * Bug fix: Fix issues with multiple touches on the virtual keyboard
+ * Bug fix: Prevent garbage lines turning into valid URL data
+ * Bug fix: Make sure the base MIDI note is an integer
+ * Bug fix: Adhere to Korg maximum cents limits
+
+
+## 2.2.0
+ * Feature: Improved Korg export including Minilogue XD
+ * Feature: Export MTS SysEx dumps
+ * Feature: Single val tempering can now produce N-of-EDO steps
+ * Bug fix: Fix how `1/1` are spelled `1\1` after equalizing the scale
+
+## 2.1.2
+ * Bug fix: Make the syntax more consistent
+
+## 2.1.1
+* Feature: A new tab for visualizing 23-limit just intonation lattices
+* Bug fix: The "Not Found" page should again produce the intended easter egg
 
 ## 2.1.0
 * Feature: New *Modify scale* option for merging an offset copy with the scale
@@ -150,6 +191,9 @@ Please base any work on `main` branch, and make pull requests against `main` as 
 * Lumi Pakkanen
 * Vincenzo Sicurella
 * Lajos Mészáros
+* Forrest Cahoon
+* Videco
+* Kraig Grady
 
 ## Development
 
@@ -227,3 +271,5 @@ MIT, see [LICENCE](https://github.com/xenharmonic-devs/scale-workshop/blob/main/
 
 * MOS scales generated using [moment-of-symmetry](https://github.com/xenharmonic-devs/moment-of-symmetry)
 * Scales tempered using [temperaments](https://github.com/xenharmonic-devs/temperaments)
+* MIDI I/O using [xen-midi](https://github.com/xenharmonic-devs/xen-midi)
+* Basic utilities from [xen-dev-utils](https://github.com/xenharmonic-devs/xen-dev-utils)
