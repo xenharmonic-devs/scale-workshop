@@ -152,7 +152,7 @@ const matrix = computed(() => {
             value="zero"
             v-model="indexing"
           />
-          <label for="format-best"> 0-indexing (default) </label>
+          <label for="indexing-zero"> 0-indexing (default) </label>
         </span>
         
         <span>
@@ -162,7 +162,7 @@ const matrix = computed(() => {
             value="one"
             v-model="indexing"
           />
-          <label for="format-decimal"> 1-indexing </label>
+          <label for="indexing-one"> 1-indexing </label>
         </span>
       </div>
     </div>
