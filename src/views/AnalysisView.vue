@@ -101,9 +101,9 @@ const matrix = computed(() => {
         <tr>
           <th></th>
           <th v-for="i of Math.min(scale.size, MAX_SCALE_SIZE)" :key="i">
-            {{ i - 1 + indexing.value }}
+            {{ i - 1 + indexing }}
           </th>
-          <th>({{ scale.size + indexing.value }})</th>
+          <th>({{ scale.size + indexing }})</th>
         </tr>
         <tr v-for="(row, i) of matrix" :key="i">
           <th>{{ formatMatrixCell(scale.getInterval(i)) }}</th>
