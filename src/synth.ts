@@ -5,7 +5,23 @@ const TIME_CONSTANT = 0.5;
 const EXPIRED = 10000;
 
 export const BASIC_WAVEFORMS = ["sine", "square", "sawtooth", "triangle"];
-export const CUSTOM_WAVEFORMS: { [key: string]: PeriodicWave } = {};
+export const WAVEFORMS = BASIC_WAVEFORMS.concat([
+  "warm1",
+  "warm2",
+  "warm3",
+  "warm4",
+  "octaver",
+  "brightness",
+  "harmonicbell",
+  "semisine",
+  "rich",
+  "slender",
+  "didacus",
+  "bohlen",
+  "glass",
+  "boethius",
+]);
+const CUSTOM_WAVEFORMS: Record<string, PeriodicWave> = {};
 
 export function initializeCustomWaveforms(audioContext: AudioContext) {
   CUSTOM_WAVEFORMS.warm1 = audioContext.createPeriodicWave(
