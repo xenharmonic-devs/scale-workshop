@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import TimeDomainVisualizer from "@/components/TimeDomainVisualizer.vue";
 import Modal from "@/components/ModalDialog.vue";
-import { BASIC_WAVEFORMS, CUSTOM_WAVEFORMS } from "@/synth";
+import { WAVEFORMS } from "@/synth";
+import { useAudioStore } from "@/stores/audio";
 
 const props = defineProps<{
-  audioContext: AudioContext;
-  audioOutput: AudioNode | null;
-  audioDelay: number;
-  mainVolume: number;
   keyboardMode: "isomorphic" | "piano";
   pianoMode: "Asdf" | "QweZxc0" | "QweZxc1";
   isomorphicHorizontal: number;
@@ -21,21 +18,9 @@ const props = defineProps<{
   equaveDownCode: string;
   degreeUpCode: string;
   degreeDownCode: string;
-  waveform: string;
-  attackTime: number;
-  decayTime: number;
-  sustainLevel: number;
-  releaseTime: number;
-  maxPolyphony: number;
-  pingPongDelayTime: number;
-  pingPongFeedback: number;
-  pingPongSeparation: number;
-  pingPongGain: number;
 }>();
 
 const emit = defineEmits([
-  "update:audioDelay",
-  "update:mainVolume",
   "update:keyboardMode",
   "update:pianoMode",
   "update:isomorphicHorizontal",
@@ -47,21 +32,13 @@ const emit = defineEmits([
   "update:equaveDownCode",
   "update:degreeUpCode",
   "update:degreeDownCode",
-  "update:waveform",
-  "update:attackTime",
-  "update:decayTime",
-  "update:sustainLevel",
-  "update:releaseTime",
-  "update:maxPolyphony",
-  "update:pingPongDelayTime",
-  "update:pingPongFeedback",
-  "update:pingPongSeparation",
-  "update:pingPongGain",
   "mapAsdf",
   "mapZxcv0",
   "mapZxcv1",
   "panic",
 ]);
+
+const audio = useAudioStore();
 
 const remappedKey = ref("");
 
@@ -69,27 +46,28 @@ const timeDomainVisualizer = ref<any>(null);
 
 const analyser = ref<AnalyserNode | null>(null);
 
+// These really should be direct v-models, but there's
+// something wrong with how input ranges are handled.
 const audioDelay = computed({
-  get: () => props.audioDelay,
+  get: () => audio.audioDelay,
   set(newValue: number) {
     if (typeof newValue !== "number") {
       newValue = parseFloat(newValue);
     }
     if (!isNaN(newValue)) {
-      emit("update:audioDelay", newValue);
+      audio.audioDelay = newValue;
     }
   },
 });
 
 const mainVolume = computed({
-  get: () => props.mainVolume,
+  get: () => audio.mainVolume,
   set(newValue: number) {
-    // There's something wrong with how input ranges are handled.
     if (typeof newValue !== "number") {
       newValue = parseFloat(newValue);
     }
     if (!isNaN(newValue)) {
-      emit("update:mainVolume", newValue);
+      audio.mainVolume = newValue;
     }
   },
 });
@@ -120,114 +98,98 @@ const degreeShift = computed({
   set: (newValue: number) => emit("update:degreeShift", newValue),
 });
 
-const waveforms = BASIC_WAVEFORMS.concat(Object.keys(CUSTOM_WAVEFORMS));
-
-const waveform = computed({
-  get: () => props.waveform,
-  set(newValue: string) {
-    emit("update:waveform", newValue);
-  },
-});
-
 const attackTime = computed({
-  get: () => props.attackTime,
+  get: () => audio.attackTime,
   set(newValue: number) {
     if (typeof newValue !== "number") {
       newValue = parseFloat(newValue);
     }
     if (!isNaN(newValue)) {
-      emit("update:attackTime", newValue);
+      audio.attackTime = newValue;
     }
   },
 });
 
 const decayTime = computed({
-  get: () => props.decayTime,
+  get: () => audio.decayTime,
   set(newValue: number) {
     if (typeof newValue !== "number") {
       newValue = parseFloat(newValue);
     }
     if (!isNaN(newValue)) {
-      emit("update:decayTime", newValue);
+      audio.decayTime = newValue;
     }
   },
 });
 
 const sustainLevel = computed({
-  get: () => props.sustainLevel,
+  get: () => audio.sustainLevel,
   set(newValue: number) {
     if (typeof newValue !== "number") {
       newValue = parseFloat(newValue);
     }
     if (!isNaN(newValue)) {
-      emit("update:sustainLevel", newValue);
+      audio.sustainLevel = newValue;
     }
   },
 });
 
 const releaseTime = computed({
-  get: () => props.releaseTime,
+  get: () => audio.releaseTime,
   set(newValue: number) {
     if (typeof newValue !== "number") {
       newValue = parseFloat(newValue);
     }
     if (!isNaN(newValue)) {
-      emit("update:releaseTime", newValue);
+      audio.releaseTime = newValue;
     }
-  },
-});
-
-const maxPolyphony = computed({
-  get: () => props.maxPolyphony,
-  set(newValue: number) {
-    emit("update:maxPolyphony", newValue);
   },
 });
 
 const pingPongDelayTime = computed({
-  get: () => props.pingPongDelayTime,
+  get: () => audio.pingPongDelayTime,
   set(newValue: number) {
     if (typeof newValue !== "number") {
       newValue = parseFloat(newValue);
     }
     if (!isNaN(newValue)) {
-      emit("update:pingPongDelayTime", newValue);
+      audio.pingPongDelayTime = newValue;
     }
   },
 });
 
 const pingPongFeedback = computed({
-  get: () => props.pingPongFeedback,
+  get: () => audio.pingPongFeedback,
   set(newValue: number) {
     if (typeof newValue !== "number") {
       newValue = parseFloat(newValue);
     }
     if (!isNaN(newValue)) {
-      emit("update:pingPongFeedback", newValue);
+      audio.pingPongFeedback = newValue;
     }
   },
 });
 
 const pingPongSeparation = computed({
-  get: () => props.pingPongSeparation,
+  get: () => audio.pingPongSeparation,
   set(newValue: number) {
     if (typeof newValue !== "number") {
       newValue = parseFloat(newValue);
     }
     if (!isNaN(newValue)) {
-      emit("update:pingPongSeparation", newValue);
+      audio.pingPongSeparation = newValue;
     }
   },
 });
 
 const pingPongGain = computed({
-  get: () => props.pingPongGain,
+  get: () => audio.pingPongGain,
   set(newValue: number) {
     if (typeof newValue !== "number") {
       newValue = parseFloat(newValue);
     }
     if (!isNaN(newValue)) {
-      emit("update:pingPongGain", newValue);
+      audio.pingPongGain = newValue;
     }
   },
 });
@@ -283,18 +245,30 @@ function assignCode(event: KeyboardEvent) {
   }
 }
 
-onMounted(() => {
-  if (props.audioOutput !== null) {
-    analyser.value = props.audioContext.createAnalyser();
-    props.audioOutput.connect(analyser.value);
+watch(
+  () => [audio.context, audio.mainGain, timeDomainVisualizer.value],
+  () => {
+    if (
+      audio.context === null ||
+      audio.mainGain === null ||
+      timeDomainVisualizer.value === null
+    ) {
+      return;
+    }
+    analyser.value = audio.context.createAnalyser();
+    audio.mainGain.connect(analyser.value);
     timeDomainVisualizer.value.initialize(analyser.value);
-  }
+  },
+  { immediate: true }
+);
+
+onMounted(() => {
   window.addEventListener("keydown", assignCode);
 });
 
 onUnmounted(() => {
-  if (props.audioOutput !== null && analyser.value !== null) {
-    props.audioOutput.disconnect(analyser.value);
+  if (audio.mainGain !== null && analyser.value !== null) {
+    audio.mainGain.disconnect(analyser.value);
     analyser.value = null;
   }
   window.removeEventListener("keydown", assignCode);
@@ -336,9 +310,9 @@ onUnmounted(() => {
           </button>
           <div class="control">
             <label for="waveform">Waveform</label>
-            <select id="waveform" class="control" v-model="waveform">
+            <select id="waveform" class="control" v-model="audio.waveform">
               <option
-                v-for="waveform of waveforms"
+                v-for="waveform of WAVEFORMS"
                 :value="waveform"
                 :key="waveform"
               >
@@ -401,7 +375,7 @@ onUnmounted(() => {
               type="number"
               min="1"
               max="32"
-              v-model="maxPolyphony"
+              v-model="audio.maxPolyphony"
             />
           </div>
           <hr />

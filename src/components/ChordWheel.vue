@@ -9,7 +9,7 @@ const NUM_SAMPLES = 512;
 
 const props = defineProps<{
   type: "otonal" | "utonal";
-  virtualSynth: VirtualSynth;
+  virtualSynth: VirtualSynth | null;
   maxChordRoot: number;
   width: number;
   height: number;
@@ -47,17 +47,17 @@ function draw(time: DOMHighResTimeStamp) {
 
   const synth = props.virtualSynth;
 
+  const ctx = canvas.value!.getContext("2d");
+  if (ctx === null || synth === null) {
+    animationFrame = window.requestAnimationFrame(draw);
+    return;
+  }
+
   if (isNaN(audioTimeOffset)) {
     audioTimeOffset = synth.audioContext.currentTime - end;
   }
   start += audioTimeOffset;
   end += audioTimeOffset;
-
-  const ctx = canvas.value!.getContext("2d");
-  if (ctx === null) {
-    animationFrame = window.requestAnimationFrame(draw);
-    return;
-  }
 
   const width = props.width;
   const height = props.height;

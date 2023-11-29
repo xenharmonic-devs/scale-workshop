@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { intervalMatrix } from "@/analysis";
-import type { VirtualSynth } from "@/virtual-synth";
 import ChordWheel from "@/components/ChordWheel.vue";
 import { computed, ref } from "vue";
 import {
@@ -9,28 +8,30 @@ import {
   type IntervalOptions,
   type Scale,
 } from "scale-workshop-core";
+import { useAudioStore } from "@/stores/audio";
 
 const MAX_SCALE_SIZE = 100;
 
 const props = defineProps<{
   scale: Scale;
-  virtualSynth: VirtualSynth;
   colorScheme: "light" | "dark";
   intervalMatrixIndexing: number;
 }>();
 
 const emit = defineEmits(["update:intervalMatrixIndexing"]);
 
-const intervalMatrixIndexing = computed({
-  get: () => props.intervalMatrixIndexing,
-  set: (newValue: string) =>
-    emit("update:intervalMatrixIndexing", parseInt(newValue, 10)),
-});
+const audio = useAudioStore();
 
 const cellFormat = ref<"best" | "cents" | "decimal">("best");
 const trailLongevity = ref(70);
 const maxOtonalRoot = ref(16);
 const maxUtonalRoot = ref(23);
+
+const intervalMatrixIndexingRadio = computed({
+  get: () => props.intervalMatrixIndexing.toString(),
+  set: (newValue: string) =>
+    emit("update:intervalMatrixIndexing", parseInt(newValue, 10)),
+});
 
 const fadeAlpha = computed(() => 1 - trailLongevity.value / 100);
 
@@ -159,7 +160,7 @@ const matrix = computed(() => {
             type="radio"
             id="indexing-zero"
             value="0"
-            v-model="intervalMatrixIndexing"
+            v-model="intervalMatrixIndexingRadio"
           />
           <label for="indexing-zero"> 0-indexing (default) </label>
         </span>
@@ -169,7 +170,7 @@ const matrix = computed(() => {
             type="radio"
             id="indexing-one"
             value="1"
-            v-model="intervalMatrixIndexing"
+            v-model="intervalMatrixIndexingRadio"
           />
           <label for="indexing-one"> 1-indexing </label>
         </span>
@@ -183,7 +184,7 @@ const matrix = computed(() => {
             class="chord-wheel"
             type="otonal"
             :maxChordRoot="maxOtonalRoot"
-            :virtualSynth="virtualSynth"
+            :virtualSynth="audio.virtualSynth"
             :width="500"
             :height="400"
             :lineWidth="2"
@@ -202,7 +203,7 @@ const matrix = computed(() => {
             class="chord-wheel"
             type="utonal"
             :maxChordRoot="maxUtonalRoot"
-            :virtualSynth="virtualSynth"
+            :virtualSynth="audio.virtualSynth"
             :width="500"
             :height="400"
             :lineWidth="2"

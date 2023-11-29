@@ -26,8 +26,7 @@ import {
   mapWhiteAsdfBlackQwerty,
   mapWhiteQweZxcBlack123Asd,
 } from "./keyboard-mapping";
-import { VirtualSynth } from "./virtual-synth";
-import { PingPongDelay, Synth } from "@/synth";
+import { useAudioStore } from "@/stores/audio";
 import {
   Interval,
   parseLine,
@@ -36,23 +35,8 @@ import {
   reverseParseScale,
 } from "scale-workshop-core";
 
-// === Root props and audio ===
-const rootProps = defineProps<{
-  audioContext: AudioContext;
-}>();
-// Protect the user's audio system by limiting
-// the gain and frequency response.
-const mainGain = ref<GainNode | null>(null);
-const mainLowpass = ref<BiquadFilterNode | null>(null);
-const mainHighpass = ref<BiquadFilterNode | null>(null);
-// Keep a reference to the intended destination of the filter stack.
-const audioDestination = ref<AudioNode | null>(null);
-// Chromium has some issues with audio nodes as props
-// so we need this extra ref and the associated watcher.
-const mainVolume = ref(0.175);
-// Fix Firefox issues with audioContext.currentTime being in the past using a delay.
-// This is a locally stored user preference, but shown on the Synth tab.
-const audioDelay = ref(0.001);
+// === Pinia-managed state ===
+const audio = useAudioStore();
 
 // === Application state ===
 const scaleName = ref("");
@@ -92,27 +76,12 @@ const midiInputChannels = reactive(new Set([1]));
 const midiOutputChannels = ref(
   new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16])
 );
-const virtualSynth = reactive(new VirtualSynth(rootProps.audioContext));
 const midiVelocityOn = ref(true);
-// The synth needs to wait for a user gesture to initialize
-const synth = ref<Synth | null>(null);
-// These are synth params that use watchers to relay their values to the synth
-const waveform = ref("semisine");
-const attackTime = ref(0.01);
-const decayTime = ref(0.3);
-const sustainLevel = ref(0.8);
-const releaseTime = ref(0.01);
-const maxPolyphony = ref(6);
+
 const midiWhiteMode = ref<"off" | "simple" | "blackAverage" | "keyColors">(
   "off"
 );
-// Stereo ping pong delay and associated params
-const pingPongDelay = new PingPongDelay(rootProps.audioContext);
-const pingPongGainNode = rootProps.audioContext.createGain();
-const pingPongDelayTime = ref(0.3);
-const pingPongFeedback = ref(0.8);
-const pingPongSeparation = ref(1);
-const pingPongGain = ref(0);
+
 // These are user preferences and are fetched from local storage.
 const newline = ref(UNIX_NEWLINE);
 const colorScheme = ref<"light" | "dark">("light");
@@ -238,15 +207,15 @@ const encodeState = debounce(() => {
     pianoMode: pianoMode.value,
     equaveShift: equaveShift.value,
     degreeShift: degreeShift.value,
-    waveform: waveform.value,
-    attackTime: attackTime.value,
-    decayTime: decayTime.value,
-    sustainLevel: sustainLevel.value,
-    releaseTime: releaseTime.value,
-    pingPongDelayTime: pingPongDelayTime.value,
-    pingPongFeedback: pingPongFeedback.value,
-    pingPongSeparation: pingPongSeparation.value,
-    pingPongGain: pingPongGain.value,
+    waveform: audio.waveform,
+    attackTime: audio.attackTime,
+    decayTime: audio.decayTime,
+    sustainLevel: audio.sustainLevel,
+    releaseTime: audio.releaseTime,
+    pingPongDelayTime: audio.pingPongDelayTime,
+    pingPongFeedback: audio.pingPongFeedback,
+    pingPongSeparation: audio.pingPongSeparation,
+    pingPongGain: audio.pingPongGain,
   };
 
   const query = encodeQuery(state) as LocationQuery;
@@ -268,27 +237,27 @@ watch(baseMidiNote, (newValue) => {
 });
 
 watch(
-  [
-    scaleName,
-    scaleLines,
+  () => [
+    scaleName.value,
+    scaleLines.value,
     scale,
-    baseMidiNote,
-    keyColors,
-    isomorphicHorizontal,
-    isomorphicVertical,
-    keyboardMode,
-    pianoMode,
-    equaveShift,
-    degreeShift,
-    waveform,
-    attackTime,
-    decayTime,
-    sustainLevel,
-    releaseTime,
-    pingPongDelayTime,
-    pingPongFeedback,
-    pingPongSeparation,
-    pingPongGain,
+    baseMidiNote.value,
+    keyColors.value,
+    isomorphicHorizontal.value,
+    isomorphicVertical.value,
+    keyboardMode.value,
+    pianoMode.value,
+    equaveShift.value,
+    degreeShift.value,
+    audio.waveform,
+    audio.attackTime,
+    audio.decayTime,
+    audio.sustainLevel,
+    audio.releaseTime,
+    audio.pingPongDelayTime,
+    audio.pingPongFeedback,
+    audio.pingPongSeparation,
+    audio.pingPongGain,
   ],
   encodeState
 );
@@ -324,15 +293,15 @@ router.afterEach((to, from) => {
       updateFromScaleLines(state.scaleLines);
       equaveShift.value = state.equaveShift;
       degreeShift.value = state.degreeShift;
-      waveform.value = state.waveform;
-      attackTime.value = state.attackTime;
-      decayTime.value = state.decayTime;
-      sustainLevel.value = state.sustainLevel;
-      releaseTime.value = state.releaseTime;
-      pingPongDelayTime.value = state.pingPongDelayTime;
-      pingPongFeedback.value = state.pingPongFeedback;
-      pingPongSeparation.value = state.pingPongSeparation;
-      pingPongGain.value = state.pingPongGain;
+      audio.waveform = state.waveform;
+      audio.attackTime = state.attackTime;
+      audio.decayTime = state.decayTime;
+      audio.sustainLevel = state.sustainLevel;
+      audio.releaseTime = state.releaseTime;
+      audio.pingPongDelayTime = state.pingPongDelayTime;
+      audio.pingPongFeedback = state.pingPongFeedback;
+      audio.pingPongSeparation = state.pingPongSeparation;
+      audio.pingPongGain = state.pingPongGain;
     } catch (error) {
       console.error(`Error parsing version ${query.get("version")} URL`, error);
     }
@@ -391,31 +360,15 @@ const midiOut = computed(
 function sendNoteOn(frequency: number, rawAttack: number) {
   const midiOff = midiOut.value.sendNoteOn(frequency, rawAttack);
 
-  if (audioDestination.value === null) {
+  if (audio.synth === null || audio.virtualSynth === null) {
     return midiOff;
   }
 
-  // Initialize synth on first user gesture.
-  if (synth.value === null) {
-    rootProps.audioContext.resume();
-    synth.value = new Synth(
-      rootProps.audioContext,
-      audioDestination.value,
-      audioDelay.value,
-      waveform.value,
-      attackTime.value,
-      decayTime.value,
-      sustainLevel.value,
-      releaseTime.value,
-      maxPolyphony.value
-    );
-  }
-
   // Trigger web audio API synth.
-  const synthOff = synth.value.noteOn(frequency, rawAttack / 127);
+  const synthOff = audio.synth.noteOn(frequency, rawAttack / 127);
 
   // Trigger virtual synth for per-voice visualization.
-  const virtualOff = virtualSynth.voiceOn(frequency);
+  const virtualOff = audio.virtualSynth.voiceOn(frequency);
 
   const off = (rawRelease: number) => {
     midiOff(rawRelease);
@@ -565,6 +518,9 @@ function keyboardNoteOn(index: number) {
 
 // === Typing keyboard state ===
 function windowKeydownOrUp(event: KeyboardEvent | MouseEvent) {
+  // Audio context must be initialized as a response to user gesture
+  audio.initialize();
+
   const target = event.target;
   // Keep typing activated while adjusting sliders
   if (
@@ -674,6 +630,7 @@ onMounted(() => {
   window.addEventListener("keyup", windowKeydownOrUp);
   window.addEventListener("mousedown", windowKeydownOrUp);
   window.addEventListener("keydown", windowKeydown);
+  window.addEventListener("touchstart", audio.initialize);
   typingKeyboard.addKeydownListener(typingKeydown);
 
   const url = new URL(window.location.href);
@@ -705,53 +662,18 @@ onMounted(() => {
         updateFromScaleLines(scaleWorkshopOneData.data.split(NEWLINE_TEST));
       }
 
-      waveform.value = scaleWorkshopOneData.waveform || "semisine";
-      attackTime.value = scaleWorkshopOneData.attackTime;
-      decayTime.value = scaleWorkshopOneData.decayTime;
-      sustainLevel.value = scaleWorkshopOneData.sustainLevel;
-      releaseTime.value = scaleWorkshopOneData.releaseTime;
+      audio.waveform = scaleWorkshopOneData.waveform || "semisine";
+      audio.attackTime = scaleWorkshopOneData.attackTime;
+      audio.decayTime = scaleWorkshopOneData.decayTime;
+      audio.sustainLevel = scaleWorkshopOneData.sustainLevel;
+      audio.releaseTime = scaleWorkshopOneData.releaseTime;
     } catch (error) {
       console.error("Error parsing version 1 URL", error);
     }
   }
-  // Audio
-  const ctx = rootProps.audioContext;
-
-  const gain = ctx.createGain();
-  gain.gain.setValueAtTime(mainVolume.value, ctx.currentTime);
-  gain.connect(ctx.destination);
-  gain.connect(pingPongDelay.destination);
-  pingPongDelay.connect(pingPongGainNode).connect(ctx.destination);
-  mainGain.value = gain;
-
-  const lowpass = ctx.createBiquadFilter();
-  lowpass.frequency.setValueAtTime(5000, ctx.currentTime);
-  lowpass.Q.setValueAtTime(Math.sqrt(0.5), ctx.currentTime);
-  lowpass.type = "lowpass";
-  lowpass.connect(gain);
-  mainLowpass.value = lowpass;
-
-  const highpass = ctx.createBiquadFilter();
-  highpass.frequency.setValueAtTime(30, ctx.currentTime);
-  highpass.Q.setValueAtTime(Math.sqrt(0.5), ctx.currentTime);
-  highpass.type = "highpass";
-  highpass.connect(lowpass);
-  mainHighpass.value = highpass;
-
-  // Intended point of audio connection
-  audioDestination.value = highpass;
 
   // Fetch user preferences
   const storage = window.localStorage;
-  if ("audioDelay" in storage) {
-    const value = storage.getItem("audioDelay");
-    if (value !== null) {
-      audioDelay.value = parseFloat(value);
-      if (isNaN(audioDelay.value)) {
-        audioDelay.value = 0.0;
-      }
-    }
-  }
   if ("newline" in storage) {
     newline.value = storage.getItem("newline")!;
   }
@@ -806,11 +728,6 @@ onMounted(() => {
   if ("degreeDownCode" in storage) {
     degreeDownCode.value = storage.getItem("degreeDownCode")!;
   }
-
-  // Fetch synth max polyphony
-  if ("maxPolyphony" in storage) {
-    maxPolyphony.value = parseInt(storage.getItem("maxPolyphony")!);
-  }
 });
 
 onUnmounted(() => {
@@ -819,35 +736,12 @@ onUnmounted(() => {
   window.removeEventListener("keydown", windowKeydownOrUp);
   window.removeEventListener("keyup", windowKeydownOrUp);
   window.removeEventListener("mousedown", windowKeydownOrUp);
+  window.removeEventListener("touchstart", audio.initialize);
   typingKeyboard.removeEventListener(typingKeydown);
   if (midiInput.value !== null) {
     midiInput.value.removeListener();
   }
-  // Audio
-  if (mainGain.value !== null) {
-    mainGain.value.disconnect();
-  }
-  if (mainLowpass.value !== null) {
-    mainLowpass.value.disconnect();
-  }
-  if (mainHighpass.value !== null) {
-    mainHighpass.value.disconnect();
-  }
-  mainGain.value = null;
-  mainLowpass.value = null;
-  mainHighpass.value = null;
-  audioDestination.value = null;
-});
-
-watch(mainVolume, (newValue) => {
-  if (mainGain.value === null) {
-    return;
-  }
-  mainGain.value.gain.setTargetAtTime(
-    newValue,
-    rootProps.audioContext.currentTime,
-    0.01
-  );
+  audio.unintialize();
 });
 
 function updateMidiInputChannels(newValue: Set<number>) {
@@ -864,99 +758,11 @@ function panic() {
       channels: [...midiOutputChannels.value],
     });
   }
-  if (synth.value !== null) {
-    synth.value.allNotesOff();
+  if (audio.synth !== null) {
+    audio.synth.allNotesOff();
   }
 }
 
-// Synth parameter watchers
-watch(audioDelay, (newValue) => {
-  if (synth.value !== null) {
-    synth.value.audioDelay = newValue;
-  }
-});
-watch(waveform, (newValue) => {
-  if (synth.value !== null) {
-    synth.value.waveform = newValue;
-  }
-});
-watch(attackTime, (newValue) => {
-  if (synth.value !== null) {
-    synth.value.attackTime = newValue;
-  }
-});
-watch(decayTime, (newValue) => {
-  if (synth.value !== null) {
-    synth.value.decayTime = newValue;
-  }
-});
-watch(sustainLevel, (newValue) => {
-  if (synth.value !== null) {
-    synth.value.sustainLevel = newValue;
-  }
-});
-watch(releaseTime, (newValue) => {
-  if (synth.value !== null) {
-    synth.value.releaseTime = newValue;
-  }
-});
-watch(maxPolyphony, (newValue) => {
-  if (synth.value !== null) {
-    synth.value.maxPolyphony = newValue;
-  }
-});
-
-// Ping pong delay parameter watchers
-watch(
-  pingPongDelayTime,
-  (newValue) => {
-    pingPongDelay.delayTime = newValue;
-  },
-  { immediate: true }
-);
-watch(
-  pingPongFeedback,
-  (newValue) => {
-    pingPongDelay.feedback = newValue;
-  },
-  { immediate: true }
-);
-watch(
-  pingPongSeparation,
-  (newValue) => {
-    pingPongDelay.separation = newValue;
-  },
-  { immediate: true }
-);
-watch(
-  pingPongGain,
-  (newValue) => {
-    pingPongGainNode.gain.setValueAtTime(
-      newValue,
-      rootProps.audioContext.currentTime
-    );
-  },
-  { immediate: true }
-);
-
-function setMaxPolyphony(newValue: number) {
-  if (newValue < 1) {
-    newValue = 1;
-  }
-  if (newValue > 128) {
-    newValue = 128;
-  }
-  if (!isNaN(newValue)) {
-    newValue = Math.round(newValue);
-    maxPolyphony.value = newValue;
-    window.localStorage.setItem("maxPolyphony", newValue.toString());
-  }
-}
-
-// Store user preferences
-watch(audioDelay, (newValue) =>
-  window.localStorage.setItem("audioDelay", newValue.toString())
-);
 watch(newline, (newValue) => window.localStorage.setItem("newline", newValue));
 watch(colorScheme, (newValue) => {
   window.localStorage.setItem("colorScheme", newValue);
@@ -1030,10 +836,6 @@ watch(degreeDownCode, (newValue) =>
     </div>
   </nav>
   <RouterView
-    :audioContext="audioContext"
-    :audioOutput="mainGain"
-    :audioDelay="audioDelay"
-    :mainVolume="mainVolume"
     :scaleName="scaleName"
     :scaleLines="scaleLines"
     :baseMidiNote="baseMidiNote"
@@ -1052,7 +854,6 @@ watch(degreeDownCode, (newValue) =>
     :heldNotes="heldNotes"
     :midiInputChannels="midiInputChannels"
     :midiOutputChannels="midiOutputChannels"
-    :virtualSynth="virtualSynth"
     :newline="newline"
     :colorScheme="colorScheme"
     :centsFractionDigits="centsFractionDigits"
@@ -1064,23 +865,11 @@ watch(degreeDownCode, (newValue) =>
     :equaveDownCode="equaveDownCode"
     :degreeUpCode="degreeUpCode"
     :degreeDownCode="degreeDownCode"
-    :waveform="waveform"
-    :attackTime="attackTime"
-    :decayTime="decayTime"
-    :sustainLevel="sustainLevel"
-    :releaseTime="releaseTime"
-    :maxPolyphony="maxPolyphony"
-    :pingPongDelayTime="pingPongDelayTime"
-    :pingPongFeedback="pingPongFeedback"
-    :pingPongSeparation="pingPongSeparation"
-    :pingPongGain="pingPongGain"
     :typingKeyboard="typingKeyboard"
     :keyboardMapping="keyboardMapping"
     :showVirtualQwerty="showVirtualQwerty"
     :midiOctaveOffset="midiOctaveOffset"
     :intervalMatrixIndexing="intervalMatrixIndexing"
-    @update:audioDelay="audioDelay = $event"
-    @update:mainVolume="mainVolume = $event"
     @update:scaleName="scaleName = $event"
     @update:scaleLines="updateFromScaleLines"
     @update:scale="updateFromScale"
@@ -1111,16 +900,6 @@ watch(degreeDownCode, (newValue) =>
     @update:equaveDownCode="equaveDownCode = $event"
     @update:degreeUpCode="degreeUpCode = $event"
     @update:degreeDownCode="degreeDownCode = $event"
-    @update:waveform="waveform = $event"
-    @update:attackTime="attackTime = $event"
-    @update:decayTime="decayTime = $event"
-    @update:sustainLevel="sustainLevel = $event"
-    @update:releaseTime="releaseTime = $event"
-    @update:maxPolyphony="setMaxPolyphony"
-    @update:pingPongDelayTime="pingPongDelayTime = $event"
-    @update:pingPongFeedback="pingPongFeedback = $event"
-    @update:pingPongSeparation="pingPongSeparation = $event"
-    @update:pingPongGain="pingPongGain = $event"
     @panic="panic"
   />
 </template>
