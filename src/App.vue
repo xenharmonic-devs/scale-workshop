@@ -786,7 +786,8 @@ onMounted(() => {
   }
   if ("intervalMatrixIndexing" in storage) {
     intervalMatrixIndexing.value = parseInt(
-      storage.getItem("intervalMatrixIndexing") ?? "0", 10
+      storage.getItem("intervalMatrixIndexing") ?? "0",
+      10
     );
   }
   // Fetch special key map
