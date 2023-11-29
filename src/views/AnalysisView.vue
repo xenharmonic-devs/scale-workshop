@@ -20,18 +20,18 @@ const props = defineProps<{
 
 const emit = defineEmits(["update:intervalMatrixIndexing"]);
 
-const intervalMatrixIndexing = computed({
-  get: () => props.intervalMatrixIndexing,
-  set: (newValue: string) =>
-    emit("update:intervalMatrixIndexing", parseInt(newValue, 10)),
-});
-
 const audio = useAudioStore();
 
 const cellFormat = ref<"best" | "cents" | "decimal">("best");
 const trailLongevity = ref(70);
 const maxOtonalRoot = ref(16);
 const maxUtonalRoot = ref(23);
+
+const intervalMatrixIndexingRadio = computed({
+  get: () => props.intervalMatrixIndexing.toString(),
+  set: (newValue: string) =>
+    emit("update:intervalMatrixIndexing", parseInt(newValue, 10)),
+});
 
 const fadeAlpha = computed(() => 1 - trailLongevity.value / 100);
 
@@ -160,7 +160,7 @@ const matrix = computed(() => {
             type="radio"
             id="indexing-zero"
             value="0"
-            v-model="intervalMatrixIndexing"
+            v-model="intervalMatrixIndexingRadio"
           />
           <label for="indexing-zero"> 0-indexing (default) </label>
         </span>
@@ -170,7 +170,7 @@ const matrix = computed(() => {
             type="radio"
             id="indexing-one"
             value="1"
-            v-model="intervalMatrixIndexing"
+            v-model="intervalMatrixIndexingRadio"
           />
           <label for="indexing-one"> 1-indexing </label>
         </span>
