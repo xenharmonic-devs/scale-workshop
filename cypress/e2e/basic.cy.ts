@@ -1,4 +1,4 @@
-// https://docs.cypress.io/api/introduction/api.html
+// https://on.cypress.io/api
 
 describe("Basic test", () => {
   it("visits the app root url", () => {

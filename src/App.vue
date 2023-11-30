@@ -154,7 +154,7 @@ function updateFromScaleLines(lines: string[]) {
     try {
       const interval = parseLine(line, DEFAULT_NUMBER_OF_COMPONENTS, options);
       intervals.push(interval);
-    } catch {}
+    } catch { /* empty */ }
   });
   if (!intervals.length) {
     intervals.push(parseLine("1/1", DEFAULT_NUMBER_OF_COMPONENTS, options));
