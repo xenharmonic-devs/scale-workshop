@@ -1,65 +1,62 @@
 <script setup lang="ts">
-import { intervalMatrix } from "@/analysis";
-import ChordWheel from "@/components/ChordWheel.vue";
-import { computed, ref } from "vue";
+import { intervalMatrix } from '@/analysis'
+import ChordWheel from '@/components/ChordWheel.vue'
+import { computed, ref } from 'vue'
 import {
   reverseParseInterval,
   type Interval,
   type IntervalOptions,
-  type Scale,
-} from "scale-workshop-core";
-import { useAudioStore } from "@/stores/audio";
+  type Scale
+} from 'scale-workshop-core'
+import { useAudioStore } from '@/stores/audio'
 
-const MAX_SCALE_SIZE = 100;
+const MAX_SCALE_SIZE = 100
 
 const props = defineProps<{
-  scale: Scale;
-  colorScheme: "light" | "dark";
-  intervalMatrixIndexing: number;
-}>();
+  scale: Scale
+  colorScheme: 'light' | 'dark'
+  intervalMatrixIndexing: number
+}>()
 
-const emit = defineEmits(["update:intervalMatrixIndexing"]);
+const emit = defineEmits(['update:intervalMatrixIndexing'])
 
-const audio = useAudioStore();
+const audio = useAudioStore()
 
-const cellFormat = ref<"best" | "cents" | "decimal">("best");
-const trailLongevity = ref(70);
-const maxOtonalRoot = ref(16);
-const maxUtonalRoot = ref(23);
+const cellFormat = ref<'best' | 'cents' | 'decimal'>('best')
+const trailLongevity = ref(70)
+const maxOtonalRoot = ref(16)
+const maxUtonalRoot = ref(23)
 
 const intervalMatrixIndexingRadio = computed({
   get: () => props.intervalMatrixIndexing.toString(),
-  set: (newValue: string) =>
-    emit("update:intervalMatrixIndexing", parseInt(newValue, 10)),
-});
+  set: (newValue: string) => emit('update:intervalMatrixIndexing', parseInt(newValue, 10))
+})
 
-const fadeAlpha = computed(() => 1 - trailLongevity.value / 100);
+const fadeAlpha = computed(() => 1 - trailLongevity.value / 100)
 
 const backgroundRBG = computed<[number, number, number]>(() => {
   // Add dependency.
-  props.colorScheme;
+  props.colorScheme
   // Fetch from document.
   const css = getComputedStyle(document.documentElement)
-    .getPropertyValue("--color-background")
+    .getPropertyValue('--color-background')
     .trim()
-    .toLowerCase();
-  if (css === "#fff") {
-    return [255, 255, 255];
-  } else if (css === "#000") {
-    return [0, 0, 0];
+    .toLowerCase()
+  if (css === '#fff') {
+    return [255, 255, 255]
+  } else if (css === '#000') {
+    return [0, 0, 0]
   } else {
-    throw new Error("General color parsing not implemented");
+    throw new Error('General color parsing not implemented')
   }
-});
+})
 
 const strokeStyle = computed(() => {
   // Add dependency.
-  props.colorScheme;
+  props.colorScheme
   // Fetch from document.
-  return getComputedStyle(document.documentElement)
-    .getPropertyValue("--color-text")
-    .trim();
-});
+  return getComputedStyle(document.documentElement).getPropertyValue('--color-text').trim()
+})
 
 // While interval.name suffices for the tuning table
 // we want more accurate results here.
@@ -67,39 +64,39 @@ function formatMatrixCell(interval: Interval) {
   // We don't have much space so let's not waste it on insignificant digits.
   const options: IntervalOptions = {
     centsFractionDigits: 1,
-    decimalFractionDigits: 3,
-  };
-  interval = interval.mergeOptions(options);
-
-  if (cellFormat.value === "cents") {
-    return interval.centsString();
+    decimalFractionDigits: 3
   }
-  if (cellFormat.value === "decimal") {
+  interval = interval.mergeOptions(options)
+
+  if (cellFormat.value === 'cents') {
+    return interval.centsString()
+  }
+  if (cellFormat.value === 'decimal') {
     // Consistent with tuning table localization.
-    return interval.decimalString().replace(",", ".");
+    return interval.decimalString().replace(',', '.')
   }
 
   // Monzos are too long.
-  if (interval.type === "monzo") {
-    return interval.centsString();
+  if (interval.type === 'monzo') {
+    return interval.centsString()
   }
   // Composite intervals are too long or not accurate.
   if (interval.isComposite()) {
-    return interval.centsString();
+    return interval.centsString()
   }
   // If we're here the name should faithfully represent the interval.
   // Reverse parsing takes care of obscure corner cases.
-  return reverseParseInterval(interval);
+  return reverseParseInterval(interval)
 }
 
 const matrix = computed(() => {
   return intervalMatrix(
     props.scale.head(MAX_SCALE_SIZE).mergeOptions({
       centsFractionDigits: 1,
-      decimalFractionDigits: 3,
+      decimalFractionDigits: 3
     })
-  ).map((row) => row.map(formatMatrixCell));
-});
+  ).map((row) => row.map(formatMatrixCell))
+})
 </script>
 
 <template>
@@ -124,54 +121,29 @@ const matrix = computed(() => {
       <div class="control radio-group">
         <label>Display intervals in matrix as</label>
         <span>
-          <input
-            type="radio"
-            id="format-best"
-            value="best"
-            v-model="cellFormat"
-          />
+          <input type="radio" id="format-best" value="best" v-model="cellFormat" />
           <label for="format-best"> Default </label>
         </span>
 
         <span>
-          <input
-            type="radio"
-            id="format-cents"
-            value="cents"
-            v-model="cellFormat"
-          />
+          <input type="radio" id="format-cents" value="cents" v-model="cellFormat" />
           <label for="format-cents"> Cents </label>
         </span>
 
         <span>
-          <input
-            type="radio"
-            id="format-decimal"
-            value="decimal"
-            v-model="cellFormat"
-          />
+          <input type="radio" id="format-decimal" value="decimal" v-model="cellFormat" />
           <label for="format-decimal"> Decimal ratio </label>
         </span>
       </div>
       <div class="control radio-group">
         <label>Interval indexing</label>
         <span>
-          <input
-            type="radio"
-            id="indexing-zero"
-            value="0"
-            v-model="intervalMatrixIndexingRadio"
-          />
+          <input type="radio" id="indexing-zero" value="0" v-model="intervalMatrixIndexingRadio" />
           <label for="indexing-zero"> 0-indexing (default) </label>
         </span>
 
         <span>
-          <input
-            type="radio"
-            id="indexing-one"
-            value="1"
-            v-model="intervalMatrixIndexingRadio"
-          />
+          <input type="radio" id="indexing-one" value="1" v-model="intervalMatrixIndexingRadio" />
           <label for="indexing-one"> 1-indexing </label>
         </span>
       </div>
@@ -233,25 +205,13 @@ const matrix = computed(() => {
         <div class="control-group">
           <div class="control">
             <label for="otonal-root">Maximum root (otonal)</label>
-            <input
-              id="otonal-root"
-              type="number"
-              class="control"
-              min="1"
-              v-model="maxOtonalRoot"
-            />
+            <input id="otonal-root" type="number" class="control" min="1" v-model="maxOtonalRoot" />
           </div>
         </div>
         <div class="control-group">
           <div class="control">
             <label for="utonal-root">Maximum root (utonal)</label>
-            <input
-              id="utonal-root"
-              type="number"
-              class="control"
-              min="1"
-              v-model="maxUtonalRoot"
-            />
+            <input id="utonal-root" type="number" class="control" min="1" v-model="maxUtonalRoot" />
           </div>
         </div>
       </div>

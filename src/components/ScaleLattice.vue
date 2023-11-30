@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import type { Interval, Scale } from "scale-workshop-core";
-import { computed, onMounted, type ComputedRef, ref, onUnmounted } from "vue";
-import { monzoEuclideanDistance } from "@/utils";
-import { kCombinations } from "xen-dev-utils";
+import type { Interval, Scale } from 'scale-workshop-core'
+import { computed, onMounted, type ComputedRef, ref, onUnmounted } from 'vue'
+import { monzoEuclideanDistance } from '@/utils'
+import { kCombinations } from 'xen-dev-utils'
 const props = defineProps<{
-  scale: Scale;
-  heldScaleDegrees: Set<number>;
-}>();
+  scale: Scale
+  heldScaleDegrees: Set<number>
+}>()
 
-type Coord = { x: number; y: number };
+type Coord = { x: number; y: number }
 type Node = {
-  x: number;
-  y: number;
-  label: string;
-  index: number;
-  fill: string;
-};
+  x: number
+  y: number
+  label: string
+  index: number
+  fill: string
+}
 
-type Coords = Coord[];
+type Coords = Coord[]
 
 const coords: Coords =
   // Coords for every prime up to 23, indexes correspond to monzo indexes
@@ -25,65 +25,65 @@ const coords: Coords =
   [
     {
       x: 0,
-      y: 0,
+      y: 0
     },
     {
       x: 40,
-      y: 0,
+      y: 0
     },
     {
       x: 0,
-      y: -40,
+      y: -40
     },
     {
       x: 13,
-      y: -11,
+      y: -11
     },
     {
       x: -14,
-      y: -18,
+      y: -18
     },
     {
       x: -8,
-      y: -4,
+      y: -4
     },
     {
       x: -5,
-      y: -32,
+      y: -32
     },
     {
       x: 7,
-      y: -25,
+      y: -25
     },
     {
       x: 20,
-      y: -6,
-    },
-  ];
+      y: -6
+    }
+  ]
 
-const container = ref<HTMLDivElement | null>(null);
+const container = ref<HTMLDivElement | null>(null)
 
 const adjustLatticeSize = () => {
   if (container.value) {
-    const containerBox = container.value.getBoundingClientRect();
-    const containerHeight = window.innerHeight - containerBox.top;
-    const image: HTMLElement | null = container.value.querySelector("#lattice");
+    const containerBox = container.value.getBoundingClientRect()
+    const containerHeight = window.innerHeight - containerBox.top
+    const image: HTMLElement | null = container.value.querySelector('#lattice')
 
     if (container.value && image) {
-      image.style.width = `100%`;
-      image.style.height = `${containerHeight}px`;
+      image.style.width = `100%`
+      image.style.height = `${containerHeight}px`
     }
   }
-};
+}
 
 onMounted(() => {
-  adjustLatticeSize();
-  window.addEventListener("resize", adjustLatticeSize);
-});
+  adjustLatticeSize()
+  window.addEventListener('resize', adjustLatticeSize)
+})
 
 onUnmounted(() => {
-  window.removeEventListener("resize", adjustLatticeSize);
-});
+  window.removeEventListener('resize', adjustLatticeSize)
+})
 
 // === Computed state ===
 
@@ -95,98 +95,89 @@ const canLatticePrimes = computed(() => {
         interval.monzo
           .toIntegerMonzo()
           .slice(9) // hardcoded for now to the 23-limit
-          .reduce(
-            (isZero: boolean, component: number) => isZero && component === 0,
-            true
-          ),
+          .reduce((isZero: boolean, component: number) => isZero && component === 0, true),
       true
-    );
+    )
   } catch {
-    return false;
+    return false
   }
-});
+})
 
 function maybeGetPrimeEquave(equave: Interval): number | null {
   try {
-    const intergerMonzo: number[] = equave.monzo.toIntegerMonzo();
+    const intergerMonzo: number[] = equave.monzo.toIntegerMonzo()
     return intergerMonzo.reduce(
-      (
-        primeIndex: number | null,
-        component: number,
-        i: number
-      ): number | null => {
+      (primeIndex: number | null, component: number, i: number): number | null => {
         if (component === 1 && !primeIndex) {
-          return i;
+          return i
         }
         if (component !== 0) {
-          throw new Error("Equave is not a prime number");
+          throw new Error('Equave is not a prime number')
         }
         if (component === 0) {
-          return primeIndex;
+          return primeIndex
         }
-        return null;
+        return null
       },
       null
-    );
+    )
   } catch {
-    return null;
+    return null
   }
 }
 
-const equavePrimeIndex = computed(() =>
-  maybeGetPrimeEquave(props.scale.equave)
-);
+const equavePrimeIndex = computed(() => maybeGetPrimeEquave(props.scale.equave))
 
 const nodes: ComputedRef<Node[] | string> = computed(() => {
   try {
     if (equavePrimeIndex.value !== 0) {
-      return "The lattice currently only supports scales with a 2/1 equave";
+      return 'The lattice currently only supports scales with a 2/1 equave'
     }
     if (props.scale.intervals.length <= 1) {
-      return "A scale must contain at least two intervals";
+      return 'A scale must contain at least two intervals'
     }
     return props.scale.intervals.map(({ monzo, name: label }, index) => {
       const node: Node = monzo.toIntegerMonzo().reduce(
         (node, component, i): Node => {
-          const { x, y } = node;
+          const { x, y } = node
           if (i === equavePrimeIndex.value) {
-            return node;
+            return node
           }
 
-          const componentVal = component.valueOf();
+          const componentVal = component.valueOf()
           if (componentVal === 0) {
-            return node;
+            return node
           } else {
-            const vector = coords[i] || { x: 0, y: 0 };
+            const vector = coords[i] || { x: 0, y: 0 }
             return {
               ...node,
               x: x + vector.x * componentVal,
-              y: y + vector.y * componentVal,
-            };
+              y: y + vector.y * componentVal
+            }
           }
         },
-        { x: 0, y: 0, label, index, fill: "white" }
-      );
-      return node;
-    });
+        { x: 0, y: 0, label, index, fill: 'white' }
+      )
+      return node
+    })
   } catch {
-    return "Cannot make lattice of non JI scale.";
+    return 'Cannot make lattice of non JI scale.'
   }
-});
+})
 
 const nodesByLabel: ComputedRef<{ [key: string]: Node }> = computed(() =>
   Array.isArray(nodes.value)
     ? nodes.value.reduce((acc, node) => ({ ...acc, [node.label]: node }), {})
     : {}
-);
+)
 
 const edges = computed(() => {
   try {
     if (!Array.isArray(nodes.value)) {
-      return [];
+      return []
     }
 
-    const combinations = kCombinations(props.scale.intervals, 2);
+    const combinations = kCombinations(props.scale.intervals, 2)
     return combinations
       .map(([a, b]) => {
         return {
@@ -195,67 +186,67 @@ const edges = computed(() => {
             a.monzo.toIntegerMonzo(),
             b.monzo.toIntegerMonzo()
           ),
-          pair: [a.name, b.name],
-        };
+          pair: [a.name, b.name]
+        }
       })
-      .filter(({ distance }) => distance === 1);
+      .filter(({ distance }) => distance === 1)
   } catch {
-    return [];
+    return []
   }
-});
+})
 
-const svgElement = ref<HTMLElement | null>(null);
+const svgElement = ref<HTMLElement | null>(null)
 
 const viewBox = computed(() => {
   if (svgElement.value) {
     return [
-      ...svgElement.value.querySelectorAll("text"),
-      ...svgElement.value.querySelectorAll("circle"),
+      ...svgElement.value.querySelectorAll('text'),
+      ...svgElement.value.querySelectorAll('circle')
     ].reduce(
       ({ minX, maxX, minY, maxY }, el) => {
         const { x, y, width, height } = el.getBBox({
           stroke: true,
-          fill: true,
-        });
+          fill: true
+        })
         return {
           minX: Math.min(minX, x),
           minY: Math.min(minY, y),
           maxX: Math.max(maxX, x + width),
-          maxY: Math.max(maxY, y + height),
-        };
+          maxY: Math.max(maxY, y + height)
+        }
       },
       {
         minX: Infinity,
         minY: Infinity,
         maxX: -Infinity,
-        maxY: -Infinity,
+        maxY: -Infinity
       }
-    );
+    )
   }
   return {
     minX: 0,
     minY: 0,
     maxX: 0,
-    maxY: 0,
-  };
-});
+    maxY: 0
+  }
+})
 
 function isNodeErrorMessage(nodeValue: any): nodeValue is string {
-  return typeof nodeValue === "string";
+  return typeof nodeValue === 'string'
 }
 
 const error = computed(() => {
   if (!canLatticePrimes.value) {
-    return "Can only make lattice of JI scales up to 23-limit";
+    return 'Can only make lattice of JI scales up to 23-limit'
   }
   if (isNodeErrorMessage(nodes.value)) {
     return (
       nodes.value ||
-      "There was an unknown error while making this lattice, please try again or with another scale."
-    );
+      'There was an unknown error while making this lattice, please try again or with another scale.'
+    )
   }
-  return null;
-});
+  return null
+})
 </script>
 
 <template>
@@ -275,7 +266,7 @@ const error = computed(() => {
             viewBox.minX,
             viewBox.minY,
             viewBox.maxX - viewBox.minX,
-            viewBox.maxY - viewBox.minY,
+            viewBox.maxY - viewBox.minY
           ].join(' ')
         "
       >

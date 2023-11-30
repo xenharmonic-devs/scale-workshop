@@ -1,165 +1,159 @@
 <script setup lang="ts">
-import { LEFT_MOUSE_BTN } from "@/constants";
-import { computed, onMounted, onUnmounted, ref } from "vue";
-import { mmod } from "xen-dev-utils";
+import { LEFT_MOUSE_BTN } from '@/constants'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { mmod } from 'xen-dev-utils'
 
-type NoteOff = () => void;
-type NoteOnCallback = (index: number) => NoteOff;
+type NoteOff = () => void
+type NoteOnCallback = (index: number) => NoteOff
 
 const props = defineProps<{
-  baseMidiNote: number;
-  baseIndex: number; // Should incorporate equave shift
-  keyColors: string[];
-  noteOn: NoteOnCallback;
-  heldNotes: Map<number, number>;
-}>();
+  baseMidiNote: number
+  baseIndex: number // Should incorporate equave shift
+  keyColors: string[]
+  noteOn: NoteOnCallback
+  heldNotes: Map<number, number>
+}>()
 
 type VirtualKey = {
-  x: number;
-  left: number;
-  right: number;
-  index: number;
-  color: string;
-};
+  x: number
+  left: number
+  right: number
+  index: number
+  color: string
+}
 
 type VirtualBlackKey = {
-  x: number;
-  index: number;
-};
+  x: number
+  index: number
+}
 
-const NUM_KEYS = 30;
+const NUM_KEYS = 30
 
-const noteOffs: Map<number, NoteOff> = new Map();
+const noteOffs: Map<number, NoteOff> = new Map()
 
 const whiteKeys = computed(() => {
-  const colors = props.keyColors.length ? props.keyColors : ["white"];
-  const result: VirtualKey[] = [];
+  const colors = props.keyColors.length ? props.keyColors : ['white']
+  const result: VirtualKey[] = []
   for (let x = 0; x < NUM_KEYS; ++x) {
-    const index = props.baseIndex + x;
-    const colorIndex = index - props.baseMidiNote;
-    const color = colors[mmod(colorIndex, colors.length)];
-    if (color.toLowerCase() !== "black") {
-      let left = 0;
-      while (
-        colors[mmod(colorIndex - 1 - left, colors.length)].toLowerCase() ===
-        "black"
-      ) {
-        left++;
+    const index = props.baseIndex + x
+    const colorIndex = index - props.baseMidiNote
+    const color = colors[mmod(colorIndex, colors.length)]
+    if (color.toLowerCase() !== 'black') {
+      let left = 0
+      while (colors[mmod(colorIndex - 1 - left, colors.length)].toLowerCase() === 'black') {
+        left++
       }
-      let right = 0;
-      while (
-        colors[mmod(colorIndex + 1 + right, colors.length)].toLowerCase() ===
-        "black"
-      ) {
-        right++;
+      let right = 0
+      while (colors[mmod(colorIndex + 1 + right, colors.length)].toLowerCase() === 'black') {
+        right++
       }
       result.push({
         x,
         left,
         right,
         index,
-        color,
-      });
+        color
+      })
     }
   }
-  return result;
-});
+  return result
+})
 
 const blackKeys = computed(() => {
-  const colors = props.keyColors.length ? props.keyColors : ["white"];
-  const result: VirtualBlackKey[] = [];
+  const colors = props.keyColors.length ? props.keyColors : ['white']
+  const result: VirtualBlackKey[] = []
   for (let x = 0; x < NUM_KEYS; ++x) {
-    const index = props.baseIndex + x;
-    const colorIndex = index - props.baseMidiNote;
-    const color = colors[mmod(colorIndex, colors.length)];
-    if (color.toLowerCase() === "black") {
+    const index = props.baseIndex + x
+    const colorIndex = index - props.baseMidiNote
+    const color = colors[mmod(colorIndex, colors.length)]
+    if (color.toLowerCase() === 'black') {
       result.push({
         x,
-        index,
-      });
+        index
+      })
     }
   }
-  return result;
-});
+  return result
+})
 
-const isMousePressed = ref(false);
+const isMousePressed = ref(false)
 
 function start(index: number) {
-  noteOffs.set(index, props.noteOn(index));
+  noteOffs.set(index, props.noteOn(index))
 }
 
 function end(index: number) {
   if (noteOffs.has(index)) {
-    noteOffs.get(index)!();
-    noteOffs.delete(index);
+    noteOffs.get(index)!()
+    noteOffs.delete(index)
   }
 }
 
 function onTouchEnd(event: TouchEvent, index: number) {
-  event.preventDefault();
-  end(index);
+  event.preventDefault()
+  end(index)
 }
 
 function onTouchStart(event: TouchEvent, index: number) {
-  event.preventDefault();
+  event.preventDefault()
   // Make sure that we start a new note.
-  end(index);
+  end(index)
 
-  start(index);
+  start(index)
 }
 
 function onMouseDown(event: MouseEvent, index: number) {
   if (event.button !== LEFT_MOUSE_BTN) {
-    return;
+    return
   }
-  event.preventDefault();
-  isMousePressed.value = true;
-  start(index);
+  event.preventDefault()
+  isMousePressed.value = true
+  start(index)
 }
 
 function onMouseUp(event: MouseEvent, index: number) {
   if (event.button !== LEFT_MOUSE_BTN) {
-    return;
+    return
   }
-  event.preventDefault();
-  isMousePressed.value = false;
-  end(index);
+  event.preventDefault()
+  isMousePressed.value = false
+  end(index)
 }
 
 function onMouseEnter(event: MouseEvent, index: number) {
   if (!isMousePressed.value) {
-    return;
+    return
   }
-  event.preventDefault();
-  start(index);
+  event.preventDefault()
+  start(index)
 }
 
 function onMouseLeave(event: MouseEvent, index: number) {
   if (!isMousePressed.value) {
-    return;
+    return
   }
-  event.preventDefault();
-  end(index);
+  event.preventDefault()
+  end(index)
 }
 
 function windowMouseUp(event: MouseEvent) {
   if (event.button === LEFT_MOUSE_BTN) {
-    isMousePressed.value = false;
+    isMousePressed.value = false
   }
 }
 
 onMounted(() => {
-  window.addEventListener("mouseup", windowMouseUp);
-});
+  window.addEventListener('mouseup', windowMouseUp)
+})
 
 onUnmounted(() => {
   noteOffs.forEach((off) => {
     if (off !== null) {
-      off();
+      off()
     }
-  });
-  window.removeEventListener("mouseup", windowMouseUp);
-});
+  })
+  window.removeEventListener('mouseup', windowMouseUp)
+})
 </script>
 
 <template>

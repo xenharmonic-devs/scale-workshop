@@ -1,22 +1,22 @@
-import { mmod } from "xen-dev-utils";
-import { CODES_LAYER_1 } from "./keyboard";
+import { mmod } from 'xen-dev-utils'
+import { CODES_LAYER_1 } from './keyboard'
 
-export const DIGIT_ROW = CODES_LAYER_1[0].slice(1) as string[];
-export const QWERTY_ROW = CODES_LAYER_1[1].slice(1) as string[];
-export const ASDF_ROW = CODES_LAYER_1[2].slice(1) as string[];
-export const ZXCV_ROW = CODES_LAYER_1[3] as string[];
+export const DIGIT_ROW = CODES_LAYER_1[0].slice(1) as string[]
+export const QWERTY_ROW = CODES_LAYER_1[1].slice(1) as string[]
+export const ASDF_ROW = CODES_LAYER_1[2].slice(1) as string[]
+export const ZXCV_ROW = CODES_LAYER_1[3] as string[]
 
 function analyzeColors(keyColors: string[]) {
-  let hasWhite = false;
-  let hasBlack = false;
+  let hasWhite = false
+  let hasBlack = false
   for (const color of keyColors) {
-    if (color.toLowerCase() === "black") {
-      hasBlack = true;
+    if (color.toLowerCase() === 'black') {
+      hasBlack = true
     } else {
-      hasWhite = true;
+      hasWhite = true
     }
   }
-  return { hasWhite, hasBlack };
+  return { hasWhite, hasBlack }
 }
 
 /**
@@ -33,40 +33,38 @@ export function mapWhiteAsdfBlackQwerty(
   baseMidiNote: number,
   baseIndex: number
 ) {
-  const { hasWhite, hasBlack } = analyzeColors(keyColors);
+  const { hasWhite, hasBlack } = analyzeColors(keyColors)
 
-  const map = new Map<string, number>();
+  const map = new Map<string, number>()
 
-  let colorIndex = baseIndex - baseMidiNote;
-  let whiteIndex = 0;
-  let blackIndex = 0;
-  let mappedIndex = baseIndex;
+  let colorIndex = baseIndex - baseMidiNote
+  let whiteIndex = 0
+  let blackIndex = 0
+  let mappedIndex = baseIndex
 
-  if (
-    keyColors[mmod(colorIndex - 1, keyColors.length)].toLowerCase() === "black"
-  ) {
-    map.set(QWERTY_ROW[0], mappedIndex - 1);
+  if (keyColors[mmod(colorIndex - 1, keyColors.length)].toLowerCase() === 'black') {
+    map.set(QWERTY_ROW[0], mappedIndex - 1)
   }
   do {
-    const color = keyColors[mmod(colorIndex++, keyColors.length)].toLowerCase();
-    let code: string | undefined;
-    if (color !== "black" && whiteIndex < ASDF_ROW.length) {
-      code = ASDF_ROW[whiteIndex++];
-      blackIndex = Math.max(blackIndex, whiteIndex);
+    const color = keyColors[mmod(colorIndex++, keyColors.length)].toLowerCase()
+    let code: string | undefined
+    if (color !== 'black' && whiteIndex < ASDF_ROW.length) {
+      code = ASDF_ROW[whiteIndex++]
+      blackIndex = Math.max(blackIndex, whiteIndex)
     }
-    if (color === "black" && blackIndex < QWERTY_ROW.length) {
-      code = QWERTY_ROW[blackIndex++];
-      whiteIndex = Math.max(whiteIndex, blackIndex - 1);
+    if (color === 'black' && blackIndex < QWERTY_ROW.length) {
+      code = QWERTY_ROW[blackIndex++]
+      whiteIndex = Math.max(whiteIndex, blackIndex - 1)
     }
     if (code !== undefined) {
-      map.set(code, mappedIndex++);
+      map.set(code, mappedIndex++)
     }
   } while (
     (hasWhite && whiteIndex < ASDF_ROW.length) ||
     (hasBlack && blackIndex < QWERTY_ROW.length)
-  );
+  )
 
-  return map;
+  return map
 }
 
 /**
@@ -87,69 +85,64 @@ export function mapWhiteQweZxcBlack123Asd(
   baseIndex: number,
   zxcvIndex = 1
 ) {
-  const { hasWhite, hasBlack } = analyzeColors(keyColors);
+  const { hasWhite, hasBlack } = analyzeColors(keyColors)
 
-  const map = new Map<string, number>();
+  const map = new Map<string, number>()
 
   // Map lower rows
-  let colorIndex = baseIndex - baseMidiNote;
-  let whiteIndex = zxcvIndex;
-  let blackIndex = zxcvIndex;
-  let mappedIndex = baseIndex;
+  let colorIndex = baseIndex - baseMidiNote
+  let whiteIndex = zxcvIndex
+  let blackIndex = zxcvIndex
+  let mappedIndex = baseIndex
 
   if (
     zxcvIndex === 1 &&
-    keyColors[mmod(colorIndex - 1, keyColors.length)].toLowerCase() === "black"
+    keyColors[mmod(colorIndex - 1, keyColors.length)].toLowerCase() === 'black'
   ) {
-    map.set(ASDF_ROW[0], mappedIndex - 1);
+    map.set(ASDF_ROW[0], mappedIndex - 1)
   }
   do {
-    const color = keyColors[mmod(colorIndex++, keyColors.length)].toLowerCase();
-    let code: string | undefined;
-    if (color !== "black" && whiteIndex < ZXCV_ROW.length) {
-      code = ZXCV_ROW[whiteIndex++];
-      blackIndex = Math.max(blackIndex, whiteIndex - 1);
+    const color = keyColors[mmod(colorIndex++, keyColors.length)].toLowerCase()
+    let code: string | undefined
+    if (color !== 'black' && whiteIndex < ZXCV_ROW.length) {
+      code = ZXCV_ROW[whiteIndex++]
+      blackIndex = Math.max(blackIndex, whiteIndex - 1)
     }
-    if (color === "black" && blackIndex < ASDF_ROW.length) {
-      code = ASDF_ROW[blackIndex++];
-      whiteIndex = Math.max(whiteIndex, blackIndex);
+    if (color === 'black' && blackIndex < ASDF_ROW.length) {
+      code = ASDF_ROW[blackIndex++]
+      whiteIndex = Math.max(whiteIndex, blackIndex)
     }
     if (code !== undefined) {
-      map.set(code, mappedIndex++);
+      map.set(code, mappedIndex++)
     }
-  } while (
-    (hasWhite && whiteIndex < ZXCV_ROW.length) ||
-    (hasBlack && blackIndex < ASDF_ROW.length)
-  );
+  } while ((hasWhite && whiteIndex < ZXCV_ROW.length) || (hasBlack && blackIndex < ASDF_ROW.length))
 
   // Map upper rows and octave higher
-  colorIndex = scaleSize + baseIndex - baseMidiNote;
-  whiteIndex = 0;
-  blackIndex = 1;
-  mappedIndex = scaleSize + baseIndex;
-  if (
-    keyColors[mmod(colorIndex - 1, keyColors.length)].toLowerCase() === "black"
-  ) {
-    map.set(DIGIT_ROW[0], mappedIndex - 1);
+  colorIndex = scaleSize + baseIndex - baseMidiNote
+  whiteIndex = 0
+  blackIndex = 1
+  mappedIndex = scaleSize + baseIndex
+  if (keyColors[mmod(colorIndex - 1, keyColors.length)].toLowerCase() === 'black') {
+    map.set(DIGIT_ROW[0], mappedIndex - 1)
   }
   do {
-    const color = keyColors[mmod(colorIndex++, keyColors.length)].toLowerCase();
-    let code: string | undefined;
-    if (color !== "black" && whiteIndex < QWERTY_ROW.length) {
-      code = QWERTY_ROW[whiteIndex++];
-      blackIndex = Math.max(blackIndex, whiteIndex);
+    const color = keyColors[mmod(colorIndex++, keyColors.length)].toLowerCase()
+    let code: string | undefined
+    if (color !== 'black' && whiteIndex < QWERTY_ROW.length) {
+      code = QWERTY_ROW[whiteIndex++]
+      blackIndex = Math.max(blackIndex, whiteIndex)
     }
-    if (color === "black" && blackIndex < DIGIT_ROW.length) {
-      code = DIGIT_ROW[blackIndex++];
-      whiteIndex = Math.max(whiteIndex, blackIndex - 1);
+    if (color === 'black' && blackIndex < DIGIT_ROW.length) {
+      code = DIGIT_ROW[blackIndex++]
+      whiteIndex = Math.max(whiteIndex, blackIndex - 1)
     }
     if (code !== undefined) {
-      map.set(code, mappedIndex++);
+      map.set(code, mappedIndex++)
     }
   } while (
     (hasWhite && whiteIndex < QWERTY_ROW.length) ||
     (hasBlack && blackIndex < DIGIT_ROW.length)
-  );
+  )
 
-  return map;
+  return map
 }

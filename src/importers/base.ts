@@ -1,39 +1,38 @@
-import type { Scale } from "scale-workshop-core";
+import type { Scale } from 'scale-workshop-core'
 
 export type ImportResult = {
-  scale: Scale;
-  name?: string;
-  baseMidiNote?: number;
-};
+  scale: Scale
+  name?: string
+  baseMidiNote?: number
+}
 
 export abstract class TextImporter {
-  event: Event;
+  event: Event
 
   constructor(event: Event) {
-    this.event = event;
+    this.event = event
   }
 
-  abstract parseText(input: string, filename: string): ImportResult;
+  abstract parseText(input: string, filename: string): ImportResult
 
   parse() {
     if (this.event.target == null) {
-      throw new Error("Missing event target element");
+      throw new Error('Missing event target element')
     }
-    const target: HTMLInputElement = this.event.target as HTMLInputElement;
+    const target: HTMLInputElement = this.event.target as HTMLInputElement
     if (target.files === null) {
-      throw new Error("Missing files");
+      throw new Error('Missing files')
     }
-    const files: FileList = target.files;
+    const files: FileList = target.files
     if (!files.length) {
-      throw new Error("Missing file");
+      throw new Error('Missing file')
     }
-    const reader = new FileReader();
+    const reader = new FileReader()
 
     return new Promise<ImportResult>((resolve, reject) => {
-      reader.onload = () =>
-        resolve(this.parseText(reader.result as string, files[0].name));
-      reader.onerror = reject;
-      reader.readAsText(files[0]);
-    });
+      reader.onload = () => resolve(this.parseText(reader.result as string, files[0].name))
+      reader.onerror = reject
+      reader.readAsText(files[0])
+    })
   }
 }

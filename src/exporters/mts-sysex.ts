@@ -1,73 +1,67 @@
-import { clamp, frequencyToMtsBytes } from "xen-dev-utils";
-import { BaseExporter, type ExporterParams } from "./base";
+import { clamp, frequencyToMtsBytes } from 'xen-dev-utils'
+import { BaseExporter, type ExporterParams } from './base'
 
-export function frequencyTableToBinaryData(
-  frequencyTableIn: number[]
-): Uint8Array {
-  const dataSize = frequencyTableIn.length * 3;
-  const data = new Uint8Array(dataSize);
-  let dataIndex = 0;
+export function frequencyTableToBinaryData(frequencyTableIn: number[]): Uint8Array {
+  const dataSize = frequencyTableIn.length * 3
+  const data = new Uint8Array(dataSize)
+  let dataIndex = 0
   frequencyTableIn.forEach((f: number) => {
-    const bytes = frequencyToMtsBytes(f);
-    data[dataIndex] = bytes[0];
-    data[dataIndex + 1] = bytes[1];
-    data[dataIndex + 2] = bytes[2];
-    dataIndex += 3;
-  });
+    const bytes = frequencyToMtsBytes(f)
+    data[dataIndex] = bytes[0]
+    data[dataIndex + 1] = bytes[1]
+    data[dataIndex + 2] = bytes[2]
+    dataIndex += 3
+  })
 
-  return data;
+  return data
 }
 
 export function getSysexChecksum(data: number[]): number {
   const checksum = data
     .filter((byte: number) => byte >= 0 && byte < 128)
-    .reduce((sum: number, byte: number) => sum ^ byte, 0xff);
-  return checksum & 0x7f;
+    .reduce((sum: number, byte: number) => sum ^ byte, 0xff)
+  return checksum & 0x7f
 }
 
 export default class MtsSysexExporter extends BaseExporter {
-  params: ExporterParams;
+  params: ExporterParams
 
   constructor(params: ExporterParams) {
-    super();
-    this.params = params;
+    super()
+    this.params = params
   }
 
   getBulkTuningData() {
-    const scale = this.params.scale;
-    const baseMidiNote = this.params.baseMidiNote;
+    const scale = this.params.scale
+    const baseMidiNote = this.params.baseMidiNote
 
-    const frequencies = scale.getFrequencyRange(
-      -baseMidiNote,
-      128 - baseMidiNote
-    );
+    const frequencies = scale.getFrequencyRange(-baseMidiNote, 128 - baseMidiNote)
 
-    const scaleData = frequencyTableToBinaryData(frequencies);
-    return scaleData;
+    const scaleData = frequencyTableToBinaryData(frequencies)
+    return scaleData
   }
 
   getNameData() {
-    let name = this.params.name ?? "";
+    let name = this.params.name ?? ''
     while (name.length < 16) {
-      name += " ";
+      name += ' '
     }
 
     const nameData = Array.from(name)
       .slice(0, 16)
-      .map((char: string) => char.charCodeAt(0));
-    return nameData;
+      .map((char: string) => char.charCodeAt(0))
+    return nameData
   }
 
   buildSysExDump() {
-    if (this.params.presetIndex === undefined)
-      throw new Error("No preset index defined");
+    if (this.params.presetIndex === undefined) throw new Error('No preset index defined')
 
-    const presetIndex = clamp(0, 0x7f, this.params.presetIndex);
+    const presetIndex = clamp(0, 0x7f, this.params.presetIndex)
 
-    const nameData = this.getNameData();
-    const scaleData = this.getBulkTuningData();
+    const nameData = this.getNameData()
+    const scaleData = this.getBulkTuningData()
 
-    const data: number[] = [];
+    const data: number[] = []
     data.push(
       0xf0,
       0x7e, // SysEx header
@@ -77,16 +71,16 @@ export default class MtsSysexExporter extends BaseExporter {
       presetIndex,
       ...nameData,
       ...scaleData
-    );
-    const checksum = getSysexChecksum(data);
-    data.push(checksum);
-    data.push(0xf7);
+    )
+    const checksum = getSysexChecksum(data)
+    data.push(checksum)
+    data.push(0xf7)
 
-    return Uint8Array.from(data);
+    return Uint8Array.from(data)
   }
 
   saveFile() {
-    const sysexDump = this.buildSysExDump();
-    super.saveFile(this.params.filename + ".syx", sysexDump, true);
+    const sysexDump = this.buildSysExDump()
+    super.saveFile(this.params.filename + '.syx', sysexDump, true)
   }
 }

@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import VirtualKeyboard from "@/components/VirtualKeyboard.vue";
-import VirtualPiano from "@/components/VirtualPiano.vue";
-import type { Scale } from "scale-workshop-core";
+import VirtualKeyboard from '@/components/VirtualKeyboard.vue'
+import VirtualPiano from '@/components/VirtualPiano.vue'
+import type { Scale } from 'scale-workshop-core'
 
-type NoteOff = () => void;
-type NoteOnCallback = (index: number) => NoteOff;
+type NoteOff = () => void
+type NoteOnCallback = (index: number) => NoteOff
 
 defineProps<{
-  baseMidiNote: number;
-  equaveShift: number;
-  degreeShift: number;
-  isomorphicHorizontal: number;
-  isomorphicVertical: number;
-  scale: Scale;
-  keyColors: string[];
-  noteOn: NoteOnCallback;
-  heldNotes: Map<number, number>;
-  keyboardMode: "isomorphic" | "piano";
-}>();
+  baseMidiNote: number
+  equaveShift: number
+  degreeShift: number
+  isomorphicHorizontal: number
+  isomorphicVertical: number
+  scale: Scale
+  keyColors: string[]
+  noteOn: NoteOnCallback
+  heldNotes: Map<number, number>
+  keyboardMode: 'isomorphic' | 'piano'
+}>()
 </script>
 
 <template>

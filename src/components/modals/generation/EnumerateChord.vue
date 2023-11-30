@@ -1,29 +1,29 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import Modal from "@/components/ModalDialog.vue";
-import { parseChordInput } from "@/utils";
-import { Scale } from "scale-workshop-core";
+import { ref } from 'vue'
+import Modal from '@/components/ModalDialog.vue'
+import { parseChordInput } from '@/utils'
+import { Scale } from 'scale-workshop-core'
 
-const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
+const emit = defineEmits(['update:scale', 'update:scaleName', 'cancel'])
 
-const chord = ref("");
-const invertChord = ref(false);
+const chord = ref('')
+const invertChord = ref(false)
 
 function generate() {
   try {
-    const intervals = parseChordInput(chord.value);
-    const scale = Scale.fromChord(intervals);
-    emit("update:scaleName", `Chord ${chord.value}`);
+    const intervals = parseChordInput(chord.value)
+    const scale = Scale.fromChord(intervals)
+    emit('update:scaleName', `Chord ${chord.value}`)
     if (invertChord.value) {
-      emit("update:scale", scale.invert());
+      emit('update:scale', scale.invert())
     } else {
-      emit("update:scale", scale);
+      emit('update:scale', scale)
     }
   } catch (error) {
     if (error instanceof Error) {
-      alert(error.message);
+      alert(error.message)
     } else {
-      alert(error);
+      alert(error)
     }
   }
 }
@@ -38,13 +38,7 @@ function generate() {
       <div class="control-group">
         <div class="control">
           <label for="chord">Chord</label>
-          <input
-            id="chord"
-            type="text"
-            class="control"
-            placeholder="4:5:6:8"
-            v-model="chord"
-          />
+          <input id="chord" type="text" class="control" placeholder="4:5:6:8" v-model="chord" />
         </div>
         <div class="control checkbox-container">
           <input type="checkbox" id="integrate-period" v-model="invertChord" />

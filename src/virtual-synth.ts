@@ -1,6 +1,6 @@
 function sin3(phase: number) {
-  const s = Math.sin(2 * Math.PI * phase);
-  return s * s * s;
+  const s = Math.sin(2 * Math.PI * phase)
+  return s * s * s
 }
 
 /**
@@ -8,14 +8,14 @@ function sin3(phase: number) {
  */
 export type Voice = {
   /** Unique identifier. */
-  id: number;
+  id: number
   /** Start time of the note. */
-  start: number;
+  start: number
   /** Frequency of the note. */
-  frequency: number;
+  frequency: number
   /** Waveform of the note. */
-  waveform: (phase: number) => number;
-};
+  waveform: (phase: number) => number
+}
 
 /**
  * Virtual synthesizer that doesn't make sound but keeps time.
@@ -23,20 +23,20 @@ export type Voice = {
  */
 export class VirtualSynth {
   /** Global audio context for timekeeping. */
-  audioContext: AudioContext;
+  audioContext: AudioContext
   /** Currently active voices sorted from lowest frequency to highest. */
-  voices: Voice[];
+  voices: Voice[]
   /** Number of voices played during the lifetime of the synth. */
-  numPlayed: number;
+  numPlayed: number
 
   /**
    * Create a new virtual synthesizer.
    * @param audioContext Global audio context for timekeeping.
    */
   constructor(audioContext: AudioContext) {
-    this.audioContext = audioContext;
-    this.voices = [];
-    this.numPlayed = 0;
+    this.audioContext = audioContext
+    this.voices = []
+    this.numPlayed = 0
   }
 
   /**
@@ -46,25 +46,25 @@ export class VirtualSynth {
    * @returns Callback for turning the voice off.
    */
   voiceOn(frequency: number, waveform = sin3) {
-    const start = this.audioContext.currentTime;
-    const id = this.numPlayed++;
+    const start = this.audioContext.currentTime
+    const id = this.numPlayed++
     this.voices.push({
       id,
       start,
       frequency,
-      waveform,
-    });
-    this.voices.sort((a, b) => a.frequency - b.frequency);
+      waveform
+    })
+    this.voices.sort((a, b) => a.frequency - b.frequency)
 
     const voiceOff = () => {
       for (let i = 0; i < this.voices.length; ++i) {
         if (this.voices[i].id === id) {
-          this.voices.splice(i, 1);
+          this.voices.splice(i, 1)
         }
       }
-    };
+    }
 
-    return voiceOff;
+    return voiceOff
   }
 
   /**
@@ -76,26 +76,26 @@ export class VirtualSynth {
    */
   getTimeDomainData(start: number, end: number, buffers: Float32Array[]) {
     if (!buffers.length) {
-      return;
+      return
     }
-    const dt = (end - start) / buffers[0].length;
+    const dt = (end - start) / buffers[0].length
     for (let i = 0; i < buffers[0].length; ++i) {
-      const t = start + dt * i;
+      const t = start + dt * i
       this.voices.forEach((voice, j) => {
         if (j >= buffers.length) {
-          return;
+          return
         }
-        const phase = (t - voice.start) * voice.frequency;
+        const phase = (t - voice.start) * voice.frequency
         if (phase >= 0) {
-          buffers[j][i] = voice.waveform(phase);
+          buffers[j][i] = voice.waveform(phase)
         } else {
-          buffers[j][i] = 0;
+          buffers[j][i] = 0
         }
-      });
+      })
     }
     // Signal unused buffers.
     for (let i = this.voices.length; i < buffers.length; ++i) {
-      buffers[i][0] = NaN;
+      buffers[i][0] = NaN
     }
   }
 }

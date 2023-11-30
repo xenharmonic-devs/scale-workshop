@@ -1,50 +1,50 @@
 <script setup lang="ts">
-import { UNIX_NEWLINE, WINDOWS_NEWLINE } from "@/constants";
-import { computed } from "vue";
+import { UNIX_NEWLINE, WINDOWS_NEWLINE } from '@/constants'
+import { computed } from 'vue'
 
 const props = defineProps<{
-  newline: string;
-  colorScheme: "light" | "dark";
-  centsFractionDigits: number;
-  decimalFractionDigits: number;
-  showVirtualQwerty: boolean;
-  midiOctaveOffset: number;
-}>();
+  newline: string
+  colorScheme: 'light' | 'dark'
+  centsFractionDigits: number
+  decimalFractionDigits: number
+  showVirtualQwerty: boolean
+  midiOctaveOffset: number
+}>()
 
 const emit = defineEmits([
-  "update:newline",
-  "update:colorScheme",
-  "update:centsFractionDigits",
-  "update:decimalFractionDigits",
-  "update:virtualKeyboardMode",
-  "update:showVirtualQwerty",
-  "update:midiOctaveOffset",
-]);
+  'update:newline',
+  'update:colorScheme',
+  'update:centsFractionDigits',
+  'update:decimalFractionDigits',
+  'update:virtualKeyboardMode',
+  'update:showVirtualQwerty',
+  'update:midiOctaveOffset'
+])
 
 const newline = computed({
   get: () => props.newline,
-  set: (newValue: string) => emit("update:newline", newValue),
-});
+  set: (newValue: string) => emit('update:newline', newValue)
+})
 const colorScheme = computed({
   get: () => props.colorScheme,
-  set: (newValue: string) => emit("update:colorScheme", newValue),
-});
+  set: (newValue: string) => emit('update:colorScheme', newValue)
+})
 const centsFractionDigits = computed({
   get: () => props.centsFractionDigits,
-  set: (newValue: number) => emit("update:centsFractionDigits", newValue),
-});
+  set: (newValue: number) => emit('update:centsFractionDigits', newValue)
+})
 const decimalFractionDigits = computed({
   get: () => props.decimalFractionDigits,
-  set: (newValue: number) => emit("update:decimalFractionDigits", newValue),
-});
+  set: (newValue: number) => emit('update:decimalFractionDigits', newValue)
+})
 const showVirtualQwerty = computed({
   get: () => props.showVirtualQwerty,
-  set: (newValue: boolean) => emit("update:showVirtualQwerty", newValue),
-});
+  set: (newValue: boolean) => emit('update:showVirtualQwerty', newValue)
+})
 const midiOctaveOffset = computed({
   get: () => props.midiOctaveOffset,
-  set: (newValue: number) => emit("update:midiOctaveOffset", newValue),
-});
+  set: (newValue: number) => emit('update:midiOctaveOffset', newValue)
+})
 </script>
 
 <template>
@@ -61,9 +61,7 @@ const midiOctaveOffset = computed({
               title="If your exported tuning files didn't work right on macOS synths, try changing this option to Unix."
               v-model="newline"
             >
-              <option :value="WINDOWS_NEWLINE">
-                Microsoft (Windows/MS-DOS)
-              </option>
+              <option :value="WINDOWS_NEWLINE">Microsoft (Windows/MS-DOS)</option>
               <option :value="UNIX_NEWLINE">Unix (Mac/Linux)</option>
             </select>
           </div>
@@ -71,11 +69,7 @@ const midiOctaveOffset = computed({
         <h2>Advanced</h2>
         <div class="control-group">
           <div class="control checkbox-container">
-            <input
-              id="virtual-qwerty"
-              type="checkbox"
-              v-model="showVirtualQwerty"
-            />
+            <input id="virtual-qwerty" type="checkbox" v-model="showVirtualQwerty" />
             <label for="virtual-qwerty"> Virtual QWERTY in top menu</label>
           </div>
         </div>
@@ -86,21 +80,11 @@ const midiOctaveOffset = computed({
           <h3>Color Scheme</h3>
           <div class="control radio-group">
             <span>
-              <input
-                type="radio"
-                id="scheme-light"
-                value="light"
-                v-model="colorScheme"
-              />
+              <input type="radio" id="scheme-light" value="light" v-model="colorScheme" />
               <label for="scheme-light"> Light </label>
             </span>
             <span>
-              <input
-                type="radio"
-                id="scheme-dark"
-                value="dark"
-                v-model="colorScheme"
-              />
+              <input type="radio" id="scheme-dark" value="dark" v-model="colorScheme" />
               <label for="scheme-dark"> Dark </label>
             </span>
           </div>
@@ -121,13 +105,7 @@ const midiOctaveOffset = computed({
         <div class="control-group">
           <div class="control">
             <label for="cents">Cents digits after decimal point</label>
-            <input
-              id="cents"
-              type="number"
-              class="control"
-              min="0"
-              v-model="centsFractionDigits"
-            />
+            <input id="cents" type="number" class="control" min="0" v-model="centsFractionDigits" />
           </div>
           <div class="control">
             <label for="decimal">Decimal digits after decimal comma</label>

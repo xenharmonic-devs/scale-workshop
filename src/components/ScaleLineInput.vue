@@ -1,41 +1,41 @@
 <script setup lang="ts">
-import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
-import { computedAndError } from "@/utils";
-import { parseLine, type Interval } from "scale-workshop-core";
-import { ref, watch } from "vue";
+import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
+import { computedAndError } from '@/utils'
+import { parseLine, type Interval } from 'scale-workshop-core'
+import { ref, watch } from 'vue'
 
 const props = defineProps<{
-  modelValue: string;
-  defaultValue: Interval;
-  placeholder?: string;
-}>();
+  modelValue: string
+  defaultValue: Interval
+  placeholder?: string
+}>()
 
-const emit = defineEmits(["update:value", "update:modelValue"]);
+const emit = defineEmits(['update:value', 'update:modelValue'])
 
-const element = ref<HTMLInputElement | null>(null);
+const element = ref<HTMLInputElement | null>(null)
 const [value, error] = computedAndError(
   () => parseLine(props.modelValue, DEFAULT_NUMBER_OF_COMPONENTS),
   props.defaultValue
-);
-watch(value, (newValue) => emit("update:value", newValue), { immediate: true });
+)
+watch(value, (newValue) => emit('update:value', newValue), { immediate: true })
 watch(
   element,
   (newElement) => {
     if (newElement) {
-      newElement.setCustomValidity(error.value);
+      newElement.setCustomValidity(error.value)
     }
   },
   { immediate: true }
-);
+)
 watch(
   error,
   (newError) => {
     if (element.value) {
-      element.value.setCustomValidity(newError);
+      element.value.setCustomValidity(newError)
     }
   },
   { immediate: true }
-);
+)
 </script>
 
 <template>
@@ -44,8 +44,6 @@ watch(
     type="text"
     :placeholder="placeholder"
     :value="modelValue"
-    @input="
-      $emit('update:modelValue', ($event.target as HTMLInputElement)!.value)
-    "
+    @input="$emit('update:modelValue', ($event.target as HTMLInputElement)!.value)"
   />
 </template>

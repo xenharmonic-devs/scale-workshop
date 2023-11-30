@@ -2,61 +2,54 @@
 // This modal is currently unused in the app.
 // TODO: Add sanity checks
 
-import { makeRank1 } from "@/tempering";
-import { ref, watch } from "vue";
-import Modal from "@/components/ModalDialog.vue";
-import { makeState } from "@/components/modals/tempering-state";
+import { makeRank1 } from '@/tempering'
+import { ref, watch } from 'vue'
+import Modal from '@/components/ModalDialog.vue'
+import { makeState } from '@/components/modals/tempering-state'
 
 const props = defineProps<{
-  centsFractionDigits: number;
-}>();
+  centsFractionDigits: number
+}>()
 
-const emit = defineEmits(["update:scaleName", "update:scale", "cancel"]);
+const emit = defineEmits(['update:scaleName', 'update:scale', 'cancel'])
 
 // === Component state ===
-const state = makeState(ref("vals"), "2.3.5");
-const valsString = state.valsString;
-const subgroupString = state.subgroupString;
-const showAdvanced = ref(false);
-const weightsString = state.weightsString;
-const subgroupError = state.subgroupError;
-const error = ref("");
-const valElement = ref<HTMLInputElement | null>(null);
-const subgroupElement = ref<HTMLInputElement | null>(null);
+const state = makeState(ref('vals'), '2.3.5')
+const valsString = state.valsString
+const subgroupString = state.subgroupString
+const showAdvanced = ref(false)
+const weightsString = state.weightsString
+const subgroupError = state.subgroupError
+const error = ref('')
+const valElement = ref<HTMLInputElement | null>(null)
+const subgroupElement = ref<HTMLInputElement | null>(null)
 
 // === Computed state ===
-const vals = state.vals;
-const subgroup = state.subgroup;
-const weights = state.weights;
+const vals = state.vals
+const subgroup = state.subgroup
+const weights = state.weights
 
 // === Watchers ===
-watch(subgroupError, (newError) =>
-  subgroupElement.value!.setCustomValidity(newError)
-);
-watch(error, (newError) => valElement.value!.setCustomValidity(newError));
+watch(subgroupError, (newError) => subgroupElement.value!.setCustomValidity(newError))
+watch(error, (newError) => valElement.value!.setCustomValidity(newError))
 
 // === Methods ===
 function generate() {
   try {
     if (vals.value.length !== 1) {
-      error.value = "A single val is required";
-      return;
+      error.value = 'A single val is required'
+      return
     }
-    const scale = makeRank1(
-      vals.value[0],
-      subgroup.value,
-      weights.value
-    ).mergeOptions({ centsFractionDigits: props.centsFractionDigits });
-    emit(
-      "update:scaleName",
-      `Rank 1 temperament (${vals.value[0]}, ${subgroupString.value})`
-    );
-    emit("update:scale", scale);
+    const scale = makeRank1(vals.value[0], subgroup.value, weights.value).mergeOptions({
+      centsFractionDigits: props.centsFractionDigits
+    })
+    emit('update:scaleName', `Rank 1 temperament (${vals.value[0]}, ${subgroupString.value})`)
+    emit('update:scale', scale)
   } catch (error_) {
     if (error_ instanceof Error) {
-      error.value = error_.message;
+      error.value = error_.message
     } else {
-      error.value = "" + error_;
+      error.value = '' + error_
     }
   }
 }
@@ -90,11 +83,7 @@ function generate() {
             v-model="subgroupString"
           />
         </div>
-        <h3
-          class="section"
-          :class="{ open: showAdvanced }"
-          @click="showAdvanced = !showAdvanced"
-        >
+        <h3 class="section" :class="{ open: showAdvanced }" @click="showAdvanced = !showAdvanced">
           Advanced options
         </h3>
         <div class="control-group" v-show="showAdvanced">
@@ -112,10 +101,7 @@ function generate() {
     </template>
     <template #footer>
       <div class="btn-group">
-        <button
-          @click="generate"
-          :disabled="error.length !== 0 || subgroupError.length !== 0"
-        >
+        <button @click="generate" :disabled="error.length !== 0 || subgroupError.length !== 0">
           OK
         </button>
         <button @click="$emit('cancel')">Cancel</button>

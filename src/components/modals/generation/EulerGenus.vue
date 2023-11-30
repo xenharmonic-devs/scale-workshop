@@ -1,25 +1,21 @@
 <script setup lang="ts">
-import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
-import { ref } from "vue";
-import Modal from "@/components/ModalDialog.vue";
-import { clamp } from "xen-dev-utils";
-import { Scale } from "scale-workshop-core";
-const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
-const guideTone = ref(45);
-const equave = ref(2);
+import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
+import { ref } from 'vue'
+import Modal from '@/components/ModalDialog.vue'
+import { clamp } from 'xen-dev-utils'
+import { Scale } from 'scale-workshop-core'
+const emit = defineEmits(['update:scale', 'update:scaleName', 'cancel'])
+const guideTone = ref(45)
+const equave = ref(2)
 function generate() {
-  const clampedTone = Math.round(clamp(1, 1000000000, guideTone.value));
-  const scale = Scale.fromEulerGenus(
-    clampedTone,
-    equave.value,
-    DEFAULT_NUMBER_OF_COMPONENTS
-  );
-  let name = `Euler-Fokker genus ${clampedTone}`;
+  const clampedTone = Math.round(clamp(1, 1000000000, guideTone.value))
+  const scale = Scale.fromEulerGenus(clampedTone, equave.value, DEFAULT_NUMBER_OF_COMPONENTS)
+  let name = `Euler-Fokker genus ${clampedTone}`
   if (equave.value !== 2) {
-    name += `<${equave.value}>`;
+    name += `<${equave.value}>`
   }
-  emit("update:scaleName", name);
-  emit("update:scale", scale);
+  emit('update:scaleName', name)
+  emit('update:scale', scale)
 }
 </script>
 
@@ -43,13 +39,7 @@ function generate() {
         </div>
         <div class="control">
           <label for="equave">Equave</label>
-          <input
-            id="equave"
-            type="number"
-            min="2"
-            class="control"
-            v-model="equave"
-          />
+          <input id="equave" type="number" min="2" class="control" v-model="equave" />
         </div>
       </div>
     </template>

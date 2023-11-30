@@ -1,29 +1,29 @@
 <script setup lang="ts">
-import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
-import { ref } from "vue";
-import Modal from "@/components/ModalDialog.vue";
-import { clamp } from "xen-dev-utils";
-import { Scale } from "scale-workshop-core";
+import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
+import { ref } from 'vue'
+import Modal from '@/components/ModalDialog.vue'
+import { clamp } from 'xen-dev-utils'
+import { Scale } from 'scale-workshop-core'
 
-const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
+const emit = defineEmits(['update:scale', 'update:scaleName', 'cancel'])
 
-const lowestHarmonic = ref(8);
-const highestHarmonic = ref(16);
+const lowestHarmonic = ref(8)
+const highestHarmonic = ref(16)
 
 function generate() {
-  const denominator = Math.max(1, Math.round(lowestHarmonic.value));
+  const denominator = Math.max(1, Math.round(lowestHarmonic.value))
   const greatestNumerator = clamp(
     denominator + 1,
     denominator + 1000,
     Math.round(highestHarmonic.value)
-  );
+  )
   const scale = Scale.fromHarmonicSeries(
     denominator,
     greatestNumerator,
     DEFAULT_NUMBER_OF_COMPONENTS
-  );
-  emit("update:scaleName", `Harmonics ${denominator}-${greatestNumerator}`);
-  emit("update:scale", scale);
+  )
+  emit('update:scaleName', `Harmonics ${denominator}-${greatestNumerator}`)
+  emit('update:scale', scale)
 }
 </script>
 

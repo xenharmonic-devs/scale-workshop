@@ -1,278 +1,270 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
-import TimeDomainVisualizer from "@/components/TimeDomainVisualizer.vue";
-import Modal from "@/components/ModalDialog.vue";
-import { WAVEFORMS } from "@/synth";
-import { useAudioStore } from "@/stores/audio";
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import TimeDomainVisualizer from '@/components/TimeDomainVisualizer.vue'
+import Modal from '@/components/ModalDialog.vue'
+import { WAVEFORMS } from '@/synth'
+import { useAudioStore } from '@/stores/audio'
 
 const props = defineProps<{
-  keyboardMode: "isomorphic" | "piano";
-  pianoMode: "Asdf" | "QweZxc0" | "QweZxc1";
-  isomorphicHorizontal: number;
-  isomorphicVertical: number;
-  equaveShift: number;
-  degreeShift: number;
-  colorScheme: "light" | "dark";
-  deactivationCode: string;
-  equaveUpCode: string;
-  equaveDownCode: string;
-  degreeUpCode: string;
-  degreeDownCode: string;
-}>();
+  keyboardMode: 'isomorphic' | 'piano'
+  pianoMode: 'Asdf' | 'QweZxc0' | 'QweZxc1'
+  isomorphicHorizontal: number
+  isomorphicVertical: number
+  equaveShift: number
+  degreeShift: number
+  colorScheme: 'light' | 'dark'
+  deactivationCode: string
+  equaveUpCode: string
+  equaveDownCode: string
+  degreeUpCode: string
+  degreeDownCode: string
+}>()
 
 const emit = defineEmits([
-  "update:keyboardMode",
-  "update:pianoMode",
-  "update:isomorphicHorizontal",
-  "update:isomorphicVertical",
-  "update:equaveShift",
-  "update:degreeShift",
-  "update:deactivationCode",
-  "update:equaveUpCode",
-  "update:equaveDownCode",
-  "update:degreeUpCode",
-  "update:degreeDownCode",
-  "mapAsdf",
-  "mapZxcv0",
-  "mapZxcv1",
-  "panic",
-]);
+  'update:keyboardMode',
+  'update:pianoMode',
+  'update:isomorphicHorizontal',
+  'update:isomorphicVertical',
+  'update:equaveShift',
+  'update:degreeShift',
+  'update:deactivationCode',
+  'update:equaveUpCode',
+  'update:equaveDownCode',
+  'update:degreeUpCode',
+  'update:degreeDownCode',
+  'mapAsdf',
+  'mapZxcv0',
+  'mapZxcv1',
+  'panic'
+])
 
-const audio = useAudioStore();
+const audio = useAudioStore()
 
-const remappedKey = ref("");
+const remappedKey = ref('')
 
-const timeDomainVisualizer = ref<any>(null);
+const timeDomainVisualizer = ref<any>(null)
 
-const analyser = ref<AnalyserNode | null>(null);
+const analyser = ref<AnalyserNode | null>(null)
 
 // These really should be direct v-models, but there's
 // something wrong with how input ranges are handled.
 const audioDelay = computed({
   get: () => audio.audioDelay,
   set(newValue: number) {
-    if (typeof newValue !== "number") {
-      newValue = parseFloat(newValue);
+    if (typeof newValue !== 'number') {
+      newValue = parseFloat(newValue)
     }
     if (!isNaN(newValue)) {
-      audio.audioDelay = newValue;
+      audio.audioDelay = newValue
     }
-  },
-});
+  }
+})
 
 const mainVolume = computed({
   get: () => audio.mainVolume,
   set(newValue: number) {
-    if (typeof newValue !== "number") {
-      newValue = parseFloat(newValue);
+    if (typeof newValue !== 'number') {
+      newValue = parseFloat(newValue)
     }
     if (!isNaN(newValue)) {
-      audio.mainVolume = newValue;
+      audio.mainVolume = newValue
     }
-  },
-});
+  }
+})
 const keyboardMode = computed({
   get: () => props.keyboardMode,
-  set: (newValue: "isomorphic" | "piano") =>
-    emit("update:keyboardMode", newValue),
-});
+  set: (newValue: 'isomorphic' | 'piano') => emit('update:keyboardMode', newValue)
+})
 const pianoMode = computed({
   get: () => props.pianoMode,
-  set: (newValue: "Asdf" | "QweZxc0" | "QweZxc1") =>
-    emit("update:pianoMode", newValue),
-});
+  set: (newValue: 'Asdf' | 'QweZxc0' | 'QweZxc1') => emit('update:pianoMode', newValue)
+})
 const isomorphicVertical = computed({
   get: () => props.isomorphicVertical,
-  set: (newValue: number) => emit("update:isomorphicVertical", newValue),
-});
+  set: (newValue: number) => emit('update:isomorphicVertical', newValue)
+})
 const isomorphicHorizontal = computed({
   get: () => props.isomorphicHorizontal,
-  set: (newValue: number) => emit("update:isomorphicHorizontal", newValue),
-});
+  set: (newValue: number) => emit('update:isomorphicHorizontal', newValue)
+})
 const equaveShift = computed({
   get: () => props.equaveShift,
-  set: (newValue: number) => emit("update:equaveShift", newValue),
-});
+  set: (newValue: number) => emit('update:equaveShift', newValue)
+})
 const degreeShift = computed({
   get: () => props.degreeShift,
-  set: (newValue: number) => emit("update:degreeShift", newValue),
-});
+  set: (newValue: number) => emit('update:degreeShift', newValue)
+})
 
 const attackTime = computed({
   get: () => audio.attackTime,
   set(newValue: number) {
-    if (typeof newValue !== "number") {
-      newValue = parseFloat(newValue);
+    if (typeof newValue !== 'number') {
+      newValue = parseFloat(newValue)
     }
     if (!isNaN(newValue)) {
-      audio.attackTime = newValue;
+      audio.attackTime = newValue
     }
-  },
-});
+  }
+})
 
 const decayTime = computed({
   get: () => audio.decayTime,
   set(newValue: number) {
-    if (typeof newValue !== "number") {
-      newValue = parseFloat(newValue);
+    if (typeof newValue !== 'number') {
+      newValue = parseFloat(newValue)
     }
     if (!isNaN(newValue)) {
-      audio.decayTime = newValue;
+      audio.decayTime = newValue
     }
-  },
-});
+  }
+})
 
 const sustainLevel = computed({
   get: () => audio.sustainLevel,
   set(newValue: number) {
-    if (typeof newValue !== "number") {
-      newValue = parseFloat(newValue);
+    if (typeof newValue !== 'number') {
+      newValue = parseFloat(newValue)
     }
     if (!isNaN(newValue)) {
-      audio.sustainLevel = newValue;
+      audio.sustainLevel = newValue
     }
-  },
-});
+  }
+})
 
 const releaseTime = computed({
   get: () => audio.releaseTime,
   set(newValue: number) {
-    if (typeof newValue !== "number") {
-      newValue = parseFloat(newValue);
+    if (typeof newValue !== 'number') {
+      newValue = parseFloat(newValue)
     }
     if (!isNaN(newValue)) {
-      audio.releaseTime = newValue;
+      audio.releaseTime = newValue
     }
-  },
-});
+  }
+})
 
 const pingPongDelayTime = computed({
   get: () => audio.pingPongDelayTime,
   set(newValue: number) {
-    if (typeof newValue !== "number") {
-      newValue = parseFloat(newValue);
+    if (typeof newValue !== 'number') {
+      newValue = parseFloat(newValue)
     }
     if (!isNaN(newValue)) {
-      audio.pingPongDelayTime = newValue;
+      audio.pingPongDelayTime = newValue
     }
-  },
-});
+  }
+})
 
 const pingPongFeedback = computed({
   get: () => audio.pingPongFeedback,
   set(newValue: number) {
-    if (typeof newValue !== "number") {
-      newValue = parseFloat(newValue);
+    if (typeof newValue !== 'number') {
+      newValue = parseFloat(newValue)
     }
     if (!isNaN(newValue)) {
-      audio.pingPongFeedback = newValue;
+      audio.pingPongFeedback = newValue
     }
-  },
-});
+  }
+})
 
 const pingPongSeparation = computed({
   get: () => audio.pingPongSeparation,
   set(newValue: number) {
-    if (typeof newValue !== "number") {
-      newValue = parseFloat(newValue);
+    if (typeof newValue !== 'number') {
+      newValue = parseFloat(newValue)
     }
     if (!isNaN(newValue)) {
-      audio.pingPongSeparation = newValue;
+      audio.pingPongSeparation = newValue
     }
-  },
-});
+  }
+})
 
 const pingPongGain = computed({
   get: () => audio.pingPongGain,
   set(newValue: number) {
-    if (typeof newValue !== "number") {
-      newValue = parseFloat(newValue);
+    if (typeof newValue !== 'number') {
+      newValue = parseFloat(newValue)
     }
     if (!isNaN(newValue)) {
-      audio.pingPongGain = newValue;
+      audio.pingPongGain = newValue
     }
-  },
-});
+  }
+})
 
 const strokeStyle = computed(() => {
   // Add dependency.
-  props.colorScheme;
+  props.colorScheme
   // Fetch from document.
-  return getComputedStyle(document.documentElement)
-    .getPropertyValue("--color-text")
-    .trim();
-});
+  return getComputedStyle(document.documentElement).getPropertyValue('--color-text').trim()
+})
 
 function presetOrgan() {
-  attackTime.value = 0.01;
-  decayTime.value = 0.15;
-  sustainLevel.value = 0.8;
-  releaseTime.value = 0.01;
+  attackTime.value = 0.01
+  decayTime.value = 0.15
+  sustainLevel.value = 0.8
+  releaseTime.value = 0.01
 }
 
 function presetPad() {
-  attackTime.value = 0.5;
-  decayTime.value = 1.5;
-  sustainLevel.value = 0.5;
-  releaseTime.value = 0.7;
+  attackTime.value = 0.5
+  decayTime.value = 1.5
+  sustainLevel.value = 0.5
+  releaseTime.value = 0.7
 }
 
 function presetShort() {
-  attackTime.value = 0.002;
-  decayTime.value = 0.125;
-  sustainLevel.value = 0.0;
-  releaseTime.value = 0.1;
+  attackTime.value = 0.002
+  decayTime.value = 0.125
+  sustainLevel.value = 0.0
+  releaseTime.value = 0.1
 }
 
 function presetMedium() {
-  attackTime.value = 0.003;
-  decayTime.value = 1.5;
-  sustainLevel.value = 0.0;
-  releaseTime.value = 0.3;
+  attackTime.value = 0.003
+  decayTime.value = 1.5
+  sustainLevel.value = 0.0
+  releaseTime.value = 0.3
 }
 
 function presetLong() {
-  attackTime.value = 0.005;
-  decayTime.value = 4;
-  sustainLevel.value = 0.0;
-  releaseTime.value = 0.8;
+  attackTime.value = 0.005
+  decayTime.value = 4
+  sustainLevel.value = 0.0
+  releaseTime.value = 0.8
 }
 
 function assignCode(event: KeyboardEvent) {
   if (remappedKey.value.length && event.code.length) {
-    emit(("update:" + remappedKey.value) as any, event.code);
-    remappedKey.value = "";
+    emit(('update:' + remappedKey.value) as any, event.code)
+    remappedKey.value = ''
   }
 }
 
 watch(
   () => [audio.context, audio.mainGain, timeDomainVisualizer.value],
   () => {
-    if (
-      audio.context === null ||
-      audio.mainGain === null ||
-      timeDomainVisualizer.value === null
-    ) {
-      return;
+    if (audio.context === null || audio.mainGain === null || timeDomainVisualizer.value === null) {
+      return
     }
-    analyser.value = audio.context.createAnalyser();
-    audio.mainGain.connect(analyser.value);
-    timeDomainVisualizer.value.initialize(analyser.value);
+    analyser.value = audio.context.createAnalyser()
+    audio.mainGain.connect(analyser.value)
+    timeDomainVisualizer.value.initialize(analyser.value)
   },
   { immediate: true }
-);
+)
 
 onMounted(() => {
-  window.addEventListener("keydown", assignCode);
-});
+  window.addEventListener('keydown', assignCode)
+})
 
 onUnmounted(() => {
   if (audio.mainGain !== null && analyser.value !== null) {
-    audio.mainGain.disconnect(analyser.value);
-    analyser.value = null;
+    audio.mainGain.disconnect(analyser.value)
+    analyser.value = null
   }
-  window.removeEventListener("keydown", assignCode);
-});
+  window.removeEventListener('keydown', assignCode)
+})
 </script>
 
 <template>
@@ -293,29 +285,14 @@ onUnmounted(() => {
         </div>
         <div class="control-group">
           <label for="volume">Main volume</label>
-          <input
-            class="control"
-            type="range"
-            min="0"
-            max="0.4"
-            step="any"
-            v-model="mainVolume"
-          />
-          <button
-            @click="emit('panic')"
-            style="max-width: 12rem"
-            title="Stop all sound at once"
-          >
+          <input class="control" type="range" min="0" max="0.4" step="any" v-model="mainVolume" />
+          <button @click="emit('panic')" style="max-width: 12rem" title="Stop all sound at once">
             Panic
           </button>
           <div class="control">
             <label for="waveform">Waveform</label>
             <select id="waveform" class="control" v-model="audio.waveform">
-              <option
-                v-for="waveform of WAVEFORMS"
-                :value="waveform"
-                :key="waveform"
-              >
+              <option v-for="waveform of WAVEFORMS" :value="waveform" :key="waveform">
                 {{ waveform }}
               </option>
             </select>
@@ -370,13 +347,7 @@ onUnmounted(() => {
           </div>
           <div class="control">
             <label for="polyphony">Max polyphony</label>
-            <input
-              id="polyphony"
-              type="number"
-              min="1"
-              max="32"
-              v-model="audio.maxPolyphony"
-            />
+            <input id="polyphony" type="number" min="1" max="32" v-model="audio.maxPolyphony" />
           </div>
           <hr />
           <label>Delay Effect</label>
@@ -441,51 +412,26 @@ onUnmounted(() => {
         <div class="control-group">
           <div class="control radio-group">
             <span>
-              <input
-                type="radio"
-                id="mode-isomorphic"
-                value="isomorphic"
-                v-model="keyboardMode"
-              />
+              <input type="radio" id="mode-isomorphic" value="isomorphic" v-model="keyboardMode" />
               <label for="mode-isomorphic"> Isomorphic </label>
             </span>
             <span>
-              <input
-                type="radio"
-                id="mode-piano"
-                value="piano"
-                v-model="keyboardMode"
-              />
+              <input type="radio" id="mode-piano" value="piano" v-model="keyboardMode" />
               <label for="mode-piano"> Piano-style layers </label>
             </span>
           </div>
           <template v-if="keyboardMode === 'piano'">
             <div class="control radio-group">
               <span>
-                <input
-                  type="radio"
-                  id="mode-asdf"
-                  value="Asdf"
-                  v-model="pianoMode"
-                />
+                <input type="radio" id="mode-asdf" value="Asdf" v-model="pianoMode" />
                 <label for="mode-asdf"> ASDF & QWERTY </label>
               </span>
               <span>
-                <input
-                  type="radio"
-                  id="mode-qwezxc1"
-                  value="QweZxc1"
-                  v-model="pianoMode"
-                />
+                <input type="radio" id="mode-qwezxc1" value="QweZxc1" v-model="pianoMode" />
                 <label for="mode-qwezxc1"> ZXCV & ASDF + QWERTY & 1234 </label>
               </span>
               <span>
-                <input
-                  type="radio"
-                  id="mode-qwezxc0"
-                  value="QweZxc0"
-                  v-model="pianoMode"
-                />
+                <input type="radio" id="mode-qwezxc0" value="QweZxc0" v-model="pianoMode" />
                 <label for="mode-qwezxc0"> ZXCV etc. (shifted left) </label>
               </span>
             </div>
@@ -514,9 +460,8 @@ onUnmounted(() => {
         <template v-if="keyboardMode === 'isomorphic'">
           <h2>Isomorphic key mapping</h2>
           <p>
-            Distance between adjacent keys on the horizontal/vertical axes, in
-            scale degrees. Affects virtual keyboard (and also typing keyboard if
-            in isomorphic mode).
+            Distance between adjacent keys on the horizontal/vertical axes, in scale degrees.
+            Affects virtual keyboard (and also typing keyboard if in isomorphic mode).
           </p>
           <div
             class="control-group"
@@ -528,11 +473,7 @@ onUnmounted(() => {
             </div>
             <div class="control" style="width: 50%">
               <label for="horizontal">Horizontal</label>
-              <input
-                type="number"
-                id="horizontal"
-                v-model="isomorphicHorizontal"
-              />
+              <input type="number" id="horizontal" v-model="isomorphicHorizontal" />
             </div>
           </div>
         </template>
@@ -540,44 +481,30 @@ onUnmounted(() => {
         <div class="control-group">
           <p><code>Shift</code> sustain currently held keys after release</p>
           <p>
-            <code @click="remappedKey = 'deactivationCode'">{{
-              deactivationCode
-            }}</code>
+            <code @click="remappedKey = 'deactivationCode'">{{ deactivationCode }}</code>
             release sustain, stop all playing notes (click to reassign)
           </p>
           <p>
-            <code @click="remappedKey = 'equaveDownCode'">{{
-              equaveDownCode
-            }}</code>
+            <code @click="remappedKey = 'equaveDownCode'">{{ equaveDownCode }}</code>
             equave shift down (click to reassign)
           </p>
           <p>
-            <code @click="remappedKey = 'equaveUpCode'">{{
-              equaveUpCode
-            }}</code>
+            <code @click="remappedKey = 'equaveUpCode'">{{ equaveUpCode }}</code>
             equave shift up (click to reassign)
           </p>
           <p>
-            <code @click="remappedKey = 'degreeDownCode'">{{
-              degreeDownCode
-            }}</code>
+            <code @click="remappedKey = 'degreeDownCode'">{{ degreeDownCode }}</code>
             degree shift down (click to reassign)
           </p>
           <p>
-            <code @click="remappedKey = 'degreeUpCode'">{{
-              degreeUpCode
-            }}</code>
+            <code @click="remappedKey = 'degreeUpCode'">{{ degreeUpCode }}</code>
             degree shift up (click to reassign)
           </p>
         </div>
       </div>
     </div>
     <Teleport to="body">
-      <Modal
-        :show="remappedKey.length > 0"
-        @confirm="remappedKey = ''"
-        @cancel="remappedKey = ''"
-      >
+      <Modal :show="remappedKey.length > 0" @confirm="remappedKey = ''" @cancel="remappedKey = ''">
         <template #header>
           <h2>Press a key...</h2>
         </template>

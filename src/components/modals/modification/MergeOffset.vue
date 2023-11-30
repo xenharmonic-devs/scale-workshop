@@ -1,46 +1,43 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import Modal from "@/components/ModalDialog.vue";
-import ScaleLineInput from "@/components/ScaleLineInput.vue";
-import { ExtendedMonzo, Interval, type Scale } from "scale-workshop-core";
-import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
+import { ref } from 'vue'
+import Modal from '@/components/ModalDialog.vue'
+import ScaleLineInput from '@/components/ScaleLineInput.vue'
+import { ExtendedMonzo, Interval, type Scale } from 'scale-workshop-core'
+import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
 
 const props = defineProps<{
-  scale: Scale;
-}>();
+  scale: Scale
+}>()
 
-const THIRD = new Interval(
-  ExtendedMonzo.fromFraction("5/4", DEFAULT_NUMBER_OF_COMPONENTS),
-  "ratio"
-);
+const THIRD = new Interval(ExtendedMonzo.fromFraction('5/4', DEFAULT_NUMBER_OF_COMPONENTS), 'ratio')
 
-const emit = defineEmits(["update:scale", "cancel"]);
+const emit = defineEmits(['update:scale', 'cancel'])
 
-const offset = ref(THIRD);
-const offsetString = ref("");
+const offset = ref(THIRD)
+const offsetString = ref('')
 // Overflow = "none" is too similar to "reduce" to be included in the UI.
-const overflowType = ref<"none" | "intuitive" | "filter" | "reduce">("filter");
+const overflowType = ref<'none' | 'intuitive' | 'filter' | 'reduce'>('filter')
 
 function modify() {
-  let transposed = props.scale.transpose(offset.value);
-  if (overflowType.value === "filter") {
-    transposed = transposed.filter();
-  } else if (overflowType.value === "reduce") {
-    transposed = transposed.reduce();
+  let transposed = props.scale.transpose(offset.value)
+  if (overflowType.value === 'filter') {
+    transposed = transposed.filter()
+  } else if (overflowType.value === 'reduce') {
+    transposed = transposed.reduce()
   }
-  const scale = props.scale.merge(transposed);
-  if (overflowType.value === "intuitive") {
+  const scale = props.scale.merge(transposed)
+  if (overflowType.value === 'intuitive') {
     if (scale.intervals.length) {
-      const highest = scale.intervals.pop()!;
-      const equave = scale.equave;
+      const highest = scale.intervals.pop()!
+      const equave = scale.equave
       if (highest.compare(equave) > 0) {
-        scale.intervals.push(equave);
-        scale.equave = highest;
-        scale.sortInPlace();
+        scale.intervals.push(equave)
+        scale.equave = highest
+        scale.sortInPlace()
       }
     }
   }
-  emit("update:scale", scale);
+  emit('update:scale', scale)
 }
 </script>
 
@@ -51,10 +48,7 @@ function modify() {
     </template>
     <template #body>
       <div class="control-group">
-        <p>
-          Clone the scale, transpose it by the offset and merge back in with the
-          original.
-        </p>
+        <p>Clone the scale, transpose it by the offset and merge back in with the original.</p>
         <div class="control">
           <label for="offset">Offset</label>
           <ScaleLineInput
@@ -68,32 +62,17 @@ function modify() {
         <div class="control radio-group">
           <label>Overflow</label>
           <span>
-            <input
-              type="radio"
-              id="overflow-intuitive"
-              value="intuitive"
-              v-model="overflowType"
-            />
+            <input type="radio" id="overflow-intuitive" value="intuitive" v-model="overflowType" />
             <label for="overflow-intuitive"> Keep </label>
           </span>
 
           <span>
-            <input
-              type="radio"
-              id="overflow-filter"
-              value="filter"
-              v-model="overflowType"
-            />
+            <input type="radio" id="overflow-filter" value="filter" v-model="overflowType" />
             <label for="method-vals"> Drop </label>
           </span>
 
           <span>
-            <input
-              type="radio"
-              id="overflow-reduce"
-              value="reduce"
-              v-model="overflowType"
-            />
+            <input type="radio" id="overflow-reduce" value="reduce" v-model="overflowType" />
             <label for="overflow-reduce"> Wrap </label>
           </span>
         </div>

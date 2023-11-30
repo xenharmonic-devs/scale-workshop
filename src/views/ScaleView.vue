@@ -1,31 +1,31 @@
 <script setup lang="ts">
-import ScaleBuilder from "@/components/ScaleBuilder.vue";
-import type { Scale } from "scale-workshop-core";
+import ScaleBuilder from '@/components/ScaleBuilder.vue'
+import type { Scale } from 'scale-workshop-core'
 
 defineProps<{
-  scaleName: string;
-  scaleLines: string[];
-  baseMidiNote: number;
-  keyColors: string[];
+  scaleName: string
+  scaleLines: string[]
+  baseMidiNote: number
+  keyColors: string[]
 
-  scale: Scale;
-  frequencies: number[];
+  scale: Scale
+  frequencies: number[]
 
-  centsFractionDigits: number;
-  decimalFractionDigits: number;
-  newline: string;
+  centsFractionDigits: number
+  decimalFractionDigits: number
+  newline: string
 
-  midiOctaveOffset: number;
-}>();
+  midiOctaveOffset: number
+}>()
 
 defineEmits([
-  "update:scaleName",
-  "update:scaleLines",
-  "update:scale",
-  "update:baseFrequency",
-  "update:baseMidiNote",
-  "update:keyColors",
-]);
+  'update:scaleName',
+  'update:scaleLines',
+  'update:scale',
+  'update:baseFrequency',
+  'update:baseMidiNote',
+  'update:keyColors'
+])
 </script>
 
 <template>
