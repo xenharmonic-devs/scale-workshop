@@ -504,6 +504,7 @@ function confirmPreset() {
       :newline="props.newline"
       :scaleName="scaleName"
       :baseMidiNote="baseMidiNote"
+      :midiOctaveOffset="midiOctaveOffset"
       :scale="scale"
     />
 
@@ -514,6 +515,7 @@ function confirmPreset() {
       :newline="props.newline"
       :scaleName="scaleName"
       :baseMidiNote="baseMidiNote"
+      :midiOctaveOffset="midiOctaveOffset"
       :scale="scale"
     />
 
@@ -524,6 +526,7 @@ function confirmPreset() {
       :newline="props.newline"
       :scaleName="scaleName"
       :baseMidiNote="baseMidiNote"
+      :midiOctaveOffset="midiOctaveOffset"
       :scale="scale"
     />
 

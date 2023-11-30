@@ -4,11 +4,13 @@ import { sanitizeFilename } from '@/utils'
 import { computed, ref } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import type { Scale } from 'scale-workshop-core'
+import type { ExporterParams } from '@/exporters/base'
 
 const props = defineProps<{
   newline: string
   scaleName: string
   baseMidiNote: number
+  midiOctaveOffset: number
   scale: Scale
 }>()
 
@@ -39,11 +41,12 @@ const fileTypePreview = computed(() => {
 })
 
 async function doExport() {
-  const params = {
+  const params: ExporterParams = {
     newline: props.newline,
     scale: props.scale,
     filename: sanitizeFilename(props.scaleName),
-    baseMidiNote: props.baseMidiNote
+    baseMidiNote: props.baseMidiNote,
+    midiOctaveOffset: props.midiOctaveOffset
   }
 
   const exporter = new KorgExporter(params, modelName.value, useOctaveFormat.value)

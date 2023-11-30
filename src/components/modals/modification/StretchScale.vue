@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { ExtendedMonzo, Interval, type Scale } from 'scale-workshop-core'
-import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
+import { DEFAULT_NUMBER_OF_COMPONENTS, FIFTH } from '@/constants'
 const props = defineProps<{
   scale: Scale
   centsFractionDigits: number
@@ -12,17 +12,16 @@ const props = defineProps<{
 const emit = defineEmits(['update:scale', 'cancel'])
 const amount = ref(1.005)
 
-// Dummy variable to get the types right
-const pureFifth = new Interval(
-  ExtendedMonzo.fromFraction('3/2', DEFAULT_NUMBER_OF_COMPONENTS),
-  'ratio'
+const equallyTemperedFifth = new Interval(
+  ExtendedMonzo.fromEqualTemperament('7/12', '2/1', DEFAULT_NUMBER_OF_COMPONENTS),
+  'equal temperament'
 )
 
 const referenceString = ref('')
-const reference = ref(pureFifth)
+const reference = ref(FIFTH)
 
 const targetString = ref('')
-const target = ref(pureFifth)
+const target = ref(FIFTH)
 
 function calculateAmount() {
   const calculated = target.value.totalCents() / reference.value.totalCents()
@@ -69,6 +68,7 @@ function modify() {
           <ScaleLineInput
             id="reference"
             placeholder="7\12"
+            :defaultValue="equallyTemperedFifth"
             @update:value="reference = $event"
             v-model="referenceString"
           />
@@ -78,6 +78,7 @@ function modify() {
           <ScaleLineInput
             id="reference"
             placeholder="3/2"
+            :defaultValue="FIFTH"
             @update:value="target = $event"
             v-model="targetString"
           />

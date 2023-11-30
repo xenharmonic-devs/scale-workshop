@@ -5,11 +5,13 @@ import { ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import type { Scale } from 'scale-workshop-core'
 import { clamp } from 'xen-dev-utils'
+import type { ExporterParams } from '@/exporters/base'
 
 const props = defineProps<{
   newline: string
   scaleName: string
   baseMidiNote: number
+  midiOctaveOffset: number
   scale: Scale
 }>()
 
@@ -48,11 +50,12 @@ function presetIndexInputCallback(indexInput: string): void {
 }
 
 function doExport() {
-  const params = {
+  const params: ExporterParams = {
     newline: props.newline,
     scale: props.scale,
     filename: sanitizeFilename(props.scaleName),
     baseMidiNote: props.baseMidiNote,
+    midiOctaveOffset: props.midiOctaveOffset,
     name: name.value,
     presetIndex: parseInt(presetIndex.value)
   }

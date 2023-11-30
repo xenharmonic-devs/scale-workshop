@@ -4,11 +4,13 @@ import { sanitizeFilename } from '@/utils'
 import { ref } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import type { Scale } from 'scale-workshop-core'
+import type { ExporterParams } from '@/exporters/base'
 
 const props = defineProps<{
   newline: string
   scaleName: string
   baseMidiNote: number
+  midiOctaveOffset: number
   scale: Scale
 }>()
 
@@ -30,14 +32,15 @@ const integratePeriod = ref(false)
 const displayPeriod = ref(true)
 
 function doExport() {
-  const params = {
+  const params: ExporterParams = {
     newline: props.newline,
     scale: props.scale,
     filename: sanitizeFilename(props.scaleName),
     baseMidiNote: props.baseMidiNote,
+    midiOctaveOffset: props.midiOctaveOffset,
     format: format.value,
     basePeriod: basePeriod.value,
-    baseDegrree: baseDegree.value,
+    baseDegree: baseDegree.value,
     centsRoot: centsRoot.value,
     integratePeriod: integratePeriod.value,
     displayPeriod: displayPeriod.value
