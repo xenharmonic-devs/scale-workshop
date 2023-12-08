@@ -1,65 +1,61 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import VirtualKeyboardKey from "@/components/VirtualKeyboardKey.vue";
-import { mmod } from "xen-dev-utils";
+import { computed, ref } from 'vue'
+import VirtualKeyboardKey from '@/components/VirtualKeyboardKey.vue'
+import { mmod } from 'xen-dev-utils'
 
-type NoteOff = () => void;
-type NoteOnCallback = (index: number) => NoteOff;
+type NoteOff = () => void
+type NoteOnCallback = (index: number) => NoteOff
 
 const props = defineProps<{
-  baseIndex: number; // Should incorporate equave shift
-  baseMidiNote: number;
-  keyColors: string[];
-  isomorphicHorizontal: number;
-  isomorphicVertical: number;
-  noteOn: NoteOnCallback;
-  heldNotes: Map<number, number>;
-}>();
+  baseIndex: number // Should incorporate equave shift
+  baseMidiNote: number
+  keyColors: string[]
+  isomorphicHorizontal: number
+  isomorphicVertical: number
+  noteOn: NoteOnCallback
+  heldNotes: Map<number, number>
+}>()
 
 type VirtualKey = {
-  x: number;
-  y: number;
-  index: number;
-  color: string;
-};
+  x: number
+  y: number
+  index: number
+  color: string
+}
 
 const virtualKeys = computed(() => {
-  const colors = props.keyColors.length ? props.keyColors : ["white"];
-  const horizontal = props.isomorphicHorizontal;
-  const vertical = props.isomorphicVertical;
-  const result: [number, VirtualKey[]][] = [];
+  const colors = props.keyColors.length ? props.keyColors : ['white']
+  const horizontal = props.isomorphicHorizontal
+  const vertical = props.isomorphicVertical
+  const result: [number, VirtualKey[]][] = []
   for (let y = 3; y >= -1; y--) {
-    const row = [];
+    const row = []
     for (let x = 0; x <= 12; ++x) {
-      const index = props.baseIndex + x * horizontal + y * vertical;
+      const index = props.baseIndex + x * horizontal + y * vertical
       row.push({
         x,
         y,
         index,
-        color: colors[mmod(index - props.baseMidiNote, colors.length)],
-      });
+        color: colors[mmod(index - props.baseMidiNote, colors.length)]
+      })
     }
-    result.push([y, row]);
+    result.push([y, row])
   }
-  return result;
-});
+  return result
+})
 
-const isMousePressed = ref(false);
+const isMousePressed = ref(false)
 </script>
 
 <template>
   <table>
-    <tr
-      v-for="[y, row] of virtualKeys"
-      :key="y"
-      :class="{ 'hidden-sm': y < 0 || y > 3 }"
-    >
+    <tr v-for="[y, row] of virtualKeys" :key="y" :class="{ 'hidden-sm': y < 0 || y > 3 }">
       <VirtualKeyboardKey
         v-for="key of row"
         :key="key.x"
         :class="{
           'hidden-sm': key.x > 8,
-          held: (heldNotes.get(key.index) || 0) > 0,
+          held: (heldNotes.get(key.index) || 0) > 0
         }"
         :color="key.color"
         :isMousePressed="isMousePressed"

@@ -1,174 +1,140 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, reactive, ref, watch } from "vue";
-import {
-  RouterLink,
-  RouterView,
-  useRouter,
-  type LocationQuery,
-} from "vue-router";
+import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import { RouterLink, RouterView, useRouter, type LocationQuery } from 'vue-router'
 import {
   DEFAULT_NUMBER_OF_COMPONENTS,
   NEWLINE_TEST,
   NUMBER_OF_NOTES,
   UNIX_NEWLINE,
-  WHITE_MODE_OFFSET,
-} from "@/constants";
-import { ScaleWorkshopOneData } from "@/scale-workshop-one";
-import type { Input, Output } from "webmidi";
-import { computeWhiteIndices } from "@/midi";
-import { MidiIn, midiKeyInfo, MidiOut } from "xen-midi";
-import { Keyboard, type CoordinateKeyboardEvent } from "@/keyboard";
-import { decodeQuery, encodeQuery, type DecodedState } from "@/url-encode";
-import { debounce } from "@/utils";
-import { version } from "../package.json";
-import { arraysEqual } from "xen-dev-utils";
-import {
-  mapWhiteAsdfBlackQwerty,
-  mapWhiteQweZxcBlack123Asd,
-} from "./keyboard-mapping";
-import { useAudioStore } from "@/stores/audio";
+  WHITE_MODE_OFFSET
+} from '@/constants'
+import { ScaleWorkshopOneData } from '@/scale-workshop-one'
+import type { Input, Output } from 'webmidi'
+import { computeWhiteIndices } from '@/midi'
+import { MidiIn, midiKeyInfo, MidiOut } from 'xen-midi'
+import { Keyboard, type CoordinateKeyboardEvent } from '@/keyboard'
+import { decodeQuery, encodeQuery, type DecodedState } from '@/url-encode'
+import { debounce } from '@/utils'
+import { version } from '../package.json'
+import { arraysEqual } from 'xen-dev-utils'
+import { mapWhiteAsdfBlackQwerty, mapWhiteQweZxcBlack123Asd } from './keyboard-mapping'
+import { useAudioStore } from '@/stores/audio'
 import {
   Interval,
   parseLine,
   Scale,
   type IntervalOptions,
-  reverseParseScale,
-} from "scale-workshop-core";
+  reverseParseScale
+} from 'scale-workshop-core'
 
 // === Pinia-managed state ===
-const audio = useAudioStore();
+const audio = useAudioStore()
 
 // === Application state ===
-const scaleName = ref("");
-const scaleLines = ref<string[]>([]);
-const scale = reactive(
-  Scale.fromIntervalArray([parseLine("1/1", DEFAULT_NUMBER_OF_COMPONENTS)])
-);
-const baseMidiNote = ref(69);
+const scaleName = ref('')
+const scaleLines = ref<string[]>([])
+const scale = reactive(Scale.fromIntervalArray([parseLine('1/1', DEFAULT_NUMBER_OF_COMPONENTS)]))
+const baseMidiNote = ref(69)
 const keyColors = ref([
-  "white",
-  "black",
-  "white",
-  "white",
-  "black",
-  "white",
-  "black",
-  "white",
-  "white",
-  "black",
-  "white",
-  "black",
-]);
-const isomorphicVertical = ref(5);
-const isomorphicHorizontal = ref(1);
+  'white',
+  'black',
+  'white',
+  'white',
+  'black',
+  'white',
+  'black',
+  'white',
+  'white',
+  'black',
+  'white',
+  'black'
+])
+const isomorphicVertical = ref(5)
+const isomorphicHorizontal = ref(1)
 // Keyboard mode affects both physical qwerty and virtual keyboards
-const keyboardMode = ref<"isomorphic" | "piano">("isomorphic");
+const keyboardMode = ref<'isomorphic' | 'piano'>('isomorphic')
 // Physical layout mimics a piano layout in one or two layers
-const pianoMode = ref<"Asdf" | "QweZxc0" | "QweZxc1">("Asdf");
-const equaveShift = ref(0);
-const degreeShift = ref(0);
-const heldNotes = reactive(new Map<number, number>());
-const typingActive = ref(true);
-const midiInput = ref<Input | null>(null);
-const midiOutput = ref<Output | null>(null);
-const midiInputChannels = reactive(new Set([1]));
+const pianoMode = ref<'Asdf' | 'QweZxc0' | 'QweZxc1'>('Asdf')
+const equaveShift = ref(0)
+const degreeShift = ref(0)
+const heldNotes = reactive(new Map<number, number>())
+const typingActive = ref(true)
+const midiInput = ref<Input | null>(null)
+const midiOutput = ref<Output | null>(null)
+const midiInputChannels = reactive(new Set([1]))
 // Channel 10 is reserved for percussion
-const midiOutputChannels = ref(
-  new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16])
-);
-const midiVelocityOn = ref(true);
+const midiOutputChannels = ref(new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16]))
+const midiVelocityOn = ref(true)
 
-const midiWhiteMode = ref<"off" | "simple" | "blackAverage" | "keyColors">(
-  "off"
-);
+const midiWhiteMode = ref<'off' | 'simple' | 'blackAverage' | 'keyColors'>('off')
 
 // These are user preferences and are fetched from local storage.
-const newline = ref(UNIX_NEWLINE);
-const colorScheme = ref<"light" | "dark">("light");
-const centsFractionDigits = ref(3);
-const decimalFractionDigits = ref(5);
-const showVirtualQwerty = ref(false);
-const midiOctaveOffset = ref(-1);
-const intervalMatrixIndexing = ref(0);
+const newline = ref(UNIX_NEWLINE)
+const colorScheme = ref<'light' | 'dark'>('light')
+const centsFractionDigits = ref(3)
+const decimalFractionDigits = ref(5)
+const showVirtualQwerty = ref(false)
+const midiOctaveOffset = ref(-1)
+const intervalMatrixIndexing = ref(0)
 
 // Special keyboard codes also from local storage.
-const deactivationCode = ref("Backquote");
-const equaveUpCode = ref("NumpadMultiply");
-const equaveDownCode = ref("NumpadDivide");
-const degreeUpCode = ref("NumpadAdd");
-const degreeDownCode = ref("NumpadSubtract");
+const deactivationCode = ref('Backquote')
+const equaveUpCode = ref('NumpadMultiply')
+const equaveDownCode = ref('NumpadDivide')
+const degreeUpCode = ref('NumpadAdd')
+const degreeDownCode = ref('NumpadSubtract')
 
 // === Computed state ===
 const frequencies = computed(() =>
-  scale.getFrequencyRange(
-    -baseMidiNote.value,
-    NUMBER_OF_NOTES - baseMidiNote.value
-  )
-);
+  scale.getFrequencyRange(-baseMidiNote.value, NUMBER_OF_NOTES - baseMidiNote.value)
+)
 
 // For midi mapping
-const whiteIndices = computed(() =>
-  computeWhiteIndices(baseMidiNote.value, keyColors.value)
-);
+const whiteIndices = computed(() => computeWhiteIndices(baseMidiNote.value, keyColors.value))
 
 const keyboardMapping = computed<Map<string, number>>(() => {
-  const baseIndex =
-    baseMidiNote.value + equaveShift.value * scale.size + degreeShift.value;
-  if (pianoMode.value === "Asdf") {
-    return mapWhiteAsdfBlackQwerty(
-      keyColors.value,
-      baseMidiNote.value,
-      baseIndex
-    );
-  } else if (pianoMode.value === "QweZxc0") {
-    return mapWhiteQweZxcBlack123Asd(
-      keyColors.value,
-      scale.size,
-      baseMidiNote.value,
-      baseIndex,
-      0
-    );
+  const baseIndex = baseMidiNote.value + equaveShift.value * scale.size + degreeShift.value
+  if (pianoMode.value === 'Asdf') {
+    return mapWhiteAsdfBlackQwerty(keyColors.value, baseMidiNote.value, baseIndex)
+  } else if (pianoMode.value === 'QweZxc0') {
+    return mapWhiteQweZxcBlack123Asd(keyColors.value, scale.size, baseMidiNote.value, baseIndex, 0)
   } else {
-    return mapWhiteQweZxcBlack123Asd(
-      keyColors.value,
-      scale.size,
-      baseMidiNote.value,
-      baseIndex,
-      1
-    );
+    return mapWhiteQweZxcBlack123Asd(keyColors.value, scale.size, baseMidiNote.value, baseIndex, 1)
   }
-});
+})
 
 // === State updates ===
 function updateFromScaleLines(lines: string[]) {
   if (arraysEqual(lines, scaleLines.value)) {
-    return;
+    return
   }
-  scaleLines.value = lines;
-  const intervals: Interval[] = [];
+  scaleLines.value = lines
+  const intervals: Interval[] = []
   const options: IntervalOptions = {
     centsFractionDigits: centsFractionDigits.value,
-    decimalFractionDigits: decimalFractionDigits.value,
-  };
+    decimalFractionDigits: decimalFractionDigits.value
+  }
   lines.forEach((line) => {
     try {
-      const interval = parseLine(line, DEFAULT_NUMBER_OF_COMPONENTS, options);
-      intervals.push(interval);
-    } catch {}
-  });
+      const interval = parseLine(line, DEFAULT_NUMBER_OF_COMPONENTS, options)
+      intervals.push(interval)
+    } catch {
+      /* empty */
+    }
+  })
   if (!intervals.length) {
-    intervals.push(parseLine("1/1", DEFAULT_NUMBER_OF_COMPONENTS, options));
+    intervals.push(parseLine('1/1', DEFAULT_NUMBER_OF_COMPONENTS, options))
   }
 
-  const surrogate = Scale.fromIntervalArray(intervals);
-  scale.intervals = surrogate.intervals;
-  scale.equave = surrogate.equave;
+  const surrogate = Scale.fromIntervalArray(intervals)
+  scale.intervals = surrogate.intervals
+  scale.equave = surrogate.equave
 }
 
 function updateFromScale(surrogate: Scale) {
-  scale.intervals = surrogate.intervals;
-  scale.equave = surrogate.equave;
-  scaleLines.value = reverseParseScale(scale);
+  scale.intervals = surrogate.intervals
+  scale.equave = surrogate.equave
+  scaleLines.value = reverseParseScale(scale)
 }
 
 // == URL path handling ==
@@ -176,24 +142,24 @@ function updateFromScale(surrogate: Scale) {
  * Strip away base path such as /scaleworkshop-dev/
  */
 function getPath(url: URL) {
-  return url.pathname.slice(import.meta.env.BASE_URL.length);
+  return url.pathname.slice(import.meta.env.BASE_URL.length)
 }
 
 // == State encoding ==
-const router = useRouter();
+const router = useRouter()
 
 // Flags to prevent infinite decode - watch - encode loops
-let justEncodedUrl = false;
-let justDecodedUrl = false;
+let justEncodedUrl = false
+let justDecodedUrl = false
 
 // Debounced to stagger navigation loops if the flags fail
 const encodeState = debounce(() => {
   // Navigation loop prevention
   if (justDecodedUrl) {
-    justDecodedUrl = false;
-    return;
+    justDecodedUrl = false
+    return
   }
-  justEncodedUrl = true;
+  justEncodedUrl = true
 
   const state: DecodedState = {
     scaleName: scaleName.value,
@@ -215,26 +181,26 @@ const encodeState = debounce(() => {
     pingPongDelayTime: audio.pingPongDelayTime,
     pingPongFeedback: audio.pingPongFeedback,
     pingPongSeparation: audio.pingPongSeparation,
-    pingPongGain: audio.pingPongGain,
-  };
+    pingPongGain: audio.pingPongGain
+  }
 
-  const query = encodeQuery(state) as LocationQuery;
-  query.version = version;
+  const query = encodeQuery(state) as LocationQuery
+  query.version = version
 
   // XXX: There are some sporadic issues with useRoute().fullPath
   // so we use native URL.pathname.
-  const url = new URL(window.location.href);
+  const url = new URL(window.location.href)
 
-  router.push({ path: getPath(url), query });
-}, 200);
+  router.push({ path: getPath(url), query })
+}, 200)
 
 watch(baseMidiNote, (newValue) => {
   if (isNaN(newValue)) {
-    baseMidiNote.value = 69;
+    baseMidiNote.value = 69
   } else if (Math.round(newValue) != newValue) {
-    baseMidiNote.value = Math.round(newValue);
+    baseMidiNote.value = Math.round(newValue)
   }
-});
+})
 
 watch(
   () => [
@@ -257,278 +223,265 @@ watch(
     audio.pingPongDelayTime,
     audio.pingPongFeedback,
     audio.pingPongSeparation,
-    audio.pingPongGain,
+    audio.pingPongGain
   ],
   encodeState
-);
+)
 
 // == State decoding ==
 router.afterEach((to, from) => {
   if (to.fullPath === from.fullPath) {
-    return;
+    return
   }
   // Navigation loop prevention
   if (justEncodedUrl) {
-    justEncodedUrl = false;
-    return;
+    justEncodedUrl = false
+    return
   }
 
   // XXX: There are some sporadic issues with useRoute().fullPath
   // so we use native URL.searchParams.
-  const url = new URL(window.location.href);
-  const query = url.searchParams;
-  if (query.has("version")) {
+  const url = new URL(window.location.href)
+  const query = url.searchParams
+  if (query.has('version')) {
     try {
-      const state = decodeQuery(query);
-      justDecodedUrl = true;
+      const state = decodeQuery(query)
+      justDecodedUrl = true
 
-      scaleName.value = state.scaleName;
-      scale.baseFrequency = state.baseFrequency;
-      baseMidiNote.value = state.baseMidiNote;
-      keyColors.value = state.keyColors;
-      isomorphicHorizontal.value = state.isomorphicHorizontal;
-      isomorphicVertical.value = state.isomorphicVertical;
-      keyboardMode.value = state.keyboardMode;
-      pianoMode.value = state.pianoMode;
-      updateFromScaleLines(state.scaleLines);
-      equaveShift.value = state.equaveShift;
-      degreeShift.value = state.degreeShift;
-      audio.waveform = state.waveform;
-      audio.attackTime = state.attackTime;
-      audio.decayTime = state.decayTime;
-      audio.sustainLevel = state.sustainLevel;
-      audio.releaseTime = state.releaseTime;
-      audio.pingPongDelayTime = state.pingPongDelayTime;
-      audio.pingPongFeedback = state.pingPongFeedback;
-      audio.pingPongSeparation = state.pingPongSeparation;
-      audio.pingPongGain = state.pingPongGain;
+      scaleName.value = state.scaleName
+      scale.baseFrequency = state.baseFrequency
+      baseMidiNote.value = state.baseMidiNote
+      keyColors.value = state.keyColors
+      isomorphicHorizontal.value = state.isomorphicHorizontal
+      isomorphicVertical.value = state.isomorphicVertical
+      keyboardMode.value = state.keyboardMode
+      pianoMode.value = state.pianoMode
+      updateFromScaleLines(state.scaleLines)
+      equaveShift.value = state.equaveShift
+      degreeShift.value = state.degreeShift
+      audio.waveform = state.waveform
+      audio.attackTime = state.attackTime
+      audio.decayTime = state.decayTime
+      audio.sustainLevel = state.sustainLevel
+      audio.releaseTime = state.releaseTime
+      audio.pingPongDelayTime = state.pingPongDelayTime
+      audio.pingPongFeedback = state.pingPongFeedback
+      audio.pingPongSeparation = state.pingPongSeparation
+      audio.pingPongGain = state.pingPongGain
     } catch (error) {
-      console.error(`Error parsing version ${query.get("version")} URL`, error);
+      console.error(`Error parsing version ${query.get('version')} URL`, error)
     }
   }
-});
+})
 
 // === Tuning table highlighting ===
 // We use hacks to bypass Vue state management for real-time gains
 function tuningTableKeyOn(index: number) {
   if (index >= 0 && index < 128) {
-    let tuningTableRow = (window as any).TUNING_TABLE_ROWS[index];
+    let tuningTableRow = (window as any).TUNING_TABLE_ROWS[index]
     if (tuningTableRow === undefined) {
-      tuningTableRow = { heldKeys: 0, element: null };
+      tuningTableRow = { heldKeys: 0, element: null }
     }
-    tuningTableRow.heldKeys++;
+    tuningTableRow.heldKeys++
     if (tuningTableRow.element?._rawValue) {
-      tuningTableRow.element._rawValue.classList.add("active");
+      tuningTableRow.element._rawValue.classList.add('active')
     }
-    (window as any).TUNING_TABLE_ROWS[index] = tuningTableRow;
+    ;(window as any).TUNING_TABLE_ROWS[index] = tuningTableRow
   }
   // Virtual keyboard state is too complex so we take the performance hit.
-  heldNotes.set(index, (heldNotes.get(index) || 0) + 1);
+  heldNotes.set(index, (heldNotes.get(index) || 0) + 1)
 }
 
 function tuningTableKeyOff(index: number) {
   if (index >= 0 && index < 128) {
-    let tuningTableRow = (window as any).TUNING_TABLE_ROWS[index];
+    let tuningTableRow = (window as any).TUNING_TABLE_ROWS[index]
     if (tuningTableRow === undefined) {
-      tuningTableRow = { heldKeys: 0, element: null };
+      tuningTableRow = { heldKeys: 0, element: null }
     }
-    tuningTableRow.heldKeys--;
+    tuningTableRow.heldKeys--
     if (tuningTableRow.element?._rawValue) {
       if (!tuningTableRow.heldKeys) {
-        tuningTableRow.element._rawValue.classList.remove("active");
+        tuningTableRow.element._rawValue.classList.remove('active')
       }
-      (window as any).TUNING_TABLE_ROWS[index] = tuningTableRow;
+      ;(window as any).TUNING_TABLE_ROWS[index] = tuningTableRow
     }
   }
-  heldNotes.set(index, (heldNotes.get(index) || 1) - 1);
+  heldNotes.set(index, (heldNotes.get(index) || 1) - 1)
 }
 
 // === MIDI input / output ===
 function getFrequency(index: number) {
   if (index >= 0 && index < frequencies.value.length) {
-    return frequencies.value[index];
+    return frequencies.value[index]
   } else {
     // Support more than 128 notes with some additional computational cost
-    return scale.getFrequency(index - baseMidiNote.value);
+    return scale.getFrequency(index - baseMidiNote.value)
   }
 }
 
-const midiOut = computed(
-  () => new MidiOut(midiOutput.value as Output, midiOutputChannels.value)
-);
+const midiOut = computed(() => new MidiOut(midiOutput.value as Output, midiOutputChannels.value))
 
 function sendNoteOn(frequency: number, rawAttack: number) {
-  const midiOff = midiOut.value.sendNoteOn(frequency, rawAttack);
+  const midiOff = midiOut.value.sendNoteOn(frequency, rawAttack)
 
   if (audio.synth === null || audio.virtualSynth === null) {
-    return midiOff;
+    return midiOff
   }
 
   // Trigger web audio API synth.
-  const synthOff = audio.synth.noteOn(frequency, rawAttack / 127);
+  const synthOff = audio.synth.noteOn(frequency, rawAttack / 127)
 
   // Trigger virtual synth for per-voice visualization.
-  const virtualOff = audio.virtualSynth.voiceOn(frequency);
+  const virtualOff = audio.virtualSynth.voiceOn(frequency)
 
   const off = (rawRelease: number) => {
-    midiOff(rawRelease);
-    synthOff();
-    virtualOff();
-  };
+    midiOff(rawRelease)
+    synthOff()
+    virtualOff()
+  }
 
-  return off;
+  return off
 }
 
 function midiNoteOn(index: number, rawAttack?: number) {
   if (rawAttack === undefined) {
-    rawAttack = 80;
+    rawAttack = 80
   }
-  let frequency = frequencies.value[index];
+  let frequency = frequencies.value[index]
   if (!midiVelocityOn.value) {
-    rawAttack = 80;
+    rawAttack = 80
   }
 
   // Store state to ensure consistent note off.
-  const info = midiKeyInfo(index);
-  const whiteMode = midiWhiteMode.value;
-  const indices = whiteIndices.value;
+  const info = midiKeyInfo(index)
+  const whiteMode = midiWhiteMode.value
+  const indices = whiteIndices.value
 
-  if (whiteMode === "off") {
-    tuningTableKeyOn(index);
-  } else if (whiteMode === "simple") {
+  if (whiteMode === 'off') {
+    tuningTableKeyOn(index)
+  } else if (whiteMode === 'simple') {
     if (info.whiteNumber === undefined) {
-      frequency = NaN;
+      frequency = NaN
     } else {
-      info.whiteNumber += WHITE_MODE_OFFSET;
-      frequency = getFrequency(info.whiteNumber);
-      tuningTableKeyOn(info.whiteNumber);
+      info.whiteNumber += WHITE_MODE_OFFSET
+      frequency = getFrequency(info.whiteNumber)
+      tuningTableKeyOn(info.whiteNumber)
     }
-  } else if (whiteMode === "blackAverage") {
+  } else if (whiteMode === 'blackAverage') {
     if (info.whiteNumber === undefined) {
-      info.flatOf += WHITE_MODE_OFFSET;
-      info.sharpOf += WHITE_MODE_OFFSET;
-      frequency = Math.sqrt(
-        getFrequency(info.flatOf) * getFrequency(info.sharpOf)
-      );
-      tuningTableKeyOn(info.flatOf);
-      tuningTableKeyOn(info.sharpOf);
+      info.flatOf += WHITE_MODE_OFFSET
+      info.sharpOf += WHITE_MODE_OFFSET
+      frequency = Math.sqrt(getFrequency(info.flatOf) * getFrequency(info.sharpOf))
+      tuningTableKeyOn(info.flatOf)
+      tuningTableKeyOn(info.sharpOf)
     } else {
-      info.whiteNumber += WHITE_MODE_OFFSET;
-      frequency = getFrequency(info.whiteNumber);
-      tuningTableKeyOn(info.whiteNumber);
+      info.whiteNumber += WHITE_MODE_OFFSET
+      frequency = getFrequency(info.whiteNumber)
+      tuningTableKeyOn(info.whiteNumber)
     }
-  } else if (whiteMode === "keyColors") {
+  } else if (whiteMode === 'keyColors') {
     if (indices.length) {
       if (info.whiteNumber === undefined) {
         // Use a black key if available
-        index = indices[info.sharpOf] + 1;
+        index = indices[info.sharpOf] + 1
         // Eliminate duplicates
         if (index === indices[info.sharpOf + 1]) {
-          frequency = NaN;
+          frequency = NaN
         } else {
-          frequency = getFrequency(index);
-          tuningTableKeyOn(index);
+          frequency = getFrequency(index)
+          tuningTableKeyOn(index)
         }
       } else {
-        index = indices[info.whiteNumber];
-        frequency = getFrequency(index);
-        tuningTableKeyOn(index);
+        index = indices[info.whiteNumber]
+        frequency = getFrequency(index)
+        tuningTableKeyOn(index)
       }
     } else {
-      frequency = NaN;
+      frequency = NaN
     }
   }
 
   if (isNaN(frequency)) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    return (rawRelease?: number) => {};
+    return (rawRelease?: number) => {}
   }
 
-  const noteOff = sendNoteOn(frequency, rawAttack);
+  const noteOff = sendNoteOn(frequency, rawAttack)
   return (rawRelease?: number) => {
     if (rawRelease === undefined) {
-      rawRelease = 80;
+      rawRelease = 80
     }
     if (!midiVelocityOn.value) {
-      rawRelease = 80;
+      rawRelease = 80
     }
-    if (whiteMode === "simple") {
+    if (whiteMode === 'simple') {
       if (info.whiteNumber !== undefined) {
-        tuningTableKeyOff(info.whiteNumber);
+        tuningTableKeyOff(info.whiteNumber)
       }
-    } else if (whiteMode === "blackAverage") {
+    } else if (whiteMode === 'blackAverage') {
       if (info.whiteNumber === undefined) {
-        tuningTableKeyOff(info.flatOf);
-        tuningTableKeyOff(info.sharpOf);
+        tuningTableKeyOff(info.flatOf)
+        tuningTableKeyOff(info.sharpOf)
       } else {
-        tuningTableKeyOff(info.whiteNumber);
+        tuningTableKeyOff(info.whiteNumber)
       }
     } else {
-      tuningTableKeyOff(index);
+      tuningTableKeyOff(index)
     }
-    noteOff(rawRelease);
-  };
+    noteOff(rawRelease)
+  }
 }
 
-const midiIn = new MidiIn(midiNoteOn, midiInputChannels);
+const midiIn = new MidiIn(midiNoteOn, midiInputChannels)
 
-const RESERVED_MESSAGES = ["noteon", "noteoff", "pitchbend"];
+const RESERVED_MESSAGES = ['noteon', 'noteoff', 'pitchbend']
 
 watch(midiInput, (newValue, oldValue) => {
   if (oldValue !== null) {
-    midiIn.unlisten(oldValue as Input);
+    midiIn.unlisten(oldValue as Input)
   }
   if (newValue !== null) {
-    midiIn.listen(newValue as Input);
+    midiIn.listen(newValue as Input)
 
     // Pass everything else through and distrubute among the channels
-    newValue.addListener("midimessage", (event) => {
-      if (
-        !RESERVED_MESSAGES.includes(event.message.type) &&
-        midiOutput.value !== null
-      ) {
-        if (
-          event.message.isChannelMessage &&
-          midiInputChannels.has(event.message.channel)
-        ) {
-          const status = event.message.statusByte & 0b11110000;
+    newValue.addListener('midimessage', (event) => {
+      if (!RESERVED_MESSAGES.includes(event.message.type) && midiOutput.value !== null) {
+        if (event.message.isChannelMessage && midiInputChannels.has(event.message.channel)) {
+          const status = event.message.statusByte & 0b11110000
           for (const channel of midiOutputChannels.value) {
-            const data = [...event.message.data];
-            data[0] = status | (channel - 1);
-            midiOutput.value.send(data);
+            const data = [...event.message.data]
+            data[0] = status | (channel - 1)
+            midiOutput.value.send(data)
           }
         } else {
-          midiOutput.value.send(event.message);
+          midiOutput.value.send(event.message)
         }
       }
-    });
+    })
   }
-});
+})
 
 // === Virtual and typing keyboard ===
 function keyboardNoteOn(index: number) {
-  tuningTableKeyOn(index);
-  const noteOff = sendNoteOn(getFrequency(index), 80);
+  tuningTableKeyOn(index)
+  const noteOff = sendNoteOn(getFrequency(index), 80)
   function keyOff() {
-    tuningTableKeyOff(index);
-    return noteOff(80);
+    tuningTableKeyOff(index)
+    return noteOff(80)
   }
-  return keyOff;
+  return keyOff
 }
 
 // === Typing keyboard state ===
 function windowKeydownOrUp(event: KeyboardEvent | MouseEvent) {
   // Audio context must be initialized as a response to user gesture
-  audio.initialize();
+  audio.initialize()
 
-  const target = event.target;
+  const target = event.target
   // Keep typing activated while adjusting sliders
-  if (
-    target instanceof HTMLInputElement &&
-    ["range", "radio", "checkbox"].includes(target.type)
-  ) {
-    typingActive.value = true;
-    return;
+  if (target instanceof HTMLInputElement && ['range', 'radio', 'checkbox'].includes(target.type)) {
+    typingActive.value = true
+    return
   }
   // Disable typing for other types of input elements
   if (
@@ -536,9 +489,9 @@ function windowKeydownOrUp(event: KeyboardEvent | MouseEvent) {
     target instanceof HTMLInputElement ||
     target instanceof HTMLSelectElement
   ) {
-    typingActive.value = false;
+    typingActive.value = false
   } else {
-    typingActive.value = true;
+    typingActive.value = true
   }
 }
 
@@ -546,259 +499,239 @@ function windowKeydownOrUp(event: KeyboardEvent | MouseEvent) {
 function windowKeydown(event: KeyboardEvent) {
   // Currently editing the scale, bail out
   if (!typingActive.value) {
-    return;
+    return
   }
 
   // Disable browser specific features like quick find on Firefox
-  event.preventDefault();
+  event.preventDefault()
 
   // The key left of Digit1 releases sustained keys
   if (event.code === deactivationCode.value) {
-    typingKeyboard.deactivate();
-    return;
+    typingKeyboard.deactivate()
+    return
   }
 
   // "Octave" keys
   if (event.code === equaveUpCode.value) {
-    equaveShift.value++;
-    return;
+    equaveShift.value++
+    return
   }
   if (event.code === equaveDownCode.value) {
-    equaveShift.value--;
-    return;
+    equaveShift.value--
+    return
   }
 
   // "Transpose" keys
   if (event.code === degreeUpCode.value) {
-    degreeShift.value++;
-    return;
+    degreeShift.value++
+    return
   }
   if (event.code === degreeDownCode.value) {
-    degreeShift.value--;
-    return;
+    degreeShift.value--
+    return
   }
 
-  typingKeyboard.keydown(event);
+  typingKeyboard.keydown(event)
 }
 
 // Keyups don't make new sounds so they can be passed through.
 function windowKeyup(event: KeyboardEvent) {
-  typingKeyboard.keyup(event);
+  typingKeyboard.keyup(event)
 }
 
 // === Typing keyboard input ===
-const typingKeyboard = new Keyboard();
+const typingKeyboard = new Keyboard()
 
 function emptyKeyup() {}
 
 function typingKeydown(event: CoordinateKeyboardEvent) {
   // Key not mapped to layers, bail out
   if (event.coordinates === undefined) {
-    return emptyKeyup;
+    return emptyKeyup
   }
 
-  const [x, y, z] = event.coordinates;
+  const [x, y, z] = event.coordinates
 
   // Key not in the layer with digits and letters, bail out
   if (z !== 1) {
-    return emptyKeyup;
+    return emptyKeyup
   }
 
-  let index = baseMidiNote.value + scale.size * equaveShift.value;
+  let index = baseMidiNote.value + scale.size * equaveShift.value
 
-  if (keyboardMode.value === "isomorphic") {
-    index +=
-      degreeShift.value +
-      x * isomorphicHorizontal.value +
-      (2 - y) * isomorphicVertical.value;
+  if (keyboardMode.value === 'isomorphic') {
+    index += degreeShift.value + x * isomorphicHorizontal.value + (2 - y) * isomorphicVertical.value
   } else {
     if (keyboardMapping.value.has(event.code)) {
-      index = keyboardMapping.value.get(event.code)!;
+      index = keyboardMapping.value.get(event.code)!
     } else {
       // No user mapping for the key, bail out
-      return emptyKeyup;
+      return emptyKeyup
     }
   }
 
-  return keyboardNoteOn(index);
+  return keyboardNoteOn(index)
 }
 
 // === Lifecycle ===
 onMounted(() => {
-  window.addEventListener("keyup", windowKeyup);
-  window.addEventListener("keydown", windowKeydownOrUp);
-  window.addEventListener("keyup", windowKeydownOrUp);
-  window.addEventListener("mousedown", windowKeydownOrUp);
-  window.addEventListener("keydown", windowKeydown);
-  window.addEventListener("touchstart", audio.initialize);
-  typingKeyboard.addKeydownListener(typingKeydown);
+  window.addEventListener('keyup', windowKeyup)
+  window.addEventListener('keydown', windowKeydownOrUp)
+  window.addEventListener('keyup', windowKeydownOrUp)
+  window.addEventListener('mousedown', windowKeydownOrUp)
+  window.addEventListener('keydown', windowKeydown)
+  window.addEventListener('touchstart', audio.initialize)
+  typingKeyboard.addKeydownListener(typingKeydown)
 
-  const url = new URL(window.location.href);
-  const query = url.searchParams;
+  const url = new URL(window.location.href)
+  const query = url.searchParams
 
   // Special handling for the empty app state so that
   // the browser's back button can undo to the clean state.
   if (![...query.keys()].length) {
-    router.push({ path: getPath(url), query: { version } });
+    router.push({ path: getPath(url), query: { version } })
   }
   // Scale Workshop 1 compatibility
-  else if (!query.has("version")) {
+  else if (!query.has('version')) {
     try {
-      const scaleWorkshopOneData = new ScaleWorkshopOneData();
+      const scaleWorkshopOneData = new ScaleWorkshopOneData()
 
-      scaleName.value = scaleWorkshopOneData.name;
-      scale.baseFrequency = scaleWorkshopOneData.freq;
-      baseMidiNote.value = scaleWorkshopOneData.midi;
-      isomorphicHorizontal.value = scaleWorkshopOneData.horizontal;
-      isomorphicVertical.value = scaleWorkshopOneData.vertical;
+      scaleName.value = scaleWorkshopOneData.name
+      scale.baseFrequency = scaleWorkshopOneData.freq
+      baseMidiNote.value = scaleWorkshopOneData.midi
+      isomorphicHorizontal.value = scaleWorkshopOneData.horizontal
+      isomorphicVertical.value = scaleWorkshopOneData.vertical
       if (scaleWorkshopOneData.colors !== undefined) {
-        keyColors.value = scaleWorkshopOneData.colors.split(" ");
+        keyColors.value = scaleWorkshopOneData.colors.split(' ')
       }
 
       if (scaleWorkshopOneData.data !== undefined) {
         // Check that the scale is valid by attempting a parse
-        scaleWorkshopOneData.parseTuningData();
+        scaleWorkshopOneData.parseTuningData()
         // Store raw text lines
-        updateFromScaleLines(scaleWorkshopOneData.data.split(NEWLINE_TEST));
+        updateFromScaleLines(scaleWorkshopOneData.data.split(NEWLINE_TEST))
       }
 
-      audio.waveform = scaleWorkshopOneData.waveform || "semisine";
-      audio.attackTime = scaleWorkshopOneData.attackTime;
-      audio.decayTime = scaleWorkshopOneData.decayTime;
-      audio.sustainLevel = scaleWorkshopOneData.sustainLevel;
-      audio.releaseTime = scaleWorkshopOneData.releaseTime;
+      audio.waveform = scaleWorkshopOneData.waveform || 'semisine'
+      audio.attackTime = scaleWorkshopOneData.attackTime
+      audio.decayTime = scaleWorkshopOneData.decayTime
+      audio.sustainLevel = scaleWorkshopOneData.sustainLevel
+      audio.releaseTime = scaleWorkshopOneData.releaseTime
     } catch (error) {
-      console.error("Error parsing version 1 URL", error);
+      console.error('Error parsing version 1 URL', error)
     }
   }
 
   // Fetch user preferences
-  const storage = window.localStorage;
-  if ("newline" in storage) {
-    newline.value = storage.getItem("newline")!;
+  const storage = window.localStorage
+  if ('newline' in storage) {
+    newline.value = storage.getItem('newline')!
   }
-  if ("colorScheme" in storage) {
-    const scheme = storage.getItem("colorScheme");
-    if (scheme === "light" || scheme === "dark") {
-      colorScheme.value = scheme;
+  if ('colorScheme' in storage) {
+    const scheme = storage.getItem('colorScheme')
+    if (scheme === 'light' || scheme === 'dark') {
+      colorScheme.value = scheme
     }
   } else {
     // Infer based on a media query.
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      colorScheme.value = "dark";
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      colorScheme.value = 'dark'
     } else {
-      colorScheme.value = "light";
+      colorScheme.value = 'light'
     }
   }
-  if ("centsFractionDigits" in storage) {
-    centsFractionDigits.value = parseInt(
-      storage.getItem("centsFractionDigits")!
-    );
+  if ('centsFractionDigits' in storage) {
+    centsFractionDigits.value = parseInt(storage.getItem('centsFractionDigits')!)
   }
-  if ("decimalFractionDigits" in storage) {
-    decimalFractionDigits.value = parseInt(
-      storage.getItem("decimalFractionDigits")!
-    );
+  if ('decimalFractionDigits' in storage) {
+    decimalFractionDigits.value = parseInt(storage.getItem('decimalFractionDigits')!)
   }
-  if ("showVirtualQwerty" in storage) {
-    showVirtualQwerty.value = storage.getItem("showVirtualQwerty") === "true";
+  if ('showVirtualQwerty' in storage) {
+    showVirtualQwerty.value = storage.getItem('showVirtualQwerty') === 'true'
   }
-  if ("midiOctaveOffset" in storage) {
-    midiOctaveOffset.value = parseInt(storage.getItem("midiOctaveOffset")!);
+  if ('midiOctaveOffset' in storage) {
+    midiOctaveOffset.value = parseInt(storage.getItem('midiOctaveOffset')!)
   }
-  if ("intervalMatrixIndexing" in storage) {
-    intervalMatrixIndexing.value = parseInt(
-      storage.getItem("intervalMatrixIndexing") ?? "0",
-      10
-    );
+  if ('intervalMatrixIndexing' in storage) {
+    intervalMatrixIndexing.value = parseInt(storage.getItem('intervalMatrixIndexing') ?? '0', 10)
   }
   // Fetch special key map
-  if ("deactivationCode" in storage) {
-    deactivationCode.value = storage.getItem("deactivationCode")!;
+  if ('deactivationCode' in storage) {
+    deactivationCode.value = storage.getItem('deactivationCode')!
   }
-  if ("equaveUpCode" in storage) {
-    equaveUpCode.value = storage.getItem("equaveUpCode")!;
+  if ('equaveUpCode' in storage) {
+    equaveUpCode.value = storage.getItem('equaveUpCode')!
   }
-  if ("equaveDownCode" in storage) {
-    equaveDownCode.value = storage.getItem("equaveDownCode")!;
+  if ('equaveDownCode' in storage) {
+    equaveDownCode.value = storage.getItem('equaveDownCode')!
   }
-  if ("degreeUpCode" in storage) {
-    degreeUpCode.value = storage.getItem("degreeUpCode")!;
+  if ('degreeUpCode' in storage) {
+    degreeUpCode.value = storage.getItem('degreeUpCode')!
   }
-  if ("degreeDownCode" in storage) {
-    degreeDownCode.value = storage.getItem("degreeDownCode")!;
+  if ('degreeDownCode' in storage) {
+    degreeDownCode.value = storage.getItem('degreeDownCode')!
   }
-});
+})
 
 onUnmounted(() => {
-  window.removeEventListener("keydown", windowKeydown);
-  window.removeEventListener("keyup", windowKeyup);
-  window.removeEventListener("keydown", windowKeydownOrUp);
-  window.removeEventListener("keyup", windowKeydownOrUp);
-  window.removeEventListener("mousedown", windowKeydownOrUp);
-  window.removeEventListener("touchstart", audio.initialize);
-  typingKeyboard.removeEventListener(typingKeydown);
+  window.removeEventListener('keydown', windowKeydown)
+  window.removeEventListener('keyup', windowKeyup)
+  window.removeEventListener('keydown', windowKeydownOrUp)
+  window.removeEventListener('keyup', windowKeydownOrUp)
+  window.removeEventListener('mousedown', windowKeydownOrUp)
+  window.removeEventListener('touchstart', audio.initialize)
+  typingKeyboard.removeEventListener(typingKeydown)
   if (midiInput.value !== null) {
-    midiInput.value.removeListener();
+    midiInput.value.removeListener()
   }
-  audio.unintialize();
-});
+  audio.unintialize()
+})
 
 function updateMidiInputChannels(newValue: Set<number>) {
-  midiInputChannels.clear();
-  newValue.forEach((channel) => midiInputChannels.add(channel));
+  midiInputChannels.clear()
+  newValue.forEach((channel) => midiInputChannels.add(channel))
 }
 
 function panic() {
-  console.log("Firing global key off.");
-  typingKeyboard.deactivate();
-  midiIn.deactivate();
+  console.log('Firing global key off.')
+  typingKeyboard.deactivate()
+  midiIn.deactivate()
   if (midiOutput.value !== null) {
     midiOutput.value.sendAllNotesOff({
-      channels: [...midiOutputChannels.value],
-    });
+      channels: [...midiOutputChannels.value]
+    })
   }
   if (audio.synth !== null) {
-    audio.synth.allNotesOff();
+    audio.synth.allNotesOff()
   }
 }
 
-watch(newline, (newValue) => window.localStorage.setItem("newline", newValue));
+watch(newline, (newValue) => window.localStorage.setItem('newline', newValue))
 watch(colorScheme, (newValue) => {
-  window.localStorage.setItem("colorScheme", newValue);
-  document.documentElement.setAttribute("data-theme", newValue);
-});
+  window.localStorage.setItem('colorScheme', newValue)
+  document.documentElement.setAttribute('data-theme', newValue)
+})
 watch(centsFractionDigits, (newValue) =>
-  window.localStorage.setItem("centsFractionDigits", newValue.toString())
-);
+  window.localStorage.setItem('centsFractionDigits', newValue.toString())
+)
 watch(decimalFractionDigits, (newValue) =>
-  window.localStorage.setItem("decimalFractionDigits", newValue.toString())
-);
+  window.localStorage.setItem('decimalFractionDigits', newValue.toString())
+)
 watch(showVirtualQwerty, (newValue) =>
-  window.localStorage.setItem("showVirtualQwerty", newValue.toString())
-);
+  window.localStorage.setItem('showVirtualQwerty', newValue.toString())
+)
 watch(midiOctaveOffset, (newValue) =>
-  window.localStorage.setItem("midiOctaveOffset", newValue.toString())
-);
+  window.localStorage.setItem('midiOctaveOffset', newValue.toString())
+)
 watch(intervalMatrixIndexing, (newValue) =>
-  window.localStorage.setItem("intervalMatrixIndexing", newValue.toString())
-);
+  window.localStorage.setItem('intervalMatrixIndexing', newValue.toString())
+)
 // Store keymaps
-watch(deactivationCode, (newValue) =>
-  window.localStorage.setItem("deactivationCode", newValue)
-);
-watch(equaveUpCode, (newValue) =>
-  window.localStorage.setItem("equaveUpCode", newValue)
-);
-watch(equaveDownCode, (newValue) =>
-  window.localStorage.setItem("equaveDownCode", newValue)
-);
-watch(degreeUpCode, (newValue) =>
-  window.localStorage.setItem("degreeUpCode", newValue)
-);
-watch(degreeDownCode, (newValue) =>
-  window.localStorage.setItem("degreeDownCode", newValue)
-);
+watch(deactivationCode, (newValue) => window.localStorage.setItem('deactivationCode', newValue))
+watch(equaveUpCode, (newValue) => window.localStorage.setItem('equaveUpCode', newValue))
+watch(equaveDownCode, (newValue) => window.localStorage.setItem('equaveDownCode', newValue))
+watch(degreeUpCode, (newValue) => window.localStorage.setItem('degreeUpCode', newValue))
+watch(degreeDownCode, (newValue) => window.localStorage.setItem('degreeDownCode', newValue))
 </script>
 
 <template>
@@ -826,9 +759,7 @@ watch(degreeDownCode, (newValue) =>
           </li>
         </template>
         <template v-else>
-          <li
-            title="Synth will not respond to keypresses until you click outside the input field"
-          >
+          <li title="Synth will not respond to keypresses until you click outside the input field">
             <span class="typing-info">Key</span>
           </li>
         </template>
@@ -905,7 +836,7 @@ watch(degreeDownCode, (newValue) =>
 </template>
 
 <style>
-@import "@/assets/base.css";
+@import '@/assets/base.css';
 
 #app {
   display: flex;

@@ -1,44 +1,43 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import Modal from "@/components/ModalDialog.vue";
-import ScaleLineInput from "@/components/ScaleLineInput.vue";
-import { ExtendedMonzo, Interval, type Scale } from "scale-workshop-core";
-import { DEFAULT_NUMBER_OF_COMPONENTS } from "@/constants";
+import { ref } from 'vue'
+import Modal from '@/components/ModalDialog.vue'
+import ScaleLineInput from '@/components/ScaleLineInput.vue'
+import { ExtendedMonzo, Interval, type Scale } from 'scale-workshop-core'
+import { DEFAULT_NUMBER_OF_COMPONENTS, FIFTH } from '@/constants'
 const props = defineProps<{
-  scale: Scale;
-  centsFractionDigits: number;
-  decimalFractionDigits: number;
-}>();
-const emit = defineEmits(["update:scale", "cancel"]);
-const amount = ref(1.005);
+  scale: Scale
+  centsFractionDigits: number
+  decimalFractionDigits: number
+}>()
+const emit = defineEmits(['update:scale', 'cancel'])
+const amount = ref(1.005)
 
-// Dummy variable to get the types right
-const pureFifth = new Interval(
-  ExtendedMonzo.fromFraction("3/2", DEFAULT_NUMBER_OF_COMPONENTS),
-  "ratio"
-);
+const equallyTemperedFifth = new Interval(
+  ExtendedMonzo.fromEqualTemperament('7/12', '2/1', DEFAULT_NUMBER_OF_COMPONENTS),
+  'equal temperament'
+)
 
-const referenceString = ref("");
-const reference = ref(pureFifth);
+const referenceString = ref('')
+const reference = ref(FIFTH)
 
-const targetString = ref("");
-const target = ref(pureFifth);
+const targetString = ref('')
+const target = ref(FIFTH)
 
 function calculateAmount() {
-  const calculated = target.value.totalCents() / reference.value.totalCents();
+  const calculated = target.value.totalCents() / reference.value.totalCents()
   if (calculated >= 0.001 && calculated <= 999.999) {
-    amount.value = calculated;
+    amount.value = calculated
   }
 }
 
 function modify() {
   emit(
-    "update:scale",
+    'update:scale',
     props.scale.stretch(amount.value).mergeOptions({
       centsFractionDigits: props.centsFractionDigits,
-      decimalFractionDigits: props.decimalFractionDigits,
+      decimalFractionDigits: props.decimalFractionDigits
     })
-  );
+  )
 }
 </script>
 
@@ -50,10 +49,7 @@ function modify() {
     <template #body>
       <div class="control-group">
         <p>Stretch or compress the whole scale evenly.</p>
-        <p>
-          Entering 1 will cause no change; entering 2 will make every interval
-          twice as large.
-        </p>
+        <p>Entering 1 will cause no change; entering 2 will make every interval twice as large.</p>
         <div class="control">
           <label for="amount">Stretch ratio</label>
           <input
@@ -72,6 +68,7 @@ function modify() {
           <ScaleLineInput
             id="reference"
             placeholder="7\12"
+            :defaultValue="equallyTemperedFifth"
             @update:value="reference = $event"
             v-model="referenceString"
           />
@@ -81,6 +78,7 @@ function modify() {
           <ScaleLineInput
             id="reference"
             placeholder="3/2"
+            :defaultValue="FIFTH"
             @update:value="target = $event"
             v-model="targetString"
           />

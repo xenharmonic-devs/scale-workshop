@@ -1,66 +1,69 @@
 <script setup lang="ts">
-import MtsSysexExporter from "@/exporters/mts-sysex";
-import { sanitizeFilename } from "@/utils";
-import { ref, watch } from "vue";
-import Modal from "@/components/ModalDialog.vue";
-import type { Scale } from "scale-workshop-core";
-import { clamp } from "xen-dev-utils";
+import MtsSysexExporter from '@/exporters/mts-sysex'
+import { sanitizeFilename } from '@/utils'
+import { ref, watch } from 'vue'
+import Modal from '@/components/ModalDialog.vue'
+import type { Scale } from 'scale-workshop-core'
+import { clamp } from 'xen-dev-utils'
+import type { ExporterParams } from '@/exporters/base'
 
 const props = defineProps<{
-  newline: string;
-  scaleName: string;
-  baseMidiNote: number;
-  scale: Scale;
-}>();
+  newline: string
+  scaleName: string
+  baseMidiNote: number
+  midiOctaveOffset: number
+  scale: Scale
+}>()
 
-const emit = defineEmits(["confirm", "cancel"]);
+const emit = defineEmits(['confirm', 'cancel'])
 
 // Rarely implemented parameters
 // const deviceId = ref(0);
 // const bank = ref(0); (only for message 0x0804)
 
 function clampName(name: string): string {
-  return name.slice(0, 16);
+  return name.slice(0, 16)
 }
 
-const name = ref(clampName(props.scaleName));
+const name = ref(clampName(props.scaleName))
 
 function nameInputCallback(nameInput: string): void {
-  name.value = clampName(nameInput);
+  name.value = clampName(nameInput)
 }
 
 watch(
   () => props.scaleName,
   (newName) => nameInputCallback(newName),
   { immediate: true }
-);
+)
 
 function formatPresetIndex(input: string): string {
-  const number = parseInt(input.replace(/\D/g, ""));
-  if (Number.isNaN(number)) return "0";
-  return String(clamp(0, 127, number));
+  const number = parseInt(input.replace(/\D/g, ''))
+  if (Number.isNaN(number)) return '0'
+  return String(clamp(0, 127, number))
 }
 
-const presetIndex = ref("0");
+const presetIndex = ref('0')
 
 function presetIndexInputCallback(indexInput: string): void {
-  presetIndex.value = formatPresetIndex(indexInput);
+  presetIndex.value = formatPresetIndex(indexInput)
 }
 
 function doExport() {
-  const params = {
+  const params: ExporterParams = {
     newline: props.newline,
     scale: props.scale,
     filename: sanitizeFilename(props.scaleName),
     baseMidiNote: props.baseMidiNote,
+    midiOctaveOffset: props.midiOctaveOffset,
     name: name.value,
-    presetIndex: parseInt(presetIndex.value),
-  };
+    presetIndex: parseInt(presetIndex.value)
+  }
 
-  const exporter = new MtsSysexExporter(params);
-  exporter.saveFile();
+  const exporter = new MtsSysexExporter(params)
+  exporter.saveFile()
 
-  emit("confirm");
+  emit('confirm')
 }
 </script>
 

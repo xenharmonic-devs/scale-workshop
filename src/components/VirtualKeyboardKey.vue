@@ -1,98 +1,98 @@
 <script setup lang="ts">
-import { LEFT_MOUSE_BTN } from "@/constants";
-import { onMounted, onUnmounted, ref } from "vue";
+import { LEFT_MOUSE_BTN } from '@/constants'
+import { onMounted, onUnmounted, ref } from 'vue'
 
-type NoteOff = () => void;
-type NoteOnCallback = () => NoteOff;
+type NoteOff = () => void
+type NoteOnCallback = () => NoteOff
 
 const props = defineProps<{
-  color: string;
-  isMousePressed: boolean;
-  noteOn: NoteOnCallback;
-}>();
+  color: string
+  isMousePressed: boolean
+  noteOn: NoteOnCallback
+}>()
 
-const active = ref(false);
+const active = ref(false)
 
-const emit = defineEmits(["press", "unpress"]);
+const emit = defineEmits(['press', 'unpress'])
 
-let noteOff: NoteOff | null = null;
+let noteOff: NoteOff | null = null
 
 function start() {
-  active.value = true;
+  active.value = true
   if (noteOff !== null) {
-    noteOff();
+    noteOff()
   }
-  noteOff = props.noteOn();
+  noteOff = props.noteOn()
 }
 
 function end() {
-  active.value = false;
+  active.value = false
   if (noteOff !== null) {
-    noteOff();
-    noteOff = null;
+    noteOff()
+    noteOff = null
   }
 }
 
 function onTouchStart(event: TouchEvent) {
-  event.preventDefault();
-  start();
+  event.preventDefault()
+  start()
 }
 
 function onTouchEnd(event: TouchEvent) {
-  event.preventDefault();
-  end();
+  event.preventDefault()
+  end()
 }
 
 function onMouseDown(event: MouseEvent) {
   if (event.button !== LEFT_MOUSE_BTN) {
-    return;
+    return
   }
-  event.preventDefault();
-  emit("press");
-  start();
+  event.preventDefault()
+  emit('press')
+  start()
 }
 
 function onMouseUp(event: MouseEvent) {
   if (event.button !== LEFT_MOUSE_BTN) {
-    return;
+    return
   }
-  event.preventDefault();
+  event.preventDefault()
 }
 
 function onWindowMouseUp(event: MouseEvent) {
   if (event.button !== LEFT_MOUSE_BTN) {
-    return;
+    return
   }
-  emit("unpress");
-  end();
+  emit('unpress')
+  end()
 }
 
 function onMouseEnter(event: MouseEvent) {
   if (!props.isMousePressed) {
-    return;
+    return
   }
-  event.preventDefault();
-  start();
+  event.preventDefault()
+  start()
 }
 
 function onMouseLeave(event: MouseEvent) {
   if (!props.isMousePressed) {
-    return;
+    return
   }
-  event.preventDefault();
-  end();
+  event.preventDefault()
+  end()
 }
 
 onMounted(() => {
-  window.addEventListener("mouseup", onWindowMouseUp);
-});
+  window.addEventListener('mouseup', onWindowMouseUp)
+})
 
 onUnmounted(() => {
   if (noteOff !== null) {
-    noteOff();
+    noteOff()
   }
-  window.removeEventListener("mouseup", onWindowMouseUp);
-});
+  window.removeEventListener('mouseup', onWindowMouseUp)
+})
 </script>
 
 <template>

@@ -1,57 +1,54 @@
 <script setup lang="ts">
-import { computed, reactive } from "vue";
-import Modal from "@/components/ModalDialog.vue";
-import type { Scale } from "scale-workshop-core";
+import { computed, reactive } from 'vue'
+import Modal from '@/components/ModalDialog.vue'
+import type { Scale } from 'scale-workshop-core'
 
 const props = defineProps<{
-  scale: Scale;
-}>();
-const emit = defineEmits(["update:scale", "cancel"]);
-defineExpose({ initialize });
+  scale: Scale
+}>()
+const emit = defineEmits(['update:scale', 'cancel'])
+defineExpose({ initialize })
 
-const selected = reactive<Set<number>>(new Set());
+const selected = reactive<Set<number>>(new Set())
 
 const mode = computed(() => {
-  const degrees = [...selected.values()];
-  degrees.sort((a, b) => a - b);
-  degrees.push(props.scale.size);
-  const result = [];
+  const degrees = [...selected.values()]
+  degrees.sort((a, b) => a - b)
+  degrees.push(props.scale.size)
+  const result = []
   for (let i = 1; i < degrees.length; ++i) {
-    result.push(degrees[i] - degrees[i - 1]);
+    result.push(degrees[i] - degrees[i - 1])
   }
-  return result.map((gap) => gap.toString()).join(", ");
-});
+  return result.map((gap) => gap.toString()).join(', ')
+})
 
 const degrees = computed(() => {
-  const degrees = [...selected.values()];
-  degrees.sort((a, b) => a - b);
-  degrees.shift();
-  return (
-    degrees.map((degree) => degree.toString()).join(", ") +
-    `, (${props.scale.size})`
-  );
-});
+  const degrees = [...selected.values()]
+  degrees.sort((a, b) => a - b)
+  degrees.shift()
+  return degrees.map((degree) => degree.toString()).join(', ') + `, (${props.scale.size})`
+})
 
 function toggle(index: number) {
   if (selected.has(index)) {
-    selected.delete(index);
+    selected.delete(index)
   } else {
-    selected.add(index);
+    selected.add(index)
   }
 }
 
 function initialize() {
-  selected.clear();
-  selected.add(0);
+  selected.clear()
+  selected.add(0)
   for (let i = 1; i < props.scale.size; ++i) {
-    selected.add(i);
+    selected.add(i)
   }
 }
 
 function modify() {
-  const subset = [...selected.values()];
-  subset.sort((a, b) => a - b);
-  emit("update:scale", props.scale.subset(subset));
+  const subset = [...selected.values()]
+  subset.sort((a, b) => a - b)
+  emit('update:scale', props.scale.subset(subset))
 }
 </script>
 

@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import Modal from "@/components/ModalDialog.vue";
-import type { Scale } from "scale-workshop-core";
+import { ref } from 'vue'
+import Modal from '@/components/ModalDialog.vue'
+import type { Scale } from 'scale-workshop-core'
 
 const props = defineProps<{
-  scale: Scale;
-}>();
+  scale: Scale
+}>()
 
-const emit = defineEmits(["update:scale", "cancel"]);
+const emit = defineEmits(['update:scale', 'cancel'])
 
-const denominator = ref(128);
+const denominator = ref(128)
 
 function modify() {
-  emit("update:scale", props.scale.approximateHarmonics(denominator.value));
+  emit('update:scale', props.scale.approximateHarmonics(denominator.value))
 }
 </script>
 

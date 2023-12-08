@@ -1,54 +1,52 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import Modal from "@/components/ModalDialog.vue";
-import ScaleLineInput from "@/components/ScaleLineInput.vue";
-import { OCTAVE } from "@/constants";
-import { computedAndError, parseChordInput } from "@/utils";
-import { Scale } from "scale-workshop-core";
+import { ref, watch } from 'vue'
+import Modal from '@/components/ModalDialog.vue'
+import ScaleLineInput from '@/components/ScaleLineInput.vue'
+import { OCTAVE } from '@/constants'
+import { computedAndError, parseChordInput } from '@/utils'
+import { Scale } from 'scale-workshop-core'
 
 const props = defineProps<{
-  show: boolean;
-}>();
+  show: boolean
+}>()
 
-const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
+const emit = defineEmits(['update:scale', 'update:scaleName', 'cancel'])
 
-const basisString = ref("3 5 7 11");
-const addUnity = ref(false);
-const equaveString = ref("2/1");
-const equave = ref(OCTAVE);
-const basisElement = ref<HTMLInputElement | null>(null);
+const basisString = ref('3 5 7 11')
+const addUnity = ref(false)
+const equaveString = ref('2/1')
+const equave = ref(OCTAVE)
+const basisElement = ref<HTMLInputElement | null>(null)
 const [basis, basisError] = computedAndError(() => {
   if (!props.show) {
-    return [];
+    return []
   }
-  const chord = parseChordInput(basisString.value);
+  const chord = parseChordInput(basisString.value)
   if (chord.length !== 4) {
-    throw new Error("Need exactly four basis vectors");
+    throw new Error('Need exactly four basis vectors')
   }
-  return chord;
-}, []);
-watch(basisError, (newError) =>
-  basisElement.value!.setCustomValidity(newError)
-);
+  return chord
+}, [])
+watch(basisError, (newError) => basisElement.value!.setCustomValidity(newError))
 
 function generate() {
   try {
-    const scale = Scale.fromOctaplex(basis.value, addUnity.value, equave.value);
-    let name = `The Octaplex (${basisString.value}`;
+    const scale = Scale.fromOctaplex(basis.value, addUnity.value, equave.value)
+    let name = `The Octaplex (${basisString.value}`
     if (addUnity.value) {
-      name += " with 1/1";
+      name += ' with 1/1'
     }
     if (!equave.value.equals(OCTAVE)) {
-      name += ` over ${equave.value.toString()}`;
+      name += ` over ${equave.value.toString()}`
     }
-    name += ")";
-    emit("update:scaleName", name);
-    emit("update:scale", scale);
+    name += ')'
+    emit('update:scaleName', name)
+    emit('update:scale', scale)
   } catch (error) {
     if (error instanceof Error) {
-      alert(error.message);
+      alert(error.message)
     } else {
-      alert(error);
+      alert(error)
     }
   }
 }

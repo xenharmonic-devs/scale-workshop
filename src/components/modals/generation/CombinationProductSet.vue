@@ -1,35 +1,33 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
-import Modal from "@/components/ModalDialog.vue";
-import ScaleLineInput from "@/components/ScaleLineInput.vue";
-import { OCTAVE } from "@/constants";
-import { computedAndError, parseChordInput } from "@/utils";
-import { Scale } from "scale-workshop-core";
+import { computed, ref, watch } from 'vue'
+import Modal from '@/components/ModalDialog.vue'
+import ScaleLineInput from '@/components/ScaleLineInput.vue'
+import { OCTAVE } from '@/constants'
+import { computedAndError, parseChordInput } from '@/utils'
+import { Scale } from 'scale-workshop-core'
 
 const props = defineProps<{
-  show: boolean;
-}>();
+  show: boolean
+}>()
 
-const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
+const emit = defineEmits(['update:scale', 'update:scaleName', 'cancel'])
 
-const factorsString = ref("");
-const numElements = ref(2);
-const addUnity = ref(false);
-const equaveString = ref("2/1");
-const equave = ref(OCTAVE);
+const factorsString = ref('')
+const numElements = ref(2)
+const addUnity = ref(false)
+const equaveString = ref('2/1')
+const equave = ref(OCTAVE)
 
-const factorsElement = ref<HTMLInputElement | null>(null);
+const factorsElement = ref<HTMLInputElement | null>(null)
 const [factors, factorsError] = computedAndError(() => {
   if (!props.show) {
-    return [];
+    return []
   }
-  return parseChordInput(factorsString.value);
-}, []);
-watch(factorsError, (newError) =>
-  factorsElement.value!.setCustomValidity(newError)
-);
+  return parseChordInput(factorsString.value)
+}, [])
+watch(factorsError, (newError) => factorsElement.value!.setCustomValidity(newError))
 
-const maxElements = computed(() => Math.max(1, factors.value.length));
+const maxElements = computed(() => Math.max(1, factors.value.length))
 
 // It's not obvious that combination count depends on a parsed text element.
 // I think it's better that the user can try using invalid values and see red.
@@ -43,22 +41,22 @@ function generate() {
       numElements.value,
       addUnity.value,
       equave.value
-    );
-    let name = `CPS (${numElements.value} of ${factorsString.value}`;
+    )
+    let name = `CPS (${numElements.value} of ${factorsString.value}`
     if (addUnity.value) {
-      name += " with 1/1";
+      name += ' with 1/1'
     }
     if (!equave.value.equals(OCTAVE)) {
-      name += ` over ${equave.value.toString()}`;
+      name += ` over ${equave.value.toString()}`
     }
-    name += ")";
-    emit("update:scaleName", name);
-    emit("update:scale", scale);
+    name += ')'
+    emit('update:scaleName', name)
+    emit('update:scale', scale)
   } catch (error) {
     if (error instanceof Error) {
-      alert(error.message);
+      alert(error.message)
     } else {
-      alert(error);
+      alert(error)
     }
   }
 }

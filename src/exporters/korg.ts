@@ -1,8 +1,8 @@
-import JSZip from "jszip";
-import { BaseExporter, type ExporterParams } from "@/exporters/base";
-import { Fraction, mtof } from "xen-dev-utils";
-import { frequencyTableToBinaryData } from "./mts-sysex";
-import { ExtendedMonzo, Interval, Scale } from "scale-workshop-core";
+import JSZip from 'jszip'
+import { BaseExporter, type ExporterParams } from '@/exporters/base'
+import { Fraction, mtof } from 'xen-dev-utils'
+import { frequencyTableToBinaryData } from './mts-sysex'
+import { ExtendedMonzo, Interval, Scale } from 'scale-workshop-core'
 
 // This exporter converts tuning data into a zip-compressed file for use with
 // Korg's Sound Librarian software, supporting their 'logue series of synthesizers.
@@ -16,151 +16,134 @@ import { ExtendedMonzo, Interval, Scale } from "scale-workshop-core";
 // strictly tested if the additional precision is employed in the synthesis.
 
 export enum KorgModels {
-  MONOLOGUE = "monologue",
-  MINILOGUE = "minilogue",
-  MINILOGUE_XD = "miniloguexd",
-  PROLOGUE = "prologue",
+  MONOLOGUE = 'monologue',
+  MINILOGUE = 'minilogue',
+  MINILOGUE_XD = 'miniloguexd',
+  PROLOGUE = 'prologue'
 }
 
 export const KORG_MODEL_INFO = {
   [KorgModels.MONOLOGUE]: {
-    name: "monologue",
-    title: "Monologue",
-    scale: ".molgtuns",
-    octave: ".molgtuno",
+    name: 'monologue',
+    title: 'Monologue',
+    scale: '.molgtuns',
+    octave: '.molgtuno'
   },
   [KorgModels.MINILOGUE]: {
-    name: "minilogue",
-    title: "Minilogue",
-    scale: ".mnlgtuns",
-    octave: ".mnlgtuno",
+    name: 'minilogue',
+    title: 'Minilogue',
+    scale: '.mnlgtuns',
+    octave: '.mnlgtuno'
   },
   [KorgModels.MINILOGUE_XD]: {
-    name: "minilogue xd",
-    title: "Minilogue XD",
-    scale: ".mnlgxdtuns",
-    octave: ".mnlgxdtuno",
+    name: 'minilogue xd',
+    title: 'Minilogue XD',
+    scale: '.mnlgxdtuns',
+    octave: '.mnlgxdtuno'
   },
   [KorgModels.PROLOGUE]: {
-    name: "prologue",
-    title: "Prologue",
-    scale: ".prlgtuns",
-    octave: ".prlgtuno",
-  },
-};
-
-export enum KorgExporterError {
-  OCTAVE_INVALID_EQUAVE = "Scale equave must be exactly 2/1 for the 12-note Octave format.",
-  OCTAVE_INVALID_SIZE = "Scale must comprise of exactly 12 intervals for the 12-note Octave format.",
-  OCTAVE_INVALID_INTERVAL = "Scale cannot contain intervals below unison or above an octave for the 12-note Octave format.",
+    name: 'prologue',
+    title: 'Prologue',
+    scale: '.prlgtuns',
+    octave: '.prlgtuno'
+  }
 }
 
-const OCTAVE_FORMAT_SIZE = 12;
-const SCALE_FORMAT_SIZE = 128;
+export enum KorgExporterError {
+  OCTAVE_INVALID_EQUAVE = 'Scale equave must be exactly 2/1 for the 12-note Octave format.',
+  OCTAVE_INVALID_SIZE = 'Scale must comprise of exactly 12 intervals for the 12-note Octave format.',
+  OCTAVE_INVALID_INTERVAL = 'Scale cannot contain intervals below unison or above an octave for the 12-note Octave format.'
+}
+
+const OCTAVE_FORMAT_SIZE = 12
+const SCALE_FORMAT_SIZE = 128
 
 export function getKorgModelInfo(modelName: string) {
   switch (modelName) {
-    case "minilogue":
-      return KORG_MODEL_INFO[KorgModels.MINILOGUE];
-    case "miniloguexd":
-      return KORG_MODEL_INFO[KorgModels.MINILOGUE_XD];
-    case "monologue":
-      return KORG_MODEL_INFO[KorgModels.MONOLOGUE];
-    case "prologue":
-      return KORG_MODEL_INFO[KorgModels.PROLOGUE];
+    case 'minilogue':
+      return KORG_MODEL_INFO[KorgModels.MINILOGUE]
+    case 'miniloguexd':
+      return KORG_MODEL_INFO[KorgModels.MINILOGUE_XD]
+    case 'monologue':
+      return KORG_MODEL_INFO[KorgModels.MONOLOGUE]
+    case 'prologue':
+      return KORG_MODEL_INFO[KorgModels.PROLOGUE]
     default:
-      throw new Error("Unknown Korg model name");
+      throw new Error('Unknown Korg model name')
   }
 }
 
 export class KorgExporter extends BaseExporter {
-  params: ExporterParams;
-  modelName: string;
-  useOctaveFormat: boolean;
+  params: ExporterParams
+  modelName: string
+  useOctaveFormat: boolean
 
-  constructor(
-    params: ExporterParams,
-    modelName: string,
-    useOctaveFormat: boolean
-  ) {
-    super();
-    this.params = params;
-    this.modelName = modelName;
-    this.useOctaveFormat = useOctaveFormat;
+  constructor(params: ExporterParams, modelName: string, useOctaveFormat: boolean) {
+    super()
+    this.params = params
+    this.modelName = modelName
+    this.useOctaveFormat = useOctaveFormat
 
     if (this.useOctaveFormat) {
-      const errorMessage = KorgExporter.getOctaveFormatErrorMessage(
-        params.scale
-      );
-      if (errorMessage !== "") throw new Error(errorMessage);
+      const errorMessage = KorgExporter.getOctaveFormatErrorMessage(params.scale)
+      if (errorMessage !== '') throw new Error(errorMessage)
     }
   }
 
   static getOctaveFormatErrorMessage(scale: Scale): string {
-    const octave = new Interval(
-      ExtendedMonzo.fromFraction(new Fraction(2, 1), 3),
-      "ratio"
-    );
+    const octave = new Interval(ExtendedMonzo.fromFraction(new Fraction(2, 1), 3), 'ratio')
 
     if (scale.equave.compare(octave) !== 0) {
-      return KorgExporterError.OCTAVE_INVALID_EQUAVE;
+      return KorgExporterError.OCTAVE_INVALID_EQUAVE
     }
 
     if (scale.intervals.length !== 12) {
-      return KorgExporterError.OCTAVE_INVALID_SIZE;
+      return KorgExporterError.OCTAVE_INVALID_SIZE
     }
 
-    const unison = new Interval(
-      ExtendedMonzo.fromFraction(new Fraction(1, 1), 3),
-      "ratio"
-    );
+    const unison = new Interval(ExtendedMonzo.fromFraction(new Fraction(1, 1), 3), 'ratio')
 
     for (const interval of scale.intervals) {
       if (interval.compare(unison) < 0 || interval.compare(octave) > 0) {
-        return KorgExporterError.OCTAVE_INVALID_INTERVAL;
+        return KorgExporterError.OCTAVE_INVALID_INTERVAL
       }
     }
 
-    return "";
+    return ''
   }
 
-  getTuningInfoXml(model: string, programmer = "Scale Workshop", comment = "") {
-    const format = getKorgModelInfo(model);
-    const name = format.name;
-    const tagName = name.replace(" ", "").toLowerCase();
+  getTuningInfoXml(model: string, programmer = 'Scale Workshop', comment = '') {
+    const format = getKorgModelInfo(model)
+    const name = format.name
+    const tagName = name.replace(' ', '').toLowerCase()
 
     const rootName = this.useOctaveFormat
       ? `${tagName}_TuneOctInformation`
-      : `${tagName}_TuneScaleInformation`;
+      : `${tagName}_TuneScaleInformation`
 
     const xml =
       `<?xml version="1.0" encoding="UTF-8"?>\n` +
-      "\n" +
+      '\n' +
       `<${rootName}>\n` +
       `  <Programmer>${programmer}</Programmer>\n` +
       `  <Comment>${comment}</Comment>\n` +
-      `</${rootName}>\n`;
+      `</${rootName}>\n`
 
-    return xml;
+    return xml
   }
 
   getFileInfoXml(model: string) {
-    const format = getKorgModelInfo(model);
+    const format = getKorgModelInfo(model)
 
-    const [
-      numTuneScaleData,
-      numTuneOctData,
-      fileNameHeader,
-      dataName,
-      binName,
-    ] = this.useOctaveFormat
-      ? ["0", "1", "TunO_000.TunO_", "TuneOctData", "TuneOctBinary"]
-      : ["1", "0", "TunS_000.TunS_", "TuneScaleData", "TuneScaleBinary"];
+    const [numTuneScaleData, numTuneOctData, fileNameHeader, dataName, binName] = this
+      .useOctaveFormat
+      ? ['0', '1', 'TunO_000.TunO_', 'TuneOctData', 'TuneOctBinary']
+      : ['1', '0', 'TunS_000.TunS_', 'TuneScaleData', 'TuneScaleBinary']
 
     const xml =
       `<?xml version="1.0" encoding="UTF-8"?>\n` +
-      "\n" +
-      "<KorgMSLibrarian_Data>\n" +
+      '\n' +
+      '<KorgMSLibrarian_Data>\n' +
       `  <Product>${format.name}</Product>\n` +
       '  <Contents NumProgramData="0" NumPresetInformation="0" ' +
       `NumTuneScaleData="${numTuneScaleData}"\n` +
@@ -169,59 +152,51 @@ export class KorgExporter extends BaseExporter {
       `      <Information>${fileNameHeader}info</Information>\n` +
       `      <${binName}>${fileNameHeader}bin</${binName}>\n` +
       `    </${dataName}>\n` +
-      "  </Contents>\n" +
-      "</KorgMSLibrarian_Data>\n";
+      '  </Contents>\n' +
+      '</KorgMSLibrarian_Data>\n'
 
-    return xml;
+    return xml
   }
 
   getFileContents(): [JSZip, string] {
-    const scale = this.params.scale;
-    const baseMidiNote = this.params.baseMidiNote;
+    const scale = this.params.scale
+    const baseMidiNote = this.params.baseMidiNote
 
-    let frequencies: number[];
+    let frequencies: number[]
     if (this.useOctaveFormat) {
-      const rootFreq = mtof(0);
-      const transposeRatio = rootFreq / scale.baseFrequency;
+      const rootFreq = mtof(0)
+      const transposeRatio = rootFreq / scale.baseFrequency
       frequencies = scale
         .getFrequencyRange(0, OCTAVE_FORMAT_SIZE)
-        .map((f: number) => f * transposeRatio);
+        .map((f: number) => f * transposeRatio)
     } else {
-      frequencies = scale.getFrequencyRange(
-        -baseMidiNote,
-        SCALE_FORMAT_SIZE - baseMidiNote
-      );
+      frequencies = scale.getFrequencyRange(-baseMidiNote, SCALE_FORMAT_SIZE - baseMidiNote)
     }
 
-    const binaryData = frequencyTableToBinaryData(frequencies);
+    const binaryData = frequencyTableToBinaryData(frequencies)
 
     // prepare files for zipping
-    const format = getKorgModelInfo(this.modelName);
+    const format = getKorgModelInfo(this.modelName)
     const tuningInfo = this.getTuningInfoXml(
       this.modelName,
-      "ScaleWorkshop",
-      this.params.name ?? ""
-    );
-    const fileInfo = this.getFileInfoXml(this.modelName);
+      'ScaleWorkshop',
+      this.params.name ?? ''
+    )
+    const fileInfo = this.getFileInfoXml(this.modelName)
     const [fileNameHeader, fileType] = this.useOctaveFormat
-      ? ["TunO_000.TunO_", format.octave]
-      : ["TunS_000.TunS_", format.scale];
+      ? ['TunO_000.TunO_', format.octave]
+      : ['TunS_000.TunS_', format.scale]
 
-    const zip = new JSZip();
-    zip.file(fileNameHeader + "bin", binaryData);
-    zip.file(fileNameHeader + "info", tuningInfo);
-    zip.file("FileInformation.xml", fileInfo);
-    return [zip, fileType];
+    const zip = new JSZip()
+    zip.file(fileNameHeader + 'bin', binaryData)
+    zip.file(fileNameHeader + 'info', tuningInfo)
+    zip.file('FileInformation.xml', fileInfo)
+    return [zip, fileType]
   }
 
   async saveFile() {
-    const [zip, fileType] = this.getFileContents();
-    const base64 = await zip.generateAsync({ type: "base64" });
-    super.saveFile(
-      this.params.filename + fileType,
-      base64,
-      false,
-      "application/zip;base64,"
-    );
+    const [zip, fileType] = this.getFileContents()
+    const base64 = await zip.generateAsync({ type: 'base64' })
+    super.saveFile(this.params.filename + fileType, base64, false, 'application/zip;base64,')
   }
 }

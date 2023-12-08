@@ -1,33 +1,33 @@
 <script setup lang="ts">
-import VirtualTypingKeyboard from "@/components/VirtualTypingKeyboard.vue";
-import type { Keyboard } from "@/keyboard";
-import type { Scale } from "scale-workshop-core";
+import VirtualTypingKeyboard from '@/components/VirtualTypingKeyboard.vue'
+import type { Keyboard } from '@/keyboard'
+import type { Scale } from 'scale-workshop-core'
 
-type NoteOff = () => void;
-type NoteOnCallback = (index: number) => NoteOff;
+type NoteOff = () => void
+type NoteOnCallback = (index: number) => NoteOff
 
 defineProps<{
-  baseMidiNote: number;
-  equaveShift: number;
-  degreeShift: number;
-  isomorphicHorizontal: number;
-  isomorphicVertical: number;
-  scale: Scale;
-  keyColors: string[];
-  noteOn: NoteOnCallback;
-  heldNotes: Map<number, number>;
-  keyboardMode: "isomorphic" | "piano";
-  colorScheme: "light" | "dark";
-  keyboardMapping: Map<string, number>;
-  typingKeyboard: Keyboard;
-  deactivationCode: string;
-  equaveUpCode: string;
-  equaveDownCode: string;
-  degreeUpCode: string;
-  degreeDownCode: string;
-}>();
+  baseMidiNote: number
+  equaveShift: number
+  degreeShift: number
+  isomorphicHorizontal: number
+  isomorphicVertical: number
+  scale: Scale
+  keyColors: string[]
+  noteOn: NoteOnCallback
+  heldNotes: Map<number, number>
+  keyboardMode: 'isomorphic' | 'piano'
+  colorScheme: 'light' | 'dark'
+  keyboardMapping: Map<string, number>
+  typingKeyboard: Keyboard
+  deactivationCode: string
+  equaveUpCode: string
+  equaveDownCode: string
+  degreeUpCode: string
+  degreeDownCode: string
+}>()
 
-defineEmits(["update:equaveShift", "update:degreeShift"]);
+defineEmits(['update:equaveShift', 'update:degreeShift'])
 </script>
 
 <template>

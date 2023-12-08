@@ -1,36 +1,36 @@
-import { ExtendedMonzo, Interval } from "scale-workshop-core";
-import { version } from "../package.json";
+import { ExtendedMonzo, Interval } from 'scale-workshop-core'
+import { version } from '../package.json'
 
 // GLOBALS
-export const APP_TITLE = `Scale Workshop ${version}`;
+export const APP_TITLE = `Scale Workshop ${version}`
 
-export const DEFAULT_NUMBER_OF_COMPONENTS = 25; // Enough to represent all primes < 100
+export const DEFAULT_NUMBER_OF_COMPONENTS = 25 // Enough to represent all primes < 100
 
-export const NEWLINE_TEST = /\r?\n/;
-export const UNIX_NEWLINE = "\n";
-export const WINDOWS_NEWLINE = "\r\n";
+export const NEWLINE_TEST = /\r?\n/
+export const UNIX_NEWLINE = '\n'
+export const WINDOWS_NEWLINE = '\r\n'
 
-export const NUMBER_OF_NOTES = 128;
+export const NUMBER_OF_NOTES = 128
 
 // Browser interaction
-export const LEFT_MOUSE_BTN = 0;
+export const LEFT_MOUSE_BTN = 0
 
 // Offset such that default base MIDI note doesn't move in "simple" white mode.
-export const WHITE_MODE_OFFSET = 69 - 40;
+export const WHITE_MODE_OFFSET = 69 - 40
 
 // === Sanity limits for tempering ===
 
 // Anything larger than this isn't evaluated interactively
-export const MAX_INTERACTIVE_SUBGROUP_SIZE = 6;
+export const MAX_INTERACTIVE_SUBGROUP_SIZE = 6
 // Anything larger than this uses O(n²) methods (if available) instead of O(exp(n))
-export const MAX_GEO_SUBGROUP_SIZE = 9;
+export const MAX_GEO_SUBGROUP_SIZE = 9
 
 // Some often used intervals
 export const OCTAVE = new Interval(
   ExtendedMonzo.fromFraction(2, DEFAULT_NUMBER_OF_COMPONENTS),
-  "ratio"
-);
+  'ratio'
+)
 export const FIFTH = new Interval(
-  ExtendedMonzo.fromFraction("3/2", DEFAULT_NUMBER_OF_COMPONENTS),
-  "ratio"
-);
+  ExtendedMonzo.fromFraction('3/2', DEFAULT_NUMBER_OF_COMPONENTS),
+  'ratio'
+)

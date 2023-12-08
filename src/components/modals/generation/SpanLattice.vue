@@ -1,137 +1,125 @@
 <script setup lang="ts">
-import { reactive, ref, watch } from "vue";
-import Modal from "@/components/ModalDialog.vue";
-import ScaleLineInput from "@/components/ScaleLineInput.vue";
-import { DEFAULT_NUMBER_OF_COMPONENTS, OCTAVE } from "@/constants";
-import { computedAndError, parseChordInput } from "@/utils";
-import { makeState } from "@/components/modals/tempering-state";
-import Temperament from "temperaments";
-import {
-  ExtendedMonzo,
-  Interval,
-  Scale,
-  type IntervalOptions,
-} from "scale-workshop-core";
+import { reactive, ref, watch } from 'vue'
+import Modal from '@/components/ModalDialog.vue'
+import ScaleLineInput from '@/components/ScaleLineInput.vue'
+import { DEFAULT_NUMBER_OF_COMPONENTS, OCTAVE } from '@/constants'
+import { computedAndError, parseChordInput } from '@/utils'
+import { makeState } from '@/components/modals/tempering-state'
+import Temperament from 'temperaments'
+import { ExtendedMonzo, Interval, Scale, type IntervalOptions } from 'scale-workshop-core'
 
 const props = defineProps<{
-  show: boolean;
-  centsFractionDigits: number;
-}>();
+  show: boolean
+  centsFractionDigits: number
+}>()
 
-const emit = defineEmits(["update:scale", "update:scaleName", "cancel"]);
+const emit = defineEmits(['update:scale', 'update:scaleName', 'cancel'])
 
-const method = ref<"generators" | "vals" | "commas">("generators");
-const state = makeState(method);
+const method = ref<'generators' | 'vals' | 'commas'>('generators')
+const state = makeState(method)
 // method: "vals"
-const valsString = state.valsString;
+const valsString = state.valsString
 // medhod: "commas"
-const commasString = state.commasString;
+const commasString = state.commasString
 // method: "generators"
-const basisString = ref("");
-const dimensions = reactive<number[]>([]);
-const equaveString = ref("2/1");
-const equave = ref(OCTAVE);
+const basisString = ref('')
+const dimensions = reactive<number[]>([])
+const equaveString = ref('2/1')
+const equave = ref(OCTAVE)
 // Generic
-const subgroupString = state.subgroupString;
-const subgroupError = state.subgroupError;
+const subgroupString = state.subgroupString
+const subgroupError = state.subgroupError
 // Advanced
-const showAdvanced = ref(false);
-const weightsString = state.weightsString;
-const tempering = state.tempering;
-const constraintsString = state.constraintsString;
+const showAdvanced = ref(false)
+const weightsString = state.weightsString
+const tempering = state.tempering
+const constraintsString = state.constraintsString
 
-const basisElement = ref<HTMLInputElement | null>(null);
+const basisElement = ref<HTMLInputElement | null>(null)
 const [basis, basisError] = computedAndError(() => {
   if (!props.show) {
-    return [];
+    return []
   }
-  return parseChordInput(basisString.value);
-}, []);
-watch(basisError, (newError) =>
-  basisElement.value!.setCustomValidity(newError)
-);
+  return parseChordInput(basisString.value)
+}, [])
+watch(basisError, (newError) => basisElement.value!.setCustomValidity(newError))
 
 watch(basis, () => {
   while (dimensions.length < basis.value.length) {
-    dimensions.push(2);
+    dimensions.push(2)
   }
-});
+})
 
 function fromCents(cents: number) {
   const options: IntervalOptions = {
-    centsFractionDigits: props.centsFractionDigits,
-  };
+    centsFractionDigits: props.centsFractionDigits
+  }
   return new Interval(
     ExtendedMonzo.fromCents(cents, DEFAULT_NUMBER_OF_COMPONENTS),
-    "cents",
+    'cents',
     undefined,
     options
-  );
+  )
 }
 
 function calculateGenerators() {
-  let temperament: Temperament;
-  if (method.value === "vals") {
-    temperament = Temperament.fromVals(state.vals.value, state.subgroup.value);
+  let temperament: Temperament
+  if (method.value === 'vals') {
+    temperament = Temperament.fromVals(state.vals.value, state.subgroup.value)
   } else {
-    temperament = Temperament.fromCommas(
-      state.commas.value,
-      state.subgroup.value
-    );
+    temperament = Temperament.fromCommas(state.commas.value, state.subgroup.value)
   }
-  const generators = temperament.generators(state.options.value);
+  const generators = temperament.generators(state.options.value)
   if (!generators.length) {
-    alert("Unable to calculate generators.");
-    return;
+    alert('Unable to calculate generators.')
+    return
   }
 
-  equave.value = fromCents(generators[0]);
-  equaveString.value = equave.value.centsString();
+  equave.value = fromCents(generators[0])
+  equaveString.value = equave.value.centsString()
 
   basisString.value = generators
     .slice(1)
     .map((generator) => fromCents(generator).centsString())
-    .join(" ");
+    .join(' ')
 
-  method.value = "generators";
+  method.value = 'generators'
 }
 
 function updateDimension(index: number, event: Event) {
-  const value = parseInt((event.target as HTMLInputElement).value);
-  dimensions[index] = value;
+  const value = parseInt((event.target as HTMLInputElement).value)
+  dimensions[index] = value
 }
 
 function flip(index: number) {
   const generator = basis.value[index].neg().mmod(
     equave.value.mergeOptions({
-      centsFractionDigits: props.centsFractionDigits,
+      centsFractionDigits: props.centsFractionDigits
     })
-  );
-  const newBasis = [...basis.value];
-  newBasis.splice(index, 1, generator);
-  basisString.value = newBasis.map((gen) => gen.toString()).join(" ");
+  )
+  const newBasis = [...basis.value]
+  newBasis.splice(index, 1, generator)
+  basisString.value = newBasis.map((gen) => gen.toString()).join(' ')
 }
 
 function generate() {
   try {
-    const scale = Scale.fromLattice(basis.value, dimensions, equave.value);
-    let name = `Lattice (${dimensions.slice(0, basis.value.length)} of ${
-      basisString.value
-    }`;
+    const scale = Scale.fromLattice(basis.value, dimensions, equave.value)
+    let name = `Lattice (${dimensions.slice(0, basis.value.length)} of ${basisString.value}`
     if (basis.value.length === 0) {
-      name = "Lattice (unison";
+      name = 'Lattice (unison'
     }
     if (!equave.value.equals(OCTAVE)) {
-      name += ` over ${equave.value.toString()}`;
+      name += ` over ${equave.value.toString()}`
     }
-    name += ")";
-    emit("update:scaleName", name);
-    emit("update:scale", scale);
+    name += ')'
+    emit('update:scaleName', name)
+    emit('update:scale', scale)
   } catch (error) {
     if (error instanceof Error) {
-      alert(error.message);
+      alert(error.message)
     } else {
-      alert(error);
+      alert(error)
     }
   }
 }
@@ -147,32 +135,17 @@ function generate() {
         <div class="control radio-group">
           <label>Method</label>
           <span>
-            <input
-              type="radio"
-              id="method-generators"
-              value="generators"
-              v-model="method"
-            />
+            <input type="radio" id="method-generators" value="generators" v-model="method" />
             <label for="method-generators"> Generators </label>
           </span>
 
           <span>
-            <input
-              type="radio"
-              id="method-vals"
-              value="vals"
-              v-model="method"
-            />
+            <input type="radio" id="method-vals" value="vals" v-model="method" />
             <label for="method-vals"> Vals </label>
           </span>
 
           <span>
-            <input
-              type="radio"
-              id="method-commas"
-              value="commas"
-              v-model="method"
-            />
+            <input type="radio" id="method-commas" value="commas" v-model="method" />
             <label for="method-commas"> Comma list </label>
           </span>
         </div>
@@ -189,11 +162,7 @@ function generate() {
             />
           </div>
           <label>Generators up from 1/1</label>
-          <div
-            class="control"
-            v-for="(dimension, i) of dimensions.slice(0, basis.length)"
-            :key="i"
-          >
+          <div class="control" v-for="(dimension, i) of dimensions.slice(0, basis.length)" :key="i">
             <label>Generator {{ basis[i] }}</label>
             <button @click="flip(i)">Flip</button>
             <input
@@ -216,22 +185,12 @@ function generate() {
         </div>
         <div class="control" v-show="method === 'vals'">
           <label for="vals">Vals</label>
-          <input
-            type="text"
-            id="vals"
-            placeholder="8d & 12 & 19"
-            v-model="valsString"
-          />
+          <input type="text" id="vals" placeholder="8d & 12 & 19" v-model="valsString" />
         </div>
 
         <div class="control" v-show="method === 'commas'">
           <label for="commas">Comma list</label>
-          <input
-            type="text"
-            id="commas"
-            placeholder="225/224, 385/384"
-            v-model="commasString"
-          />
+          <input type="text" id="commas" placeholder="225/224, 385/384" v-model="commasString" />
         </div>
 
         <div class="control" v-show="method === 'vals' || method === 'commas'">
@@ -246,42 +205,23 @@ function generate() {
       </div>
       <div class="control-group">
         <div v-show="method === 'vals' || method === 'commas'">
-          <p
-            class="section"
-            :class="{ open: showAdvanced }"
-            @click="showAdvanced = !showAdvanced"
-          >
+          <p class="section" :class="{ open: showAdvanced }" @click="showAdvanced = !showAdvanced">
             Advanced options
           </p>
           <div class="control-group" v-show="showAdvanced">
             <div class="control radio-group">
               <span>
-                <input
-                  type="radio"
-                  id="tempering-TE"
-                  value="TE"
-                  v-model="tempering"
-                />
+                <input type="radio" id="tempering-TE" value="TE" v-model="tempering" />
                 <label for="tempering-TE"> TE </label>
               </span>
 
               <span>
-                <input
-                  type="radio"
-                  id="tempering-POTE"
-                  value="POTE"
-                  v-model="tempering"
-                />
+                <input type="radio" id="tempering-POTE" value="POTE" v-model="tempering" />
                 <label for="tempering-POTE"> POTE </label>
               </span>
 
               <span>
-                <input
-                  type="radio"
-                  id="tempering-CTE"
-                  value="CTE"
-                  v-model="tempering"
-                />
+                <input type="radio" id="tempering-CTE" value="CTE" v-model="tempering" />
                 <label for="tempering-CTE"> CTE </label>
               </span>
             </div>
@@ -298,10 +238,7 @@ function generate() {
           </div>
         </div>
         <div class="control" v-show="method === 'vals' || method === 'commas'">
-          <button
-            @click="calculateGenerators"
-            :disabled="subgroupError.length !== 0"
-          >
+          <button @click="calculateGenerators" :disabled="subgroupError.length !== 0">
             Calculate generators
           </button>
         </div>
@@ -309,9 +246,7 @@ function generate() {
     </template>
     <template #footer>
       <div class="btn-group">
-        <button @click="generate" :disabled="method !== 'generators'">
-          OK
-        </button>
+        <button @click="generate" :disabled="method !== 'generators'">OK</button>
         <button @click="$emit('cancel')">Cancel</button>
       </div>
     </template>

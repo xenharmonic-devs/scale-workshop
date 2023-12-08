@@ -3,11 +3,11 @@
   --color-background-soft: #eee;
   --color-background-mute: #ddd;
   --color-background-invalid: #fee;
-  --color-background-semitransparent: rgba(255,255,255,0.9);
+  --color-background-semitransparent: rgba(255, 255, 255, 0.9);
 
   --color-border: #aaa;
   --color-border-hover: #eee;
-  --color-drop-shadow: rgba(0,0,0,0.5);
+  --color-drop-shadow: rgba(0, 0, 0, 0.5);
 
   --color-heading: #000;
   --color-text: #000;
@@ -19,14 +19,14 @@
   --color-accent-mute: #6bb;
   --color-accent-deeper: #006060;
   --color-accent-background: #f5ffff;
-  --color-accent-dimmed: rgba(0,20,20,0.7);
+  --color-accent-dimmed: rgba(0, 20, 20, 0.7);
 
   --color-error: red;
 
-  /* Mimic Bootstrap alert with 'danger' variant */ 
-  --color-alert-danger: rgba(104, 35, 39, 1.0);
-  --color-alert-danger-background: rgba(243, 216, 218, 1.0);
-  --color-alert-danger-border: rgba(239, 199, 204, 1.0);
+  /* Mimic Bootstrap alert with 'danger' variant */
+  --color-alert-danger: rgba(104, 35, 39, 1);
+  --color-alert-danger-background: rgba(243, 216, 218, 1);
+  --color-alert-danger-border: rgba(239, 199, 204, 1);
 
   --section-gap: 160px;
   --base-font-size: 15px;
@@ -34,16 +34,16 @@
 }
 
 /* Dark theme */
-[data-theme="dark"] {
+[data-theme='dark'] {
   --color-background: #000;
   --color-background-soft: #333;
   --color-background-mute: #222;
   --color-background-invalid: #300;
-  --color-background-semitransparent: rgba(0,0,0,0.75);
+  --color-background-semitransparent: rgba(0, 0, 0, 0.75);
 
   --color-border: #666;
   --color-border-hover: #111;
-  --color-drop-shadow: rgba(100,200,200,0.5);
+  --color-drop-shadow: rgba(100, 200, 200, 0.5);
 
   --color-heading: #fff;
   --color-text: #fff;
@@ -55,7 +55,7 @@
   --color-accent-mute: #366;
   --color-accent-deeper: #006060;
   --color-accent-background: #011;
-  --color-accent-dimmed: rgba(0,20,20,0.7);
+  --color-accent-dimmed: rgba(0, 20, 20, 0.7);
 
   --color-error: red;
 }
@@ -75,7 +75,9 @@ body {
   padding: 0;
   color: var(--color-text);
   background: var(--color-background);
-  transition: color 0.5s, background-color 0.5s;
+  transition:
+    color 0.5s,
+    background-color 0.5s;
   line-height: 2;
   font-family: sans-serif;
   font-size: var(--base-font-size);
@@ -83,7 +85,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 
 /* Text */
 h2 {
@@ -120,8 +121,8 @@ code {
 }
 
 /* UI elements */
-input[type=text],
-input[type=number],
+input[type='text'],
+input[type='number'],
 textarea,
 select {
   padding: 0.4rem;
@@ -149,7 +150,8 @@ select:invalid {
   flex-flow: row wrap;
   gap: 0.25rem;
 }
-button, .btn {
+button,
+.btn {
   cursor: pointer;
   display: inline-block;
   border-radius: 3px;
@@ -159,7 +161,8 @@ button, .btn {
   text-decoration: none;
   color: var(--color-accent-text-btn);
 }
-button:hover, .btn:hover {
+button:hover,
+.btn:hover {
   color: white;
   background-color: var(--color-accent);
   border-color: var(--color-accent);
@@ -172,7 +175,8 @@ button:disabled:hover {
   color: var(--color-accent-mute);
   background-color: var(--color-accent-background);
 }
-ul.btn-group, .btn-dropdown-group ul {
+ul.btn-group,
+.btn-dropdown-group ul {
   list-style: none;
   padding-left: unset;
 }
@@ -206,7 +210,8 @@ ul.btn-group, .btn-dropdown-group ul {
   color: white;
   background-color: var(--color-accent);
 }
-ul.btn-group, .btn-dropdown-group ul {
+ul.btn-group,
+.btn-dropdown-group ul {
   list-style: none;
   padding-left: unset;
 }
@@ -232,8 +237,8 @@ ul.btn-group, .btn-dropdown-group ul {
   width: 100%;
   font-weight: bold;
 }
-.control input[type=text],
-.control input[type=number],
+.control input[type='text'],
+.control input[type='number'],
 .control textarea,
 .control select {
   flex-grow: 1;
@@ -263,7 +268,7 @@ ul.btn-group, .btn-dropdown-group ul {
 
 /* UI element - expandable section */
 .section::after {
-  content: " ▼";
+  content: ' ▼';
   font-size: 0.5rem;
   color: var(--color-accent-text-btn);
   background-color: var(--color-accent-background);
@@ -273,7 +278,7 @@ ul.btn-group, .btn-dropdown-group ul {
   vertical-align: middle;
 }
 .section.open::after {
-  content: " ▲";
+  content: ' ▲';
 }
 .section:hover::after {
   color: var(--color-accent-text);

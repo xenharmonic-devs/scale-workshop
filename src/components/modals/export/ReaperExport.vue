@@ -1,52 +1,55 @@
 <script setup lang="ts">
-import ReaperExporter from "@/exporters/reaper";
-import { sanitizeFilename } from "@/utils";
-import { ref } from "vue";
-import Modal from "@/components/ModalDialog.vue";
-import type { Scale } from "scale-workshop-core";
+import ReaperExporter from '@/exporters/reaper'
+import { sanitizeFilename } from '@/utils'
+import { ref } from 'vue'
+import Modal from '@/components/ModalDialog.vue'
+import type { Scale } from 'scale-workshop-core'
+import type { ExporterParams } from '@/exporters/base'
 
 const props = defineProps<{
-  newline: string;
-  scaleName: string;
-  baseMidiNote: number;
-  scale: Scale;
-}>();
+  newline: string
+  scaleName: string
+  baseMidiNote: number
+  midiOctaveOffset: number
+  scale: Scale
+}>()
 
-const emit = defineEmits(["confirm", "cancel"]);
+const emit = defineEmits(['confirm', 'cancel'])
 
-type Format = "name" | "cents" | "frequency" | "decimal" | "degree";
+type Format = 'name' | 'cents' | 'frequency' | 'decimal' | 'degree'
 const formats = [
-  ["name", "Scale data"],
-  ["cents", "Cents"],
-  ["frequency", "Frequencies"],
-  ["decimal", "Decimal ratios"],
-  ["degree", "Scale degrees"],
-];
-const format = ref<Format>("name");
-const basePeriod = ref(0);
-const baseDegree = ref(0);
-const centsRoot = ref(0);
-const integratePeriod = ref(false);
-const displayPeriod = ref(true);
+  ['name', 'Scale data'],
+  ['cents', 'Cents'],
+  ['frequency', 'Frequencies'],
+  ['decimal', 'Decimal ratios'],
+  ['degree', 'Scale degrees']
+]
+const format = ref<Format>('name')
+const basePeriod = ref(0)
+const baseDegree = ref(0)
+const centsRoot = ref(0)
+const integratePeriod = ref(false)
+const displayPeriod = ref(true)
 
 function doExport() {
-  const params = {
+  const params: ExporterParams = {
     newline: props.newline,
     scale: props.scale,
     filename: sanitizeFilename(props.scaleName),
     baseMidiNote: props.baseMidiNote,
+    midiOctaveOffset: props.midiOctaveOffset,
     format: format.value,
     basePeriod: basePeriod.value,
-    baseDegrree: baseDegree.value,
+    baseDegree: baseDegree.value,
     centsRoot: centsRoot.value,
     integratePeriod: integratePeriod.value,
-    displayPeriod: displayPeriod.value,
-  };
+    displayPeriod: displayPeriod.value
+  }
 
-  const exporter = new ReaperExporter(params);
-  exporter.saveFile();
+  const exporter = new ReaperExporter(params)
+  exporter.saveFile()
 
-  emit("confirm");
+  emit('confirm')
 }
 </script>
 
@@ -60,11 +63,7 @@ function doExport() {
         <div class="control">
           <label for="pitch-format">Pitch format</label>
           <select id="pitch-format" v-model="format">
-            <option
-              v-for="[value, name] of formats"
-              :key="value"
-              :value="value"
-            >
+            <option v-for="[value, name] of formats" :key="value" :value="value">
               {{ name }}
             </option>
           </select>
@@ -75,11 +74,7 @@ function doExport() {
           <label for="display-period">Show period number</label>
         </div>
         <div class="control checkbox-container">
-          <input
-            type="checkbox"
-            id="integrate-period"
-            v-model="integratePeriod"
-          />
+          <input type="checkbox" id="integrate-period" v-model="integratePeriod" />
           <label for="integrate-period">Accumulate period in pitch</label>
         </div>
         <div class="control">

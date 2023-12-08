@@ -1,31 +1,29 @@
-import { BaseExporter, type ExporterParams } from "@/exporters/base";
+import { BaseExporter, type ExporterParams } from '@/exporters/base'
 
 export default class PureDataExporter extends BaseExporter {
-  static tuningMaxSize = 128;
+  static tuningMaxSize = 128
 
-  params: ExporterParams;
+  params: ExporterParams
 
   constructor(params: ExporterParams) {
-    super();
-    this.params = params;
+    super()
+    this.params = params
   }
 
   // assemble the text file contents
   getFileContents() {
-    let file = "";
+    let file = ''
     for (let i = 0; i < PureDataExporter.tuningMaxSize; i++) {
       file +=
-        this.params.scale
-          .getFrequency(i - this.params.baseMidiNote)
-          .toFixed(7) +
-        ";" +
-        this.params.newline;
+        this.params.scale.getFrequency(i - this.params.baseMidiNote).toFixed(7) +
+        ';' +
+        this.params.newline
     }
 
-    return file;
+    return file
   }
 
   saveFile() {
-    super.saveFile(this.params.filename + ".txt", this.getFileContents());
+    super.saveFile(this.params.filename + '.txt', this.getFileContents())
   }
 }

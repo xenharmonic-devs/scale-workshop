@@ -1,92 +1,80 @@
-import { DEFAULT_NUMBER_OF_COMPONENTS, NEWLINE_TEST } from "@/constants";
-import {
-  getLineType,
-  LINE_TYPE,
-  parseLine,
-  Interval,
-  Scale,
-} from "scale-workshop-core";
-import { TextImporter, type ImportResult } from "@/importers/base";
+import { DEFAULT_NUMBER_OF_COMPONENTS, NEWLINE_TEST } from '@/constants'
+import { getLineType, LINE_TYPE, parseLine, Interval, Scale } from 'scale-workshop-core'
+import { TextImporter, type ImportResult } from '@/importers/base'
 
 export class AnaMarkImporter extends TextImporter {
   parseText(input: string, filename: string): ImportResult {
-    const lines = input.split(NEWLINE_TEST);
-    let name;
-    let atInfoSection = false;
+    const lines = input.split(NEWLINE_TEST)
+    let name
+    let atInfoSection = false
     for (let i = 0; i < lines.length; ++i) {
-      if (lines[i].includes("[Info]")) {
-        atInfoSection = true;
+      if (lines[i].includes('[Info]')) {
+        atInfoSection = true
       } else if (atInfoSection) {
-        if (lines[i].trim().startsWith("Name")) {
-          const regex = /"(.*?)"/g;
-          const match = lines[i].match(regex);
+        if (lines[i].trim().startsWith('Name')) {
+          const regex = /"(.*?)"/g
+          const match = lines[i].match(regex)
           if (match == null) {
-            continue;
+            continue
           }
-          name = match[0].replace(/"/g, "").replace(/\.tun/g, "");
+          name = match[0].replace(/"/g, '').replace(/\.tun/g, '')
         }
       }
     }
     if (name === undefined) {
-      name = filename.slice(0, -4);
+      name = filename.slice(0, -4)
     }
     let firstLineIndex = lines.findIndex(
-      (line) =>
-        line.includes("[Functional Tuning]") ||
-        line.includes("[Functional tuning]")
-    );
+      (line) => line.includes('[Functional Tuning]') || line.includes('[Functional tuning]')
+    )
     if (firstLineIndex < 0) {
-      throw new Error("Missing functional tuning");
+      throw new Error('Missing functional tuning')
     } else {
-      firstLineIndex += 1;
+      firstLineIndex += 1
     }
-    const functionalLines = [];
+    const functionalLines = []
     for (let i = firstLineIndex; i < lines.length; ++i) {
-      const noteNumber = i - firstLineIndex;
-      if (lines[i].includes("#=0")) {
+      const noteNumber = i - firstLineIndex
+      if (lines[i].includes('#=0')) {
         functionalLines.push(
-          lines[i]
-            .substring(lines[i].indexOf("#=0") + 6, lines[i].length - 2)
-            .trim()
-        );
+          lines[i].substring(lines[i].indexOf('#=0') + 6, lines[i].length - 2).trim()
+        )
       }
-      if (lines[i].includes("#>")) {
-        const m = (noteNumber + 1).toString();
-        const prefix = "note " + m + '="#>-' + m;
-        const dePrefixed = lines[i].replace(prefix, "");
-        functionalLines.push(
-          dePrefixed.substring(3, dePrefixed.indexOf("~")).trim()
-        );
+      if (lines[i].includes('#>')) {
+        const m = (noteNumber + 1).toString()
+        const prefix = 'note ' + m + '="#>-' + m
+        const dePrefixed = lines[i].replace(prefix, '')
+        functionalLines.push(dePrefixed.substring(3, dePrefixed.indexOf('~')).trim())
       }
     }
 
-    const intervals: Interval[] = [];
+    const intervals: Interval[] = []
     functionalLines.forEach((line) => {
       if (!line.length) {
-        return;
+        return
       }
-      const lineType = getLineType(line);
+      const lineType = getLineType(line)
       if (lineType === LINE_TYPE.INVALID) {
-        throw new Error(`Failed to parse line ${line}`);
+        throw new Error(`Failed to parse line ${line}`)
       }
-      intervals.push(parseLine(line, DEFAULT_NUMBER_OF_COMPONENTS));
-    });
-    const scale = Scale.fromIntervalArray(intervals);
+      intervals.push(parseLine(line, DEFAULT_NUMBER_OF_COMPONENTS))
+    })
+    const scale = Scale.fromIntervalArray(intervals)
 
-    const result: ImportResult = { scale, name };
+    const result: ImportResult = { scale, name }
 
     // get base frequency and MIDI note
     for (let i = firstLineIndex + 1; i < lines.length; i++) {
-      if (lines[i].includes("!")) {
+      if (lines[i].includes('!')) {
         scale.baseFrequency = parseFloat(
-          lines[i].substring(lines[i].indexOf("!") + 2, lines[i].length - 2)
-        );
+          lines[i].substring(lines[i].indexOf('!') + 2, lines[i].length - 2)
+        )
         result.baseMidiNote = parseInt(
-          lines[i].substring(0, lines[i].indexOf("!") - 2).replace("note ", "")
-        );
+          lines[i].substring(0, lines[i].indexOf('!') - 2).replace('note ', '')
+        )
       }
     }
 
-    return result;
+    return result
   }
 }

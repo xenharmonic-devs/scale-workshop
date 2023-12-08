@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import TuningTableRow from "@/components/TuningTableRow.vue";
-import { mmod } from "xen-dev-utils";
-import type { Scale } from "scale-workshop-core";
+import { computed } from 'vue'
+import TuningTableRow from '@/components/TuningTableRow.vue'
+import { mmod } from 'xen-dev-utils'
+import type { Scale } from 'scale-workshop-core'
 
 const props = defineProps<{
-  scale: Scale;
-  frequencies: number[];
-  baseMidiNote: number;
-  keyColors: string[];
-}>();
+  scale: Scale
+  frequencies: number[]
+  baseMidiNote: number
+  keyColors: string[]
+}>()
 
 const rows = computed(() => {
-  const colors = props.keyColors.length ? props.keyColors : ["white"];
+  const colors = props.keyColors.length ? props.keyColors : ['white']
   return props.frequencies.map((frequency, i) => {
-    const index = i - props.baseMidiNote;
-    const monzo = props.scale.getMonzo(index);
+    const index = i - props.baseMidiNote
+    const monzo = props.scale.getMonzo(index)
     return {
       index: i,
       frequency: frequency,
@@ -24,10 +24,10 @@ const rows = computed(() => {
       name: props.scale.getName(index),
       keyColor: colors[mmod(index, colors.length)],
       isRoot: index === 0,
-      equave: mmod(index, props.scale.size) === 0,
-    };
-  });
-});
+      equave: mmod(index, props.scale.size) === 0
+    }
+  })
+})
 </script>
 
 <template>

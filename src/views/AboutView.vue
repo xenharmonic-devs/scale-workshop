@@ -1,12 +1,6 @@
 <template>
   <div class="about">
-    <img
-      alt="Scale Workshop logo"
-      class="logo"
-      src="@/assets/logo.svg"
-      width="100"
-      height="100"
-    />
+    <img alt="Scale Workshop logo" class="logo" src="@/assets/logo.svg" width="100" height="100" />
     <h1>Scale Workshop 2</h1>
     <p>
       <em>Because there are more than 12 notes</em>
@@ -19,12 +13,8 @@
           target="_blank"
           >User guide</a
         >
-        <a class="btn" href="https://github.com/xenharmonic-devs/scale-workshop"
-          >GitHub</a
-        >
-        <a
-          class="btn"
-          href="https://github.com/xenharmonic-devs/scale-workshop/issues"
+        <a class="btn" href="https://github.com/xenharmonic-devs/scale-workshop">GitHub</a>
+        <a class="btn" href="https://github.com/xenharmonic-devs/scale-workshop/issues"
           >Report an issue</a
         >
       </div>

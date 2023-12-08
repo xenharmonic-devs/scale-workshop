@@ -1,34 +1,34 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch, nextTick } from "vue";
+import { onMounted, onUnmounted, ref, watch, nextTick } from 'vue'
 
 const props = defineProps({
   show: Boolean,
   extraStyle: {
-    default: "",
-    type: String,
-  },
-});
+    default: '',
+    type: String
+  }
+})
 
-const emit = defineEmits(["confirm", "cancel"]);
+const emit = defineEmits(['confirm', 'cancel'])
 
-const body = ref<HTMLDivElement | null>(null);
+const body = ref<HTMLDivElement | null>(null)
 
 function cancelOnEsc(event: KeyboardEvent) {
   if (!props.show) {
-    return;
+    return
   }
-  if (event.code === "Escape") {
-    emit("cancel");
+  if (event.code === 'Escape') {
+    emit('cancel')
   }
 }
 
 onMounted(() => {
-  window.addEventListener("keydown", cancelOnEsc);
-});
+  window.addEventListener('keydown', cancelOnEsc)
+})
 
 onUnmounted(() => {
-  window.removeEventListener("keydown", cancelOnEsc);
-});
+  window.removeEventListener('keydown', cancelOnEsc)
+})
 
 /**
  * Focus the first focusable child element.
@@ -41,17 +41,17 @@ function focusFirst(element: Element) {
     element instanceof HTMLTextAreaElement ||
     element instanceof HTMLSelectElement
   ) {
-    element.focus();
-    return true;
+    element.focus()
+    return true
   }
 
   for (const child of element.children) {
     if (focusFirst(child)) {
-      return true;
+      return true
     }
   }
 
-  return false;
+  return false
 }
 
 watch(
@@ -60,12 +60,12 @@ watch(
     if (newValue) {
       nextTick(() => {
         if (body.value) {
-          focusFirst(body.value);
+          focusFirst(body.value)
         }
-      });
+      })
     }
   }
-);
+)
 </script>
 
 <template>

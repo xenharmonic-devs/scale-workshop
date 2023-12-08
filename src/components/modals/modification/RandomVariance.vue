@@ -1,34 +1,34 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import Modal from "@/components/ModalDialog.vue";
-import type { Scale } from "scale-workshop-core";
+import { computed, ref } from 'vue'
+import Modal from '@/components/ModalDialog.vue'
+import type { Scale } from 'scale-workshop-core'
 
-const EPSILON = 1e-6;
+const EPSILON = 1e-6
 
 const props = defineProps<{
-  scale: Scale;
-  centsFractionDigits: number;
-  decimalFractionDigits: number;
-}>();
-const emit = defineEmits(["update:scale", "cancel"]);
-const amount = ref(10);
-const varyEquave = ref(false);
+  scale: Scale
+  centsFractionDigits: number
+  decimalFractionDigits: number
+}>()
+const emit = defineEmits(['update:scale', 'cancel'])
+const amount = ref(10)
+const varyEquave = ref(false)
 
 const equave = computed(() => {
   if (Math.abs(props.scale.equave.totalCents() - 1200) < EPSILON) {
-    return "octave";
+    return 'octave'
   }
-  return "equave";
-});
+  return 'equave'
+})
 
 function modify() {
   emit(
-    "update:scale",
+    'update:scale',
     props.scale.vary(amount.value, varyEquave.value).mergeOptions({
       centsFractionDigits: props.centsFractionDigits,
-      decimalFractionDigits: props.decimalFractionDigits,
+      decimalFractionDigits: props.decimalFractionDigits
     })
-  );
+  )
 }
 </script>
 
@@ -42,13 +42,7 @@ function modify() {
         <p>Add random amount of detuning to each note of the scale</p>
         <div class="control">
           <label for="amount">Maximum variance in cents</label>
-          <input
-            type="number"
-            id="amount"
-            min="0"
-            step="0.1"
-            v-model="amount"
-          />
+          <input type="number" id="amount" min="0" step="0.1" v-model="amount" />
         </div>
         <div class="control checkbox-container">
           <input id="vary-equave" type="checkbox" v-model="varyEquave" />
