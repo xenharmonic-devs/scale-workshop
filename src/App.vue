@@ -206,7 +206,7 @@ watch(
   () => [
     scaleName.value,
     scaleLines.value,
-    scale,
+    scale.baseFrequency,
     baseMidiNote.value,
     keyColors.value,
     isomorphicHorizontal.value,
