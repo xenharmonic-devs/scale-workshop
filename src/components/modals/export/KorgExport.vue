@@ -44,6 +44,7 @@ async function doExport() {
     scale: props.scale,
     filename: sanitizeFilename(props.scaleName),
     baseMidiNote: props.baseMidiNote,
+    midiOctaveOffset: 0,
   };
 
   const exporter = new KorgExporter(
@@ -88,7 +89,7 @@ async function doExport() {
           {{ fileTypePreview }}
         </p>
         <div class="alert-box-danger" v-if="dialogErrorMessage.length > 0">
-          <p class="alert-message-danger">
+          <p>
             {{ dialogErrorMessage }}
           </p>
         </div>
