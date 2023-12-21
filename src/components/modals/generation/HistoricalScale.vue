@@ -4,9 +4,9 @@ import Modal from '@/components/ModalDialog.vue'
 import { computed, reactive, ref, watch } from 'vue'
 import { DEFAULT_NUMBER_OF_COMPONENTS, FIFTH, OCTAVE } from '@/constants'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
-import { mmod, centsToValue, lcm, Fraction } from 'xen-dev-utils'
+import { mmod, centsToValue, lcm, Fraction, circleDifference } from 'xen-dev-utils'
 import { mosSizes } from 'moment-of-symmetry'
-import { circleDifference, spineLabel as spineLabel_, type AccidentalStyle } from '@/utils'
+import { spineLabel as spineLabel_, type AccidentalStyle } from '@/utils'
 
 const props = defineProps<{
   centsFractionDigits: number
@@ -224,7 +224,7 @@ const wellIntervals = computed(() => {
 
 const enharmonicCents = computed(() => {
   const ws = wellIntervals.value
-  return circleDifference(ws[ws.length - 1].totalCents(), ws[0].totalCents(), 1200.0).toFixed(
+  return circleDifference(ws[ws.length - 1].totalCents(), ws[0].totalCents()).toFixed(
     props.centsFractionDigits
   )
 })

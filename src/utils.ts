@@ -302,15 +302,3 @@ export function spineLabel(fifthsUp: number, style: AccidentalStyle = 'double'):
   }
   return label
 }
-
-/**
- * Calculate the difference between two cents values such that equave equivalence is taken into account.
- * @param a The first pitch measured in cents.
- * @param b The second pitch measured in cents.
- * @param equaveCents The interval of equivalence measured in cents.
- * @returns The first pitch minus the second pitch but on a circle such that large differences wrap around.
- */
-export function circleDifference(a: number, b: number, equaveCents: number) {
-  const half = 0.5 * equaveCents
-  return mmod(a - b + half, equaveCents) - half
-}
