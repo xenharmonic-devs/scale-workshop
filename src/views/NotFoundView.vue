@@ -9,6 +9,7 @@ import type { Scale } from 'scale-workshop-core'
 import { nextTick, ref } from 'vue'
 import { useRouter, type LocationQuery } from 'vue-router'
 import { version } from '../../package.json'
+import { useAudioStore } from '@/stores/audio'
 
 const props = defineProps<{
   scaleName: string
@@ -26,17 +27,6 @@ const props = defineProps<{
 
   equaveShift: number
   degreeShift: number
-
-  waveform: string
-  attackTime: number
-  decayTime: number
-  sustainLevel: number
-  releaseTime: number
-
-  pingPongDelayTime: number
-  pingPongFeedback: number
-  pingPongSeparation: number
-  pingPongGain: number
 }>()
 
 const emit = defineEmits(['update:scale', 'update:scaleName'])
@@ -44,6 +34,8 @@ const emit = defineEmits(['update:scale', 'update:scaleName'])
 const ritualInProgress = ref(false)
 
 const router = useRouter()
+
+const audio = useAudioStore()
 
 function openTheGates(scale: Scale) {
   emit('update:scale', scale)
@@ -64,16 +56,16 @@ function openTheGates(scale: Scale) {
       equaveShift: props.equaveShift,
       degreeShift: props.degreeShift,
 
-      waveform: props.waveform,
-      attackTime: props.attackTime,
-      decayTime: props.decayTime,
-      sustainLevel: props.sustainLevel,
-      releaseTime: props.releaseTime,
+      waveform: audio.waveform,
+      attackTime: audio.attackTime,
+      decayTime: audio.decayTime,
+      sustainLevel: audio.sustainLevel,
+      releaseTime: audio.releaseTime,
 
-      pingPongDelayTime: props.pingPongDelayTime,
-      pingPongFeedback: props.pingPongFeedback,
-      pingPongSeparation: props.pingPongSeparation,
-      pingPongGain: props.pingPongGain
+      pingPongDelayTime: audio.pingPongDelayTime,
+      pingPongFeedback: audio.pingPongFeedback,
+      pingPongSeparation: audio.pingPongSeparation,
+      pingPongGain: audio.pingPongGain
     }
 
     const query = encodeQuery(state) as LocationQuery
