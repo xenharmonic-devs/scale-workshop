@@ -262,3 +262,55 @@ export function monzoEuclideanDistance(
 
   return distance
 }
+
+export type AccidentalStyle = 'double' | 'single' | 'ASCII'
+
+const NOMINALS = ['F', 'C', 'G', 'D', 'A', 'E', 'B']
+
+/**
+ * Obtain a nominal with sharps and flats along the chain of fifths starting from C.
+ * @param fifthsUp How far clockwise to travel along the spiral of fifths.
+ * @param style Whether or not to use '𝄫' and '𝄪' or to use 'b' and '#' throughout.
+ * @returns The label of the pitch class.
+ */
+export function spineLabel(fifthsUp: number, style: AccidentalStyle = 'double'): string {
+  let label = NOMINALS[mmod(fifthsUp + 1, NOMINALS.length)]
+  let accidentals = Math.floor((fifthsUp + 1) / NOMINALS.length)
+  const flat = style === 'ASCII' ? 'b' : '♭'
+  const sharp = style === 'ASCII' ? '#' : '♯'
+  while (accidentals <= -2) {
+    if (style === 'double') {
+      label += '𝄫'
+    } else {
+      label += flat + flat
+    }
+    accidentals += 2
+  }
+  while (accidentals >= 2) {
+    if (style === 'double') {
+      label += '𝄪'
+    } else {
+      label += sharp + sharp
+    }
+    accidentals -= 2
+  }
+  if (accidentals > 0) {
+    label += sharp
+  }
+  if (accidentals < 0) {
+    label += flat
+  }
+  return label
+}
+
+/**
+ * Calculate the difference between two cents values such that equave equivalence is taken into account.
+ * @param a The first pitch measured in cents.
+ * @param b The second pitch measured in cents.
+ * @param equaveCents The interval of equivalence measured in cents.
+ * @returns The first pitch minus the second pitch but on a circle such that large differences wrap around.
+ */
+export function circleDifference(a: number, b: number, equaveCents: number) {
+  const half = 0.5 * equaveCents
+  return mmod(a - b + half, equaveCents) - half
+}

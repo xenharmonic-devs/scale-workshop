@@ -175,6 +175,10 @@ button:disabled:hover {
   color: var(--color-accent-mute);
   background-color: var(--color-accent-background);
 }
+input:disabled {
+  color: var(--color-accent-mute);
+  background-color: var(--color-background-mute);
+}
 ul.btn-group,
 .btn-dropdown-group ul {
   list-style: none;
