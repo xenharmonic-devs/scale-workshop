@@ -25,17 +25,28 @@ function modify() {
   } else if (overflowType.value === 'reduce') {
     transposed = transposed.reduce()
   }
-  const scale = props.scale.merge(transposed)
+  let scale: Scale;
   if (overflowType.value === 'intuitive') {
+    scale = props.scale.variant([...props.scale.intervals]);
+    let unison: Interval;
     if (scale.intervals.length) {
-      const highest = scale.intervals.pop()!
-      const equave = scale.equave
-      if (highest.compare(equave) > 0) {
-        scale.intervals.push(equave)
-        scale.equave = highest
-        scale.sortInPlace()
+      unison = scale.intervals.shift()!
+      scale = props.scale.merge(transposed)
+      if (scale.intervals.length) {
+        const highest = scale.intervals.pop()!
+        const equave = scale.equave
+        if (highest.compare(equave) > 0) {
+          scale.intervals.push(equave)
+          scale.equave = highest
+          scale.sortInPlace()
+        }
       }
+      scale.intervals.unshift(unison!);
+    } else {
+      scale = props.scale.merge(transposed)
     }
+  } else {
+    scale = props.scale.merge(transposed)
   }
   emit('update:scale', scale)
 }
