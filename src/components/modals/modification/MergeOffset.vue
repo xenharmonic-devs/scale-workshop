@@ -25,10 +25,10 @@ function modify() {
   } else if (overflowType.value === 'reduce') {
     transposed = transposed.reduce()
   }
-  let scale: Scale;
+  let scale: Scale
   if (overflowType.value === 'intuitive') {
-    scale = props.scale.variant([...props.scale.intervals]);
-    let unison: Interval;
+    scale = props.scale.variant([...props.scale.intervals])
+    let unison: Interval
     if (scale.intervals.length) {
       unison = scale.intervals.shift()!
       scale = props.scale.merge(transposed)
@@ -41,7 +41,7 @@ function modify() {
           scale.sortInPlace()
         }
       }
-      scale.intervals.unshift(unison!);
+      scale.intervals.unshift(unison!)
     } else {
       scale = props.scale.merge(transposed)
     }
