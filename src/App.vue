@@ -502,8 +502,11 @@ function windowKeydown(event: KeyboardEvent) {
     return
   }
 
-  // Disable browser specific features like quick find on Firefox
-  event.preventDefault()
+  // Disable browser specific features like quick find on Firefox,
+  // but allow normal copy & paste.
+  if (!event.ctrlKey && !event.altKey && !event.metaKey) {
+    event.preventDefault()
+  }
 
   // The key left of Digit1 releases sustained keys
   if (event.code === deactivationCode.value) {
