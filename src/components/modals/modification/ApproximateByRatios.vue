@@ -104,7 +104,7 @@ function modifyPrimeLimit(event: Event) {
 }
 
 function primeLimitString(fraction: Fraction) {
-  const limit = getPrimeLimit(fraction, 97)
+  const limit = getPrimeLimit(fraction, false, 97)
   if (limit < Infinity) {
     return `${limit}-limit`
   }

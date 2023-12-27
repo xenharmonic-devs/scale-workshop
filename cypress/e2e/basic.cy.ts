@@ -32,3 +32,22 @@ describe("404 page", () => {
     );
   });
 });
+
+describe("Scale generation/modification", () => {
+  it("generates and approximates 5-TET", () => {
+    cy.visit("/");
+
+    cy.get("a").contains("New scale").click();
+    cy.get("a").contains("Equal temperament").click();
+    cy.get("button").contains("OK").click();
+    cy.get("#scale-data").should("contain.value", "1\\5");
+
+    cy.get("a").contains("Modify scale").click();
+    cy.get("a").contains("Approximate by ratios").click();
+    for (let i = 0; i < 5; ++i) {
+      cy.get("button").contains("Apply").click();
+    }
+    cy.get("button").contains("Close").click();
+    cy.get("#scale-data").should("contain.value", "8/7");
+  });
+});
