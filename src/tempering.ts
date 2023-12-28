@@ -180,7 +180,7 @@ export function mosPatternsRank2FromCommas(
   maxLength?: number,
   options?: TuningOptions
 ) {
-  const temperament = Temperament.fromCommas(commas, subgroup)
+  const temperament = Temperament.fromCommas(commas, subgroup, true)
   if (temperament.getRank() !== 2) {
     throw new Error('Given commas do not define a rank 2 temperament')
   }
@@ -225,7 +225,7 @@ export function makeRank2FromCommas(
   subgroup?: SubgroupValue,
   options?: TuningOptions
 ) {
-  const temperament = Temperament.fromCommas(commas, subgroup)
+  const temperament = Temperament.fromCommas(commas, subgroup, true)
   if (temperament.getRank() !== 2) {
     throw new Error('Given vals do not define a rank 2 temperament')
   }
