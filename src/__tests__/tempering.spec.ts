@@ -265,9 +265,9 @@ describe('Tempered scale generation', () => {
   })
 
   it('generates frostburn from a comma', () => {
-    const commas = [[-5, 0, 7, -4, 0, 0, 0]];
+    const commas = [[-5, 0, 7, -4, 0, 0, 0]]
     const infos = mosPatternsRank2FromCommas(commas, new Subgroup('2.5.7'), undefined, 6)
     const sizes = infos.map((info) => info.numberOfLargeSteps + info.numberOfSmallSteps)
     expect(sizes).toEqual([2, 3, 4, 5, 6, 11])
-  });
+  })
 })
