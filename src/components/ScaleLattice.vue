@@ -2,13 +2,12 @@
 import type { Interval, Scale } from 'scale-workshop-core'
 import { computed, onMounted, type ComputedRef, ref, onUnmounted } from 'vue'
 import { monzoEuclideanDistance } from '@/utils'
-import { kCombinations } from 'xen-dev-utils'
+import { dot, kCombinations } from 'xen-dev-utils'
 const props = defineProps<{
   scale: Scale
   heldScaleDegrees: Set<number>
 }>()
 
-type Coord = { x: number; y: number }
 type Node = {
   x: number
   y: number
@@ -17,49 +16,11 @@ type Node = {
   fill: string
 }
 
-type Coords = Coord[]
-
-const coords: Coords =
-  // Coords for every prime up to 23, indexes correspond to monzo indexes
-  // based on Kraig Grady's coordinate system https://anaphoria.com/wilsontreasure.html
-  [
-    {
-      x: 0,
-      y: 0
-    },
-    {
-      x: 40,
-      y: 0
-    },
-    {
-      x: 0,
-      y: -40
-    },
-    {
-      x: 13,
-      y: -11
-    },
-    {
-      x: -14,
-      y: -18
-    },
-    {
-      x: -8,
-      y: -4
-    },
-    {
-      x: -5,
-      y: -32
-    },
-    {
-      x: 7,
-      y: -25
-    },
-    {
-      x: 20,
-      y: -6
-    }
-  ]
+// Based on Kraig Grady's coordinate system https://anaphoria.com/wilsontreasure.html
+// X-coordinates for every prime up to 23.
+const horizontalCoords = [-23, 40, 0, 13, -14, -8, -5, 7, 20]
+// Y-coordinates for every prime up to 23.
+const verticalCoords = [-45, 0, -40, -11, -18, -4, -32, -25, -6]
 
 const container = ref<HTMLDivElement | null>(null)
 
@@ -130,35 +91,23 @@ const equavePrimeIndex = computed(() => maybeGetPrimeEquave(props.scale.equave))
 
 const nodes: ComputedRef<Node[] | string> = computed(() => {
   try {
-    if (equavePrimeIndex.value !== 0) {
-      return 'The lattice currently only supports scales with a 2/1 equave'
+    if (equavePrimeIndex.value === null) {
+      return 'The lattice only supports scales with a prime equave'
     }
     if (props.scale.intervals.length <= 1) {
       return 'A scale must contain at least two intervals'
     }
-    return props.scale.intervals.map(({ monzo, name: label }, index) => {
-      const node: Node = monzo.toIntegerMonzo().reduce(
-        (node, component, i): Node => {
-          const { x, y } = node
-          if (i === equavePrimeIndex.value) {
-            return node
-          }
-
-          const componentVal = component.valueOf()
-          if (componentVal === 0) {
-            return node
-          } else {
-            const vector = coords[i] || { x: 0, y: 0 }
-            return {
-              ...node,
-              x: x + vector.x * componentVal,
-              y: y + vector.y * componentVal
-            }
-          }
-        },
-        { x: 0, y: 0, label, index, fill: 'white' }
-      )
-      return node
+    return props.scale.intervals.map(({ monzo, name: label }, index: number) => {
+      const vector = monzo.toIntegerMonzo()
+      // Make the interval of equivalence disappear.
+      vector[equavePrimeIndex.value!] = 0
+      return {
+        label,
+        x: dot(horizontalCoords, vector),
+        y: dot(verticalCoords, vector),
+        fill: 'white',
+        index
+      }
     })
   } catch {
     return 'Cannot make lattice of non JI scale.'
