@@ -1,27 +1,16 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
+import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import { Input, Output, WebMidi, type NoteMessageEvent, type MessageEvent } from 'webmidi'
 import MidiPiano from '@/components/MidiPiano.vue'
+import { useStateStore } from '@/stores/state'
+import { useMidiStore } from '@/stores/midi'
 
 const props = defineProps<{
-  baseMidiNote: number
-  midiInput: Input | null
-  midiOutput: Output | null
   midiInputChannels: Set<number>
-  midiOutputChannels: Set<number>
-  midiVelocityOn: boolean
-  midiWhiteMode: 'off' | 'simple' | 'blackAverage' | 'keyColors'
-  keyColors: string[]
 }>()
 
-const emit = defineEmits([
-  'update:midiInput',
-  'update:midiOutput',
-  'update:midiInputChannels',
-  'update:midiOutputChannels',
-  'update:midiVelocityOn',
-  'update:midiWhiteMode'
-])
+const state = useStateStore()
+const midi = useMidiStore()
 
 const inputs = reactive<Input[]>([])
 const outputs = reactive<Output[]>([])
@@ -30,15 +19,6 @@ const stopHighlights = ref<() => void>(() => {})
 
 const activeKeys = reactive<Set<number>>(new Set())
 const stopActivations = ref<() => void>(() => {})
-
-const midiVelocityOn = computed({
-  get: () => props.midiVelocityOn,
-  set: (newValue) => emit('update:midiVelocityOn', newValue)
-})
-const midiWhiteMode = computed({
-  get: () => props.midiWhiteMode,
-  set: (newValue) => emit('update:midiWhiteMode', newValue)
-})
 
 function highlightMidiChannel(event: MessageEvent) {
   inputHighlights.add(event.message.channel)
@@ -61,21 +41,19 @@ function selectMidiInput(event: Event) {
   const id = (event!.target as HTMLSelectElement).value
   stopHighlights.value()
   if (id === 'no-midi-input') {
-    emit('update:midiInput', null)
+    midi.input = null
     stopHighlights.value = () => {}
   } else {
     const input = WebMidi.getInputById(id)
-    emit('update:midiInput', input)
+    midi.input = input
     input.addListener('midimessage', highlightMidiChannel)
     stopHighlights.value = () => input.removeListener('midimessage', highlightMidiChannel)
   }
   stopActivations.value()
   if (id === 'no-midi-input') {
-    emit('update:midiInput', null)
     stopActivations.value = () => {}
   } else {
     const input = WebMidi.getInputById(id)
-    emit('update:midiInput', input)
     input.addListener('noteon', activateKey)
     input.addListener('noteoff', deactivateKey)
     stopActivations.value = () => {
@@ -88,9 +66,9 @@ function selectMidiInput(event: Event) {
 function selectMidiOutput(event: Event) {
   const id = (event!.target as HTMLSelectElement).value
   if (id === 'no-midi-output') {
-    emit('update:midiOutput', null)
+    midi.output = null
   } else {
-    emit('update:midiOutput', WebMidi.getOutputById(id))
+    midi.output = WebMidi.getOutputById(id)!
   }
 }
 
@@ -120,13 +98,20 @@ function toggleChannel(
   } else {
     result.delete(channel)
   }
-  emit(eventStr, result)
+  if (eventStr === 'update:midiInputChannels') {
+    props.midiInputChannels.clear()
+    for (const channel of result) {
+      props.midiInputChannels.add(channel)
+    }
+  } else {
+    midi.outputChannels = result
+  }
 }
 
 const toggleInputChannel = (event: Event) =>
   toggleChannel(event, props.midiInputChannels, 'update:midiInputChannels')
 const toggleOutputChannel = (event: Event) =>
-  toggleChannel(event, props.midiOutputChannels, 'update:midiOutputChannels')
+  toggleChannel(event, midi.outputChannels, 'update:midiOutputChannels')
 
 onMounted(async () => {
   await WebMidi.enable()
@@ -139,8 +124,8 @@ onMounted(async () => {
     setTimeout(refreshMidi, 500)
   }
 
-  if (props.midiInput !== null) {
-    const input = props.midiInput
+  if (midi.input !== null) {
+    const input = midi.input
     input.addListener('midimessage', highlightMidiChannel)
     stopHighlights.value = () => input.removeListener('midimessage', highlightMidiChannel)
 
@@ -168,12 +153,12 @@ onUnmounted(() => {
           <div class="control">
             <label for="input">Input device</label>
             <select id="input" @change="selectMidiInput" class="control">
-              <option value="no-midi-input" :selected="midiInput === null">No MIDI input</option>
+              <option value="no-midi-input" :selected="midi.input === null">No MIDI input</option>
               <option
                 v-for="input of inputs"
                 :value="input.id"
                 :key="input.id"
-                :selected="input.id === props.midiInput?.id"
+                :selected="input.id === midi.input?.id"
               >
                 {{ (input.manufacturer || '(Generic)') + ': ' + input.name }}
               </option>
@@ -194,34 +179,34 @@ onUnmounted(() => {
             </span>
           </div>
           <div class="control checkbox-container">
-            <input type="checkbox" id="midi-velocity" v-model="midiVelocityOn" />
+            <input type="checkbox" id="midi-velocity" v-model="midi.velocityOn" />
             <label for="midi-velocity">Use velocity</label>
           </div>
           <div class="control radio-group">
             <label>Color mapping</label>
             <span>
-              <input type="radio" id="white-off" value="off" v-model="midiWhiteMode" />
+              <input type="radio" id="white-off" value="off" v-model="midi.whiteMode" />
               <label for="white-off"> Chromatic </label>
             </span>
             <span>
-              <input type="radio" id="white-simple" value="simple" v-model="midiWhiteMode" />
+              <input type="radio" id="white-simple" value="simple" v-model="midi.whiteMode" />
               <label for="white-simple"> White only </label>
             </span>
             <span>
-              <input type="radio" id="white-black" value="blackAverage" v-model="midiWhiteMode" />
+              <input type="radio" id="white-black" value="blackAverage" v-model="midi.whiteMode" />
               <label for="white-black"> White w/ interpolation </label>
             </span>
             <span>
-              <input type="radio" id="white-color" value="keyColors" v-model="midiWhiteMode" />
+              <input type="radio" id="white-color" value="keyColors" v-model="midi.whiteMode" />
               <label for="white-color"> White key to white color </label>
             </span>
           </div>
         </div>
         <div class="piano-container">
           <MidiPiano
-            :baseMidiNote="baseMidiNote"
-            :midiWhiteMode="midiWhiteMode"
-            :keyColors="keyColors"
+            :baseMidiNote="state.baseMidiNote"
+            :midiWhiteMode="midi.whiteMode"
+            :keyColors="state.keyColors"
             :activeKeys="activeKeys"
           />
         </div>
@@ -232,12 +217,14 @@ onUnmounted(() => {
           <div class="control">
             <label for="output">Output device</label>
             <select id="output" @change="selectMidiOutput" class="control">
-              <option value="no-midi-output" :selected="midiOutput === null">No MIDI output</option>
+              <option value="no-midi-output" :selected="midi.output === null">
+                No MIDI output
+              </option>
               <option
                 v-for="output of outputs"
                 :value="output.id"
                 :key="output.id"
-                :selected="output.id === props.midiOutput?.id"
+                :selected="output.id === midi.output?.id"
               >
                 {{ (output.manufacturer || '(Generic)') + ': ' + output.name }}
               </option>
@@ -250,7 +237,7 @@ onUnmounted(() => {
               <input
                 type="checkbox"
                 :value="channel"
-                :checked="midiOutputChannels.has(channel)"
+                :checked="midi.outputChannels.has(channel)"
                 @input="toggleOutputChannel"
               />
             </span>
