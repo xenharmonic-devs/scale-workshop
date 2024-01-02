@@ -9,7 +9,6 @@ import Temperament from 'temperaments'
 import { ExtendedMonzo, Interval, Scale, type IntervalOptions } from 'scale-workshop-core'
 
 const props = defineProps<{
-  show: boolean
   centsFractionDigits: number
 }>()
 
@@ -37,9 +36,6 @@ const constraintsString = state.constraintsString
 
 const basisElement = ref<HTMLInputElement | null>(null)
 const [basis, basisError] = computedAndError(() => {
-  if (!props.show) {
-    return []
-  }
   return parseChordInput(basisString.value)
 }, [])
 watch(basisError, (newError) => basisElement.value!.setCustomValidity(newError))
@@ -126,7 +122,7 @@ function generate() {
 </script>
 
 <template>
-  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate lattice</h2>
     </template>

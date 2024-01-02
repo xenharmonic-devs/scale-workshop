@@ -6,10 +6,6 @@ import { OCTAVE } from '@/constants'
 import { computedAndError, parseChordInput } from '@/utils'
 import { Scale } from 'scale-workshop-core'
 
-const props = defineProps<{
-  show: boolean
-}>()
-
 const emit = defineEmits(['update:scale', 'update:scaleName', 'cancel'])
 
 const basisString = ref('')
@@ -18,9 +14,6 @@ const equaveString = ref('2/1')
 const equave = ref(OCTAVE)
 const basisElement = ref<HTMLInputElement | null>(null)
 const [basis, basisError] = computedAndError(() => {
-  if (!props.show) {
-    return []
-  }
   return parseChordInput(basisString.value)
 }, [])
 watch(basisError, (newError) => basisElement.value!.setCustomValidity(newError))
@@ -49,7 +42,7 @@ function generate() {
 </script>
 
 <template>
-  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate cross-polytope (hyperoctahedron)</h2>
     </template>

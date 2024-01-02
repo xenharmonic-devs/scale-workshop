@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, defineAsyncComponent, ref } from 'vue'
 import TuningTable from '@/components/TuningTable.vue'
 import { debounce, autoKeyColors } from '@/utils'
 import ScaleRule from '@/components/ScaleRule.vue'
@@ -7,37 +7,91 @@ import { APP_TITLE } from '@/constants'
 import { sanitizeFilename, midiNoteNumberToName } from '@/utils'
 import { exportFile, type ExporterKey } from '@/exporters'
 import Modal from '@/components/ModalDialog.vue'
-import ReaperExportModal from '@/components/modals/export/ReaperExport.vue'
-import MtsSysexExportModal from '@/components/modals/export/MtsSysexExport.vue'
-import KorgExportModal from '@/components/modals/export/KorgExport.vue'
-import ShareUrlModal from '@/components/modals/ShareUrl.vue'
-import EqualTemperamentModal from '@/components/modals/generation/EqualTemperament.vue'
-import HarmonicSeriesModal from '@/components/modals/generation/HarmonicSeries.vue'
-import MosModal from '@/components/modals/generation/MosScale.vue'
-import ApproximateByHarmonicsModal from '@/components/modals/modification/ApproximateByHarmonics.vue'
-import SubharmonicSeriesModal from '@/components/modals/generation/SubharmonicSeries.vue'
-import EnumerateChordModal from '@/components/modals/generation/EnumerateChord.vue'
-import CpsModal from '@/components/modals/generation/CombinationProductSet.vue'
-import HistoricalModal from '@/components/modals/generation/HistoricalScale.vue'
-import CrossPolytopeModal from '@/components/modals/generation/CrossPolytope.vue'
-import LatticeModal from '@/components/modals/generation/SpanLattice.vue'
-import EulerGenusModal from '@/components/modals/generation/EulerGenus.vue'
-import DwarfModal from '@/components/modals/generation/DwarfScale.vue'
-import RankTwoModal from '@/components/modals/generation/RankTwo.vue'
-import RotateModal from '@/components/modals/modification/RotateScale.vue'
-import SubsetModal from '@/components/modals/modification/TakeSubset.vue'
-import StretchModal from '@/components/modals/modification/StretchScale.vue'
-import RandomVarianceModal from '@/components/modals/modification/RandomVariance.vue'
-import TemperModal from '@/components/modals/modification/TemperScale.vue'
-import EqualizeModal from '@/components/modals/modification/EqualizeScale.vue'
-import ConvertModal from '@/components/modals/modification/ConvertType.vue'
-import OffsetModal from '@/components/modals/modification/MergeOffset.vue'
-import ApproximateBySubharmonicsModal from '@/components/modals/modification/ApproximateBySubharmonics.vue'
-import ApproximateByRatiosModal from '@/components/modals/modification/ApproximateByRatios.vue'
 import { presets, presetsByGroup } from '@/presets'
 import { importFile, type ImporterKey } from '@/importers'
 import { mtof } from 'xen-dev-utils'
 import type { Scale } from 'scale-workshop-core'
+
+// Export
+const KorgExportModal = defineAsyncComponent(
+  () => import('@/components/modals/export/KorgExport.vue')
+)
+const MtsSysexExportModal = defineAsyncComponent(
+  () => import('@/components/modals/export/MtsSysexExport.vue')
+)
+const ReaperExportModal = defineAsyncComponent(
+  () => import('@/components/modals/export/ReaperExport.vue')
+)
+const ShareUrlModal = defineAsyncComponent(() => import('@/components/modals/ShareUrl.vue'))
+// Generation
+const CpsModal = defineAsyncComponent(
+  () => import('@/components/modals/generation/CombinationProductSet.vue')
+)
+const CrossPolytopeModal = defineAsyncComponent(
+  () => import('@/components/modals/generation/CrossPolytope.vue')
+)
+const DwarfModal = defineAsyncComponent(
+  () => import('@/components/modals/generation/DwarfScale.vue')
+)
+const EnumerateChordModal = defineAsyncComponent(
+  () => import('@/components/modals/generation/EnumerateChord.vue')
+)
+const EqualTemperamentModal = defineAsyncComponent(
+  () => import('@/components/modals/generation/EqualTemperament.vue')
+)
+const EulerGenusModal = defineAsyncComponent(
+  () => import('@/components/modals/generation/EulerGenus.vue')
+)
+const HarmonicSeriesModal = defineAsyncComponent(
+  () => import('@/components/modals/generation/HarmonicSeries.vue')
+)
+const HistoricalModal = defineAsyncComponent(
+  () => import('@/components/modals/generation/HistoricalScale.vue')
+)
+const LatticeModal = defineAsyncComponent(
+  () => import('@/components/modals/generation/SpanLattice.vue')
+)
+const MosModal = defineAsyncComponent(() => import('@/components/modals/generation/MosScale.vue'))
+const RankTwoModal = defineAsyncComponent(
+  () => import('@/components/modals/generation/RankTwo.vue')
+)
+const SubharmonicSeriesModal = defineAsyncComponent(
+  () => import('@/components/modals/generation/SubharmonicSeries.vue')
+)
+// Modification
+const ApproximateByHarmonicsModal = defineAsyncComponent(
+  () => import('@/components/modals/modification/ApproximateByHarmonics.vue')
+)
+const ApproximateByRatiosModal = defineAsyncComponent(
+  () => import('@/components/modals/modification/ApproximateByRatios.vue')
+)
+const ApproximateBySubharmonicsModal = defineAsyncComponent(
+  () => import('@/components/modals/modification/ApproximateBySubharmonics.vue')
+)
+const ConvertModal = defineAsyncComponent(
+  () => import('@/components/modals/modification/ConvertType.vue')
+)
+const EqualizeModal = defineAsyncComponent(
+  () => import('@/components/modals/modification/EqualizeScale.vue')
+)
+const OffsetModal = defineAsyncComponent(
+  () => import('@/components/modals/modification/MergeOffset.vue')
+)
+const RandomVarianceModal = defineAsyncComponent(
+  () => import('@/components/modals/modification/RandomVariance.vue')
+)
+const RotateModal = defineAsyncComponent(
+  () => import('@/components/modals/modification/RotateScale.vue')
+)
+const StretchModal = defineAsyncComponent(
+  () => import('@/components/modals/modification/StretchScale.vue')
+)
+const SubsetModal = defineAsyncComponent(
+  () => import('@/components/modals/modification/TakeSubset.vue')
+)
+const TemperModal = defineAsyncComponent(
+  () => import('@/components/modals/modification/TemperScale.vue')
+)
 
 const props = defineProps<{
   scaleName: string
@@ -502,7 +556,7 @@ function confirmPreset() {
 
   <Teleport to="body">
     <KorgExportModal
-      :show="showKorgExportModal"
+      v-if="showKorgExportModal"
       @confirm="showKorgExportModal = false"
       @cancel="showKorgExportModal = false"
       :newline="props.newline"
@@ -513,7 +567,7 @@ function confirmPreset() {
     />
 
     <ReaperExportModal
-      :show="showReaperExportModal"
+      v-if="showReaperExportModal"
       @confirm="showReaperExportModal = false"
       @cancel="showReaperExportModal = false"
       :newline="props.newline"
@@ -524,7 +578,7 @@ function confirmPreset() {
     />
 
     <MtsSysexExportModal
-      :show="showMtsSysexExportModal"
+      v-if="showMtsSysexExportModal"
       @confirm="showMtsSysexExportModal = false"
       @cancel="showMtsSysexExportModal = false"
       :newline="props.newline"
@@ -535,7 +589,7 @@ function confirmPreset() {
     />
 
     <RankTwoModal
-      :show="showRankTwoModal"
+      v-if="showRankTwoModal"
       :centsFractionDigits="centsFractionDigits"
       :scale="scale"
       @update:scaleName="emit('update:scaleName', $event)"
@@ -545,7 +599,7 @@ function confirmPreset() {
     />
 
     <HistoricalModal
-      :show="showHistoricalModal"
+      v-if="showHistoricalModal"
       :centsFractionDigits="centsFractionDigits"
       @update:scaleName="emit('update:scaleName', $event)"
       @update:scale="updateScaleAndHideModals"
@@ -557,7 +611,7 @@ function confirmPreset() {
 
     <ShareUrlModal
       ref="shareUrlModal"
-      :show="showShareUrlModal"
+      v-if="showShareUrlModal"
       :scaleName="scaleName"
       :newline="newline"
       @confirm="showShareUrlModal = false"
@@ -565,7 +619,7 @@ function confirmPreset() {
     />
 
     <EqualTemperamentModal
-      :show="showEqualTemperamentModal"
+      v-if="showEqualTemperamentModal"
       :centsFractionDigits="centsFractionDigits"
       :decimalFractionDigits="decimalFractionDigits"
       @update:scaleName="emit('update:scaleName', $event)"
@@ -574,14 +628,14 @@ function confirmPreset() {
     />
 
     <HarmonicSeriesModal
-      :show="showHarmonicSeriesModal"
+      v-if="showHarmonicSeriesModal"
       @update:scaleName="emit('update:scaleName', $event)"
       @update:scale="updateScaleAndHideModals"
       @cancel="showHarmonicSeriesModal = false"
     />
 
     <MosModal
-      :show="showMosModal"
+      v-if="showMosModal"
       @update:scaleName="emit('update:scaleName', $event)"
       @update:scale="updateScaleAndHideModals"
       @update:keyColors="emit('update:keyColors', $event)"
@@ -589,48 +643,48 @@ function confirmPreset() {
     />
 
     <SubharmonicSeriesModal
-      :show="showSubharmonicSeriesModal"
+      v-if="showSubharmonicSeriesModal"
       @update:scaleName="emit('update:scaleName', $event)"
       @update:scale="updateScaleAndHideModals"
       @cancel="showSubharmonicSeriesModal = false"
     />
 
     <EnumerateChordModal
-      :show="showEnumerateChordModal"
+      v-if="showEnumerateChordModal"
       @update:scaleName="emit('update:scaleName', $event)"
       @update:scale="updateScaleAndHideModals"
       @cancel="showEnumerateChordModal = false"
     />
 
     <CpsModal
-      :show="showCpsModal"
+      v-if="showCpsModal"
       @update:scaleName="emit('update:scaleName', $event)"
       @update:scale="updateScaleAndHideModals"
       @cancel="showCpsModal = false"
     />
 
     <EulerGenusModal
-      :show="showEulerGenusModal"
+      v-if="showEulerGenusModal"
       @update:scaleName="emit('update:scaleName', $event)"
       @update:scale="updateScaleAndHideModals"
       @cancel="showEulerGenusModal = false"
     />
 
     <DwarfModal
-      :show="showDwarfModal"
+      v-if="showDwarfModal"
       @update:scaleName="emit('update:scaleName', $event)"
       @update:scale="updateScaleAndHideModals"
       @cancel="showDwarfModal = false"
     />
 
     <CrossPolytopeModal
-      :show="showCrossPolytopeModal"
+      v-if="showCrossPolytopeModal"
       @update:scaleName="emit('update:scaleName', $event)"
       @update:scale="updateScaleAndHideModals"
       @cancel="showCrossPolytopeModal = false"
     />
     <LatticeModal
-      :show="showLatticeModal"
+      v-if="showLatticeModal"
       :centsFractionDigits="centsFractionDigits"
       @update:scaleName="emit('update:scaleName', $event)"
       @update:scale="updateScaleAndHideModals"
@@ -657,7 +711,7 @@ function confirmPreset() {
     </Modal>
 
     <RotateModal
-      :show="showRotateModal"
+      v-if="showRotateModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showRotateModal = false"
       :scale="scale"
@@ -665,14 +719,14 @@ function confirmPreset() {
 
     <SubsetModal
       ref="subsetModal"
-      :show="showSubsetModal"
+      v-if="showSubsetModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showSubsetModal = false"
       :scale="scale"
     />
 
     <StretchModal
-      :show="showStretchModal"
+      v-if="showStretchModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showStretchModal = false"
       :scale="scale"
@@ -681,7 +735,7 @@ function confirmPreset() {
     />
 
     <RandomVarianceModal
-      :show="showRandomVarianceModal"
+      v-if="showRandomVarianceModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showRandomVarianceModal = false"
       :scale="scale"
@@ -690,35 +744,35 @@ function confirmPreset() {
     />
 
     <ApproximateByRatiosModal
-      :show="showApproximateByRatiosModal"
+      v-if="showApproximateByRatiosModal"
       @update:scale="emit('update:scale', $event)"
       @cancel="showApproximateByRatiosModal = false"
       :scale="scale"
     />
 
     <ApproximateByHarmonicsModal
-      :show="showApproximateByHarmonicsModal"
+      v-if="showApproximateByHarmonicsModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showApproximateByHarmonicsModal = false"
       :scale="scale"
     />
 
     <ApproximateBySubharmonicsModal
-      :show="showApproximateBySubharmonicsModal"
+      v-if="showApproximateBySubharmonicsModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showApproximateBySubharmonicsModal = false"
       :scale="scale"
     />
 
     <EqualizeModal
-      :show="showEqualizeModal"
+      v-if="showEqualizeModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showEqualizeModal = false"
       :scale="scale"
     />
 
     <TemperModal
-      :show="showTemperModal"
+      v-if="showTemperModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showTemperModal = false"
       :scale="scale"
@@ -726,14 +780,14 @@ function confirmPreset() {
     />
 
     <OffsetModal
-      :show="showOffsetModal"
+      v-if="showOffsetModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showOffsetModal = false"
       :scale="scale"
     />
 
     <ConvertModal
-      :show="showConvertModal"
+      v-if="showConvertModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showConvertModal = false"
       :scale="scale"

@@ -17,7 +17,6 @@ import { fractionToString, ExtendedMonzo, Interval, type Scale } from 'scale-wor
 const MAX_LENGTH = 128
 
 const props = defineProps<{
-  show: boolean
   scale: Scale
 }>()
 const emit = defineEmits(['update:scale', 'cancel'])
@@ -118,11 +117,6 @@ type Approximation = {
 }
 
 const approximationsWithErrorsAndLimits = computed<Approximation[]>(() => {
-  // #185: Watched properties are evaluated when the component is loaded.
-  // This guard prevents computing approximations on a hidden modal.
-  if (!props.show) {
-    return []
-  }
   const selected = props.scale.getMonzo(degree.value)
   const selectedCents = selected.totalCents()
   if (method.value === 'convergents') {
@@ -210,7 +204,7 @@ function modifyAndAdvance() {
 </script>
 
 <template>
-  <Modal :show="show" @confirm="modifyAndAdvance" @cancel="$emit('cancel')">
+  <Modal @confirm="modifyAndAdvance" @cancel="$emit('cancel')">
     <template #header>
       <h2>Approximate by ratios</h2>
     </template>
