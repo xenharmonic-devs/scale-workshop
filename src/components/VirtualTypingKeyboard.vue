@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { mmod } from 'xen-dev-utils'
-import type { Keyboard, CoordinateKeyboardEvent } from '@/keyboard'
-import { CODES_LAYER_1 } from '@/keyboard'
+import type { Keyboard, CoordinateKeyboardEvent } from 'isomorphic-qwerty'
+import { CODES_LAYER_1 } from 'isomorphic-qwerty'
 import { LEFT_MOUSE_BTN } from '@/constants'
 
 /** Unimplemented features:

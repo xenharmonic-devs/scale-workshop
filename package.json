@@ -15,6 +15,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "isomorphic-qwerty": "^0.0.2",
     "jszip": "^3.10.1",
     "moment-of-symmetry": "^0.3.3",
     "pinia": "^2.1.7",
