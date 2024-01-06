@@ -6,10 +6,6 @@ import { OCTAVE } from '@/constants'
 import { computedAndError, parseChordInput } from '@/utils'
 import { Scale } from 'scale-workshop-core'
 
-const props = defineProps<{
-  show: boolean
-}>()
-
 const emit = defineEmits(['update:scale', 'update:scaleName', 'cancel'])
 
 const factorsString = ref('')
@@ -20,9 +16,6 @@ const equave = ref(OCTAVE)
 
 const factorsElement = ref<HTMLInputElement | null>(null)
 const [factors, factorsError] = computedAndError(() => {
-  if (!props.show) {
-    return []
-  }
   return parseChordInput(factorsString.value)
 }, [])
 watch(factorsError, (newError) => factorsElement.value!.setCustomValidity(newError))
@@ -63,7 +56,7 @@ function generate() {
 </script>
 
 <template>
-  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate combination product set</h2>
     </template>

@@ -2,7 +2,10 @@
 import { onMounted, onUnmounted, ref, watch, nextTick } from 'vue'
 
 const props = defineProps({
-  show: Boolean,
+  show: {
+    default: true,
+    type: Boolean
+  },
   extraStyle: {
     default: '',
     type: String
