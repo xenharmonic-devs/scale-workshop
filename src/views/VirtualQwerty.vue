@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import VirtualTypingKeyboard from '@/components/VirtualTypingKeyboard.vue'
-import type { Keyboard } from '@/keyboard'
+import type { Keyboard } from 'isomorphic-qwerty'
 import type { Scale } from 'scale-workshop-core'
 
 type NoteOff = () => void
