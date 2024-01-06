@@ -57,7 +57,7 @@ async function doExport() {
 </script>
 
 <template>
-  <Modal>
+  <Modal @cancel="$emit('cancel')">
     <template #header>
       <h2>Export Korg Sound Librarian scale</h2>
     </template>
