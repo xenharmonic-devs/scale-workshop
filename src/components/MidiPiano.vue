@@ -20,7 +20,7 @@ const BLACK_WIDTH = 0.6 * KEY_SCALE
 // Close enough.
 const center = computed(() => {
   const info = midiKeyInfo(props.baseMidiNote)
-  if (info.whiteNumber) {
+  if (info.whiteNumber !== undefined) {
     return info.whiteNumber * KEY_SCALE
   }
   return (info.sharpOf! + 0.5) * KEY_SCALE
