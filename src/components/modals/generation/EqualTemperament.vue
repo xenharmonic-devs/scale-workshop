@@ -1,18 +1,16 @@
 <script setup lang="ts">
-import { DEFAULT_NUMBER_OF_COMPONENTS, OCTAVE } from '@/constants'
+import { OCTAVE } from '@/constants'
 import { computed, ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { clamp } from 'xen-dev-utils'
-import { ExtendedMonzo, Interval, Scale } from 'scale-workshop-core'
 import { splitText } from '@/utils'
 
 const props = defineProps<{
   centsFractionDigits: number
-  decimalFractionDigits: number
 }>()
 
-const emit = defineEmits(['update:scale', 'update:scaleName', 'cancel'])
+const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
 const divisions = ref(5)
 const equaveString = ref('2/1')
@@ -81,32 +79,23 @@ function updateFromDegrees() {
 }
 
 function generate() {
-  const lineOptions = {
-    centsFractionDigits: props.centsFractionDigits,
-    decimalFractionDigits: props.decimalFractionDigits
-  }
   if (singleStepOnly.value) {
-    const stepCents = equave.value.totalCents() / divisions.value
-    const scale = Scale.fromIntervalArray([
-      new Interval(
-        ExtendedMonzo.fromCents(stepCents, DEFAULT_NUMBER_OF_COMPONENTS),
-        'cents',
-        undefined,
-        lineOptions
-      )
-    ])
-    emit('update:scaleName', `${scale.equave.name} cET`)
-    emit('update:scale', scale)
+    const stepCents = equave.value.value.totalCents() / divisions.value
+    const line = stepCents.toFixed(props.centsFractionDigits)
+    emit('update:scaleName', `${line} cET`)
+    emit('update:source', line)
   } else {
-    // Implicit use of safeScaleSize. Note that small subsets of huge EDOs cause no issues.
-    const scale = Scale.fromEqualTemperamentSubset(
-      degrees.value,
-      equave.value.mergeOptions(lineOptions)
-    )
-    // Obtain effective divisions from the scale just generated.
-    const effectiveDivisions = scale.getInterval(0).options.preferredEtDenominator
-    emit('update:scaleName', `${effectiveDivisions} equal divisions of ${equave.value.toString()}`)
-    emit('update:scale', scale)
+    emit('update:scaleName', `${divisions.value} equal divisions of ${equaveString.value}`)
+    if (equave.value.equals(OCTAVE)) {
+      const edo = divisions.value;
+      const source = degrees.value.map(steps => `${steps}\\${edo}`).join('\n')
+      emit('update:source', source)
+    } else {
+      const ed = divisions.value;
+      const ji = equave.value.toString();
+      const source = degrees.value.map(steps => `${steps}\\${ed}<${ji}>`).join('\n')
+      emit('update:source', source)
+    }
   }
 }
 </script>

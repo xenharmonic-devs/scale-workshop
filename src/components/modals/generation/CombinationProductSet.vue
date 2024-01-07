@@ -4,9 +4,9 @@ import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { OCTAVE } from '@/constants'
 import { computedAndError, parseChordInput } from '@/utils'
-import { Scale } from 'scale-workshop-core'
+import { getSourceVisitor, parseAST } from 'sonic-weave'
 
-const emit = defineEmits(['update:scale', 'update:scaleName', 'cancel'])
+const emit = defineEmits(['update:scaleName', 'update:source', 'cancel'])
 
 const factorsString = ref('')
 const numElements = ref(2)
@@ -29,12 +29,13 @@ const maxElements = computed(() => Math.max(1, factors.value.length))
 
 function generate() {
   try {
-    const scale = Scale.fromCombinations(
-      factors.value,
-      numElements.value,
-      addUnity.value,
-      equave.value
-    )
+    const code = `cps([${factors.value.map(f => f.toString()).join(', ')}], ${numElements.value}, ${equave.value.toString()}, ${addUnity.value.toString()})`
+    const visitor = getSourceVisitor()
+    const ast = parseAST(code)
+    for (const statement of ast.body) {
+      visitor.visit(statement)
+    }
+    const source = visitor.expand(visitor)
     let name = `CPS (${numElements.value} of ${factorsString.value}`
     if (addUnity.value) {
       name += ' with 1/1'
@@ -44,7 +45,7 @@ function generate() {
     }
     name += ')'
     emit('update:scaleName', name)
-    emit('update:scale', scale)
+    emit('update:source', source)
   } catch (error) {
     if (error instanceof Error) {
       alert(error.message)

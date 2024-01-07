@@ -4,8 +4,9 @@ import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { OCTAVE } from '@/constants'
 import { computedAndError, parseChordInput } from '@/utils'
-import { Scale } from 'scale-workshop-core'
+// import { Scale } from 'scale-workshop-core'
 
+/*
 const props = defineProps<{
   show: boolean
 }>()
@@ -31,7 +32,7 @@ watch(basisError, (newError) => basisElement.value!.setCustomValidity(newError))
 
 function generate() {
   try {
-    const scale = Scale.fromOctaplex(basis.value, addUnity.value, equave.value)
+    // const scale = Scale.fromOctaplex(basis.value, addUnity.value, equave.value)
     let name = `The Octaplex (${basisString.value}`
     if (addUnity.value) {
       name += ' with 1/1'
@@ -50,6 +51,7 @@ function generate() {
     }
   }
 }
+*/
 </script>
 
 <template>

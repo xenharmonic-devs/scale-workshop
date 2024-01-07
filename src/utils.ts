@@ -1,7 +1,23 @@
-import { parseChord } from 'scale-workshop-core'
 import { computed, type ComputedRef } from 'vue'
 import { gcd, mmod } from 'xen-dev-utils'
-import { DEFAULT_NUMBER_OF_COMPONENTS } from './constants'
+import { evaluateExpression, Interval } from 'sonic-weave'
+
+/**
+ * Calculate the smallest power of two greater or equal to the input value.
+ * @param x Integer to compare to.
+ * @returns Smallest `2**n` such that `x <= 2**n`.
+ */
+export function ceilPow2(x: number) {
+  return 1 << (32 - Math.clz32(x - 1));
+}
+
+export function parseInterval(input: string) {
+  const result = evaluateExpression(input)
+  if (result instanceof Interval) {
+    return result
+  }
+  throw new Error('Must evaluate to an interval')
+}
 
 // Split at whitespace, pipes, amps, colons, semicolons and commas
 export const SEPARATOR_RE = /\s|\||&|:|;|,/
@@ -11,7 +27,7 @@ export function splitText(text: string) {
 }
 
 export function parseChordInput(input: string) {
-  return parseChord(input, DEFAULT_NUMBER_OF_COMPONENTS, SEPARATOR_RE)
+  return splitText(input).map(part => parseInterval(part))
 }
 
 export function debounce(func: (...args: any[]) => void, timeout = 300) {
@@ -24,14 +40,11 @@ export function debounce(func: (...args: any[]) => void, timeout = 300) {
   }
 }
 
-const MIDI_NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
-
 /**
  * Convert an integer MIDI note number to a name such as A4.
  * @param noteNumber MIDI note number to convert.
  * @param octaveOffset Defaults to the English standard: 69 = A4. An offset of zero results in the French standard 69 = A5.
  * @returns String representation of the MIDI note number.
- */
 export function midiNoteNumberToName(noteNumber: number, octaveOffset = -1) {
   const remainder = mmod(noteNumber, 12)
   const quotient = (noteNumber - remainder) / 12 + octaveOffset
@@ -48,6 +61,7 @@ export function sanitizeFilename(input: string) {
     .replace(/\//g, '_')
     .replace(/\\/g, '_')
 }
+*/
 
 export function formatExponential(x: number, fractionDigits = 3) {
   if (Math.abs(x) < 10000) {
@@ -301,4 +315,47 @@ export function spineLabel(fifthsUp: number, style: AccidentalStyle = 'double'):
     label += flat
   }
   return label
+}
+
+const ENHARMONICS = [
+  ['C=', 'B#', 'Dbb'],
+  ['C#', 'Db'],
+  ['D=', 'C##', 'Ebb'],
+  ['Eb', 'D#'],
+  ['E=', 'Fb', 'D##'],
+  ['F=', 'E#', 'Gbb'],
+  ['F#', 'Gb'],
+  ['G=', 'F##', 'Abb'],
+  ['G#', 'Ab'],
+  ['A=', 'G##', 'Bbb'],
+  ['Bb', 'A#'],
+  ['B=', 'Cb', 'A##']
+]
+
+// Find a set of Pythagorean enharmonics corresponding to a MIDI note number
+export function midiNoteNumberToEnharmonics(noteNumber: number, style: AccidentalStyle = 'double', octaveOffset = -1) {
+  const remainder = mmod(noteNumber, 12)
+  const quotient = (noteNumber - remainder) / 12 + octaveOffset
+  const enharmonics = ENHARMONICS[remainder]
+  const result = []
+  for (let enharmonic of enharmonics) {
+    if (style === 'double') {
+      enharmonic = enharmonic.replace('bb', '𝄫')
+      enharmonic = enharmonic.replace('##', '𝄪')
+    }
+    if (style === 'single' || style === 'double') {
+      enharmonic = enharmonic.replace(/b/g, '♭')
+      enharmonic = enharmonic.replace(/#/g, '♯')
+      enharmonic = enharmonic.replace('=', '♮')
+    }
+    let octave = quotient.toString()
+    if (enharmonic.startsWith('B') && enharmonics[0].startsWith('C')) {
+      octave = (quotient - 1).toString()
+    }
+    if (enharmonic.startsWith('C') && enharmonics[0].startsWith('B')) {
+      octave = (quotient + 1).toString()
+    }
+    result.push(enharmonic + octave)
+  }
+  return result
 }

@@ -1,5 +1,6 @@
 import { DEFAULT_NUMBER_OF_COMPONENTS, NEWLINE_TEST, UNIX_NEWLINE } from '@/constants'
-import { getLineType, LINE_TYPE, parseLine, Scale, type Interval } from 'scale-workshop-core'
+// import { getLineType, LINE_TYPE, parseLine, Scale, type Interval } from 'scale-workshop-core'
+import { TimeMonzo, parseScaleWorkshop2Line } from 'sonic-weave'
 
 // decodes HTML entities
 function decodeHTML(input: string): string {
@@ -106,19 +107,14 @@ export class ScaleWorkshopOneData {
       throw new Error('No data to parse')
     }
     const lines = this.data.split(NEWLINE_TEST)
-    const intervals: Interval[] = []
+    const monzos: TimeMonzo[] = []
     lines.forEach((line) => {
       if (!line.length) {
         return
       }
-      const lineType = getLineType(line)
-      if (lineType === LINE_TYPE.INVALID) {
-        throw new Error(`Failed to parse line ${line}`)
-      }
-      intervals.push(parseLine(line, DEFAULT_NUMBER_OF_COMPONENTS))
+      monzos.push(parseScaleWorkshop2Line(line, DEFAULT_NUMBER_OF_COMPONENTS))
     })
-    const scale = Scale.fromIntervalArray(intervals, this.freq)
-    return scale
+    return monzos;
   }
 
   get attackTime() {
