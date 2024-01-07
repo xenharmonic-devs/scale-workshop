@@ -1,139 +1,68 @@
 <script setup lang="ts">
-import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
-import { Mapping, stretchToEdo, toPrimeMapping } from '@/tempering'
 import { ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
-import { Fraction, PRIME_CENTS } from 'xen-dev-utils'
-import { mapByVal, resolveMonzo, tenneyVals, vanishCommas } from 'temperaments'
-import { ExtendedMonzo, Interval, Scale, type IntervalOptions } from 'scale-workshop-core'
-import { setAndReportValidity, splitText } from '@/utils'
+import { Temperament, tenneyVals, vanishCommas } from 'temperaments'
 import { useTemperStore } from '@/stores/tempering'
+import { useScaleStore } from '@/stores/scale'
+import { useStateStore } from '@/stores/state'
+import { setAndReportValidity } from '@/utils'
 
-const props = defineProps<{
-  scale: Scale
-  centsFractionDigits: number
-}>()
-
-const emit = defineEmits(['update:scale', 'cancel'])
+const emit = defineEmits(['done', 'cancel'])
 
 const temper = useTemperStore()
+const scale = useScaleStore()
+const state = useStateStore()
 
+const valsInput = ref<HTMLInputElement | null>(null)
+const commasInput = ref<HTMLInputElement | null>(null)
 const subgroupInput = ref<HTMLInputElement | null>(null)
 
+watch(
+  () => temper.valsError,
+  (newValue) => setAndReportValidity(valsInput.value, newValue)
+)
+watch(
+  () => temper.commasError,
+  (newValue) => setAndReportValidity(commasInput.value, newValue)
+)
 watch(
   () => temper.subgroupError,
   (newValue) => setAndReportValidity(subgroupInput.value, newValue)
 )
 
-function modify() {
-  try {
-    if (temper.method === 'vals' && !temper.edoUnavailable && !temper.subgroupString.length) {
-      const monzos = [...Array(props.scale.size + 1).keys()].map((i) =>
-        temper.toLongMonzo(props.scale.getMonzo(i))
-      )
-      const octave = new Fraction(2)
-      monzos.push(resolveMonzo(octave))
-      const steps = mapByVal(monzos, temper.vals[0])
-      const edo = steps.pop()
-      let scale: Scale
-      if (temper.convertToEdoSteps) {
-        const options: IntervalOptions = {
-          preferredEtDenominator: edo,
-          preferredEtEquave: octave
-        }
-        const equave = new Interval(
-          ExtendedMonzo.fromEqualTemperament(
-            new Fraction(steps.pop()!, edo),
-            octave,
-            DEFAULT_NUMBER_OF_COMPONENTS
-          ),
-          'equal temperament',
-          undefined,
-          options
-        )
-        scale = new Scale(
-          steps.map(
-            (step) =>
-              new Interval(
-                ExtendedMonzo.fromEqualTemperament(
-                  new Fraction(step, edo),
-                  octave,
-                  DEFAULT_NUMBER_OF_COMPONENTS
-                ),
-                'equal temperament',
-                undefined,
-                options
-              )
-          ),
-          equave,
-          props.scale.baseFrequency
-        )
-      } else {
-        scale = stretchToEdo(props.scale, steps, edo!)
-      }
-      emit('update:scale', scale.mergeOptions({ centsFractionDigits: props.centsFractionDigits }))
+function modify(expand = true) {
+  let mapping: number[] | undefined;
+  if (temper.method === 'vals') {
+    if (temper.edoAvailable && temper.convertToEdoSteps) {
+      scale.sourceText += `\n${temper.vals[0][0]}@${temper.subgroupString}`
     } else {
-      let mapping: Mapping
-      if (temper.method === 'mapping') {
-        const vector = splitText(temper.mappingString).map((component) => parseFloat(component))
-        while (vector.length < DEFAULT_NUMBER_OF_COMPONENTS) {
-          vector.push(PRIME_CENTS[vector.length])
-        }
-        mapping = new Mapping(vector.slice(0, DEFAULT_NUMBER_OF_COMPONENTS))
-      } else if (temper.method === 'vals') {
-        if (temper.constraintsDisabled) {
-          // Subgroup is too large to use geometric methods. Use O(n²) projection instead.
-          const weights = temper.options.weights
-          // True constraints are not supported so CTE is interpreted as POTE.
-          const temperEquaves = temper.options.temperEquaves && temper.tempering !== 'CTE'
-          const jip = temper.subgroup.jip()
-          const valVectors = temper.vals.map((val) => temper.subgroup.fromWarts(val))
-          let mappingVector = tenneyVals(valVectors, jip, weights)
-          if (!temperEquaves) {
-            mappingVector = mappingVector.map((m) => (jip[0] * m) / mappingVector[0])
-          }
-          mapping = new Mapping(toPrimeMapping(mappingVector, temper.subgroup))
-        } else {
-          mapping = Mapping.fromVals(
-            temper.vals,
-            DEFAULT_NUMBER_OF_COMPONENTS,
-            temper.subgroup,
-            temper.options
-          )
-        }
+      if (temper.constraintsAvailable) {
+        const temperament = Temperament.fromVals(temper.vals, temper.subgroup);
+        mapping = temperament.getMapping(temper.options);
       } else {
-        if (temper.constraintsDisabled) {
-          // Subgroup is too large to use geometric methods. Use O(n) gradient descent instead.
-          // True constraints are not supported so CTE is interpreted as pure equaves.
-          const temperEquaves = temper.options.temperEquaves && temper.tempering !== 'CTE'
-          const weights = temper.options.weights
-          const jip = temper.subgroup.jip()
-          const commaMonzos = temper.rawCommas.map(
-            (comma) => temper.subgroup.toMonzoAndResidual(comma)[0]
-          )
-          const mappingVector = vanishCommas(commaMonzos, jip, weights, temperEquaves)
-          mapping = new Mapping(toPrimeMapping(mappingVector, temper.subgroup))
-        } else {
-          mapping = Mapping.fromCommas(
-            temper.commas,
-            DEFAULT_NUMBER_OF_COMPONENTS,
-            temper.subgroup,
-            temper.options
-          )
-        }
+        mapping = temper.subgroup.toPrimeMapping(tenneyVals(temper.vals, temper.subgroup, temper.weights, 'cents'))
       }
-      emit(
-        'update:scale',
-        mapping.apply(props.scale).mergeOptions({ centsFractionDigits: props.centsFractionDigits })
-      )
     }
-  } catch (error_) {
-    if (error_ instanceof Error) {
-      temper.error = error_.message
+  } else if (temper.method === 'commas') {
+    if (temper.constraintsAvailable) {
+      const temperament = Temperament.fromCommas(temper.commas, temper.subgroup, true);
+      mapping = temperament.getMapping(temper.options);
     } else {
-      temper.error = '' + error_
+      const temperEquaves = temper.options.temperEquaves && temper.tempering !== 'CTE'
+      mapping = temper.subgroup.toPrimeMapping(vanishCommas(temper.commas.map(c => temper.subgroup.primeMonzoToSubgroupMonzo(c)), temper.subgroup, temper.weights, temperEquaves, 'cents'));
     }
   }
+  if (temper.method === 'mapping') {
+    scale.sourceText += `\nPrimeMapping(${temper.mappingString})`
+  } else if (mapping) {
+    scale.sourceText += `\nPrimeMapping(${mapping.map(c => c.toFixed(state.centsFractionDigits)).join(', ')})`
+  }
+  if (expand) {
+    const {visitor, defaults} = scale.getVisitors()
+    scale.sourceText = visitor.expand(defaults)
+  }
+  scale.computeScale();
+  emit('done')
 }
 </script>
 
@@ -192,6 +121,7 @@ function modify() {
           <div class="control" v-show="temper.method === 'vals'">
             <label for="vals">Vals</label>
             <input
+              ref="valsInput"
               type="text"
               id="vals"
               placeholder="12 & 17c"
@@ -205,10 +135,10 @@ function modify() {
                 <input
                   type="checkbox"
                   id="edo-steps"
-                  :disabled="temper.edoUnavailable"
+                  :disabled="!temper.edoAvailable"
                   v-model="temper.convertToEdoSteps"
                 />
-                <label for="edo-steps" :class="{ disabled: temper.edoUnavailable }">
+                <label for="edo-steps" :class="{ disabled: !temper.edoAvailable }">
                   Convert to edo-steps</label
                 >
               </span>
@@ -218,6 +148,7 @@ function modify() {
           <div class="control" v-show="temper.method === 'commas'">
             <label for="commas">Comma list</label>
             <input
+              ref="commasInput"
               type="text"
               id="commas"
               placeholder="225/224, 1029/1024"
@@ -229,8 +160,8 @@ function modify() {
           <div class="control" v-show="temper.method === 'vals' || temper.method === 'commas'">
             <label for="subgroup">Subgroup / Prime limit</label>
             <input
-              type="text"
               ref="subgroupInput"
+              type="text"
               id="subgroup"
               :placeholder="temper.method === 'vals' ? '2.3.5' : ''"
               @focus="temper.error = ''"
@@ -275,7 +206,7 @@ function modify() {
                 id="tempering-CTE"
                 value="CTE"
                 @focus="temper.error = ''"
-                :disabled="temper.constraintsDisabled"
+                :disabled="!temper.constraintsAvailable"
                 v-model="temper.tempering"
               />
               <label for="tempering-CTE"> CTE </label>
@@ -287,7 +218,7 @@ function modify() {
             <textarea
               id="constraints"
               @focus="temper.error = ''"
-              :disabled="temper.constraintsDisabled"
+              :disabled="!temper.constraintsAvailable"
               v-model="temper.constraintsString"
             ></textarea>
           </div>
@@ -305,8 +236,9 @@ function modify() {
     </template>
     <template #footer>
       <div class="btn-group">
-        <button @click="modify" :disabled="temper.error.length !== 0">OK</button>
+        <button @click="modify(true)" :disabled="temper.error.length !== 0">OK</button>
         <button @click="$emit('cancel')">Cancel</button>
+        <button @click="modify(false)">Raw</button>
         <span class="error" v-show="temper.error.length">⚠</span>
       </div>
     </template>

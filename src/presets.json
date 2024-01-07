@@ -1,1164 +1,656 @@
 {
-  "pelog": {
-    "title": "Pelog",
-    "name": "Normalised Pelog, Kunst, 1949. Average of 39 Javanese gamelans",
-    "lines": ["120.", "270.", "540.", "670.", "785.", "950.", "1215."],
-    "categories": ["traditional"],
-    "keyColors": ["gray", "white", "white", "white", "white", "white", "white"]
-  },
-  "slendro": {
-    "title": "Slendro",
-    "name": "Average of 30 measured slendro gamelans, W. Surjodiningrat et al., 1993.",
-    "lines": ["231.", "474.", "717.", "955.", "1208."],
-    "categories": ["traditional"],
-    "keyColors": ["gray", "white", "white", "white", "white"]
-  },
-  "ragabageshri": {
-    "name": "Raga Bageshri",
-    "lines": ["10/9", "32/27", "4/3", "3/2", "5/3", "16/9", "2/1"],
-    "categories": ["traditional", "just intonation"],
-    "keyColors": ["white", "black", "white", "white", "white", "black", "white"]
-  },
-  "ragabhairavi": {
-    "name": "Raga Bhairavi",
-    "lines": ["16/15", "9/8", "6/5", "27/20", "3/2", "8/5", "9/5", "2/1"],
-    "categories": ["traditional", "just intonation"],
-    "keyColors": ["white", "black", "white", "gray", "gray", "white", "gray", "gray"]
-  },
-  "ragakafi": {
-    "name": "Raga Kafi",
-    "lines": ["9/8", "32/27", "4/3", "3/2", "5/3", "16/9", "2/1"],
-    "categories": ["traditional", "just intonation"],
-    "keyColors": ["white", "white", "white", "white", "white", "black", "white"]
-  },
-  "ragatodi": {
-    "name": "Raga Todi",
-    "lines": ["256/243", "32/27", "45/32", "3/2", "128/81", "15/8", "2/1"],
-    "categories": ["traditional", "just intonation"],
-    "keyColors": ["white", "white", "white", "black", "white", "white", "black"]
-  },
-  "ragayaman": {
-    "name": "Raga Yaman",
-    "lines": ["9/8", "5/4", "45/32", "3/2", "27/16", "15/8", "2/1"],
-    "categories": ["traditional", "just intonation"],
-    "keyColors": ["white", "white", "gray", "black", "white", "white", "black"]
-  },
-  "22shruti": {
-    "name": "22 Shruti",
-    "lines": [
-      "256/243",
-      "16/15",
-      "10/9",
-      "9/8",
-      "32/27",
-      "6/5",
-      "5/4",
-      "81/64",
-      "4/3",
-      "27/20",
-      "45/32",
-      "729/512",
-      "3/2",
-      "128/81",
-      "8/5",
-      "5/3",
-      "27/16",
-      "16/9",
-      "9/5",
-      "15/8",
-      "243/128",
-      "2/1"
-    ],
-    "categories": ["traditional", "just intonation"],
-    "keyColors": [
-      "white",
-      "white",
-      "black",
-      "blue",
-      "white",
-      "white",
-      "black",
-      "blue",
-      "white",
-      "white",
-      "black",
-      "blue",
-      "white",
-      "white",
-      "white",
-      "black",
-      "blue",
-      "white",
-      "white",
-      "black",
-      "blue",
-      "white"
-    ]
-  },
-  "hirajoshi": {
-    "name": "Hirajoshi",
-    "lines": ["185.", "337.", "683.", "790.", "1200."],
-    "categories": ["traditional"],
-    "keyColors": ["gray", "white", "white", "white", "white"]
-  },
-  "balafon": {
-    "title": "Balafon 1",
-    "name": "Observed balafon tuning from Patna, Helmholtz/Ellis p. 518, nr.81",
-    "lines": ["187.", "356.", "526.", "672.", "856.", "985.", "1222."],
-    "categories": ["traditional"],
-    "keyColors": ["gray", "white", "white", "white", "white", "white", "white"]
-  },
-  "balafon2": {
-    "title": "Balafon 2",
-    "name": "Observed balafon tuning from West-Africa, Helmholtz/Ellis p. 518, nr.86",
-    "lines": ["152.", "287.", "533.", "724.", "890.", "1029.", "1200."],
-    "categories": ["traditional"],
-    "keyColors": ["gray", "white", "white", "white", "white", "white", "white"]
-  },
-  "balafon3": {
-    "title": "Balafon 3",
-    "name": "Pitt-River's balafon tuning from West-Africa, Helmholtz/Ellis p. 518, nr.87",
-    "lines": ["195.", "289.", "513.", "686.", "796.", "1008.", "1209."],
-    "categories": ["traditional"],
-    "keyColors": ["gray", "white", "white", "white", "white", "white", "white"]
-  },
-  "balafon4": {
-    "title": "Balafon 4",
-    "name": "Mandinka balafon scale from Gambia",
-    "lines": ["151.", "345.", "526.", "660.", "861.", "1025.", "1141."],
-    "categories": ["traditional"],
-    "keyColors": ["gray", "white", "white", "white", "white", "white", "white"]
-  },
-  "balafon5": {
-    "title": "Balafon 5",
-    "name": "An observed balafon tuning from Singapore, Helmholtz/Ellis p. 518, nr.82",
-    "lines": ["169.", "350.", "543.", "709.", "894.", "1040.", "1205."],
-    "categories": ["traditional"],
-    "keyColors": ["gray", "white", "white", "white", "white", "white", "white"]
-  },
-  "balafon6": {
-    "title": "Balafon 6",
-    "name": "Observed balafon tuning from Burma, Helmholtz/Ellis p. 518, nr.84",
-    "lines": ["114.", "350.", "550.", "687.", "838.", "1032.", "1196."],
-    "categories": ["traditional"],
-    "keyColors": ["gray", "white", "white", "white", "white", "white", "white"]
-  },
-  "balafon7": {
-    "title": "Balafon 7",
-    "name": "Observed South Pacific pentatonic balafon tuning, Helmholtz/Ellis p. 518, nr.93",
-    "lines": ["202.", "370.", "685.", "903.", "1200."],
-    "categories": ["traditional"],
-    "keyColors": ["gray", "white", "white", "white", "white"]
-  },
-  "5edo": {
-    "title": "Equal pentatonic",
-    "name": "Equal pentatonic (5edo)",
-    "lines": ["1\\5", "2\\5", "3\\5", "4\\5", "5\\5"],
-    "categories": ["traditional", "equal temperament"],
-    "keyColors": ["gray", "white", "white", "white", "white"]
-  },
-  "7edo": {
-    "title": "Equal heptatonic",
-    "name": "Equal heptatonic (7edo)",
-    "lines": ["1\\7", "2\\7", "3\\7", "4\\7", "5\\7", "6\\7", "7\\7"],
-    "categories": ["traditional", "equal temperament"],
-    "keyColors": ["white", "black", "white", "white", "white", "black", "white"]
-  },
-  "archytasdiatonic": {
-    "name": "Archytas Diatonic",
-    "lines": ["28/27", "32/27", "4/3", "3/2", "14/9", "16/9", "2/1"],
-    "categories": ["traditional", "just intonation"],
-    "keyColors": ["white", "black", "white", "white", "white", "black", "white"]
-  },
-  "archytasenharmonic": {
-    "name": "Archytas Enharmonic",
-    "lines": ["28/27", "16/15", "4/3", "3/2", "14/9", "8/5", "2/1"],
-    "categories": ["traditional", "just intonation"],
-    "keyColors": ["white", "black", "gray", "white", "white", "black", "gray"]
-  },
-  "didymuschromatic": {
-    "name": "Didymus Chromatic",
-    "lines": ["16/15", "10/9", "4/3", "3/2", "8/5", "5/3", "2/1"],
-    "categories": ["traditional", "just intonation"],
-    "keyColors": ["white", "black", "gray", "white", "white", "black", "gray"]
-  },
-  "ptolemydiatonicditoniaion": {
-    "name": "Ptolemy Diatonic Ditoniaion",
-    "lines": ["256/243", "32/27", "4/3", "3/2", "128/81", "16/9", "2/1"],
-    "categories": ["traditional", "just intonation"],
-    "keyColors": ["gray", "white", "white", "white", "white", "white", "white"]
-  },
-  "ptolemydiatonichemiolion": {
-    "name": "Ptolemy Diatonic Hemiolion",
-    "lines": ["12/11", "6/5", "4/3", "3/2", "18/11", "9/5", "2/1"],
-    "categories": ["traditional", "just intonation"],
-    "keyColors": ["white", "black", "gray", "white", "white", "black", "gray"]
-  },
-  "pythagorean": {
-    "name": "Pythagorean",
-    "lines": [
-      "256/243",
-      "9/8",
-      "32/27",
-      "81/64",
-      "4/3",
-      "1024/729",
-      "3/2",
-      "128/81",
-      "27/16",
-      "16/9",
-      "4096/2187",
-      "2/1"
-    ],
-    "categories": ["traditional", "just intonation"],
-    "keyColors": [
-      "white",
-      "black",
-      "white",
-      "black",
-      "white",
-      "white",
-      "black",
-      "white",
-      "black",
-      "white",
-      "white",
-      "black"
-    ],
-    "baseMidiNote": 67,
-    "baseFrequency": 391
-  },
-  "werckmeisteriii": {
-    "name": "Werckmeister III (1691)",
-    "lines": [
-      "107.82",
-      "203.91",
-      "311.72",
-      "401.955",
-      "503.91",
-      "605.865",
-      "701.955",
-      "809.775",
-      "900.",
-      "1007.82",
-      "1103.91",
-      "1200."
-    ],
-    "categories": ["traditional"],
-    "keyColors": [
-      "white",
-      "white",
-      "black",
-      "white",
-      "black",
-      "white",
-      "black",
-      "white",
-      "white",
-      "black",
-      "white",
-      "black"
-    ],
-    "baseMidiNote": 64,
-    "baseFrequency": 329
-  },
-  "young1799": {
-    "name": "Young (1799)",
-    "lines": [
-      "106.",
-      "198.",
-      "306.2",
-      "400.1",
-      "502.",
-      "604.",
-      "697.9",
-      "806.1",
-      "898.1",
-      "1004.1",
-      "1102.",
-      "1200."
-    ],
-    "categories": ["traditional"],
-    "keyColors": [
-      "white",
-      "black",
-      "white",
-      "black",
-      "white",
-      "white",
-      "black",
-      "white",
-      "black",
-      "white",
-      "white",
-      "black"
-    ],
-    "baseMidiNote": 67,
-    "baseFrequency": 392
-  },
-  "12edo": {
-    "name": "12-tone equal temperament",
-    "lines": [
-      "100.",
-      "200.",
-      "300.",
-      "400.",
-      "500.",
-      "600.",
-      "700.",
-      "800.",
-      "900.",
-      "1000.",
-      "1100.",
-      "1200."
-    ],
-    "categories": ["traditional", "equal temperament"],
-    "keyColors": [
-      "white",
-      "black",
-      "white",
-      "white",
-      "black",
-      "white",
-      "black",
-      "white",
-      "white",
-      "black",
-      "white",
-      "black"
-    ]
-  },
-  "partch43": {
-    "name": "Harry Partch 43-tone",
-    "lines": [
-      "81/80",
-      "33/32",
-      "21/20",
-      "16/15",
-      "12/11",
-      "11/10",
-      "10/9",
-      "9/8",
-      "8/7",
-      "7/6",
-      "32/27",
-      "6/5",
-      "11/9",
-      "5/4",
-      "14/11",
-      "9/7",
-      "21/16",
-      "4/3",
-      "27/20",
-      "11/8",
-      "7/5",
-      "10/7",
-      "16/11",
-      "40/27",
-      "3/2",
-      "32/21",
-      "14/9",
-      "11/7",
-      "8/5",
-      "18/11",
-      "5/3",
-      "27/16",
-      "12/7",
-      "7/4",
-      "16/9",
-      "9/5",
-      "20/11",
-      "11/6",
-      "15/8",
-      "40/21",
-      "64/33",
-      "160/81",
-      "2/1"
-    ],
-    "categories": ["just intonation"],
-    "keyColors": [
-      "white",
-      "green",
-      "pink",
-      "teal",
-      "green",
-      "plum",
-      "black",
-      "yellow",
-      "white",
-      "red",
-      "blue",
-      "white",
-      "green",
-      "pink",
-      "yellow",
-      "black",
-      "red",
-      "blue",
-      "white",
-      "green",
-      "pink",
-      "teal",
-      "orange",
-      "plum",
-      "yellow",
-      "white",
-      "red",
-      "blue",
-      "black",
-      "green",
-      "plum",
-      "yellow",
-      "white",
-      "red",
-      "blue",
-      "white",
-      "green",
-      "black",
-      "pink",
-      "yellow",
-      "orange",
-      "plum",
-      "yellow"
-    ]
-  },
-  "carlossuperjust": {
-    "name": "Wendy Carlos Super Just",
-    "lines": [
-      "17/16",
-      "9/8",
-      "6/5",
-      "5/4",
-      "4/3",
-      "11/8",
-      "3/2",
-      "13/8",
-      "5/3",
-      "7/4",
-      "15/8",
-      "2/1"
-    ],
-    "baseFrequency": 264,
-    "baseMidiNote": 60,
-    "categories": ["just intonation"],
-    "keyColors": [
-      "white",
-      "black",
-      "white",
-      "black",
-      "gray",
-      "white",
-      "black",
-      "white",
-      "black",
-      "gray",
-      "black",
-      "gray"
-    ]
-  },
-  "gradycentaur": {
-    "title": "Kraig Grady Centaur (7-limit)",
-    "name": "Kraig Grady Centaur",
-    "lines": [
-      "21/20",
-      "9/8",
-      "7/6",
-      "5/4",
-      "4/3",
-      "7/5",
-      "3/2",
-      "14/9",
-      "5/3",
-      "7/4",
-      "15/8",
-      "2/1"
-    ],
-    "baseFrequency": 264,
-    "baseMidiNote": 60,
-    "categories": ["just intonation"],
-    "keyColors": [
-      "white",
-      "black",
-      "white",
-      "black",
-      "gray",
-      "white",
-      "black",
-      "white",
-      "black",
-      "gray",
-      "black",
-      "gray"
-    ]
-  },
-  "gradycentauras": {
-    "title": "Kraig Grady Centaura Subharmonic (11-limit)",
-    "name": "Kraig Grady Centaura Subharmonic",
-    "lines": [
-      "15/14",
-      "10/9",
-      "40/33",
-      "5/4",
-      "4/3",
-      "10/7",
-      "3/2",
-      "45/28",
-      "5/3",
-      "20/11",
-      "15/8",
-      "2/1"
-    ],
-    "baseFrequency": 264,
-    "baseMidiNote": 60,
-    "categories": ["just intonation"],
-    "keyColors": [
-      "white",
-      "black",
-      "gray",
-      "black",
-      "gray",
-      "white",
-      "black",
-      "white",
-      "black",
-      "gray",
-      "black",
-      "gray"
-    ]
-  },
-  "gradycentaurah": {
-    "title": "Kraig Grady Centaura Harmonic (11-limit)",
-    "name": "Kraig Grady Centaura Harmonic",
-    "lines": [
-      "33/32",
-      "9/8",
-      "7/6",
-      "5/4",
-      "4/3",
-      "11/8",
-      "3/2",
-      "14/9",
-      "5/3",
-      "7/4",
-      "15/8",
-      "2/1"
-    ],
-    "baseFrequency": 264,
-    "baseMidiNote": 60,
-    "categories": ["just intonation"],
-    "keyColors": [
-      "white",
-      "black",
-      "white",
-      "black",
-      "gray",
-      "white",
-      "black",
-      "white",
-      "black",
-      "gray",
-      "black",
-      "gray"
-    ]
-  },
-  "11machine6": {
-    "name": "11edo machine[6]",
-    "lines": ["2\\11", "4\\11", "6\\11", "8\\11", "10\\11", "11\\11"],
-    "categories": ["MOS", "equal temperament"],
-    "keyColors": ["black", "white", "white", "white", "white", "white"]
-  },
-  "13glacial7": {
-    "name": "13edo glacial[7]",
-    "lines": ["2\\13", "4\\13", "6\\13", "8\\13", "10\\13", "12\\13", "13\\13"],
-    "categories": ["MOS", "equal temperament"],
-    "keyColors": ["black", "white", "white", "white", "white", "white", "white"]
-  },
-  "13father8": {
-    "name": "13edo father[8]",
-    "lines": ["2\\13", "4\\13", "5\\13", "7\\13", "9\\13", "10\\13", "12\\13", "13\\13"],
-    "categories": ["MOS", "equal temperament"],
-    "keyColors": ["black", "white", "white", "black", "white", "white", "black", "white"]
-  },
-  "15blackwood10": {
-    "name": "15edo blackwood[10]",
-    "lines": [
-      "2\\15",
-      "3\\15",
-      "5\\15",
-      "6\\15",
-      "8\\15",
-      "9\\15",
-      "11\\15",
-      "12\\15",
-      "14\\15",
-      "15\\15"
-    ],
-    "categories": ["MOS", "equal temperament"],
-    "keyColors": ["white", "black"]
-  },
-  "16mavila7": {
-    "name": "16edo mavila[7]",
-    "lines": ["2\\16", "4\\16", "7\\16", "9\\16", "11\\16", "13\\16", "16\\16"],
-    "categories": ["MOS", "equal temperament"],
-    "keyColors": ["white", "white", "black", "white", "white", "white", "black"]
-  },
-  "17superpyth12": {
-    "name": "17edo superpyth[12]",
-    "lines": [
-      "1\\17",
-      "2\\17",
-      "4\\17",
-      "5\\17",
-      "7\\17",
-      "8\\17",
-      "9\\17",
-      "11\\17",
-      "12\\17",
-      "14\\17",
-      "15\\17",
-      "17\\17"
-    ],
-    "categories": ["MOS", "equal temperament"],
-    "keyColors": [
-      "white",
-      "black",
-      "white",
-      "white",
-      "black",
-      "white",
-      "black",
-      "white",
-      "white",
-      "black",
-      "white",
-      "black"
-    ]
-  },
-  "17rast": {
-    "name": "17edo Rast",
-    "lines": ["3\\17", "5\\17", "7\\17", "10\\17", "13\\17", "15\\17", "17\\17"],
-    "categories": ["equal temperament"],
-    "keyColors": ["white", "white", "black", "white", "white", "white", "black"]
-  },
-  "22porcupine8": {
-    "name": "22edo porcupine[8]",
-    "lines": ["3\\22", "6\\22", "9\\22", "12\\22", "15\\22", "18\\22", "21\\22", "22\\22"],
-    "categories": ["MOS", "equal temperament"],
-    "keyColors": ["black", "white", "white", "white", "white", "white", "white", "white"]
-  },
-  "22orwell9": {
-    "name": "22edo orwell[9]",
-    "lines": [
-      "2\\22",
-      "5\\22",
-      "7\\22",
-      "10\\22",
-      "12\\22",
-      "15\\22",
-      "17\\22",
-      "20\\22",
-      "22\\22"
-    ],
-    "categories": ["MOS", "equal temperament"],
-    "keyColors": ["white", "black", "white", "black", "white", "black", "white", "black", "white"]
-  },
-  "22pajara12": {
-    "name": "22edo pajara[12]",
-    "lines": [
-      "2\\22",
-      "4\\22",
-      "6\\22",
-      "8\\22",
-      "10\\22",
-      "11\\22",
-      "13\\22",
-      "15\\22",
-      "17\\22",
-      "19\\22",
-      "21\\22",
-      "22\\22"
-    ],
-    "categories": ["MOS", "equal temperament"],
-    "keyColors": ["black", "white", "white", "white", "white", "white"]
-  },
-  "26lemba10": {
-    "name": "26edo lemba[10]",
-    "lines": [
-      "3\\26",
-      "5\\26",
-      "8\\26",
-      "10\\26",
-      "13\\26",
-      "16\\26",
-      "18\\26",
-      "21\\26",
-      "23\\26",
-      "26\\26"
-    ],
-    "categories": ["MOS", "equal temperament"],
-    "keyColors": ["white", "white", "black", "white", "black"]
-  },
-  "26flattone12": {
-    "name": "26edo flattone[12]",
-    "lines": [
-      "1\\26",
-      "4\\26",
-      "5\\26",
-      "8\\26",
-      "11\\26",
-      "12\\26",
-      "15\\26",
-      "16\\26",
-      "19\\26",
-      "22\\26",
-      "23\\26",
-      "26\\26"
-    ],
-    "categories": ["MOS", "equal temperament"],
-    "keyColors": [
-      "white",
-      "black",
-      "white",
-      "black",
-      "white",
-      "white",
-      "black",
-      "white",
-      "black",
-      "white",
-      "white",
-      "black"
-    ],
-    "baseMidiNote": 60,
-    "baseFrequency": 265
-  },
-  "31meantone19": {
-    "name": "31edo meantone[19]",
-    "lines": [
-      "1\\31",
-      "3\\31",
-      "4\\31",
-      "6\\31",
-      "8\\31",
-      "9\\31",
-      "11\\31",
-      "13\\31",
-      "14\\31",
-      "16\\31",
-      "17\\31",
-      "19\\31",
-      "21\\31",
-      "22\\31",
-      "24\\31",
-      "26\\31",
-      "27\\31",
-      "29\\31",
-      "31\\31"
-    ],
-    "categories": ["MOS", "equal temperament"],
-    "keyColors": [
-      "white",
-      "black",
-      "white",
-      "black",
-      "white",
-      "white",
-      "black",
-      "white",
-      "white",
-      "black",
-      "white",
-      "black",
-      "white",
-      "white",
-      "black",
-      "white",
-      "white",
-      "black",
-      "white"
-    ]
-  },
-  "46sensi11": {
-    "name": "46edo sensi[11]",
-    "lines": [
-      "5\\46",
-      "10\\46",
-      "15\\46",
-      "17\\46",
-      "22\\46",
-      "27\\46",
-      "32\\46",
-      "34\\46",
-      "39\\46",
-      "44\\46",
-      "46\\46"
-    ],
-    "categories": ["MOS", "equal temperament"],
-    "keyColors": [
-      "black",
-      "white",
-      "white",
-      "white",
-      "black",
-      "white",
-      "white",
-      "white",
-      "black",
-      "white",
-      "white"
-    ]
-  },
-  "362barbados9": {
-    "name": "362edo barbados[9]",
-    "lines": [
-      "62\\362",
-      "75\\362",
-      "137\\362",
-      "150\\362",
-      "212\\362",
-      "225\\362",
-      "287\\362",
-      "300\\362",
-      "362\\362"
-    ],
-    "categories": ["MOS", "equal temperament"],
-    "keyColors": ["white", "white", "black", "white", "black", "white", "black", "white", "black"]
-  },
-  "bohlenpierceeq": {
-    "name": "Bohlen-Pierce equal (13ed3)",
-    "lines": [
-      "1\\13<3>",
-      "2\\13<3>",
-      "3\\13<3>",
-      "4\\13<3>",
-      "5\\13<3>",
-      "6\\13<3>",
-      "7\\13<3>",
-      "8\\13<3>",
-      "9\\13<3>",
-      "10\\13<3>",
-      "11\\13<3>",
-      "12\\13<3>",
-      "13\\13<3>"
-    ],
-    "categories": ["non-octave", "equal temperament"],
-    "keyColors": [
-      "white",
-      "black",
-      "white",
-      "white",
-      "white",
-      "black",
-      "white",
-      "white",
-      "black",
-      "white",
-      "white",
-      "black",
-      "white"
-    ]
-  },
-  "bohlenpierceji": {
-    "name": "Bohlen-Pierce just",
-    "lines": [
-      "27/25",
-      "25/21",
-      "9/7",
-      "7/5",
-      "75/49",
-      "5/3",
-      "9/5",
-      "49/25",
-      "15/7",
-      "7/3",
-      "63/25",
-      "25/9",
-      "3/1"
-    ],
-    "categories": ["non-octave", "just intonation"],
-    "keyColors": [
-      "white",
-      "black",
-      "white",
-      "white",
-      "white",
-      "black",
-      "white",
-      "white",
-      "black",
-      "white",
-      "white",
-      "black",
-      "white"
-    ]
-  },
-  "carlosalpha": {
-    "name": "Wendy Carlos Alpha",
-    "lines": ["78.", "156.", "234.", "312.", "390.", "468.", "546.", "624.", "702."],
-    "categories": ["non-octave", "equal temperament"],
-    "keyColors": ["white", "white", "white", "black", "white", "white", "white", "white", "black"]
-  },
-  "carlosbeta": {
-    "name": "Wendy Carlos Beta",
-    "lines": [
-      "63.8",
-      "127.6",
-      "191.4",
-      "255.2",
-      "319.0",
-      "382.8",
-      "446.6",
-      "510.4",
-      "574.2",
-      "638.0",
-      "701.8"
-    ],
-    "categories": ["non-octave", "equal temperament"],
-    "keyColors": [
-      "white",
-      "black",
-      "white",
-      "black",
-      "white",
-      "black",
-      "white",
-      "black",
-      "white",
-      "black",
-      "white"
-    ]
-  },
-  "carlosgamma": {
-    "name": "Wendy Carlos Gamma",
-    "lines": [
-      "35.1",
-      "70.2",
-      "105.3",
-      "140.4",
-      "175.5",
-      "210.6",
-      "245.7",
-      "280.8",
-      "315.9",
-      "351.0",
-      "386.1",
-      "421.2",
-      "456.3",
-      "491.4",
-      "526.5",
-      "561.6",
-      "596.7",
-      "631.8",
-      "666.9",
-      "702.0"
-    ],
-    "categories": ["non-octave", "equal temperament"],
-    "keyColors": [
-      "white",
-      "black",
-      "white",
-      "black",
-      "white",
-      "white",
-      "black",
-      "white",
-      "black",
-      "white",
-      "black",
-      "white",
-      "black",
-      "white",
-      "black",
-      "white",
-      "white",
-      "black",
-      "white",
-      "black"
-    ]
-  },
-  "65cet": {
-    "name": "65 cent Equal Temperament",
-    "lines": ["65.0"],
-    "categories": ["non-octave", "equal temperament"],
-    "keyColors": ["white"]
-  },
-  "88cet": {
-    "name": "88 cent Equal Temperament",
-    "lines": ["88.0"],
-    "categories": ["non-octave", "equal temperament"],
-    "keyColors": ["white"]
-  },
-  "blackdye": {
-    "title": "Blackdye GO",
-    "name": "Blackdye",
-    "lines": [
-      "1\\27",
-      "5\\27",
-      "7\\27",
-      "11\\27",
-      "12\\27",
-      "16\\27",
-      "18\\27",
-      "22\\27",
-      "23\\27",
-      "27\\27"
-    ],
-    "categories": ["GO", "MV4", "equal temperament"],
-    "keyColors": [
-      "white",
-      "black",
-      "white",
-      "white",
-      "black",
-      "white",
-      "white",
-      "white",
-      "black",
-      "white"
-    ]
-  },
-  "diasem": {
-    "title": "Diasem MV3 GO",
-    "name": "Diasem",
-    "lines": [
-      "2\\31",
-      "7\\31",
-      "8\\31",
-      "13\\31",
-      "15\\31",
-      "20\\31",
-      "21\\31",
-      "26\\31",
-      "31\\31"
-    ],
-    "categories": ["MV3", "GO", "equal temperament"],
-    "keyColors": ["white", "white", "black", "white", "white", "white", "black", "white", "white"],
-    "baseMidiNote": 71,
-    "baseFrequency": 493
-  },
-  "zarlino": {
-    "title": "Zarlino MV3 GO",
-    "name": "Zarlino",
-    "lines": ["5\\29", "9\\29", "14\\29", "17\\29", "22\\29", "26\\29", "29\\29"],
-    "categories": ["MV3", "GO", "equal temperament"],
-    "keyColors": ["gray", "white", "white", "white", "white", "white", "white"],
-    "baseMidiNote": 65,
-    "baseFrequency": 355
-  },
-  "superzarlino": {
-    "title": "Superzarlino MV3 GO",
-    "name": "Superzarlino",
-    "lines": [
-      "3\\34",
-      "4\\34",
-      "6\\34",
-      "9\\34",
-      "11\\34",
-      "12\\34",
-      "15\\34",
-      "17\\34",
-      "18\\34",
-      "20\\34",
-      "23\\34",
-      "24\\34",
-      "26\\34",
-      "29\\34",
-      "31\\34",
-      "32\\34",
-      "34\\34"
-    ],
-    "categories": ["MV3", "GO", "equal temperament"],
-    "keyColors": [
-      "white",
-      "black",
-      "white",
-      "white",
-      "black",
-      "gray",
-      "white",
-      "black",
-      "gray",
-      "white",
-      "white",
-      "black",
-      "white",
-      "white",
-      "black",
-      "gray",
-      "white"
-    ]
-  },
-  "marveldene": {
-    "title": "Marveldene TE",
-    "name": "The Marveldene, a 2.3.5.7 classic. Septimal Aeolian minor oriented.",
-    "lines": [
-      "116.01264",
-      "232.02527",
-      "316.92766",
-      "432.94029",
-      "499.84142",
-      "615.85405",
-      "700.75644",
-      "816.76907",
-      "932.78170",
-      "999.68282",
-      "1133.69672",
-      "1200.59784"
-    ],
-    "categories": ["TE", "rank 3"],
-    "keyColors": [
-      "white",
-      "gray",
-      "black",
-      "gray",
-      "black",
-      "white",
-      "gray",
-      "white",
-      "gray",
-      "black",
-      "white",
-      "black"
-    ]
-  },
-  "meantone": {
-    "title": "Meantone CTE",
-    "name": "Meantone[12], TE optimized with a 2/1 constraint.",
-    "lines": [
-      "113.9284",
-      "194.4286",
-      "308.3571",
-      "388.8573",
-      "502.7857",
-      "583.2859",
-      "697.2143",
-      "811.1427",
-      "891.6429",
-      "1005.5713",
-      "1086.0716",
-      "1200.0000"
-    ],
-    "categories": ["MOS", "CTE", "rank 2"],
-    "keyColors": [
-      "white",
-      "black",
-      "white",
-      "white",
-      "black",
-      "white",
-      "black",
-      "white",
-      "white",
-      "black",
-      "white",
-      "black"
-    ]
-  },
-  "orgone": {
-    "title": "Orgone POTE",
-    "name": "Orgone[7], a 2.7.11 classic. POTE optimized.",
-    "lines": ["229.8849", "323.3717", "553.2566", "646.7434", "876.6283", "970.1151", "1200.0000"],
-    "categories": ["MOS", "POTE", "rank 2"],
-    "keyColors": ["white", "white", "black", "white", "black", "white", "black"]
-  }
+    "pelog":
+    {
+        "title": "Pelog",
+        "name": "Normalised Pelog, Kunst, 1949. Average of 39 Javanese gamelans",
+        "source": "120. white\n270. white\n540. white\n670. white\n785. white\n950. white\n1215. gray\n",
+        "categories":
+        [
+            "traditional"
+        ]
+    },
+    "slendro":
+    {
+        "title": "Slendro",
+        "name": "Average of 30 measured slendro gamelans, W. Surjodiningrat et al., 1993.",
+        "source": "231. white\n474. white\n717. white\n955. white\n1208. gray\n",
+        "categories":
+        [
+            "traditional"
+        ]
+    },
+    "ragabageshri":
+    {
+        "name": "Raga Bageshri",
+        "source": "54 white:\n60 black:\n64 white:\n72 white:\n81 white:\n90 black:\n96 white:\n108 '2/1'\n\nsimplify\n",
+        "categories":
+        [
+            "traditional",
+            "just intonation"
+        ]
+    },
+    "ragabhairavi":
+    {
+        "name": "Raga Bhairavi",
+        "source": "eulerGenus(135, 5)\n$[5] = 16/15\nsort()\nlabel([black, white, black, black, white, black, black, white])\n",
+        "categories":
+        [
+            "traditional",
+            "just intonation"
+        ]
+    },
+    "ragakafi":
+    {
+        "name": "Raga Kafi",
+        "source": "rank2(3/2 white, 2, 3, 2/1 gray)\ninsert(5/3 yellow)\n",
+        "categories":
+        [
+            "traditional",
+            "just intonation"
+        ]
+    },
+    "ragatodi":
+    {
+        "name": "Raga Todi",
+        "source": "rank2(3/2 white, 1, 5, 2/1 white)\n$[2] *~= 135/128 black\n$[5] *~= 135/128 black\n",
+        "categories":
+        [
+            "traditional",
+            "just intonation"
+        ]
+    },
+    "ragayaman":
+    {
+        "name": "Raga Yaman",
+        "source": "gs(geodiff(4:5 yellow:6 white), 7, 2/1 white)\n",
+        "categories":
+        [
+            "traditional",
+            "just intonation"
+        ]
+    },
+    "22shruti":
+    {
+        "name": "22 Shruti",
+        "source": "rank2(3/2 white, 4, 0, 2/1 white)\nmergeOffset([10/9 yellow, 16/15 green, 256/243 white, 9/8 white], 'wrap')\nsimplify\n",
+        "categories":
+        [
+            "traditional",
+            "just intonation"
+        ]
+    },
+    "hirajoshi":
+    {
+        "title": "Hirajoshi",
+        "name": "Observed Japanese pentatonic koto scale. Helmholtz/Ellis p.519, nr.112",
+        "source": "185. white\n337. white\n683. white\n790. white\n1200. gray\n",
+        "categories":
+        [
+            "traditional"
+        ]
+    },
+    "hirajoshi-ji":
+    {
+        "title": "Hirajoshi just",
+        "name": "Japanese pentatonic koto scale, theoretical. Helmholz/Ellis p.519, nr.110",
+        "source": "9/8 white\neulerGenus(15 white, 5, 2 gray)\n",
+        "categories":
+        [
+            "traditional",
+            "just intonation"
+        ]
+    },
+    "balafon":
+    {
+        "title": "Balafon 1",
+        "name": "Observed balafon tuning from Patna, Helmholtz/Ellis p. 518, nr.81",
+        "source": "187. white\n356. white\n526. white\n672. white\n856. white\n985. white\n1222. gray\n",
+        "categories":
+        [
+            "traditional"
+        ]
+    },
+    "balafon2":
+    {
+        "title": "Balafon 2",
+        "name": "Observed balafon tuning from West-Africa, Helmholtz/Ellis p. 518, nr.86",
+        "source": "152. white\n287. white\n533. white\n724. white\n890. white\n1029. white\n1200. gray\n",
+        "categories":
+        [
+            "traditional"
+        ]
+    },
+    "balafon3":
+    {
+        "title": "Balafon 3",
+        "name": "Pitt-River's balafon tuning from West-Africa, Helmholtz/Ellis p. 518, nr.87",
+        "source": "195. white\n289. white\n513. white\n686. white\n796. white\n1008. white\n1209. gray\n",
+        "categories":
+        [
+            "traditional"
+        ]
+    },
+    "balafon4":
+    {
+        "title": "Balafon 4",
+        "name": "Mandinka balafon scale from Gambia",
+        "source": "151. white\n345. white\n526. white\n660. white\n861. white\n1025. white\n1141. gray\n",
+        "categories":
+        [
+            "traditional"
+        ]
+    },
+    "balafon5":
+    {
+        "title": "Balafon 5",
+        "name": "An observed balafon tuning from Singapore, Helmholtz/Ellis p. 518, nr.82",
+        "source": "169. white\n350. white\n543. white\n709. white\n894. white\n1040. white\n1205. gray\n",
+        "categories":
+        [
+            "traditional"
+        ]
+    },
+    "balafon6":
+    {
+        "title": "Balafon 6",
+        "name": "Observed balafon tuning from Burma, Helmholtz/Ellis p. 518, nr.84",
+        "source": "114. white\n350. white\n550. white\n687. white\n838. white\n1032. white\n1196. gray\n",
+        "categories":
+        [
+            "traditional"
+        ]
+    },
+    "balafon7":
+    {
+        "title": "Balafon 7",
+        "name": "Observed South Pacific pentatonic balafon tuning, Helmholtz/Ellis p. 518, nr.93",
+        "source": "202. white\n370. white\n685. white\n903. white\n1200. gray\n",
+        "categories":
+        [
+            "traditional"
+        ]
+    },
+    "5edo":
+    {
+        "title": "Equal pentatonic",
+        "name": "Equal pentatonic (5edo)",
+        "source": "ed(5)\nlabel([white, white, white, white, gray])\n",
+        "categories":
+        [
+            "traditional",
+            "equal temperament"
+        ]
+    },
+    "7edo":
+    {
+        "title": "Equal heptatonic",
+        "name": "Equal heptatonic (7edo)",
+        "source": "ed(7)\ni => i white\npop() gray\n",
+        "categories":
+        [
+            "traditional",
+            "equal temperament"
+        ]
+    },
+    "archytasdiatonic":
+    {
+        "name": "Archytas Diatonic",
+        "source": "3/2 white\n2/1 white\nmergeOffset([28/27 blue, 32/27 white, 4/3 white])\nsimplify\n",
+        "categories":
+        [
+            "traditional",
+            "just intonation"
+        ]
+    },
+    "archytasenharmonic":
+    {
+        "name": "Archytas Enharmonic",
+        "source": "3/2 white\n2/1 white\nmergeOffset([28/27 blue, 16/15 green, 4/3 white])\nsimplify\n",
+        "categories":
+        [
+            "traditional",
+            "just intonation"
+        ]
+    },
+    "didymuschromatic":
+    {
+        "name": "Didymus Chromatic",
+        "source": "3/2 white\n2/1 white\nmergeOffset([16/15 green, 10/9 yellow, 4/3 white])\nsimplify\n",
+        "categories":
+        [
+            "traditional",
+            "just intonation"
+        ]
+    },
+    "ptolemydiatonicditoniaion":
+    {
+        "name": "Ptolemy Diatonic Ditoniaion",
+        "source": "rank2(3/2 white, 1, 5, 2/1 gray)\n",
+        "categories":
+        [
+            "traditional",
+            "just intonation"
+        ]
+    },
+    "ptolemydiatonichemiolion":
+    {
+        "name": "Ptolemy Diatonic Hemiolion",
+        "source": "3/2 white\n2/1 white\nmergeOffset([12/11 black, 6/5 green, 4/3 white])\nsimplify\n",
+        "categories":
+        [
+            "traditional",
+            "just intonation"
+        ]
+    },
+    "pythagorean":
+    {
+        "name": "Pythagorean",
+        "source": "labeled(['F', 'C', 'G', 'D', 'A', 'E', 'B'], [3^i rdc 2 white for i of [-2..4]])\nlabeled(['G♭', 'D♭', 'A♭', 'E♭', 'B♭'], [3^i rdc 2 black for i of [-7..-3]])\nsort()\n",
+        "categories":
+        [
+            "traditional",
+            "just intonation"
+        ],
+        "baseMidiNote": 67,
+        "baseFrequency": 391
+    },
+    "werckmeisteriii":
+    {
+        "name": "Werckmeister III (1691)",
+        "source": "701.955 white 'C'\n701.955 white 'G'\n701.955 - 5.865 white 'D'\n701.955 white 'A'\n701.955 white 'E'\n701.955 white 'B'\n701.955 black 'F♯'\n701.955 black 'C♯'\n701.955 black 'G♯'\n701.955 - 5.865 black 'D♯'\n701.955 - 5.865 black 'A♯'\nstack()\n\n1200. white 'F'\nreduce()\nsort()\n",
+        "categories":
+        [
+            "traditional"
+        ],
+        "baseMidiNote": 65,
+        "baseFrequency": 349
+    },
+    "young1799":
+    {
+        "name": "Young (1799)",
+        "source": "697.9 white 'C'\n700.1 white 'G'\n700.1 white 'D'\n702.0 white 'A'\n701.9 white 'E'\n702.0 white 'B'\n702.0 black 'F♯'\n700.1 black 'C♯'\n700.1 black 'G♯'\n697.9 black 'D♯'\n697.9 black 'A♯'\nstack()\n\n1200. 'F'\nreduce()\nsort()\n",
+        "categories":
+        [
+            "traditional"
+        ],
+        "baseMidiNote": 65,
+        "baseFrequency": 349
+    },
+    "12edo":
+    {
+        "name": "12-tone equal temperament",
+        "source": "100. black 'B♭'\n200. white 'B'\n300. white 'C'\n400. black 'C♯'\n500. white 'D'\n600. black 'E♭'\n700. white 'E'\n800. white 'F'\n900. black 'F♯'\n1000. white 'G'\n1100. black 'G♯'\n1200. white 'A'\n",
+        "categories":
+        [
+            "traditional",
+            "equal temperament"
+        ]
+    },
+    "partch43":
+    {
+        "name": "Harry Partch 43-tone",
+        "source": "[\n n % d white\n  for n of [1..11]\n  for d of [1..11]\n]\n\n1 gray:15:21:27:33\n/1 black:15:21:27:33\n\n5 olive:21:27:81\n/5 gold:21:27:81\n\n2\nreduce()\nsort()\nkeepUnique()\n",
+        "categories":
+        [
+            "just intonation"
+        ]
+    },
+    "carlossuperjust":
+    {
+        "name": "Wendy Carlos Super Just",
+        "source": "[3,5..17]\nlabel([white, yellow, blue, white, lavender, chocolate, yellow, indigo])\n1/3 white\n3/5 green\n5/3 yellow\n2 white\nreduce()\nsort()\n",
+        "baseFrequency": 264,
+        "baseMidiNote": 60,
+        "categories":
+        [
+            "just intonation"
+        ]
+    },
+    "gradycentaur":
+    {
+        "title": "Kraig Grady Centaur (7-limit)",
+        "name": "Kraig Grady Centaur",
+        "source": "gs(geodiff(12:14 blue:15 yellow:18 white), 10, 2/1 white)\nrotate(6)\ninsert(21/20 cyan)\ninsert(7/5 cyan)\n",
+        "baseFrequency": 264,
+        "baseMidiNote": 60,
+        "categories":
+        [
+            "just intonation"
+        ]
+    },
+    "gradycentauras":
+    {
+        "title": "Kraig Grady Centaura Subharmonic (11-limit)",
+        "name": "Kraig Grady Centaura Subharmonic",
+        "source": "4/3 white\n3/2 white\n2/1 white\nmergeOffset([15/14 cyan, 5/4 yellow, 20/11 black, 5/3 yellow], 'wrap')\nvoid(pop($, 5))\n",
+        "baseFrequency": 264,
+        "baseMidiNote": 60,
+        "categories":
+        [
+            "just intonation"
+        ]
+    },
+    "gradycentaurah":
+    {
+        "title": "Kraig Grady Centaura Harmonic (11-limit)",
+        "name": "Kraig Grady Centaura Harmonic",
+        "source": "4/3 white\n3/2 white\n2/1 white\nmergeOffset([7/6 blue, 5/4 yellow, 11/8 lavender, 3/2 white], 'wrap')\nvoid(pop($, 11))\nsimplify\n",
+        "baseFrequency": 264,
+        "baseMidiNote": 60,
+        "categories":
+        [
+            "just intonation"
+        ]
+    },
+    "11machine6":
+    {
+        "name": "11edo machine[6]",
+        "source": "rank2(9/8 white, 5, 0, 2/1 gray)\n11@2.9.7.11\n",
+        "categories":
+        [
+            "MOS",
+            "equal temperament"
+        ]
+    },
+    "13glacial7":
+    {
+        "name": "13edo glacial[7]",
+        "source": "rank2(11/10 white, 6, 0, 2/1 gray)\n13@2.9.5.11.13\n",
+        "categories":
+        [
+            "MOS",
+            "equal temperament"
+        ]
+    },
+    "13oneirotonic":
+    {
+        "name": "13edo oneirotonic (5L 3s)",
+        "source": "mos(5, 3)\nlabel([white, black, white, white, black, white, black, white])\n",
+        "categories":
+        [
+            "MOS",
+            "equal temperament"
+        ]
+    },
+    "15blackwood10":
+    {
+        "name": "15edo blackwood[10]",
+        "source": "rank2(5/1 black, 5, 0, 1\\5 white, 5)\n15@\n",
+        "categories":
+        [
+            "MOS",
+            "equal temperament"
+        ]
+    },
+    "16mavila7":
+    {
+        "name": "16edo mavila[7]",
+        "source": "rank2(3/2 white, 5, 1, 2/1 gray)\n16@",
+        "categories":
+        [
+            "MOS",
+            "equal temperament"
+        ]
+    },
+    "17superpyth12":
+    {
+        "name": "17edo superpyth[12]",
+        "source": "[3^i rdc 2 for i of concat([0 white..6], [7 black..11])]\nlabel(['F', 'C', 'G', 'D', 'A', 'E', 'B', 'F♯', 'C♯', 'G♯', 'D♯', 'A♯'])\nsort()\n17@",
+        "categories":
+        [
+            "MOS",
+            "equal temperament"
+        ],
+        "baseMidiNote": 65,
+        "baseFrequency": 349
+    },
+    "17rast":
+    {
+        "name": "17edo Rast",
+        "source": "M2 white\nn3 gray\nP4 white\nP5 white\nM6 white\nn7 gray\nP8 white\nlabel(map(str))\n17@\n",
+        "categories":
+        [
+            "MOS",
+            "equal temperament"
+        ]
+    },
+    "22porcupine8":
+    {
+        "name": "22edo porcupine[8]",
+        "source": "rank2(27/25 white, 7, 0, 2/1 gray)\n22@\n",
+        "categories":
+        [
+            "MOS",
+            "equal temperament"
+        ]
+    },
+    "22orwell9":
+    {
+        "name": "22edo orwell[9]",
+        "source": "rank2(7/6, 4, 4)\nlabel([black, white, black, white, white, black, white, black, white])\n22@\n",
+        "categories":
+        [
+            "MOS",
+            "equal temperament"
+        ]
+    },
+    "22pajara12":
+    {
+        "name": "22edo pajara[12]",
+        "source": "rank2(3/2 white, 10, 0, 1\\2 gray, 2)\n22@\n",
+        "categories":
+        [
+            "MOS",
+            "equal temperament"
+        ]
+    },
+    "26lemba10":
+    {
+        "name": "26edo lemba[10]",
+        "source": "rank2(8/7 white, 4, 4, 7/5 gray, 2)\n26@",
+        "categories":
+        [
+            "MOS",
+            "equal temperament"
+        ]
+    },
+    "26flattone12":
+    {
+        "name": "26edo flattone[12]",
+        "source": "C=4 = 265 Hz\nC#4 black\nD=4 white\nD#4 black\nE=4 white\nF=4 white\nF#4 black\nG=4 white\nG#4 black\nA=4 white\nBb4 black\nB=4 white\nC=5 white\nlabel(map(i => str(i)[..1]))\n26@\n",
+        "categories":
+        [
+            "MOS",
+            "equal temperament"
+        ],
+        "baseMidiNote": 60,
+        "baseFrequency": 265
+    },
+    "31meantone19":
+    {
+        "name": "31edo meantone[19]",
+        "source": "A♮4 = 440 Hz\nA♯4 navy\nB♭4 maroon\nB♮4 white\nC♭5 maroon\nC♮5 white\nC♯5 navy\nD♭5 maroon\nD♮5 white\nD♯5 navy\nE♭5 maroon\nE♮5 white\nE♯5 navy\nF♮5 white\nF♯5 navy\nG♭5 maroon\nG♮5 white\nG♯5 navy\nA♭5 maroon\nA♮5 white\nlabel(map(i => str(i)[..1]))\n31@\n",
+        "categories":
+        [
+            "MOS",
+            "equal temperament"
+        ]
+    },
+    "46sensi11":
+    {
+        "name": "46edo sensi[11]",
+        "source": "rank2(9/7, 10)\nlabel([white, white, black, white, white, white, black, white, white, black, white])\n46@",
+        "categories":
+        [
+            "MOS",
+            "equal temperament"
+        ]
+    },
+    "362barbados9":
+    {
+        "name": "362edo barbados[9]",
+        "source": "rank2(15/13 white, 4, 4, 2/1 gray)\n362@",
+        "categories":
+        [
+            "MOS",
+            "equal temperament"
+        ]
+    },
+    "bohlenpierceeq":
+    {
+        "name": "Bohlen-Pierce equal (13ed3)",
+        "source": "27/25 black 'C♯/D♭'\n25/21 white 'D'\n9/7 white 'E'\n7/5 white 'F'\n75/49 black 'F♯/G♭'\n5/3 white 'G'\n9/5 white 'H'\n49/25 black 'H♯/J♭'\n15/7 white 'J'\n7/3 white 'A'\n63/25 black 'A♯/B♭'\n25/9 white 'B'\n3/1 white 'C'\nb13@\n",
+        "categories":
+        [
+            "non-octave",
+            "equal temperament"
+        ]
+    },
+    "bohlenpierceji":
+    {
+        "name": "Bohlen-Pierce just",
+        "source": "27/25 black 'C♯/D♭'\n25/21 white 'D'\n9/7 white 'E'\n7/5 white 'F'\n75/49 black 'F♯/G♭'\n5/3 white 'G'\n9/5 white 'H'\n49/25 black 'H♯/J♭'\n15/7 white 'J'\n7/3 white 'A'\n63/25 black 'A♯/B♭'\n25/9 white 'B'\n3/1 white 'C'\n",
+        "categories":
+        [
+            "non-octave",
+            "just intonation"
+        ]
+    },
+    "carlosalpha":
+    {
+        "name": "Wendy Carlos Alpha",
+        "source": "78.\nrepeat(9)\nlabel([black, black, black, white, white, black, black, black, white])\n",
+        "categories":
+        [
+            "non-octave",
+            "equal temperament"
+        ]
+    },
+    "carlosbeta":
+    {
+        "name": "Wendy Carlos Beta",
+        "source": "63.8\nrepeat(11)\nlabel([black, black, white, black, white, white, black, white, black, black, white])\n",
+        "categories":
+        [
+            "non-octave",
+            "equal temperament"
+        ]
+    },
+    "carlosgamma":
+    {
+        "name": "Wendy Carlos Gamma",
+        "source": "35.1\nrepeat(20)\nlabel([black, black, gray, black, black, white, black, black, white, black, white, black, black, white, black, black, gray, black, black, white])\n",
+        "categories":
+        [
+            "non-octave",
+            "equal temperament"
+        ]
+    },
+    "65cet":
+    {
+        "name": "65 cent Equal Temperament",
+        "source": "65.0 white",
+        "categories":
+        [
+            "non-octave",
+            "equal temperament"
+        ]
+    },
+    "88cet":
+    {
+        "name": "88 cent Equal Temperament",
+        "source": "88.0 white",
+        "categories":
+        [
+            "non-octave",
+            "equal temperament"
+        ]
+    },
+    "blackdye":
+    {
+        "title": "Blackdye GO",
+        "name": "Blackdye",
+        "source": "rank2(3/2 black, 4, 0, 2/1 black)\nmergeOffset(10/9 white)\nrotate(3)\n27@",
+        "categories":
+        [
+            "GO",
+            "MV4",
+            "equal temperament"
+        ]
+    },
+    "diasem":
+    {
+        "title": "Diasem MV3 GO",
+        "name": "Diasem",
+        "source": "gs([7/6 white, 8/7 white], 9, 2/1 gray)\n31@",
+        "categories":
+        [
+            "MV3",
+            "GO",
+            "equal temperament"
+        ],
+        "baseMidiNote": 71,
+        "baseFrequency": 493
+    },
+    "zarlino":
+    {
+        "title": "Zarlino MV3 GO",
+        "name": "Zarlino",
+        "source": "gs([5/4 white, 6/5 white], 7, 2/1 gray)\n29@",
+        "categories":
+        [
+            "MV3",
+            "GO",
+            "equal temperament"
+        ],
+        "baseMidiNote": 65,
+        "baseFrequency": 355
+    },
+    "superzarlino":
+    {
+        "title": "Superzarlino MV3 GO",
+        "name": "Superzarlino",
+        "source": "gs([5/4, 6/5], 17)\nlabel([black, black, white, black, white, black, black, white, black, white, black, black, white, black, white, black, white])\n34@",
+        "categories":
+        [
+            "MV3",
+            "GO",
+            "equal temperament"
+        ]
+    },
+    "marveldene":
+    {
+        "title": "Marveldene TE",
+        "name": "The Marveldene, a 2.3.5.7 classic. Septimal Aeolian minor oriented.",
+        "source": "eulerGenus(675 white, 15, 2 gray)\nPrimeMapping(1200.5978, 1901.3543, 2785.0245, 3369.7682)\n",
+        "categories":
+        [
+            "TE",
+            "rank 3"
+        ]
+    },
+    "meantone":
+    {
+        "title": "Meantone CTE",
+        "name": "Meantone[12], TE optimized with a 2/1 constraint.",
+        "source": "A♮4 = 440Hz\nB♭4 black\nB♮4 white\nC♮5 white\nC♯5 black\nD♮5 white\nE♭5 black\nE♮5 white\nF♮5 white\nF♯5 black\nG♮5 white\nG♯5 black\nA♮5 white\nlabel(map(i => str(i)[..1]))\nPrimeMapping(1200.000, 1897.214, 2788.857)\n",
+        "categories":
+        [
+            "MOS",
+            "CTE",
+            "rank 2"
+        ]
+    },
+    "orgone":
+    {
+        "title": "Orgone POTE",
+        "name": "Orgone[7], a 2.7.11 classic. POTE optimized.",
+        "source": "rank2(77/64 white, 3, 3, 2/1 gray)\nPrimeMapping(1200.000, niente, niente, 3370.115, 4153.257)\n",
+        "categories":
+        [
+            "MOS",
+            "POTE",
+            "rank 2"
+        ]
+    }
 }

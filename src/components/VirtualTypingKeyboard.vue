@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
-import { mmod } from 'xen-dev-utils'
 import type { Keyboard, CoordinateKeyboardEvent } from 'isomorphic-qwerty'
 import { CODES_LAYER_1, COORDS_BY_CODE } from 'isomorphic-qwerty'
 import { LEFT_MOUSE_BTN } from '@/constants'
@@ -13,14 +12,14 @@ import { LEFT_MOUSE_BTN } from '@/constants'
 
 type NoteOff = () => void
 type NoteOnCallback = (index: number) => NoteOff
+type ColorMap = (index: number) => string
 
 const props = defineProps<{
-  baseIndex: number // Should incorporate equave shift
-  baseMidiNote: number
-  keyColors: string[]
+  baseIndex: number // Should incorporate shifts
+  colorMap: ColorMap
   keyboardMode: 'isomorphic' | 'piano'
   colorScheme: 'light' | 'dark'
-  keyboardMapping: Map<string, number>
+  qwertyMapping: Map<string, number>
   isomorphicHorizontal: number
   isomorphicVertical: number
   noteOn: NoteOnCallback
@@ -58,12 +57,10 @@ const activeKeys = reactive(new Set())
 const disabledFill = computed(() => (props.colorScheme === 'light' ? 'whitesmoke' : 'gray'))
 
 const rows = computed(() => {
-  const colors = props.keyColors.length ? props.keyColors : ['white']
   const horizontal = props.isomorphicHorizontal
   const vertical = props.isomorphicVertical
   const base = props.baseIndex
-  const midi = props.baseMidiNote
-  const mapping = props.keyboardMapping
+  const mapping = props.qwertyMapping
 
   const result: VirtualKey[][] = []
 
@@ -76,15 +73,15 @@ const rows = computed(() => {
       if (code === null || code === 'Backquote') {
         continue
       }
-      let index
+      let index: number | undefined = base
       if (props.keyboardMode === 'isomorphic') {
         const [x, y] = COORDS_BY_CODE.get(code)!
-        index = base + x * horizontal + (2 - y) * vertical
+        index += base + x * horizontal + (2 - y) * vertical
       } else {
-        index = mapping!.get(code)
+        index = mapping.get(code)
       }
       const color =
-        index === undefined ? disabledFill.value : colors[mmod(index - midi, colors.length)]
+        index === undefined ? disabledFill.value : props.colorMap(index)
       const black = color.toLowerCase() === 'black'
       row.push({
         key: code,

@@ -3,14 +3,10 @@ import { ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { OCTAVE } from '@/constants'
-import { computedAndError, parseChordInput, setAndReportValidity } from '@/utils'
-import { Scale } from 'scale-workshop-core'
+import { computedAndError, expandCode, setAndReportValidity} from '@/utils'
+import { parseChord } from 'sonic-weave'
 
-const props = defineProps<{
-  show: boolean
-}>()
-
-const emit = defineEmits(['update:scale', 'update:scaleName', 'cancel'])
+const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
 const basisString = ref('3 5 7 11')
 const addUnity = ref(false)
@@ -18,10 +14,7 @@ const equaveString = ref('2/1')
 const equave = ref(OCTAVE)
 const basisElement = ref<HTMLInputElement | null>(null)
 const [basis, basisError] = computedAndError(() => {
-  if (!props.show) {
-    return []
-  }
-  const chord = parseChordInput(basisString.value)
+  const chord = parseChord(basisString.value)
   if (chord.length !== 4) {
     throw new Error('Need exactly four basis vectors')
   }
@@ -29,9 +22,12 @@ const [basis, basisError] = computedAndError(() => {
 }, [])
 watch(basisError, (newError) => setAndReportValidity(basisElement.value, newError))
 
-function generate() {
+function generate(expand = true) {
   try {
-    const scale = Scale.fromOctaplex(basis.value, addUnity.value, equave.value)
+    let source = `octaplex(${basis.value.map(b => b.toString()).join(', ')}, ${equave.value.toString()}, ${addUnity.value.toString()})`
+    if (expand) {
+      source = expandCode(source)
+    }
     let name = `The Octaplex (${basisString.value}`
     if (addUnity.value) {
       name += ' with 1/1'
@@ -41,7 +37,7 @@ function generate() {
     }
     name += ')'
     emit('update:scaleName', name)
-    emit('update:scale', scale)
+    emit('update:source', source)
   } catch (error) {
     if (error instanceof Error) {
       alert(error.message)
@@ -53,7 +49,7 @@ function generate() {
 </script>
 
 <template>
-  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate octaplex (24-cell)</h2>
     </template>
@@ -81,6 +77,13 @@ function generate() {
             :defaultValue="OCTAVE"
           />
         </div>
+      </div>
+    </template>
+    <template #footer>
+      <div class="btn-group">
+        <button @click="generate(true)">OK</button>
+        <button @click="$emit('cancel')">Cancel</button>
+        <button @click="generate(false)">Raw</button>
       </div>
     </template>
   </Modal>

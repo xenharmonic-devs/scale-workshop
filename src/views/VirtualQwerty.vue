@@ -2,8 +2,11 @@
 import VirtualTypingKeyboard from '@/components/VirtualTypingKeyboard.vue'
 import type { Keyboard } from 'isomorphic-qwerty'
 import { useStateStore } from '@/stores/state'
+import { useScaleStore } from '@/stores/scale';
+import { computed } from 'vue';
 
 const state = useStateStore()
+const scale = useScaleStore()
 
 type NoteOff = () => void
 type NoteOnCallback = (index: number) => NoteOff
@@ -13,20 +16,21 @@ defineProps<{
   typingKeyboard: Keyboard
 }>()
 
-defineEmits(['update:equaveShift', 'update:degreeShift'])
+const baseIndex = computed(
+  () => scale.baseMidiNote + scale.equaveShift * scale.scale.size + scale.degreeShift
+)
 </script>
 
 <template>
   <main>
     <VirtualTypingKeyboard
-      :baseIndex="state.baseIndex"
-      :baseMidiNote="state.baseMidiNote"
+      :baseIndex="baseIndex"
       :isomorphicHorizontal="state.isomorphicHorizontal"
-      :keyboardMode="state.keyboardMode"
+      :keyboardMode="scale.keyboardMode"
       :colorScheme="state.colorScheme"
-      :keyboardMapping="state.keyboardMapping"
+      :qwertyMapping="scale.qwertyMapping"
       :isomorphicVertical="state.isomorphicVertical"
-      :keyColors="state.keyColors"
+      :colorMap="scale.colorForIndex"
       :noteOn="noteOn"
       :heldNotes="state.heldNotes"
       :typingKeyboard="typingKeyboard"
@@ -35,10 +39,10 @@ defineEmits(['update:equaveShift', 'update:degreeShift'])
       :equaveDownCode="state.equaveDownCode"
       :degreeUpCode="state.degreeUpCode"
       :degreeDownCode="state.degreeDownCode"
-      :equaveShift="state.equaveShift"
-      :degreeShift="state.degreeShift"
-      @update:equaveShift="state.equaveShift = $event"
-      @update:degreeShift="state.degreeShift = $event"
+      :equaveShift="scale.equaveShift"
+      :degreeShift="scale.degreeShift"
+      @update:equaveShift="scale.equaveShift = $event"
+      @update:degreeShift="scale.degreeShift = $event"
     ></VirtualTypingKeyboard>
   </main>
 </template>

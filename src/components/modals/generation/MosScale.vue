@@ -11,7 +11,6 @@ import {
 } from 'moment-of-symmetry'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
-import { Scale } from 'scale-workshop-core'
 import { useModalStore } from '@/stores/modal'
 
 const COLORS = {
@@ -22,60 +21,44 @@ const COLORS = {
   unknown: 'indigo'
 }
 
-const emit = defineEmits(['update:scale', 'update:scaleName', 'update:keyColors', 'cancel'])
+const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
 const modal = useModalStore()
 
 function generate() {
   let name: string
   let steps: number[]
+  let colors: string[] = []
   if (modal.colorMethod === 'none') {
-    steps = mos(modal.safeNumLarge, modal.safeNumSmall, {
-      sizeOfLargeStep: modal.safeSizeLarge,
-      sizeOfSmallStep: modal.safeSizeSmall,
-      up: modal.safeUp
-    })
+    steps = mos(
+      modal.safeNumLarge,
+      modal.safeNumSmall,
+      {sizeOfLargeStep: modal.safeSizeLarge, sizeOfSmallStep: modal.safeSizeSmall, up: modal.safeUp}
+    )
   } else if (modal.colorMethod === 'parent') {
-    const map = mosWithParent(modal.safeNumLarge, modal.safeNumSmall, {
-      sizeOfLargeStep: modal.safeSizeLarge,
-      sizeOfSmallStep: modal.safeSizeSmall,
-      up: modal.safeUp,
-      accidentals: modal.parentColorAccidentals
-    })
+    const map = mosWithParent(modal.safeNumLarge, modal.safeNumSmall, {sizeOfLargeStep: modal.safeSizeLarge, sizeOfSmallStep: modal.safeSizeSmall, up: modal.safeUp, accidentals: modal.parentColorAccidentals});
     steps = [...map.keys()]
-    steps.sort((a, b) => a - b)
-    const colors = steps.map((step) => (map.get(step) ? 'white' : 'black'))
-    colors.unshift(colors.pop()!)
-    emit('update:keyColors', colors)
+    steps.sort((a, b) => a - b);
+    colors = steps.map(s => map.get(s) ? 'white' : 'black')
   } else {
-    let accidentals = modal.daughterColorAccidentals
+    let accidentals = modal.daughterColorAccidentals;
     if (accidentals === 'all') {
       accidentals = 'both'
     }
-    const map = mosWithDaughter(modal.safeNumLarge, modal.safeNumSmall, {
-      sizeOfLargeStep: modal.safeSizeLarge,
-      sizeOfSmallStep: modal.safeSizeSmall,
-      up: modal.safeUp,
-      accidentals
-    })
+    const map = mosWithDaughter(
+      modal.safeNumLarge,
+      modal.safeNumSmall,
+      {sizeOfLargeStep: modal.safeSizeLarge, sizeOfSmallStep: modal.safeSizeSmall, up: modal.safeUp, accidentals}
+    )
     if (modal.daughterColorAccidentals === 'all') {
       steps = [...Array(Math.max(...map.keys())).keys()]
       steps.push(steps.length)
       steps.shift()
     } else {
       steps = [...map.keys()]
-      steps.sort((a, b) => a - b)
+      steps.sort((a, b) => a - b);
     }
-    let colors: string[]
-    if (modal.daughterColorAccidentals === 'sharp' || modal.daughterColorAccidentals === 'flat') {
-      // Piano-style layers expect black & white
-      colors = steps.map((step) => (map.get(step) === 'parent' ? 'white' : 'black'))
-    } else {
-      // Multi-layer piano not implemented in v2 series
-      colors = steps.map((s) => COLORS[map.get(s) ?? 'unknown'])
-    }
-    colors.unshift(colors.pop()!)
-    emit('update:keyColors', colors)
+    colors = steps.map(s => COLORS[map.get(s) ?? 'unknown'])
   }
 
   if (modal.colorMethod === 'parent') {
@@ -106,8 +89,15 @@ function generate() {
   }
   emit('update:scaleName', name)
 
-  const scale = Scale.fromEqualTemperamentSubset(steps, modal.equave)
-  emit('update:scale', scale)
+  const projector = modal.equave.compare(OCTAVE) ? `<${modal.equave.toString()}>` : '';
+  const divisions = steps[steps.length - 1];
+  let source = ''
+  for (let i = 0; i < steps.length; ++i) {
+    const color = colors[i] ? ' ' + colors[i] : '';
+    source += `${steps[i]}\\${divisions}${projector}${color}\n`
+  }
+
+  emit('update:source', source)
 }
 
 // Actions that would take multiple lines in template code and get ruined by auto-formatting
@@ -168,7 +158,7 @@ function edoClick(info: MosScaleInfo) {
             id="number-of-large-steps"
             type="number"
             min="1"
-            max="1000"
+            max="999"
             v-model="modal.numberOfLargeSteps"
           />
         </div>
@@ -178,7 +168,7 @@ function edoClick(info: MosScaleInfo) {
             id="number-of-small-steps"
             type="number"
             min="1"
-            max="1000"
+            max="999"
             v-model="modal.numberOfSmallSteps"
           />
         </div>

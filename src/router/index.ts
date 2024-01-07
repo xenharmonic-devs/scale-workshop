@@ -37,6 +37,7 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue')
     },
+    /*
     {
       path: '/analysis',
       name: 'analysis',
@@ -52,6 +53,7 @@ const router = createRouter({
       name: 'midi',
       component: () => import('../views/MidiView.vue')
     },
+    */
     {
       path: '/prefs',
       name: 'preferencess',

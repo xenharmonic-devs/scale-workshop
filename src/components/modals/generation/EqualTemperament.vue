@@ -1,19 +1,15 @@
 <script setup lang="ts">
-import { DEFAULT_NUMBER_OF_COMPONENTS, OCTAVE } from '@/constants'
+import { OCTAVE } from '@/constants'
 import { ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
-import { ExtendedMonzo, Interval, Scale } from 'scale-workshop-core'
 import { useModalStore } from '@/stores/modal'
 import { setAndReportValidity } from '@/utils'
+import { useStateStore } from '@/stores/state'
 
-const props = defineProps<{
-  centsFractionDigits: number
-  decimalFractionDigits: number
-}>()
+const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
-const emit = defineEmits(['update:scale', 'update:scaleName', 'cancel'])
-
+const state = useStateStore()
 const modal = useModalStore()
 
 const divisionsElement = ref<HTMLInputElement | null>(null)
@@ -29,33 +25,32 @@ watch(
   }
 )
 
-function generate() {
-  const lineOptions = {
-    centsFractionDigits: props.centsFractionDigits,
-    decimalFractionDigits: props.decimalFractionDigits
-  }
+function generate(expand = true) {
   if (modal.singleStepOnly) {
-    const stepCents = modal.equave.totalCents() / modal.divisions
-    const scale = Scale.fromIntervalArray([
-      new Interval(
-        ExtendedMonzo.fromCents(stepCents, DEFAULT_NUMBER_OF_COMPONENTS),
-        'cents',
-        undefined,
-        lineOptions
-      )
-    ])
-    emit('update:scaleName', `${scale.equave.name} cET`)
-    emit('update:scale', scale)
+    const stepCents = modal.equave.value.totalCents() / modal.divisions
+    const line = stepCents.toFixed(state.centsFractionDigits)
+    emit('update:scaleName', `${line} cET`)
+    emit('update:source', line)
   } else {
-    // Implicit use of safeScaleSize. Note that small subsets of huge EDOs cause no issues.
-    const scale = Scale.fromEqualTemperamentSubset(
-      modal.degrees,
-      modal.equave.mergeOptions(lineOptions)
-    )
-    // Obtain effective divisions from the scale just generated.
-    const effectiveDivisions = scale.getInterval(0).options.preferredEtDenominator
-    emit('update:scaleName', `${effectiveDivisions} equal divisions of ${modal.equave.toString()}`)
-    emit('update:scale', scale)
+    emit('update:scaleName', `${modal.divisions} equal divisions of ${modal.equaveString}`)
+    let source: string
+    if (modal.equave.equals(OCTAVE)) {
+      const edo = modal.divisions;
+      if (expand || !modal.simpleEd) {
+        source = modal.degrees.map(steps => `${steps}\\${edo}`).join('\n')
+      } else {
+        source = `ed(${edo})`
+      }
+    } else {
+      const ed = modal.divisions;
+      const ji = modal.equave.toString();
+      if (expand || !modal.simpleEd) {
+        source = modal.degrees.map(steps => `${steps}\\${ed}<${ji}>`).join('\n')
+      } else {
+        source = `ed(${ed}, ${ji})`
+      }
+    }
+    emit('update:source', source)
   }
 }
 </script>
@@ -105,6 +100,13 @@ function generate() {
             :defaultValue="OCTAVE"
           />
         </div>
+      </div>
+    </template>
+    <template #footer>
+      <div class="btn-group">
+        <button @click="() => generate(true)">OK</button>
+        <button @click="$emit('cancel')">Cancel</button>
+        <button @click="() => generate(false)" :disabled="!modal.simpleEd">Raw</button>
       </div>
     </template>
   </Modal>

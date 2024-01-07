@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { LEFT_MOUSE_BTN } from '@/constants'
-import type { Scale } from 'scale-workshop-core'
+import type { Scale } from '@/scale';
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { valueToCents } from 'xen-dev-utils';
 
 const CIRCLE_RADIUS = 40
 const SCALE_TICK_HEIGHT = 4
@@ -9,6 +10,7 @@ const GENERATOR_TICK_HEIGHT = 5
 
 const props = defineProps<{
   scale: Scale | null
+  labels: string[] | null
   generatorCents: number | null
   periodCents: number | null
   size: number
@@ -22,7 +24,7 @@ const periodCents = computed(() => {
     return props.periodCents
   }
   if (props.scale !== null) {
-    return props.scale.equave.totalCents()
+    return valueToCents(Math.abs(props.scale.equaveRatio))
   }
   return 1200
 })
@@ -33,7 +35,7 @@ const scaleTickDirections = computed(() => {
   }
   const result = []
   for (let i = 1; i < props.scale.size + 1; ++i) {
-    result.push(props.scale.getMonzo(i).totalCents())
+    result.push(valueToCents(Math.abs(props.scale.getRatio(i))))
   }
   const angleScale = (2 * Math.PI) / periodCents.value
   return result
@@ -58,9 +60,9 @@ const scaleTickCoords = computed(() => {
 
 const scaleLabels = computed(() => {
   const result = []
-  let i = 1
+  let i = 0
   for (const [sin, cos] of scaleTickDirections.value) {
-    const name = props.scale!.getName(i++)
+    const name = props.labels ? props.labels[i++] : '·'
     const radius = CIRCLE_RADIUS - 2 * SCALE_TICK_HEIGHT
     result.push({
       x: `${50 + radius * sin}`,
