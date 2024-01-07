@@ -1,15 +1,16 @@
-import type { Scale } from 'scale-workshop-core'
+import type { Interval } from "sonic-weave"
 
 export type ExporterParams = {
   newline: string
-  scale: Scale
   filename: string
+  relativeIntervals: Interval[]
+  baseFrequency: number
   baseMidiNote: number
   midiOctaveOffset: number
   name?: string
   scaleUrl?: string
   description?: string
-  lines?: string[] // May contain invalid lines
+  sourceText?: string // May contain invalid lines
   appTitle?: string
   date?: Date
   format?: 'name' | 'cents' | 'frequency' | 'decimal' | 'degree'
@@ -22,6 +23,24 @@ export type ExporterParams = {
 }
 
 export class BaseExporter {
+  params: ExporterParams
+
+  constructor(params: ExporterParams) {
+    this.params = params
+    this.validateParams()
+  }
+
+  validateParams() {
+    for (const interval of this.params.relativeIntervals) {
+      if (interval.domain === 'cologarithmic') {
+        throw new Error('Cannot export vals.');
+      }
+      if (!interval.isRelative()) {
+        throw new Error('Intervals must be given relative to the base frequency.');
+      }
+    }
+  }
+
   saveFile(filename: string, contents: any, raw = false, mimeType = 'application/octet-stream,') {
     const link = document.createElement('a')
     link.download = filename

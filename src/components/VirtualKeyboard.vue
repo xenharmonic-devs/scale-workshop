@@ -36,7 +36,7 @@ const virtualKeys = computed(() => {
         x,
         y,
         index,
-        color: colors[mmod(index - props.baseMidiNote, colors.length)]
+        color: colors[mmod(index - props.baseMidiNote - 1, colors.length)]
       })
     }
     result.push([y, row])

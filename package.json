@@ -1,6 +1,6 @@
 {
   "name": "scale-workshop",
-  "version": "2.3.6",
+  "version": "3.0.0-alpha.13",
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
@@ -20,13 +20,14 @@
     "moment-of-symmetry": "^0.4.0",
     "pinia": "^2.1.7",
     "qs": "^6.11.2",
-    "scale-workshop-core": "github:xenharmonic-devs/scale-workshop-core#v0.1.2",
     "temperaments": "^0.5.2",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5",
     "webmidi": "^3.1.7",
     "xen-dev-utils": "^0.2.6",
-    "xen-midi": "^0.1.2"
+    "xen-midi": "^0.1.2",
+    "sonic-weave": "github:xenharmonic-devs/sonic-weave",
+    "sw-synth": "^0.1.0"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.6.0",

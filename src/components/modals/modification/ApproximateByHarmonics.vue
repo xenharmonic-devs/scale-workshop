@@ -1,28 +1,30 @@
 <script setup lang="ts">
 import Modal from '@/components/ModalDialog.vue'
-import type { Scale } from 'scale-workshop-core'
 import { useModalStore } from '@/stores/modal'
 import { computed } from 'vue'
-import { centsToValue } from 'xen-dev-utils'
+import { useScaleStore } from '@/stores/scale';
 
-const props = defineProps<{
-  scale: Scale
-}>()
-
-const emit = defineEmits(['update:scale', 'cancel'])
+const emit = defineEmits(['done', 'cancel'])
 
 const modal = useModalStore()
+const scale = useScaleStore()
 
 const maxDenominator = computed(() => {
-  let maxCents = 0
-  for (let i = 0; i < props.scale.size; ++i) {
-    maxCents = Math.max(Math.abs(props.scale.getCents(i)))
+  let maxRatio = 1
+  for (let i = 0; i < scale.scale.size; ++i) {
+    maxRatio = Math.max(maxRatio, Math.abs(scale.scale.getRatio(i)), 1 / Math.abs(scale.scale.getRatio(i)))
   }
-  return Math.floor(Number.MAX_SAFE_INTEGER / centsToValue(maxCents))
+  return Math.floor(Number.MAX_SAFE_INTEGER / maxRatio)
 })
 
-function modify() {
-  emit('update:scale', props.scale.approximateHarmonics(modal.largeInteger))
+function modify(expand = true) {
+  scale.sourceText += `\ntoHarmonics(${modal.largeInteger})`
+  if (expand) {
+    const {visitor, defaults} = scale.getVisitors()
+    scale.sourceText = visitor.expand(defaults)
+  }
+  scale.computeScale();
+  emit('done')
 }
 </script>
 
@@ -44,6 +46,13 @@ function modify() {
             v-model="modal.largeInteger"
           />
         </div>
+      </div>
+    </template>
+    <template #footer>
+      <div class="btn-group">
+        <button @click="modify(true)">OK</button>
+        <button @click="$emit('cancel')">Cancel</button>
+        <button @click="modify(false)">Raw</button>
       </div>
     </template>
   </Modal>
