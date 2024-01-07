@@ -2,8 +2,10 @@
 import { UNIX_NEWLINE, WINDOWS_NEWLINE } from '@/constants'
 
 import { useStateStore } from '@/stores/state'
+import { useScaleStore } from '@/stores/scale'
 
 const state = useStateStore()
+const scale = useScaleStore()
 </script>
 
 <template>
@@ -47,16 +49,6 @@ const state = useStateStore()
               <label for="scheme-dark"> Dark </label>
             </span>
           </div>
-          <div class="control">
-            <label for="midiOctaveOffset">MIDI octave offset</label>
-            <input
-              id="midiOctaveOffset"
-              type="number"
-              class="control"
-              step="1"
-              v-model="state.midiOctaveOffset"
-            />
-          </div>
           <h3>Accidentals</h3>
           <div class="control radio-group">
             <span>
@@ -64,7 +56,7 @@ const state = useStateStore()
                 type="radio"
                 id="accidentals-double"
                 value="double"
-                v-model="state.accidentalPreference"
+                v-model="scale.accidentalPreference"
               />
               <label for="accidentals-double"> Double 𝄫/𝄪</label>
             </span>
@@ -73,7 +65,7 @@ const state = useStateStore()
                 type="radio"
                 id="accidentals-single"
                 value="single"
-                v-model="state.accidentalPreference"
+                v-model="scale.accidentalPreference"
               />
               <label for="accidentals-single"> Single ♭♭/♯♯</label>
             </span>
@@ -82,7 +74,7 @@ const state = useStateStore()
                 type="radio"
                 id="accidentals-ascii"
                 value="ASCII"
-                v-model="state.accidentalPreference"
+                v-model="scale.accidentalPreference"
               />
               <label for="accidentals-single"> ASCII bb/##</label>
             </span>

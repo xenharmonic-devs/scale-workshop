@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import Modal from '@/components/ModalDialog.vue'
-import type { Scale } from 'scale-workshop-core'
 import { useModalStore } from '@/stores/modal'
+import { useScaleStore } from '@/stores/scale';
 
-const props = defineProps<{
-  scale: Scale
-}>()
-
-const emit = defineEmits(['update:scale', 'cancel'])
+const emit = defineEmits(['done', 'cancel'])
 
 const modal = useModalStore()
+const scale = useScaleStore()
 
-function modify() {
-  emit('update:scale', props.scale.approximateSubharmonics(modal.largeInteger))
+function modify(expand = true) {
+  scale.sourceText += `\ntoSubharmonics(${modal.largeInteger})`
+  if (expand) {
+    const {visitor, defaults} = scale.getVisitors()
+    scale.sourceText = visitor.expand(defaults)
+  }
+  scale.computeScale();
+  emit('done')
 }
 </script>
 
@@ -33,6 +36,13 @@ function modify() {
             v-model="modal.largeInteger"
           />
         </div>
+      </div>
+    </template>
+    <template #footer>
+      <div class="btn-group">
+        <button @click="modify(true)">OK</button>
+        <button @click="$emit('cancel')">Cancel</button>
+        <button @click="modify(false)">Raw</button>
       </div>
     </template>
   </Modal>

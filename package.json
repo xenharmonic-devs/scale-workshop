@@ -1,6 +1,6 @@
 {
   "name": "scale-workshop",
-  "version": "2.3.5",
+  "version": "3.0.0-alpha.12",
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
@@ -17,15 +17,16 @@
   "dependencies": {
     "isomorphic-qwerty": "^0.0.2",
     "jszip": "^3.10.1",
-    "moment-of-symmetry": "^0.3.4",
+    "moment-of-symmetry": "github:xenharmonic-devs/moment-of-symmetry#home-mode",
     "pinia": "^2.1.7",
     "qs": "^6.11.2",
-    "scale-workshop-core": "github:xenharmonic-devs/scale-workshop-core#v0.1.1",
-    "temperaments": "^0.4.6",
+    "sonic-weave": "github:xenharmonic-devs/sonic-weave",
+    "sw-synth": "^0.1.0",
+    "temperaments": "github:xenharmonic-devs/temperaments",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5",
     "webmidi": "^3.1.7",
-    "xen-dev-utils": "^0.2.4",
+    "xen-dev-utils": "github:xenharmonic-devs/xen-dev-utils",
     "xen-midi": "^0.1.1"
   },
   "devDependencies": {

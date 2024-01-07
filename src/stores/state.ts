@@ -1,38 +1,11 @@
 import { computed, reactive, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
-import {
-  Interval,
-  Scale,
-  parseLine,
-  type IntervalOptions,
-  reverseParseScale
-} from 'scale-workshop-core'
-import { DEFAULT_NUMBER_OF_COMPONENTS, NUMBER_OF_NOTES, UNIX_NEWLINE } from '@/constants'
+import { DEFAULT_NUMBER_OF_COMPONENTS, UNIX_NEWLINE } from '@/constants'
 import { computeWhiteIndices } from '@/midi'
 import { mapWhiteAsdfBlackQwerty, mapWhiteQweZxcBlack123Asd } from '@/keyboard-mapping'
 import { arraysEqual } from 'xen-dev-utils'
-import type { AccidentalStyle } from '@/utils'
 
 export const useStateStore = defineStore('state', () => {
-  // Nonpersistent state of the application
-  const scaleName = ref('')
-  const scaleLines = ref<string[]>([])
-  const scale = reactive(Scale.fromIntervalArray([parseLine('1/1', DEFAULT_NUMBER_OF_COMPONENTS)]))
-  const baseMidiNote = ref(69)
-  const keyColors = ref([
-    'white',
-    'black',
-    'white',
-    'white',
-    'black',
-    'white',
-    'black',
-    'white',
-    'white',
-    'black',
-    'white',
-    'black'
-  ])
   const isomorphicVertical = ref(5)
   const isomorphicHorizontal = ref(1)
   // Keyboard mode affects both physical qwerty and virtual keyboards
@@ -41,6 +14,7 @@ export const useStateStore = defineStore('state', () => {
   const pianoMode = ref<'Asdf' | 'QweZxc0' | 'QweZxc1'>('Asdf')
   const equaveShift = ref(0)
   const degreeShift = ref(0)
+  // Mapping from MIDI index to number of interfaces currently pressing the key down
   const heldNotes = reactive(new Map<number, number>())
   const typingActive = ref(true)
 
@@ -56,11 +30,7 @@ export const useStateStore = defineStore('state', () => {
   const centsFractionDigits = ref(parseInt(storage.getItem('centsFractionDigits') ?? '3', 10))
   const decimalFractionDigits = ref(parseInt(storage.getItem('decimalFractionDigits') ?? '5', 10))
   const showVirtualQwerty = ref(storage.getItem('showVirtualQwerty') === 'true')
-  const midiOctaveOffset = ref(parseInt(storage.getItem('midiOctaveOffset') ?? '-1', 10))
   const intervalMatrixIndexing = ref(parseInt(storage.getItem('intervalMatrixIndexing') ?? '0', 10))
-  const accidentalPreference = ref<AccidentalStyle>(
-    (localStorage.getItem('accidentalPreference') as AccidentalStyle) ?? 'double'
-  )
 
   // Special keyboard codes also from local storage.
   const deactivationCode = ref(storage.getItem('deactivationCode') ?? 'Backquote')
@@ -69,15 +39,7 @@ export const useStateStore = defineStore('state', () => {
   const degreeUpCode = ref(storage.getItem('degreeUpCode') ?? 'NumpadAdd')
   const degreeDownCode = ref(storage.getItem('degreeDownCode') ?? 'NumpadSubtract')
 
-  // === Computed state ===
-  const frequencies = computed(() =>
-    scale.getFrequencyRange(-baseMidiNote.value, NUMBER_OF_NOTES - baseMidiNote.value)
-  )
-
-  const baseIndex = computed(
-    () => baseMidiNote.value + equaveShift.value * scale.size + degreeShift.value
-  )
-
+  /*
   // For midi mapping
   const whiteIndices = computed(() => computeWhiteIndices(baseMidiNote.value, keyColors.value))
 
@@ -92,55 +54,7 @@ export const useStateStore = defineStore('state', () => {
       return mapWhiteQweZxcBlack123Asd(keyColors.value, size, baseMidiNote.value, baseIndex, 1)
     }
   })
-
-  // === State updates ===
-  function updateFromScaleLines(lines: string[]) {
-    if (arraysEqual(lines, scaleLines.value)) {
-      return
-    }
-    scaleLines.value = lines
-    const intervals: Interval[] = []
-    const options: IntervalOptions = {
-      centsFractionDigits: centsFractionDigits.value,
-      decimalFractionDigits: decimalFractionDigits.value
-    }
-    lines.forEach((line) => {
-      try {
-        const interval = parseLine(line, DEFAULT_NUMBER_OF_COMPONENTS, options)
-        intervals.push(interval)
-      } catch {
-        /* empty */
-      }
-    })
-    if (!intervals.length) {
-      intervals.push(parseLine('1/1', DEFAULT_NUMBER_OF_COMPONENTS, options))
-    }
-
-    const surrogate = Scale.fromIntervalArray(intervals)
-    scale.intervals = surrogate.intervals
-    scale.equave = surrogate.equave
-  }
-
-  function updateFromScale(surrogate: Scale) {
-    scale.intervals = surrogate.intervals
-    scale.equave = surrogate.equave
-    scaleLines.value = reverseParseScale(scale)
-  }
-
-  // Computed wrappers to avoid triggering a watcher loop.
-  const scaleWrapper = computed({
-    get() {
-      return scale
-    },
-    set: updateFromScale
-  })
-
-  const scaleLinesWrapper = computed({
-    get() {
-      return scaleLines.value
-    },
-    set: updateFromScaleLines
-  })
+  */
 
   // Local storage watchers
   watch(newline, (newValue) => window.localStorage.setItem('newline', newValue))
@@ -161,13 +75,9 @@ export const useStateStore = defineStore('state', () => {
   watch(showVirtualQwerty, (newValue) =>
     window.localStorage.setItem('showVirtualQwerty', newValue.toString())
   )
-  watch(midiOctaveOffset, (newValue) =>
-    window.localStorage.setItem('midiOctaveOffset', newValue.toString())
-  )
   watch(intervalMatrixIndexing, (newValue) =>
     window.localStorage.setItem('intervalMatrixIndexing', newValue.toString())
   )
-  watch(accidentalPreference, (newValue) => localStorage.setItem('accidentalPreference', newValue))
   // Store keymaps
   watch(deactivationCode, (newValue) => window.localStorage.setItem('deactivationCode', newValue))
   watch(equaveUpCode, (newValue) => window.localStorage.setItem('equaveUpCode', newValue))
@@ -175,34 +85,8 @@ export const useStateStore = defineStore('state', () => {
   watch(degreeUpCode, (newValue) => window.localStorage.setItem('degreeUpCode', newValue))
   watch(degreeDownCode, (newValue) => window.localStorage.setItem('degreeDownCode', newValue))
 
-  // Sanity watchers
-  watch(baseMidiNote, (newValue) => {
-    if (isNaN(newValue)) {
-      baseMidiNote.value = 69
-    } else if (Math.round(newValue) != newValue) {
-      baseMidiNote.value = Math.round(newValue)
-    }
-  })
-
-  // Methods
-  function getFrequency(index: number) {
-    if (index >= 0 && index < frequencies.value.length) {
-      return frequencies.value[index]
-    } else {
-      // Support more than 128 notes with some additional computational cost
-      return scale.getFrequency(index - baseMidiNote.value)
-    }
-  }
-
   return {
     // Live state
-    scaleName,
-    scaleLinesRaw: scaleLines,
-    scaleLines: scaleLinesWrapper,
-    scaleRaw: scale,
-    scale: scaleWrapper,
-    baseMidiNote,
-    keyColors,
     isomorphicVertical,
     isomorphicHorizontal,
     keyboardMode,
@@ -217,20 +101,14 @@ export const useStateStore = defineStore('state', () => {
     centsFractionDigits,
     decimalFractionDigits,
     showVirtualQwerty,
-    midiOctaveOffset,
     intervalMatrixIndexing,
     deactivationCode,
     equaveUpCode,
     equaveDownCode,
     degreeUpCode,
     degreeDownCode,
-    accidentalPreference,
     // Computed state
-    frequencies,
-    baseIndex,
-    whiteIndices,
-    keyboardMapping,
-    // Methods
-    getFrequency
+    // whiteIndices,
+    // keyboardMapping,
   }
 })

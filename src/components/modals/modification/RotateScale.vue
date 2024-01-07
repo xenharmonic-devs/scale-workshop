@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import Modal from '@/components/ModalDialog.vue'
-import type { Scale } from 'scale-workshop-core'
 import { useModalStore } from '@/stores/modal'
+import { useScaleStore } from '@/stores/scale';
 
-const props = defineProps<{
-  scale: Scale
-}>()
-
-const emit = defineEmits(['update:scale', 'cancel'])
+const emit = defineEmits(['done', 'cancel'])
 
 const modal = useModalStore()
+const scale = useScaleStore()
 
-function modify() {
-  emit('update:scale', props.scale.rotate(modal.newUnison))
+function modify(expand = true) {
+  scale.sourceText += `\nrotate(${modal.newUnison + 1})`
+  if (expand) {
+    const {visitor, defaults} = scale.getVisitors()
+    scale.sourceText = visitor.expand(defaults)
+  }
+  scale.computeScale();
+  emit('done')
 }
 </script>
 
@@ -24,15 +27,21 @@ function modify() {
     <template #body>
       <div class="control-group">
         <div class="control">
-          <p>Rotates the mode of your scale.</p>
-          <p>The resulting scale will be sorted in ascending order.</p>
+          <p>Rotate the mode of your scale.</p>
           <label for="new-unison">New 1/1</label>
           <select id="new-unison" class="control" v-model="modal.newUnison">
-            <option v-for="i of props.scale.size - 1" :key="i" :value="i">
-              {{ props.scale.getName(i) }}
+            <option v-for="label, i of scale.labels" :key="i" :value="i">
+              {{ label }}
             </option>
           </select>
         </div>
+      </div>
+    </template>
+    <template #footer>
+      <div class="btn-group">
+        <button @click="modify(true)">OK</button>
+        <button @click="$emit('cancel')">Cancel</button>
+        <button @click="modify(false)">Raw</button>
       </div>
     </template>
   </Modal>

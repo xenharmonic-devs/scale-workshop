@@ -1,17 +1,17 @@
 import { FIFTH, MAX_GEO_SUBGROUP_SIZE, MAX_INTERACTIVE_SUBGROUP_SIZE, OCTAVE } from '@/constants'
-import { mosPatternsRank2FromCommas, mosPatternsRank2FromVals } from '@/tempering'
-import { computedAndError, parseChordInput, splitText } from '@/utils'
+// import { mosPatternsRank2FromCommas, mosPatternsRank2FromVals } from '@/tempering'
+import { computedAndError, splitText } from '@/utils'
 import { isBright, mosPatterns as getMosPatterns, type MosInfo } from 'moment-of-symmetry'
 import { defineStore } from 'pinia'
-import { ExtendedMonzo, fractionToString } from 'scale-workshop-core'
+import { parseChord, parseVals, type TimeMonzo } from 'sonic-weave'
 import { Subgroup, resolveMonzo, type TuningOptions } from 'temperaments'
 import { computed, ref, watch, type Ref, reactive } from 'vue'
 import { add } from 'xen-dev-utils'
 
-// Split text into (non-extended) monzos
+// Split text into (non-time) monzos
 function splitCommas(text: string) {
-  return parseChordInput(text).map((interval) =>
-    interval.monzo.vector.map((component) => component.valueOf())
+  return parseChord(text).map((interval) =>
+    interval.value.toIntegerMonzo()
   )
 }
 
@@ -30,10 +30,10 @@ function makeState(method: Ref, subgroupStringDefault = '') {
   const constraintsString = ref('')
 
   // === Computed state ===
-  const vals = computed(() => splitText(valsString.value))
 
-  const rawCommas = computed(() => splitText(commasString.value))
-  const commas = computed(() => splitCommas(commasString.value))
+  const [vals, valsError] = computedAndError(() => parseVals(valsString.value, subgroupString.value), [])
+
+  const [commas, commasError] = computedAndError(() => splitCommas(commasString.value), [])
 
   const subgroupDefault = new Subgroup(subgroupStringDefault || [])
   const [subgroup, subgroupError] = computedAndError(() => {
@@ -62,20 +62,30 @@ function makeState(method: Ref, subgroupStringDefault = '') {
 
   const constraints = computed(() => splitText(constraintsString.value))
 
+  const baseOptions: TuningOptions = {
+    primeMapping: true,
+    units: 'cents',
+  };
+
   const options = computed<TuningOptions>(() => {
     if (tempering.value === 'CTE') {
       return {
+        ...baseOptions,
         temperEquaves: true,
         constraints: constraints.value,
         weights: weights.value
       }
     } else if (tempering.value === 'TE') {
       return {
+        ...baseOptions,
         temperEquaves: true,
         weights: weights.value
       }
     } else {
-      return { weights: weights.value }
+      return {
+        ...baseOptions,
+        weights: weights.value
+      }
     }
   })
 
@@ -84,12 +94,12 @@ function makeState(method: Ref, subgroupStringDefault = '') {
   watch(subgroup, (newValue, oldValue) => {
     if (
       !constraintsString.value.length ||
-      (oldValue.basis.length && constraintsString.value === fractionToString(oldValue.basis[0]))
+      (oldValue.basis.length && constraintsString.value === oldValue.basis[0].toFraction())
     ) {
       if (!newValue.basis.length) {
         constraintsString.value = ''
       } else {
-        constraintsString.value = fractionToString(newValue.basis[0])
+        constraintsString.value = newValue.basis[0].toFraction()
       }
     }
   })
@@ -103,8 +113,9 @@ function makeState(method: Ref, subgroupStringDefault = '') {
     tempering,
     constraintsString,
     vals,
-    rawCommas,
+    valsError,
     commas,
+    commasError,
     subgroup,
     weights,
     options
@@ -151,9 +162,11 @@ export const useRank2Store = defineStore('rank2', () => {
   const generatorPerPeriod = computed(
     () => generator.value.totalCents() / period.value.totalCents()
   )
-  const opposite = computed(() =>
-    isBright(generatorPerPeriod.value, size.value / numPeriods.value) ? 'dark' : 'bright'
-  )
+  const opposite = computed(() => {
+    // TODO: Fix everywhere.
+    const s = Math.round(size.value / numPeriods.value) * numPeriods.value
+    return isBright(generatorPerPeriod.value, s) ? 'dark' : 'bright'
+  })
 
   const [mosPatterns, mosPatternsError] = computedAndError(() => {
     if (method.value === 'generator') {
@@ -171,6 +184,8 @@ export const useRank2Store = defineStore('rank2', () => {
       if (subgroup.value.basis.length > MAX_INTERACTIVE_SUBGROUP_SIZE) {
         return expensiveMosPatterns.value
       }
+      return []
+      /*
       return mosPatternsRank2FromVals(
         vals.value,
         subgroup.value,
@@ -178,6 +193,7 @@ export const useRank2Store = defineStore('rank2', () => {
         MAX_LENGTH,
         options.value
       )
+      */
     } else if (method.value === 'commas') {
       // Don't show error in the default configuration
       if (!commas.value.length) {
@@ -187,6 +203,8 @@ export const useRank2Store = defineStore('rank2', () => {
       if (subgroup.value.basis.length > MAX_INTERACTIVE_SUBGROUP_SIZE) {
         return expensiveMosPatterns.value
       }
+      return []
+      /*
       return mosPatternsRank2FromCommas(
         commas.value,
         subgroup.value,
@@ -194,6 +212,7 @@ export const useRank2Store = defineStore('rank2', () => {
         MAX_LENGTH,
         options.value
       )
+      */
     } else {
       return expensiveMosPatterns.value
     }
@@ -270,6 +289,7 @@ export const useRank2Store = defineStore('rank2', () => {
         if (!subgroupString.value.length) {
           throw new Error('A subgroup must be given with vals')
         }
+        /*
         expensiveMosPatterns.value = mosPatternsRank2FromVals(
           vals.value,
           subgroup.value,
@@ -277,7 +297,9 @@ export const useRank2Store = defineStore('rank2', () => {
           MAX_LENGTH,
           options.value
         )
+        */
       } else if (method.value === 'commas') {
+        /*
         expensiveMosPatterns.value = mosPatternsRank2FromCommas(
           commas.value,
           subgroup.value,
@@ -285,6 +307,7 @@ export const useRank2Store = defineStore('rank2', () => {
           MAX_LENGTH,
           options.value
         )
+        */
       } else {
         // Please note that the button to initiate this calculation is not included in the UI due to lack of screen space.
         // The functionality is retained in case we ever tweak the UI.
@@ -340,31 +363,45 @@ export const useLatticeStore = defineStore('lattice', () => {
   const state = makeState(method)
   // method: "generators"
   const basisString = ref('')
-  const dimensions = reactive<number[]>([])
+  const ups = reactive<number[]>([])
+  const downs = reactive<number[]>([])
   const equaveString = ref('2/1')
   const equave = ref(OCTAVE)
   const showAdvanced = ref(false)
 
   const [basis, basisError] = computedAndError(() => {
-    return parseChordInput(basisString.value)
+    return parseChord(basisString.value)
   }, [])
 
   watch(basis, () => {
-    while (dimensions.length < basis.value.length) {
-      dimensions.push(2)
+    while (ups.length < basis.value.length) {
+      ups.push(1)
     }
+    while (downs.length < basis.value.length) {
+      downs.push(0)
+    }
+  })
+
+  const dimensions = computed(() => {
+    const result: number[] = [];
+    for (let i = 0; i < basis.value.length; ++i) {
+      result.push(1 + ups[i] + downs[i]);
+    }
+    return result;
   })
 
   return {
     ...state,
     method,
     basisString,
-    dimensions,
+    ups,
+    downs,
     equaveString,
     equave,
     showAdvanced,
     basis,
-    basisError
+    basisError,
+    dimensions,
   }
 })
 
@@ -374,7 +411,7 @@ export const useTemperStore = defineStore('temper', () => {
   const error = ref('')
   const state = makeState(method)
   // method: "mapping"
-  const mappingString = ref('1200, 1897.2143, 2788.8573')
+  const mappingString = ref('1200., 1897.2143, 2788.8573')
   // method: "vals"
   const convertToEdoSteps = ref(false)
   // Advanced
@@ -383,18 +420,18 @@ export const useTemperStore = defineStore('temper', () => {
   // === Computed state ===
   const vals = state.vals
   const subgroup = state.subgroup
-  const edoUnavailable = computed(() => vals.value.length !== 1)
+  const edoAvailable = computed(() => vals.value.length === 1)
 
-  const constraintsDisabled = computed(() => subgroup.value.basis.length > MAX_GEO_SUBGROUP_SIZE)
+  const constraintsAvailable = computed(() => subgroup.value.basis.length <= MAX_GEO_SUBGROUP_SIZE)
 
   // === Methods ===
 
   // Expand out the residual in the `ExtendedMonzo` and ignore cents offsets
-  function toLongMonzo(monzo: ExtendedMonzo) {
+  function toLongMonzo(monzo: TimeMonzo) {
     const base = resolveMonzo(monzo.residual)
     return add(
       base,
-      monzo.vector.map((component) => component.valueOf())
+      monzo.toIntegerMonzo()
     )
   }
 
@@ -405,8 +442,8 @@ export const useTemperStore = defineStore('temper', () => {
     mappingString,
     convertToEdoSteps,
     showAdvanced,
-    edoUnavailable,
-    constraintsDisabled,
+    edoAvailable,
+    constraintsAvailable,
     toLongMonzo
   }
 })

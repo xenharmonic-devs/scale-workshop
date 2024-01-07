@@ -37,6 +37,7 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue')
     },
+    /*
     {
       path: '/analysis',
       name: 'analysis',
@@ -52,6 +53,7 @@ const router = createRouter({
       name: 'midi',
       component: () => import('../views/MidiView.vue')
     },
+    */
     {
       path: '/prefs',
       name: 'preferencess',
@@ -67,11 +69,13 @@ const router = createRouter({
       name: 'virtualKeyboard',
       component: () => import('../views/VirtualKeyboardView.vue')
     },
+    /*
     {
       path: '/qwerty',
       name: 'qwerty',
       component: () => import('../views/VirtualQwerty.vue')
     },
+    */
     // Root aliases mainly for compatibility with old SW1 URLs.
     {
       path: '/index.html',
@@ -81,12 +85,14 @@ const router = createRouter({
       path: '/index.htm',
       redirect: '/'
     },
+    /*
     // 404 route will match everything and put it under `$route.params.pathMatch`
     {
       path: '/:pathMatch(.*)*',
       name: 'notFound',
       component: () => import('../views/NotFoundView.vue')
     }
+    */
   ]
 })
 

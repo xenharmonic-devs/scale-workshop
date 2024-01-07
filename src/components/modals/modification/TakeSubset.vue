@@ -1,21 +1,19 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
-import type { Scale } from 'scale-workshop-core'
 import { useModalStore } from '@/stores/modal'
+import { useScaleStore } from '@/stores/scale';
+import { arrayToString } from '@/utils';
 
-const props = defineProps<{
-  scale: Scale
-}>()
+const emit = defineEmits(['done', 'cancel'])
 
-const emit = defineEmits(['update:scale', 'cancel'])
-
+const scale = useScaleStore()
 const modal = useModalStore()
 
 const mode = computed(() => {
   const degrees = [...modal.selected.values()]
   degrees.sort((a, b) => a - b)
-  degrees.push(props.scale.size)
+  degrees.push(scale.scale.size)
   const result = []
   for (let i = 1; i < degrees.length; ++i) {
     result.push(degrees[i] - degrees[i - 1])
@@ -27,13 +25,19 @@ const degrees = computed(() => {
   const degrees = [...modal.selected.values()]
   degrees.sort((a, b) => a - b)
   degrees.shift()
-  return degrees.map((degree) => degree.toString()).join(', ') + `, (${props.scale.size})`
+  return degrees.map((degree) => degree.toString()).join(', ') + `, (${scale.scale.size})`
 })
 
-function modify() {
+function modify(expand = true) {
   const subset = [...modal.selected.values()]
   subset.sort((a, b) => a - b)
-  emit('update:scale', props.scale.subset(subset))
+  scale.sourceText += `\nsubset(${arrayToString(subset)})`
+  if (expand) {
+    const {visitor, defaults} = scale.getVisitors()
+    scale.sourceText = visitor.expand(defaults)
+  }
+  scale.computeScale();
+  emit('done')
 }
 </script>
 
@@ -48,17 +52,24 @@ function modify() {
         <label>Selected intervals</label>
         <div class="control">
           <button
-            v-for="i of props.scale.size - 1"
+            v-for="_, i of scale.scale.size"
             :key="i"
             class="degree"
             :class="{ selected: modal.selected.has(i) }"
             @click="modal.toggleSelected(i)"
           >
-            {{ scale.getName(i) }}
+            {{ scale.labels[i] }}
           </button>
         </div>
         <div class="control"><label>Mode </label>{{ mode }}</div>
         <div class="control"><label>Degrees </label>{{ degrees }}</div>
+      </div>
+    </template>
+    <template #footer>
+      <div class="btn-group">
+        <button @click="modify(true)">OK</button>
+        <button @click="$emit('cancel')">Cancel</button>
+        <button @click="modify(false)">Raw</button>
       </div>
     </template>
   </Modal>

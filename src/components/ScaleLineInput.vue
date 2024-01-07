@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
 import { computedAndError } from '@/utils'
-import { parseLine, type Interval } from 'scale-workshop-core'
+import { evaluateExpression, type Interval } from 'sonic-weave';
 import { ref, watch } from 'vue'
 
 const props = defineProps<{
@@ -14,7 +13,7 @@ const emit = defineEmits(['update:value', 'update:modelValue'])
 
 const element = ref<HTMLInputElement | null>(null)
 const [value, error] = computedAndError(
-  () => parseLine(props.modelValue, DEFAULT_NUMBER_OF_COMPONENTS),
+  () => evaluateExpression(props.modelValue),
   props.defaultValue
 )
 watch(value, (newValue) => emit('update:value', newValue), { immediate: true })

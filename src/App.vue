@@ -1,22 +1,26 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, reactive, watch } from 'vue'
 import { RouterLink, RouterView, useRouter, type LocationQuery } from 'vue-router'
-import { NEWLINE_TEST, WHITE_MODE_OFFSET } from '@/constants'
+import { DEFAULT_NUMBER_OF_COMPONENTS, NEWLINE_TEST, WHITE_MODE_OFFSET } from '@/constants'
 import { ScaleWorkshopOneData } from '@/scale-workshop-one'
 import type { Input, Output } from 'webmidi'
 import { MidiIn, midiKeyInfo, MidiOut } from 'xen-midi'
 import { Keyboard, type CoordinateKeyboardEvent } from 'isomorphic-qwerty'
 import { decodeQuery, encodeQuery, type DecodedState } from '@/url-encode'
-import { debounce } from '@/utils'
+import { annotateColors, debounce } from '@/utils'
 import { version } from '../package.json'
 import { useAudioStore } from '@/stores/audio'
 import { useStateStore } from './stores/state'
 import { useMidiStore } from './stores/midi'
+import { useScaleStore } from './stores/scale'
+import { clamp } from 'xen-dev-utils'
+import { parseScaleWorkshop2Line } from 'sonic-weave'
 
 // === Pinia-managed state ===
-const audio = useAudioStore()
 const state = useStateStore()
+const scale = useScaleStore()
 const midi = useMidiStore()
+const audio = useAudioStore()
 
 // == URL path handling ==
 /**
@@ -26,89 +30,11 @@ function getPath(url: URL) {
   return url.pathname.slice(import.meta.env.BASE_URL.length)
 }
 
-// == State encoding ==
 const router = useRouter()
-
-// Flags to prevent infinite decode - watch - encode loops
-let justEncodedUrl = false
-let justDecodedUrl = false
-
-// Debounced to stagger navigation loops if the flags fail
-const encodeState = debounce(() => {
-  // Navigation loop prevention
-  if (justDecodedUrl) {
-    justDecodedUrl = false
-    return
-  }
-  justEncodedUrl = true
-
-  const decodedState: DecodedState = {
-    scaleName: state.scaleName,
-    scaleLines: state.scaleLines,
-    baseFrequency: state.scale.baseFrequency,
-    baseMidiNote: state.baseMidiNote,
-    keyColors: state.keyColors,
-    isomorphicHorizontal: state.isomorphicHorizontal,
-    isomorphicVertical: state.isomorphicVertical,
-    keyboardMode: state.keyboardMode,
-    pianoMode: state.pianoMode,
-    equaveShift: state.equaveShift,
-    degreeShift: state.degreeShift,
-    waveform: audio.waveform,
-    attackTime: audio.attackTime,
-    decayTime: audio.decayTime,
-    sustainLevel: audio.sustainLevel,
-    releaseTime: audio.releaseTime,
-    pingPongDelayTime: audio.pingPongDelayTime,
-    pingPongFeedback: audio.pingPongFeedback,
-    pingPongSeparation: audio.pingPongSeparation,
-    pingPongGain: audio.pingPongGain
-  }
-
-  const query = encodeQuery(decodedState) as LocationQuery
-  query.version = version
-
-  // XXX: There are some sporadic issues with useRoute().fullPath
-  // so we use native URL.pathname.
-  const url = new URL(window.location.href)
-
-  router.push({ path: getPath(url), query })
-}, 200)
-
-watch(
-  () => [
-    state.scaleName,
-    state.scaleLines,
-    state.scale.baseFrequency,
-    state.baseMidiNote,
-    state.keyColors,
-    state.isomorphicHorizontal,
-    state.isomorphicVertical,
-    state.keyboardMode,
-    state.pianoMode,
-    state.equaveShift,
-    state.degreeShift,
-    audio.waveform,
-    audio.attackTime,
-    audio.decayTime,
-    audio.sustainLevel,
-    audio.releaseTime,
-    audio.pingPongDelayTime,
-    audio.pingPongFeedback,
-    audio.pingPongSeparation,
-    audio.pingPongGain
-  ],
-  encodeState
-)
 
 // == State decoding ==
 router.afterEach((to, from) => {
   if (to.fullPath === from.fullPath) {
-    return
-  }
-  // Navigation loop prevention
-  if (justEncodedUrl) {
-    justEncodedUrl = false
     return
   }
 
@@ -116,20 +42,18 @@ router.afterEach((to, from) => {
   // so we use native URL.searchParams.
   const url = new URL(window.location.href)
   const query = url.searchParams
-  if (query.has('version')) {
+  if (query.has('version') && query.get('version')!.startsWith('2.')) {
     try {
       const decodedState = decodeQuery(query)
-      justDecodedUrl = true
 
-      state.scaleName = decodedState.scaleName
-      state.scale.baseFrequency = decodedState.baseFrequency
-      state.baseMidiNote = decodedState.baseMidiNote
-      state.keyColors = decodedState.keyColors
+      scale.name = decodedState.scaleName
+      scale.baseFrequency = decodedState.baseFrequency
+      scale.autoFrequency = false
+      scale.baseMidiNote = decodedState.baseMidiNote
       state.isomorphicHorizontal = decodedState.isomorphicHorizontal
       state.isomorphicVertical = decodedState.isomorphicVertical
       state.keyboardMode = decodedState.keyboardMode
       state.pianoMode = decodedState.pianoMode
-      state.scaleLines = decodedState.scaleLines
       state.equaveShift = decodedState.equaveShift
       state.degreeShift = decodedState.degreeShift
       audio.waveform = decodedState.waveform
@@ -141,6 +65,15 @@ router.afterEach((to, from) => {
       audio.pingPongFeedback = decodedState.pingPongFeedback
       audio.pingPongSeparation = decodedState.pingPongSeparation
       audio.pingPongGain = decodedState.pingPongGain
+
+      // The decoder speaks Scale Workshop 2. Translate to SonicWeave.
+      const sourceLines = decodedState.scaleLines.map(l => parseScaleWorkshop2Line(l, DEFAULT_NUMBER_OF_COMPONENTS).toString())
+      annotateColors(sourceLines, decodedState.keyColors)
+      scale.sourceText = sourceLines.join('\n');
+      scale.computeScale();
+
+      // Replace query with version 3.
+      router.push({ path: getPath(url), query: { version } })
     } catch (error) {
       console.error(`Error parsing version ${query.get('version')} URL`, error)
     }
@@ -148,49 +81,28 @@ router.afterEach((to, from) => {
 })
 
 // === Tuning table highlighting ===
-// We use hacks to bypass Vue state management for real-time gains
 function tuningTableKeyOn(index: number) {
-  if (index >= 0 && index < 128) {
-    let tuningTableRow = (window as any).TUNING_TABLE_ROWS[index]
-    if (tuningTableRow === undefined) {
-      tuningTableRow = { heldKeys: 0, element: null }
-    }
-    tuningTableRow.heldKeys++
-    if (tuningTableRow.element?._rawValue) {
-      tuningTableRow.element._rawValue.classList.add('active')
-    }
-    ;(window as any).TUNING_TABLE_ROWS[index] = tuningTableRow
-  }
-  // Virtual keyboard state is too complex so we take the performance hit.
   state.heldNotes.set(index, (state.heldNotes.get(index) ?? 0) + 1)
 }
 
 function tuningTableKeyOff(index: number) {
-  if (index >= 0 && index < 128) {
-    let tuningTableRow = (window as any).TUNING_TABLE_ROWS[index]
-    if (tuningTableRow === undefined) {
-      tuningTableRow = { heldKeys: 0, element: null }
-    }
-    tuningTableRow.heldKeys--
-    if (tuningTableRow.element?._rawValue) {
-      if (!tuningTableRow.heldKeys) {
-        tuningTableRow.element._rawValue.classList.remove('active')
-      }
-      ;(window as any).TUNING_TABLE_ROWS[index] = tuningTableRow
-    }
-  }
   state.heldNotes.set(index, Math.max(0, (state.heldNotes.get(index) ?? 0) - 1))
 }
 
 // === MIDI input / output ===
 
-const midiOut = computed(() => new MidiOut(midi.output as Output, midi.outputChannels))
+
+// const midiOut = computed(() => new MidiOut(midi.output as Output, midi.outputChannels))
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function emptyOff(rawRelease: number) {}
 
 function sendNoteOn(frequency: number, rawAttack: number) {
-  const midiOff = midiOut.value.sendNoteOn(frequency, rawAttack)
+  frequency = clamp(-24000, 24000, frequency);
+  // const midiOff = midiOut.value.sendNoteOn(frequency, rawAttack)
 
   if (audio.synth === null || audio.virtualSynth === null) {
-    return midiOff
+    return emptyOff;
   }
 
   // Trigger web audio API synth.
@@ -199,15 +111,16 @@ function sendNoteOn(frequency: number, rawAttack: number) {
   // Trigger virtual synth for per-voice visualization.
   const virtualOff = audio.virtualSynth.voiceOn(frequency)
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const off = (rawRelease: number) => {
-    midiOff(rawRelease)
+    // midiOff(rawRelease)
     synthOff()
     virtualOff()
   }
 
   return off
 }
-
+/*
 function midiNoteOn(index: number, rawAttack?: number) {
   if (rawAttack === undefined) {
     rawAttack = 80
@@ -331,11 +244,12 @@ watch(
     }
   }
 )
+*/
 
 // === Virtual and typing keyboard ===
 function keyboardNoteOn(index: number) {
   tuningTableKeyOn(index)
-  const noteOff = sendNoteOn(state.getFrequency(index), 80)
+  const noteOff = sendNoteOn(scale.getFrequency(index), 80)
   function keyOff() {
     tuningTableKeyOff(index)
     return noteOff(80)
@@ -346,7 +260,7 @@ function keyboardNoteOn(index: number) {
 // === Typing keyboard state ===
 function windowKeydownOrUp(event: KeyboardEvent | MouseEvent) {
   // Audio context must be initialized as a response to user gesture
-  audio.initialize()
+  setTimeout(() => audio.initialize(), 1)
 
   const target = event.target
   // Keep typing activated while adjusting sliders
@@ -431,17 +345,17 @@ function typingKeydown(event: CoordinateKeyboardEvent) {
     return emptyKeyup
   }
 
-  let index = state.baseMidiNote + state.scale.size * state.equaveShift
+  let index = scale.baseMidiNote + scale.scale.size * state.equaveShift
 
   if (state.keyboardMode === 'isomorphic') {
     index += state.degreeShift + x * state.isomorphicHorizontal + (2 - y) * state.isomorphicVertical
   } else {
-    if (state.keyboardMapping.has(event.code)) {
+    /* if (state.keyboardMapping.has(event.code)) {
       index = state.keyboardMapping.get(event.code)!
-    } else {
+    } else {*/
       // No user mapping for the key, bail out
       return emptyKeyup
-    }
+    // }
   }
 
   return keyboardNoteOn(index)
@@ -465,25 +379,26 @@ onMounted(() => {
   if (![...query.keys()].length) {
     router.push({ path: getPath(url), query: { version } })
   }
+  // TODO: Move SW2 here
   // Scale Workshop 1 compatibility
   else if (!query.has('version')) {
     try {
       const scaleWorkshopOneData = new ScaleWorkshopOneData()
 
-      state.scaleName = scaleWorkshopOneData.name
-      state.scale.baseFrequency = scaleWorkshopOneData.freq
-      state.baseMidiNote = scaleWorkshopOneData.midi
+      scale.name = scaleWorkshopOneData.name
+      // scale.baseFrequency = scaleWorkshopOneData.freq
+      scale.baseMidiNote = scaleWorkshopOneData.midi
       state.isomorphicHorizontal = scaleWorkshopOneData.horizontal
       state.isomorphicVertical = scaleWorkshopOneData.vertical
-      if (scaleWorkshopOneData.colors !== undefined) {
-        state.keyColors = scaleWorkshopOneData.colors.split(' ')
-      }
-
+      
       if (scaleWorkshopOneData.data !== undefined) {
-        // Check that the scale is valid by attempting a parse
-        scaleWorkshopOneData.parseTuningData()
-        // Store raw text lines
-        state.scaleLines = scaleWorkshopOneData.data.split(NEWLINE_TEST)
+        const colors = scaleWorkshopOneData.colors ?? ''
+        const intervals = scaleWorkshopOneData.parseTuningData()
+        // Convert to raw text
+        const sourceLines = intervals.map(i => i.toString())
+        annotateColors(sourceLines, colors.split(' '))
+        scale.sourceText = sourceLines.join('\n')
+        scale.computeScale()
       }
 
       audio.waveform = scaleWorkshopOneData.waveform || 'semisine'
@@ -491,6 +406,9 @@ onMounted(() => {
       audio.decayTime = scaleWorkshopOneData.decayTime
       audio.sustainLevel = scaleWorkshopOneData.sustainLevel
       audio.releaseTime = scaleWorkshopOneData.releaseTime
+
+      // Replace query with version 3.
+      router.push({ path: getPath(url), query: { version } })
     } catch (error) {
       console.error('Error parsing version 1 URL', error)
     }
@@ -514,7 +432,7 @@ onUnmounted(() => {
 function panic() {
   console.log('Firing global key off.')
   typingKeyboard.deactivate()
-  midiIn.deactivate()
+  // midiIn.deactivate()
   if (midi.output !== null) {
     midi.output.sendAllNotesOff({
       channels: [...midi.outputChannels]
@@ -533,14 +451,14 @@ function panic() {
         <RouterLink to="/about"><strong>Sw</strong></RouterLink>
       </li>
       <li><RouterLink to="/">Build Scale</RouterLink></li>
-      <li><RouterLink to="/analysis">Analysis</RouterLink></li>
-      <li><RouterLink to="/lattice">Lattice</RouterLink></li>
+      <!--<li><RouterLink to="/analysis">Analysis</RouterLink></li>
+      <li><RouterLink to="/lattice">Lattice</RouterLink></li>-->
       <li><RouterLink to="/vk">Virtual Keyboard</RouterLink></li>
-      <li v-if="state.showVirtualQwerty">
+      <!--<li v-if="state.showVirtualQwerty">
         <RouterLink to="/qwerty">Virtual QWERTY</RouterLink>
-      </li>
+      </li>-->
       <li><RouterLink to="/synth">Synth</RouterLink></li>
-      <li><RouterLink to="/midi">MIDI I/O</RouterLink></li>
+      <!--<li><RouterLink to="/midi">MIDI I/O</RouterLink></li>-->
       <li><RouterLink to="/prefs">Preferences</RouterLink></li>
     </ul>
     <div id="app-tray" class="hidden-sm">
@@ -560,7 +478,6 @@ function panic() {
   </nav>
   <RouterView
     :noteOn="keyboardNoteOn"
-    :midiInputChannels="midiInputChannels"
     :typingKeyboard="typingKeyboard"
     @panic="panic"
   />
@@ -568,6 +485,7 @@ function panic() {
 
 <style>
 @import '@/assets/base.css';
+@import '@/assets/main.css';
 
 #app {
   display: flex;

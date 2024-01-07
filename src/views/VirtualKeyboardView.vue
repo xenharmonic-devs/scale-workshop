@@ -2,12 +2,19 @@
 import VirtualKeyboard from '@/components/VirtualKeyboard.vue'
 import VirtualPiano from '@/components/VirtualPiano.vue'
 import { useStateStore } from '@/stores/state'
+import { useScaleStore } from '@/stores/scale'
+import { computed } from 'vue';
 
 defineProps<{
   noteOn: NoteOnCallback
 }>()
 
 const state = useStateStore()
+const scale = useScaleStore()
+
+const baseIndex = computed(
+  () => scale.baseMidiNote + state.equaveShift * scale.scale.size + state.degreeShift
+)
 
 type NoteOff = () => void
 type NoteOnCallback = (index: number) => NoteOff
@@ -17,19 +24,19 @@ type NoteOnCallback = (index: number) => NoteOff
   <main>
     <VirtualPiano
       v-if="state.keyboardMode === 'piano'"
-      :baseIndex="state.baseIndex"
-      :baseMidiNote="state.baseMidiNote"
-      :keyColors="state.keyColors"
+      :baseIndex="baseIndex"
+      :baseMidiNote="scale.baseMidiNote"
+      :keyColors="scale.colors"
       :noteOn="noteOn"
       :heldNotes="state.heldNotes"
     ></VirtualPiano>
     <VirtualKeyboard
       v-else
-      :baseIndex="state.baseIndex"
-      :baseMidiNote="state.baseMidiNote"
+      :baseIndex="baseIndex"
+      :baseMidiNote="scale.baseMidiNote"
       :isomorphicHorizontal="state.isomorphicHorizontal"
       :isomorphicVertical="state.isomorphicVertical"
-      :keyColors="state.keyColors"
+      :keyColors="scale.colors"
       :noteOn="noteOn"
       :heldNotes="state.heldNotes"
     ></VirtualKeyboard>

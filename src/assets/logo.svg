@@ -55,7 +55,7 @@
      id="layer1"
      transform="translate(0,-161.53332)">
     <path
-       style="fill:#008080;fill-opacity:1;stroke:none;stroke-width:22.92934418;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       style="fill:#803080;fill-opacity:1;stroke:#801080;stroke-width:22.92934418;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
        d="M 0,161.53333 H 135.46666 V 296.99998 H 0 Z"
        id="rect873" />
     <g
