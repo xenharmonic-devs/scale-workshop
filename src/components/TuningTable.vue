@@ -15,12 +15,11 @@ const rows = computed(() => {
   const colors = props.keyColors.length ? props.keyColors : ['white']
   return props.frequencies.map((frequency, i) => {
     const index = i - props.baseMidiNote
-    const monzo = props.scale.getMonzo(index)
     return {
       index: i,
       frequency: frequency,
-      cents: monzo.toCents(),
-      ratio: monzo.valueOf(),
+      cents: props.scale.getCents(index),
+      ratio: props.scale.getRatio(index),
       name: props.scale.getName(index),
       keyColor: colors[mmod(index, colors.length)],
       isRoot: index === 0,
