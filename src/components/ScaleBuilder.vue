@@ -12,6 +12,8 @@ import { importFile, type ImporterKey } from '@/importers'
 import { mtof } from 'xen-dev-utils'
 import type { Scale } from 'scale-workshop-core'
 import { useStateStore } from '@/stores/state'
+import { useModalStore } from '@/stores/modal'
+import { useApproximateByRatiosStore } from '@/stores/approximate-by-ratios'
 
 // Export
 const KorgExportModal = defineAsyncComponent(
@@ -95,6 +97,8 @@ const TemperModal = defineAsyncComponent(
 )
 
 const state = useStateStore()
+const modal = useModalStore()
+const approx = useApproximateByRatiosStore()
 
 const joinedLines = computed({
   get() {
@@ -261,9 +265,19 @@ function clickInvert() {
   scaleDataArea.value!.focus()
 }
 
+function clickRotate() {
+  modal.initialize(state.scale.size)
+  showRotateModal.value = true
+}
+
 function clickSubset() {
-  subsetModal.value.initialize()
+  modal.initialize(state.scale.size)
   showSubsetModal.value = true
+}
+
+function clickApproximateByRatios() {
+  approx.initialize()
+  showApproximateByRatiosModal.value = true
 }
 
 function clickShareUrl() {
@@ -345,13 +359,11 @@ function confirmPreset() {
             <a href="#" @click="sortAscending"><li>Sort ascending</li></a>
             <a href="#" @click="clickReduce"><li>Reduce</li></a>
             <a href="#" @click="clickInvert"><li>Invert</li></a>
-            <a href="#" @click="showRotateModal = true"><li>Rotate</li></a>
+            <a href="#" @click="clickRotate"><li>Rotate</li></a>
             <a href="#" @click="clickSubset"><li>Subset</li></a>
             <a href="#" @click="showStretchModal = true"><li>Stretch/compress</li></a>
             <a href="#" @click="showRandomVarianceModal = true"><li>Random variance</li></a>
-            <a href="#" @click="showApproximateByRatiosModal = true"
-              ><li>Approximate by ratios</li></a
-            >
+            <a href="#" @click="clickApproximateByRatios"><li>Approximate by ratios</li></a>
             <a href="#" @click="showApproximateByHarmonicsModal = true"
               ><li>Approximate by harmonics</li></a
             >

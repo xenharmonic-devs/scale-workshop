@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import type { Scale } from 'scale-workshop-core'
+import { useModalStore } from '@/stores/modal'
 
 const props = defineProps<{
   scale: Scale
@@ -9,10 +9,10 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:scale', 'cancel'])
 
-const divisions = ref(22)
+const modal = useModalStore()
 
 function modify() {
-  emit('update:scale', props.scale.approximateEqualTemperament(divisions.value))
+  emit('update:scale', props.scale.approximateEqualTemperament(modal.largeDivisions))
 }
 </script>
 
@@ -29,7 +29,13 @@ function modify() {
         </p>
         <div class="control">
           <label for="divisions">Number of equal divisions</label>
-          <input id="divisions" type="number" min="1" class="control" v-model="divisions" />
+          <input
+            id="divisions"
+            type="number"
+            min="1"
+            class="control"
+            v-model="modal.largeDivisions"
+          />
         </div>
       </div>
     </template>

@@ -1,32 +1,27 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
-import { ExtendedMonzo, Interval, type Scale } from 'scale-workshop-core'
-import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
+import { Interval, type Scale } from 'scale-workshop-core'
+import { useModalStore } from '@/stores/modal'
+import { THIRD } from '@/constants'
 
 const props = defineProps<{
   scale: Scale
 }>()
 
-const THIRD = new Interval(ExtendedMonzo.fromFraction('5/4', DEFAULT_NUMBER_OF_COMPONENTS), 'ratio')
-
 const emit = defineEmits(['update:scale', 'cancel'])
 
-const offset = ref(THIRD)
-const offsetString = ref('')
-// Overflow = "none" is too similar to "reduce" to be included in the UI.
-const overflowType = ref<'none' | 'intuitive' | 'filter' | 'reduce'>('filter')
+const modal = useModalStore()
 
 function modify() {
-  let transposed = props.scale.transpose(offset.value)
-  if (overflowType.value === 'filter') {
+  let transposed = props.scale.transpose(modal.offset)
+  if (modal.overflowType === 'filter') {
     transposed = transposed.filter()
-  } else if (overflowType.value === 'reduce') {
+  } else if (modal.overflowType === 'reduce') {
     transposed = transposed.reduce()
   }
   let scale: Scale
-  if (overflowType.value === 'intuitive') {
+  if (modal.overflowType === 'intuitive') {
     scale = props.scale.variant([...props.scale.intervals])
     let unison: Interval
     if (scale.intervals.length) {
@@ -65,25 +60,30 @@ function modify() {
           <ScaleLineInput
             id="offset"
             placeholder="5/4"
-            v-model="offsetString"
+            v-model="modal.offsetString"
             :defaultValue="THIRD"
-            @update:value="offset = $event"
+            @update:value="modal.offset = $event"
           />
         </div>
         <div class="control radio-group">
           <label>Overflow</label>
           <span>
-            <input type="radio" id="overflow-intuitive" value="intuitive" v-model="overflowType" />
+            <input
+              type="radio"
+              id="overflow-intuitive"
+              value="intuitive"
+              v-model="modal.overflowType"
+            />
             <label for="overflow-intuitive"> Keep </label>
           </span>
 
           <span>
-            <input type="radio" id="overflow-filter" value="filter" v-model="overflowType" />
+            <input type="radio" id="overflow-filter" value="filter" v-model="modal.overflowType" />
             <label for="method-vals"> Drop </label>
           </span>
 
           <span>
-            <input type="radio" id="overflow-reduce" value="reduce" v-model="overflowType" />
+            <input type="radio" id="overflow-reduce" value="reduce" v-model="modal.overflowType" />
             <label for="overflow-reduce"> Wrap </label>
           </span>
         </div>
