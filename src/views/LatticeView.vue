@@ -1,21 +1,16 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { Scale } from 'scale-workshop-core'
 import { mmod } from 'xen-dev-utils'
 import ScaleLattice from '@/components/ScaleLattice.vue'
+import { useStateStore } from '@/stores/state'
 
-const props = defineProps<{
-  scale: Scale
-  baseMidiNote: number
-  keyColors: string[]
-  heldNotes: Map<number, number>
-}>()
+const state = useStateStore()
 
 const heldScaleDegrees = computed(() => {
   const result: Set<number> = new Set()
-  for (const tableIndex of props.heldNotes.keys()) {
-    if (props.heldNotes.get(tableIndex)! > 0) {
-      result.add(mmod(tableIndex - props.baseMidiNote, props.scale.size))
+  for (const tableIndex of state.heldNotes.keys()) {
+    if (state.heldNotes.get(tableIndex)! > 0) {
+      result.add(mmod(tableIndex - state.baseMidiNote, state.scale.size))
     }
   }
   return result
@@ -25,7 +20,7 @@ const heldScaleDegrees = computed(() => {
 <template>
   <main>
     <h2>Lattice visualization</h2>
-    <ScaleLattice :scale="scale" :heldScaleDegrees="heldScaleDegrees" />
+    <ScaleLattice :scale="state.scale" :heldScaleDegrees="heldScaleDegrees" />
   </main>
 </template>
 

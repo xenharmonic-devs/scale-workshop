@@ -11,6 +11,7 @@ import { presets, presetsByGroup } from '@/presets'
 import { importFile, type ImporterKey } from '@/importers'
 import { mtof } from 'xen-dev-utils'
 import type { Scale } from 'scale-workshop-core'
+import { useStateStore } from '@/stores/state'
 
 // Export
 const KorgExportModal = defineAsyncComponent(
@@ -93,64 +94,40 @@ const TemperModal = defineAsyncComponent(
   () => import('@/components/modals/modification/TemperScale.vue')
 )
 
-const props = defineProps<{
-  scaleName: string
-  scaleLines: string[]
-  baseMidiNote: number
-  keyColors: string[]
-
-  scale: Scale
-  frequencies: number[]
-
-  centsFractionDigits: number
-  decimalFractionDigits: number
-  newline: string
-
-  midiOctaveOffset: number
-}>()
-
-const emit = defineEmits([
-  'update:scaleName',
-  'update:scaleLines',
-  'update:scale',
-  'update:baseFrequency',
-  'update:baseMidiNote',
-  'update:keyColors'
-])
+const state = useStateStore()
 
 const joinedLines = computed({
   get() {
-    return props.scaleLines.join('\n')
+    return state.scaleLines.join('\n')
   },
-  set: debounce((newValue: string) => emit('update:scaleLines', newValue.split('\n')))
+  set: debounce((newValue: string) => {
+    state.scaleLines = newValue.split('\n')
+  })
 })
 
 const joinedKeyColors = computed({
   get() {
-    return props.keyColors.join(' ')
+    return state.keyColors.join(' ')
   },
-  set: debounce((newValue: string) => emit('update:keyColors', newValue.split(' ')))
-})
-
-const scaleName = computed({
-  get: () => props.scaleName,
-  set: (newValue: string) => emit('update:scaleName', newValue)
+  set: debounce((newValue: string) => {
+    state.keyColors = newValue.split(' ')
+  })
 })
 
 const baseFrequency = computed({
-  get: () => props.scale.baseFrequency,
+  get: () => state.scale.baseFrequency,
   set: debounce((newValue: number) => {
     if (typeof newValue === 'number' && !isNaN(newValue) && isFinite(newValue)) {
-      emit('update:baseFrequency', newValue)
+      state.scale.baseFrequency = newValue
     }
   })
 })
 
 const baseMidiNote = computed({
-  get: () => props.baseMidiNote,
+  get: () => state.baseMidiNote,
   set: debounce((newValue: number) => {
     if (typeof newValue === 'number' && !isNaN(newValue)) {
-      emit('update:baseMidiNote', newValue)
+      state.baseMidiNote = newValue
     }
   })
 })
@@ -158,7 +135,7 @@ const baseMidiNote = computed({
 const midiNoteNumber = ref<HTMLInputElement | null>(null)
 
 function autoFrequency() {
-  let baseMidiNote = props.baseMidiNote
+  let baseMidiNote = state.baseMidiNote
   if (midiNoteNumber.value !== null) {
     // Circumvent debouncing for this simple click
     baseMidiNote = parseInt(midiNoteNumber.value.value)
@@ -167,20 +144,20 @@ function autoFrequency() {
     }
   }
 
-  emit('update:baseFrequency', mtof(baseMidiNote))
+  state.scale.baseFrequency = mtof(baseMidiNote)
 }
 
 function doExport(exporter: ExporterKey) {
   const params = {
-    newline: props.newline,
-    name: props.scaleName,
+    newline: state.newline,
+    name: state.scaleName,
     scaleUrl: window.location.href,
-    scale: props.scale,
-    filename: sanitizeFilename(props.scaleName),
-    baseMidiNote: props.baseMidiNote,
-    midiOctaveOffset: props.midiOctaveOffset,
-    description: props.scaleName,
-    lines: props.scaleLines,
+    scale: state.scale,
+    filename: sanitizeFilename(state.scaleName),
+    baseMidiNote: state.baseMidiNote,
+    midiOctaveOffset: state.midiOctaveOffset,
+    description: state.scaleName,
+    lines: state.scaleLines,
     appTitle: APP_TITLE,
     date: new Date()
   }
@@ -199,11 +176,11 @@ const presetSelect = ref<HTMLSelectElement | null>(null)
 const showPresetModal = ref(false)
 function selectPreset() {
   const preset = presets[presetSelect.value!.value]
-  emit('update:scaleName', preset.name)
-  emit('update:scaleLines', preset.lines)
-  emit('update:baseFrequency', preset.baseFrequency)
-  emit('update:baseMidiNote', preset.baseMidiNote)
-  emit('update:keyColors', preset.keyColors)
+  state.scaleName = preset.name
+  state.scaleLines = preset.lines
+  state.scale.baseFrequency = preset.baseFrequency
+  state.baseMidiNote = preset.baseMidiNote
+  state.keyColors = preset.keyColors
 }
 
 const showEqualTemperamentModal = ref(false)
@@ -241,15 +218,15 @@ const exportTextClipboard = ref("Copy this scale's unique URL to clipboard")
 
 async function doImport(importerKey: ImporterKey, event: Event) {
   const result = await importFile(importerKey, event)
-  emit('update:scaleLines', result.scale.toStrings())
+  state.scaleLines = result.scale.toStrings()
   if (importerKey != 'scalascl') {
-    emit('update:baseFrequency', result.scale.baseFrequency)
+    state.scale.baseFrequency = result.scale.baseFrequency
   }
   if (result.name !== undefined) {
-    emit('update:scaleName', result.name)
+    state.scaleName = result.name
   }
   if (result.baseMidiNote !== undefined) {
-    emit('update:baseMidiNote', result.baseMidiNote)
+    state.baseMidiNote = result.baseMidiNote
   }
 }
 
@@ -269,17 +246,17 @@ function clearScale() {
 }
 
 function sortAscending() {
-  emit('update:scale', props.scale.sorted())
+  state.scale = state.scale.sorted()
   scaleDataArea.value!.focus()
 }
 
 function clickReduce() {
-  emit('update:scale', props.scale.reduce())
+  state.scale = state.scale.reduce()
   scaleDataArea.value!.focus()
 }
 
 function clickInvert() {
-  emit('update:scale', props.scale.invert())
+  state.scale = state.scale.invert()
   scaleDataArea.value!.focus()
 }
 
@@ -294,7 +271,7 @@ function clickShareUrl() {
 }
 
 function updateScaleAndHideModals(scale: Scale) {
-  emit('update:scale', scale)
+  state.scale = scale
   showRankTwoModal.value = false
   showEqualTemperamentModal.value = false
   showHarmonicSeriesModal.value = false
@@ -332,7 +309,7 @@ function confirmPreset() {
         id="scale-name"
         rows="1"
         placeholder="Untitled scale"
-        v-model="scaleName"
+        v-model="state.scaleName"
       ></textarea>
 
       <ul class="btn-group">
@@ -395,7 +372,7 @@ function confirmPreset() {
         </div>
       </div>
 
-      <ScaleRule :scale="props.scale" />
+      <ScaleRule :scale="state.scale" />
 
       <div class="control-group">
         <h2>Tuning</h2>
@@ -424,7 +401,7 @@ function confirmPreset() {
             step="1"
             v-model="baseMidiNote"
           />
-          <span>{{ midiNoteNumberToName(baseMidiNote, props.midiOctaveOffset) }}</span>
+          <span>{{ midiNoteNumberToName(baseMidiNote, state.midiOctaveOffset) }}</span>
         </div>
 
         <!-- This control is for the 3rd field that is found at the top of kbm files -->
@@ -451,16 +428,16 @@ function confirmPreset() {
           <textarea v-model="joinedKeyColors"></textarea>
         </div>
         <div class="control">
-          <button @click="$emit('update:keyColors', autoKeyColors(props.scale.size))">Auto</button>
+          <button @click="state.keyColors = autoKeyColors(state.scale.size)">Auto</button>
         </div>
       </div>
     </div>
     <TuningTable
-      :scale="scale"
-      :frequencies="frequencies"
-      :lines="props.scaleLines"
-      :baseMidiNote="props.baseMidiNote"
-      :keyColors="props.keyColors"
+      :scale="state.scale"
+      :frequencies="state.frequencies"
+      :lines="state.scaleLines"
+      :baseMidiNote="state.baseMidiNote"
+      :keyColors="state.keyColors"
     />
     <div class="column exporters">
       <h2>Export current settings</h2>
@@ -559,134 +536,135 @@ function confirmPreset() {
       v-if="showKorgExportModal"
       @confirm="showKorgExportModal = false"
       @cancel="showKorgExportModal = false"
-      :newline="props.newline"
-      :scaleName="scaleName"
+      :newline="state.newline"
+      :scaleName="state.scaleName"
       :baseMidiNote="baseMidiNote"
-      :midiOctaveOffset="midiOctaveOffset"
-      :scale="scale"
+      :midiOctaveOffset="state.midiOctaveOffset"
+      :scale="state.scale"
     />
 
     <ReaperExportModal
       v-if="showReaperExportModal"
       @confirm="showReaperExportModal = false"
       @cancel="showReaperExportModal = false"
-      :newline="props.newline"
-      :scaleName="scaleName"
+      :newline="state.newline"
+      :scaleName="state.scaleName"
       :baseMidiNote="baseMidiNote"
-      :midiOctaveOffset="midiOctaveOffset"
-      :scale="scale"
+      :midiOctaveOffset="state.midiOctaveOffset"
+      :scale="state.scale"
     />
 
     <MtsSysexExportModal
       v-if="showMtsSysexExportModal"
       @confirm="showMtsSysexExportModal = false"
       @cancel="showMtsSysexExportModal = false"
-      :newline="props.newline"
-      :scaleName="scaleName"
+      :newline="state.newline"
+      :scaleName="state.scaleName"
       :baseMidiNote="baseMidiNote"
-      :midiOctaveOffset="midiOctaveOffset"
-      :scale="scale"
+      :midiOctaveOffset="state.midiOctaveOffset"
+      :scale="state.scale"
     />
 
     <RankTwoModal
       v-if="showRankTwoModal"
-      :centsFractionDigits="centsFractionDigits"
-      :scale="scale"
-      @update:scaleName="emit('update:scaleName', $event)"
+      :centsFractionDigits="state.centsFractionDigits"
+      :scale="state.scale"
+      @update:scaleName="state.scaleName = $event"
       @update:scale="updateScaleAndHideModals"
-      @update:keyColors="emit('update:keyColors', $event)"
+      @update:keyColors="state.keyColors = $event"
       @cancel="showRankTwoModal = false"
     />
 
     <HistoricalModal
       v-if="showHistoricalModal"
-      :centsFractionDigits="centsFractionDigits"
-      @update:scaleName="emit('update:scaleName', $event)"
+      :centsFractionDigits="state.centsFractionDigits"
+      :accidentalStyle="state.accidentalPreference"
+      @update:scaleName="state.scaleName = $event"
       @update:scale="updateScaleAndHideModals"
-      @update:baseFrequency="emit('update:baseFrequency', $event)"
-      @update:baseMidiNote="emit('update:baseMidiNote', $event)"
-      @update:keyColors="emit('update:keyColors', $event)"
+      @update:baseFrequency="state.scale.baseFrequency = $event"
+      @update:baseMidiNote="state.baseMidiNote = $event"
+      @update:keyColors="state.keyColors = $event"
       @cancel="showHistoricalModal = false"
     />
 
     <ShareUrlModal
       ref="shareUrlModal"
       v-if="showShareUrlModal"
-      :scaleName="scaleName"
-      :newline="newline"
+      :scaleName="state.scaleName"
+      :newline="state.newline"
       @confirm="showShareUrlModal = false"
       @cancel="showShareUrlModal = false"
     />
 
     <EqualTemperamentModal
       v-if="showEqualTemperamentModal"
-      :centsFractionDigits="centsFractionDigits"
-      :decimalFractionDigits="decimalFractionDigits"
-      @update:scaleName="emit('update:scaleName', $event)"
+      :centsFractionDigits="state.centsFractionDigits"
+      :decimalFractionDigits="state.decimalFractionDigits"
+      @update:scaleName="state.scaleName = $event"
       @update:scale="updateScaleAndHideModals"
       @cancel="showEqualTemperamentModal = false"
     />
 
     <HarmonicSeriesModal
       v-if="showHarmonicSeriesModal"
-      @update:scaleName="emit('update:scaleName', $event)"
+      @update:scaleName="state.scaleName = $event"
       @update:scale="updateScaleAndHideModals"
       @cancel="showHarmonicSeriesModal = false"
     />
 
     <MosModal
       v-if="showMosModal"
-      @update:scaleName="emit('update:scaleName', $event)"
+      @update:scaleName="state.scaleName = $event"
       @update:scale="updateScaleAndHideModals"
-      @update:keyColors="emit('update:keyColors', $event)"
+      @update:keyColors="state.keyColors = $event"
       @cancel="showMosModal = false"
     />
 
     <SubharmonicSeriesModal
       v-if="showSubharmonicSeriesModal"
-      @update:scaleName="emit('update:scaleName', $event)"
+      @update:scaleName="state.scaleName = $event"
       @update:scale="updateScaleAndHideModals"
       @cancel="showSubharmonicSeriesModal = false"
     />
 
     <EnumerateChordModal
       v-if="showEnumerateChordModal"
-      @update:scaleName="emit('update:scaleName', $event)"
+      @update:scaleName="state.scaleName = $event"
       @update:scale="updateScaleAndHideModals"
       @cancel="showEnumerateChordModal = false"
     />
 
     <CpsModal
       v-if="showCpsModal"
-      @update:scaleName="emit('update:scaleName', $event)"
+      @update:scaleName="state.scaleName = $event"
       @update:scale="updateScaleAndHideModals"
       @cancel="showCpsModal = false"
     />
 
     <EulerGenusModal
       v-if="showEulerGenusModal"
-      @update:scaleName="emit('update:scaleName', $event)"
+      @update:scaleName="state.scaleName = $event"
       @update:scale="updateScaleAndHideModals"
       @cancel="showEulerGenusModal = false"
     />
 
     <DwarfModal
       v-if="showDwarfModal"
-      @update:scaleName="emit('update:scaleName', $event)"
+      @update:scaleName="state.scaleName = $event"
       @update:scale="updateScaleAndHideModals"
       @cancel="showDwarfModal = false"
     />
 
     <CrossPolytopeModal
       v-if="showCrossPolytopeModal"
-      @update:scaleName="emit('update:scaleName', $event)"
+      @update:scaleName="state.scaleName = $event"
       @update:scale="updateScaleAndHideModals"
       @cancel="showCrossPolytopeModal = false"
     />
     <LatticeModal
       v-if="showLatticeModal"
-      :centsFractionDigits="centsFractionDigits"
-      @update:scaleName="emit('update:scaleName', $event)"
+      :centsFractionDigits="state.centsFractionDigits"
+      @update:scaleName="state.scaleName = $event"
       @update:scale="updateScaleAndHideModals"
       @cancel="showLatticeModal = false"
     />
@@ -714,7 +692,7 @@ function confirmPreset() {
       v-if="showRotateModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showRotateModal = false"
-      :scale="scale"
+      :scale="state.scale"
     />
 
     <SubsetModal
@@ -722,77 +700,77 @@ function confirmPreset() {
       v-if="showSubsetModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showSubsetModal = false"
-      :scale="scale"
+      :scale="state.scale"
     />
 
     <StretchModal
       v-if="showStretchModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showStretchModal = false"
-      :scale="scale"
-      :centsFractionDigits="centsFractionDigits"
-      :decimalFractionDigits="decimalFractionDigits"
+      :scale="state.scale"
+      :centsFractionDigits="state.centsFractionDigits"
+      :decimalFractionDigits="state.decimalFractionDigits"
     />
 
     <RandomVarianceModal
       v-if="showRandomVarianceModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showRandomVarianceModal = false"
-      :scale="scale"
-      :centsFractionDigits="centsFractionDigits"
-      :decimalFractionDigits="decimalFractionDigits"
+      :scale="state.scale"
+      :centsFractionDigits="state.centsFractionDigits"
+      :decimalFractionDigits="state.decimalFractionDigits"
     />
 
     <ApproximateByRatiosModal
       v-if="showApproximateByRatiosModal"
-      @update:scale="emit('update:scale', $event)"
+      @update:scale="state.scale = $event"
       @cancel="showApproximateByRatiosModal = false"
-      :scale="scale"
+      :scale="state.scale"
     />
 
     <ApproximateByHarmonicsModal
       v-if="showApproximateByHarmonicsModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showApproximateByHarmonicsModal = false"
-      :scale="scale"
+      :scale="state.scale"
     />
 
     <ApproximateBySubharmonicsModal
       v-if="showApproximateBySubharmonicsModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showApproximateBySubharmonicsModal = false"
-      :scale="scale"
+      :scale="state.scale"
     />
 
     <EqualizeModal
       v-if="showEqualizeModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showEqualizeModal = false"
-      :scale="scale"
+      :scale="state.scale"
     />
 
     <TemperModal
       v-if="showTemperModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showTemperModal = false"
-      :scale="scale"
-      :centsFractionDigits="centsFractionDigits"
+      :scale="state.scale"
+      :centsFractionDigits="state.centsFractionDigits"
     />
 
     <OffsetModal
       v-if="showOffsetModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showOffsetModal = false"
-      :scale="scale"
+      :scale="state.scale"
     />
 
     <ConvertModal
       v-if="showConvertModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showConvertModal = false"
-      :scale="scale"
-      :centsFractionDigits="centsFractionDigits"
-      :decimalFractionDigits="decimalFractionDigits"
+      :scale="state.scale"
+      :centsFractionDigits="state.centsFractionDigits"
+      :decimalFractionDigits="state.decimalFractionDigits"
     />
   </Teleport>
 </template>

@@ -10,6 +10,7 @@ import { spineLabel as spineLabel_, type AccidentalStyle } from '@/utils'
 
 const props = defineProps<{
   centsFractionDigits: number
+  accidentalStyle: AccidentalStyle
 }>()
 
 const emit = defineEmits([
@@ -53,11 +54,8 @@ const SYNTONIC = new Interval(
   'ratio'
 )
 
-const ACCIDENTAL_STYLE =
-  (localStorage.getItem('accidentalPreference') as AccidentalStyle) ?? 'double'
-
 function spineLabel(up: number) {
-  return spineLabel_(up, ACCIDENTAL_STYLE)
+  return spineLabel_(up, props.accidentalStyle)
 }
 
 const method = ref<'simple' | 'target' | 'well temperament'>('simple')

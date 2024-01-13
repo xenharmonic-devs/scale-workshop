@@ -2,25 +2,14 @@
 import { intervalMatrix } from '@/analysis'
 import ChordWheel from '@/components/ChordWheel.vue'
 import { computed, ref } from 'vue'
-import {
-  reverseParseInterval,
-  type Interval,
-  type IntervalOptions,
-  type Scale
-} from 'scale-workshop-core'
+import { reverseParseInterval, type Interval, type IntervalOptions } from 'scale-workshop-core'
 import { useAudioStore } from '@/stores/audio'
+import { useStateStore } from '@/stores/state'
 
 const MAX_SCALE_SIZE = 100
 
-const props = defineProps<{
-  scale: Scale
-  colorScheme: 'light' | 'dark'
-  intervalMatrixIndexing: number
-}>()
-
-const emit = defineEmits(['update:intervalMatrixIndexing'])
-
 const audio = useAudioStore()
+const state = useStateStore()
 
 const cellFormat = ref<'best' | 'cents' | 'decimal'>('best')
 const trailLongevity = ref(70)
@@ -28,15 +17,15 @@ const maxOtonalRoot = ref(16)
 const maxUtonalRoot = ref(23)
 
 const intervalMatrixIndexingRadio = computed({
-  get: () => props.intervalMatrixIndexing.toString(),
-  set: (newValue: string) => emit('update:intervalMatrixIndexing', parseInt(newValue, 10))
+  get: () => state.intervalMatrixIndexing.toString(),
+  set: (newValue: string) => (state.intervalMatrixIndexing = parseInt(newValue, 10))
 })
 
 const fadeAlpha = computed(() => 1 - trailLongevity.value / 100)
 
 const backgroundRBG = computed<[number, number, number]>(() => {
   // Add dependency.
-  props.colorScheme
+  state.colorScheme
   // Fetch from document.
   const css = getComputedStyle(document.documentElement)
     .getPropertyValue('--color-background')
@@ -53,7 +42,7 @@ const backgroundRBG = computed<[number, number, number]>(() => {
 
 const strokeStyle = computed(() => {
   // Add dependency.
-  props.colorScheme
+  state.colorScheme
   // Fetch from document.
   return getComputedStyle(document.documentElement).getPropertyValue('--color-text').trim()
 })
@@ -91,7 +80,7 @@ function formatMatrixCell(interval: Interval) {
 
 const matrix = computed(() => {
   return intervalMatrix(
-    props.scale.head(MAX_SCALE_SIZE).mergeOptions({
+    state.scale.head(MAX_SCALE_SIZE).mergeOptions({
       centsFractionDigits: 1,
       decimalFractionDigits: 3
     })
@@ -106,13 +95,13 @@ const matrix = computed(() => {
       <table>
         <tr>
           <th></th>
-          <th v-for="i of Math.min(scale.size, MAX_SCALE_SIZE)" :key="i">
-            {{ i - 1 + intervalMatrixIndexing }}
+          <th v-for="i of Math.min(state.scale.size, MAX_SCALE_SIZE)" :key="i">
+            {{ i - 1 + state.intervalMatrixIndexing }}
           </th>
-          <th>({{ scale.size + intervalMatrixIndexing }})</th>
+          <th>({{ state.scale.size + state.intervalMatrixIndexing }})</th>
         </tr>
         <tr v-for="(row, i) of matrix" :key="i">
-          <th>{{ formatMatrixCell(scale.getInterval(i)) }}</th>
+          <th>{{ formatMatrixCell(state.scale.getInterval(i)) }}</th>
           <td v-for="(name, j) of row" :key="j">{{ name }}</td>
         </tr>
       </table>

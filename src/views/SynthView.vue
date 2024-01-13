@@ -4,39 +4,11 @@ import TimeDomainVisualizer from '@/components/TimeDomainVisualizer.vue'
 import Modal from '@/components/ModalDialog.vue'
 import { WAVEFORMS } from '@/synth'
 import { useAudioStore } from '@/stores/audio'
+import { useStateStore } from '@/stores/state'
 
-const props = defineProps<{
-  keyboardMode: 'isomorphic' | 'piano'
-  pianoMode: 'Asdf' | 'QweZxc0' | 'QweZxc1'
-  isomorphicHorizontal: number
-  isomorphicVertical: number
-  equaveShift: number
-  degreeShift: number
-  colorScheme: 'light' | 'dark'
-  deactivationCode: string
-  equaveUpCode: string
-  equaveDownCode: string
-  degreeUpCode: string
-  degreeDownCode: string
-}>()
+const emit = defineEmits(['panic'])
 
-const emit = defineEmits([
-  'update:keyboardMode',
-  'update:pianoMode',
-  'update:isomorphicHorizontal',
-  'update:isomorphicVertical',
-  'update:equaveShift',
-  'update:degreeShift',
-  'update:deactivationCode',
-  'update:equaveUpCode',
-  'update:equaveDownCode',
-  'update:degreeUpCode',
-  'update:degreeDownCode',
-  'mapAsdf',
-  'mapZxcv0',
-  'mapZxcv1',
-  'panic'
-])
+const state = useStateStore()
 
 const audio = useAudioStore()
 
@@ -70,30 +42,6 @@ const mainVolume = computed({
       audio.mainVolume = newValue
     }
   }
-})
-const keyboardMode = computed({
-  get: () => props.keyboardMode,
-  set: (newValue: 'isomorphic' | 'piano') => emit('update:keyboardMode', newValue)
-})
-const pianoMode = computed({
-  get: () => props.pianoMode,
-  set: (newValue: 'Asdf' | 'QweZxc0' | 'QweZxc1') => emit('update:pianoMode', newValue)
-})
-const isomorphicVertical = computed({
-  get: () => props.isomorphicVertical,
-  set: (newValue: number) => emit('update:isomorphicVertical', newValue)
-})
-const isomorphicHorizontal = computed({
-  get: () => props.isomorphicHorizontal,
-  set: (newValue: number) => emit('update:isomorphicHorizontal', newValue)
-})
-const equaveShift = computed({
-  get: () => props.equaveShift,
-  set: (newValue: number) => emit('update:equaveShift', newValue)
-})
-const degreeShift = computed({
-  get: () => props.degreeShift,
-  set: (newValue: number) => emit('update:degreeShift', newValue)
 })
 
 const attackTime = computed({
@@ -194,7 +142,7 @@ const pingPongGain = computed({
 
 const strokeStyle = computed(() => {
   // Add dependency.
-  props.colorScheme
+  state.colorScheme
   // Fetch from document.
   return getComputedStyle(document.documentElement).getPropertyValue('--color-text').trim()
 })
@@ -236,7 +184,7 @@ function presetLong() {
 
 function assignCode(event: KeyboardEvent) {
   if (remappedKey.value.length && event.code.length) {
-    emit(('update:' + remappedKey.value) as any, event.code)
+    ;(state as any)[remappedKey.value] = event.code
     remappedKey.value = ''
   }
 }
@@ -412,26 +360,31 @@ onUnmounted(() => {
         <div class="control-group">
           <div class="control radio-group">
             <span>
-              <input type="radio" id="mode-isomorphic" value="isomorphic" v-model="keyboardMode" />
+              <input
+                type="radio"
+                id="mode-isomorphic"
+                value="isomorphic"
+                v-model="state.keyboardMode"
+              />
               <label for="mode-isomorphic"> Isomorphic </label>
             </span>
             <span>
-              <input type="radio" id="mode-piano" value="piano" v-model="keyboardMode" />
+              <input type="radio" id="mode-piano" value="piano" v-model="state.keyboardMode" />
               <label for="mode-piano"> Piano-style layers </label>
             </span>
           </div>
-          <template v-if="keyboardMode === 'piano'">
+          <template v-if="state.keyboardMode === 'piano'">
             <div class="control radio-group">
               <span>
-                <input type="radio" id="mode-asdf" value="Asdf" v-model="pianoMode" />
+                <input type="radio" id="mode-asdf" value="Asdf" v-model="state.pianoMode" />
                 <label for="mode-asdf"> ASDF & QWERTY </label>
               </span>
               <span>
-                <input type="radio" id="mode-qwezxc1" value="QweZxc1" v-model="pianoMode" />
+                <input type="radio" id="mode-qwezxc1" value="QweZxc1" v-model="state.pianoMode" />
                 <label for="mode-qwezxc1"> ZXCV & ASDF + QWERTY & 1234 </label>
               </span>
               <span>
-                <input type="radio" id="mode-qwezxc0" value="QweZxc0" v-model="pianoMode" />
+                <input type="radio" id="mode-qwezxc0" value="QweZxc0" v-model="state.pianoMode" />
                 <label for="mode-qwezxc0"> ZXCV etc. (shifted left) </label>
               </span>
             </div>
@@ -444,7 +397,7 @@ onUnmounted(() => {
             <code>/</code> and <code>*</code>)
           </p>
           <div class="control">
-            <input type="number" v-model="equaveShift" />
+            <input type="number" v-model="state.equaveShift" />
           </div>
         </div>
         <h2>Keyboard degree shift</h2>
@@ -454,10 +407,10 @@ onUnmounted(() => {
             <code>-</code> and <code>+</code>).
           </p>
           <div class="control">
-            <input type="number" v-model="degreeShift" />
+            <input type="number" v-model="state.degreeShift" />
           </div>
         </div>
-        <template v-if="keyboardMode === 'isomorphic'">
+        <template v-if="state.keyboardMode === 'isomorphic'">
           <h2>Isomorphic key mapping</h2>
           <p>
             Distance between adjacent keys on the horizontal/vertical axes, in scale degrees.
@@ -469,11 +422,11 @@ onUnmounted(() => {
           >
             <div class="control" style="width: 50%">
               <label for="vertical">Vertical</label>
-              <input type="number" id="vertical" v-model="isomorphicVertical" />
+              <input type="number" id="vertical" v-model="state.isomorphicVertical" />
             </div>
             <div class="control" style="width: 50%">
               <label for="horizontal">Horizontal</label>
-              <input type="number" id="horizontal" v-model="isomorphicHorizontal" />
+              <input type="number" id="horizontal" v-model="state.isomorphicHorizontal" />
             </div>
           </div>
         </template>
@@ -481,23 +434,23 @@ onUnmounted(() => {
         <div class="control-group">
           <p><code>Shift</code> sustain currently held keys after release</p>
           <p>
-            <code @click="remappedKey = 'deactivationCode'">{{ deactivationCode }}</code>
+            <code @click="remappedKey = 'deactivationCode'">{{ state.deactivationCode }}</code>
             release sustain, stop all playing notes (click to reassign)
           </p>
           <p>
-            <code @click="remappedKey = 'equaveDownCode'">{{ equaveDownCode }}</code>
+            <code @click="remappedKey = 'equaveDownCode'">{{ state.equaveDownCode }}</code>
             equave shift down (click to reassign)
           </p>
           <p>
-            <code @click="remappedKey = 'equaveUpCode'">{{ equaveUpCode }}</code>
+            <code @click="remappedKey = 'equaveUpCode'">{{ state.equaveUpCode }}</code>
             equave shift up (click to reassign)
           </p>
           <p>
-            <code @click="remappedKey = 'degreeDownCode'">{{ degreeDownCode }}</code>
+            <code @click="remappedKey = 'degreeDownCode'">{{ state.degreeDownCode }}</code>
             degree shift down (click to reassign)
           </p>
           <p>
-            <code @click="remappedKey = 'degreeUpCode'">{{ degreeUpCode }}</code>
+            <code @click="remappedKey = 'degreeUpCode'">{{ state.degreeUpCode }}</code>
             degree shift up (click to reassign)
           </p>
         </div>

@@ -10,51 +10,34 @@ import { nextTick, ref } from 'vue'
 import { useRouter, type LocationQuery } from 'vue-router'
 import { version } from '../../package.json'
 import { useAudioStore } from '@/stores/audio'
-
-const props = defineProps<{
-  scaleName: string
-  scaleLines: string[]
-  baseMidiNote: number
-  keyColors: string[]
-
-  scale: Scale
-
-  isomorphicHorizontal: number
-  isomorphicVertical: number
-
-  keyboardMode: 'isomorphic' | 'piano'
-  pianoMode: 'Asdf' | 'QweZxc0' | 'QweZxc1'
-
-  equaveShift: number
-  degreeShift: number
-}>()
-
-const emit = defineEmits(['update:scale', 'update:scaleName'])
+import { useStateStore } from '@/stores/state'
 
 const ritualInProgress = ref(false)
 
 const router = useRouter()
 
+const state = useStateStore()
+
 const audio = useAudioStore()
 
 function openTheGates(scale: Scale) {
-  emit('update:scale', scale)
+  state.scale = scale
 
   // Unfortunately we need to encode the state here.
   // Simply navigating to "/" triggers decoding of the default empty state.
   nextTick(() => {
-    const state = {
-      scaleName: props.scaleName,
-      scaleLines: props.scaleLines,
-      baseFrequency: props.scale.baseFrequency,
-      baseMidiNote: props.baseMidiNote,
-      keyColors: props.keyColors,
-      isomorphicHorizontal: props.isomorphicHorizontal,
-      isomorphicVertical: props.isomorphicVertical,
-      keyboardMode: props.keyboardMode,
-      pianoMode: props.pianoMode,
-      equaveShift: props.equaveShift,
-      degreeShift: props.degreeShift,
+    const encodedState = {
+      scaleName: state.scaleName,
+      scaleLines: state.scaleLines,
+      baseFrequency: state.scale.baseFrequency,
+      baseMidiNote: state.baseMidiNote,
+      keyColors: state.keyColors,
+      isomorphicHorizontal: state.isomorphicHorizontal,
+      isomorphicVertical: state.isomorphicVertical,
+      keyboardMode: state.keyboardMode,
+      pianoMode: state.pianoMode,
+      equaveShift: state.equaveShift,
+      degreeShift: state.degreeShift,
 
       waveform: audio.waveform,
       attackTime: audio.attackTime,
@@ -68,7 +51,7 @@ function openTheGates(scale: Scale) {
       pingPongGain: audio.pingPongGain
     }
 
-    const query = encodeQuery(state) as LocationQuery
+    const query = encodeQuery(encodedState) as LocationQuery
     query.version = version
 
     router.push({ path: '/', query })
@@ -88,7 +71,7 @@ function openTheGates(scale: Scale) {
     <Teleport to="body">
       <OctaplexPortal
         :show="ritualInProgress"
-        @update:scaleName="emit('update:scaleName', $event)"
+        @update:scaleName="state.scaleName = $event"
         @update:scale="openTheGates"
         @cancel="ritualInProgress = false"
       />

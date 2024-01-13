@@ -1,57 +1,9 @@
 <script setup lang="ts">
 import { UNIX_NEWLINE, WINDOWS_NEWLINE } from '@/constants'
-import type { AccidentalStyle } from '@/utils'
-import { ref, computed, watch } from 'vue'
 
-const props = defineProps<{
-  newline: string
-  colorScheme: 'light' | 'dark'
-  centsFractionDigits: number
-  decimalFractionDigits: number
-  showVirtualQwerty: boolean
-  midiOctaveOffset: number
-}>()
+import { useStateStore } from '@/stores/state'
 
-const emit = defineEmits([
-  'update:newline',
-  'update:colorScheme',
-  'update:centsFractionDigits',
-  'update:decimalFractionDigits',
-  'update:virtualKeyboardMode',
-  'update:showVirtualQwerty',
-  'update:midiOctaveOffset'
-])
-
-const newline = computed({
-  get: () => props.newline,
-  set: (newValue: string) => emit('update:newline', newValue)
-})
-const colorScheme = computed({
-  get: () => props.colorScheme,
-  set: (newValue: string) => emit('update:colorScheme', newValue)
-})
-const centsFractionDigits = computed({
-  get: () => props.centsFractionDigits,
-  set: (newValue: number) => emit('update:centsFractionDigits', newValue)
-})
-const decimalFractionDigits = computed({
-  get: () => props.decimalFractionDigits,
-  set: (newValue: number) => emit('update:decimalFractionDigits', newValue)
-})
-const showVirtualQwerty = computed({
-  get: () => props.showVirtualQwerty,
-  set: (newValue: boolean) => emit('update:showVirtualQwerty', newValue)
-})
-const midiOctaveOffset = computed({
-  get: () => props.midiOctaveOffset,
-  set: (newValue: number) => emit('update:midiOctaveOffset', newValue)
-})
-
-// Lazy developer here hoping to move to Pinia, so I won't drill this back to App.vue
-const accidentalPreference = ref<AccidentalStyle>(
-  (localStorage.getItem('accidentalPreference') as AccidentalStyle) ?? 'double'
-)
-watch(accidentalPreference, (newValue) => localStorage.setItem('accidentalPreference', newValue))
+const state = useStateStore()
 </script>
 
 <template>
@@ -66,7 +18,7 @@ watch(accidentalPreference, (newValue) => localStorage.setItem('accidentalPrefer
               id="newline"
               class="control"
               title="If your exported tuning files didn't work right on macOS synths, try changing this option to Unix."
-              v-model="newline"
+              v-model="state.newline"
             >
               <option :value="WINDOWS_NEWLINE">Microsoft (Windows/MS-DOS)</option>
               <option :value="UNIX_NEWLINE">Unix (Mac/Linux)</option>
@@ -76,7 +28,7 @@ watch(accidentalPreference, (newValue) => localStorage.setItem('accidentalPrefer
         <h2>Advanced</h2>
         <div class="control-group">
           <div class="control checkbox-container">
-            <input id="virtual-qwerty" type="checkbox" v-model="showVirtualQwerty" />
+            <input id="virtual-qwerty" type="checkbox" v-model="state.showVirtualQwerty" />
             <label for="virtual-qwerty"> Virtual QWERTY in top menu</label>
           </div>
         </div>
@@ -87,11 +39,11 @@ watch(accidentalPreference, (newValue) => localStorage.setItem('accidentalPrefer
           <h3>Color Scheme</h3>
           <div class="control radio-group">
             <span>
-              <input type="radio" id="scheme-light" value="light" v-model="colorScheme" />
+              <input type="radio" id="scheme-light" value="light" v-model="state.colorScheme" />
               <label for="scheme-light"> Light </label>
             </span>
             <span>
-              <input type="radio" id="scheme-dark" value="dark" v-model="colorScheme" />
+              <input type="radio" id="scheme-dark" value="dark" v-model="state.colorScheme" />
               <label for="scheme-dark"> Dark </label>
             </span>
           </div>
@@ -102,7 +54,7 @@ watch(accidentalPreference, (newValue) => localStorage.setItem('accidentalPrefer
               type="number"
               class="control"
               step="1"
-              v-model="midiOctaveOffset"
+              v-model="state.midiOctaveOffset"
             />
           </div>
           <h3>Accidentals</h3>
@@ -112,7 +64,7 @@ watch(accidentalPreference, (newValue) => localStorage.setItem('accidentalPrefer
                 type="radio"
                 id="accidentals-double"
                 value="double"
-                v-model="accidentalPreference"
+                v-model="state.accidentalPreference"
               />
               <label for="accidentals-double"> Double 𝄫/𝄪</label>
             </span>
@@ -121,7 +73,7 @@ watch(accidentalPreference, (newValue) => localStorage.setItem('accidentalPrefer
                 type="radio"
                 id="accidentals-single"
                 value="single"
-                v-model="accidentalPreference"
+                v-model="state.accidentalPreference"
               />
               <label for="accidentals-single"> Single ♭♭/♯♯</label>
             </span>
@@ -130,7 +82,7 @@ watch(accidentalPreference, (newValue) => localStorage.setItem('accidentalPrefer
                 type="radio"
                 id="accidentals-ascii"
                 value="ASCII"
-                v-model="accidentalPreference"
+                v-model="state.accidentalPreference"
               />
               <label for="accidentals-single"> ASCII bb/##</label>
             </span>
@@ -142,7 +94,13 @@ watch(accidentalPreference, (newValue) => localStorage.setItem('accidentalPrefer
         <div class="control-group">
           <div class="control">
             <label for="cents">Cents digits after decimal point</label>
-            <input id="cents" type="number" class="control" min="0" v-model="centsFractionDigits" />
+            <input
+              id="cents"
+              type="number"
+              class="control"
+              min="0"
+              v-model="state.centsFractionDigits"
+            />
           </div>
           <div class="control">
             <label for="decimal">Decimal digits after decimal comma</label>
@@ -151,7 +109,7 @@ watch(accidentalPreference, (newValue) => localStorage.setItem('accidentalPrefer
               type="number"
               class="control"
               min="0"
-              v-model="decimalFractionDigits"
+              v-model="state.decimalFractionDigits"
             />
           </div>
         </div>
