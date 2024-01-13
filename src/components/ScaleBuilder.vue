@@ -241,6 +241,7 @@ function copyToClipboard() {
 // Actions that would take multiple lines in template code and get ruined by auto-formatting
 
 function clearScale() {
+  state.scaleName = ''
   joinedLines.value = ''
   scaleDataArea.value!.focus()
 }
