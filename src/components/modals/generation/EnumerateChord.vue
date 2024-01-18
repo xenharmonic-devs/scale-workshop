@@ -1,20 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import { parseChordInput } from '@/utils'
 import { Scale } from 'scale-workshop-core'
+import { useModalStore } from '@/stores/modal'
 
 const emit = defineEmits(['update:scale', 'update:scaleName', 'cancel'])
 
-const chord = ref('')
-const invertChord = ref(false)
+const modal = useModalStore()
 
 function generate() {
   try {
-    const intervals = parseChordInput(chord.value)
+    const intervals = parseChordInput(modal.chord)
     const scale = Scale.fromChord(intervals)
-    emit('update:scaleName', `Chord ${chord.value}`)
-    if (invertChord.value) {
+    emit('update:scaleName', `Chord ${modal.chord}`)
+    if (modal.invertChord) {
       emit('update:scale', scale.invert())
     } else {
       emit('update:scale', scale)
@@ -38,10 +37,16 @@ function generate() {
       <div class="control-group">
         <div class="control">
           <label for="chord">Chord</label>
-          <input id="chord" type="text" class="control" placeholder="4:5:6:8" v-model="chord" />
+          <input
+            id="chord"
+            type="text"
+            class="control"
+            placeholder="4:5:6:8"
+            v-model="modal.chord"
+          />
         </div>
         <div class="control checkbox-container">
-          <input type="checkbox" id="integrate-period" v-model="invertChord" />
+          <input type="checkbox" id="integrate-period" v-model="modal.invertChord" />
           <label for="integrate-period">Invert chord</label>
         </div>
       </div>

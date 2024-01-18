@@ -1,46 +1,38 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { OCTAVE } from '@/constants'
-import { computedAndError, parseChordInput } from '@/utils'
 import { Scale } from 'scale-workshop-core'
+import { useModalStore } from '@/stores/modal'
 
 const emit = defineEmits(['update:scale', 'update:scaleName', 'cancel'])
 
-const factorsString = ref('')
-const numElements = ref(2)
-const addUnity = ref(false)
-const equaveString = ref('2/1')
-const equave = ref(OCTAVE)
+const modal = useModalStore()
 
 const factorsElement = ref<HTMLInputElement | null>(null)
-const [factors, factorsError] = computedAndError(() => {
-  return parseChordInput(factorsString.value)
-}, [])
-watch(factorsError, (newError) => factorsElement.value!.setCustomValidity(newError))
-
-const maxElements = computed(() => Math.max(1, factors.value.length))
+watch(
+  () => modal.factorsError,
+  (newError) => factorsElement.value!.setCustomValidity(newError)
+)
 
 // It's not obvious that combination count depends on a parsed text element.
 // I think it's better that the user can try using invalid values and see red.
-// Anyway, here's the enforcing watcher if you need it.
-// watch(maxElements, (newValue) => numElements.value = Math.min(numElements.value, newValue));
 
 function generate() {
   try {
     const scale = Scale.fromCombinations(
-      factors.value,
-      numElements.value,
-      addUnity.value,
-      equave.value
+      modal.factors,
+      modal.numElements,
+      modal.addUnity,
+      modal.equave
     )
-    let name = `CPS (${numElements.value} of ${factorsString.value}`
-    if (addUnity.value) {
+    let name = `CPS (${modal.numElements} of ${modal.factorsString}`
+    if (modal.addUnity) {
       name += ' with 1/1'
     }
-    if (!equave.value.equals(OCTAVE)) {
-      name += ` over ${equave.value.toString()}`
+    if (!modal.equave.equals(OCTAVE)) {
+      name += ` over ${modal.equave.toString()}`
     }
     name += ')'
     emit('update:scaleName', name)
@@ -70,7 +62,7 @@ function generate() {
             type="text"
             class="control"
             placeholder="1 3 5 7"
-            v-model="factorsString"
+            v-model="modal.factorsString"
           />
         </div>
         <div class="control">
@@ -80,20 +72,20 @@ function generate() {
             type="number"
             class="control"
             min="1"
-            :max="maxElements"
-            v-model="numElements"
+            :max="modal.maxElements"
+            v-model="modal.numElements"
           />
         </div>
         <div class="control checkbox-container">
-          <input type="checkbox" id="add-unity" v-model="addUnity" />
+          <input type="checkbox" id="add-unity" v-model="modal.addUnity" />
           <label for="add-unity">Include 1/1 (origin)</label>
         </div>
         <div class="control">
           <label for="equave">Equave</label>
           <ScaleLineInput
             id="equave"
-            @update:value="equave = $event"
-            v-model="equaveString"
+            @update:value="modal.equave = $event"
+            v-model="modal.equaveString"
             :defaultValue="OCTAVE"
           />
         </div>

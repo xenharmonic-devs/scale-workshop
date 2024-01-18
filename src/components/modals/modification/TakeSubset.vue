@@ -1,18 +1,19 @@
 <script setup lang="ts">
-import { computed, reactive } from 'vue'
+import { computed } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import type { Scale } from 'scale-workshop-core'
+import { useModalStore } from '@/stores/modal'
 
 const props = defineProps<{
   scale: Scale
 }>()
-const emit = defineEmits(['update:scale', 'cancel'])
-defineExpose({ initialize })
 
-const selected = reactive<Set<number>>(new Set())
+const emit = defineEmits(['update:scale', 'cancel'])
+
+const modal = useModalStore()
 
 const mode = computed(() => {
-  const degrees = [...selected.values()]
+  const degrees = [...modal.selected.values()]
   degrees.sort((a, b) => a - b)
   degrees.push(props.scale.size)
   const result = []
@@ -23,30 +24,14 @@ const mode = computed(() => {
 })
 
 const degrees = computed(() => {
-  const degrees = [...selected.values()]
+  const degrees = [...modal.selected.values()]
   degrees.sort((a, b) => a - b)
   degrees.shift()
   return degrees.map((degree) => degree.toString()).join(', ') + `, (${props.scale.size})`
 })
 
-function toggle(index: number) {
-  if (selected.has(index)) {
-    selected.delete(index)
-  } else {
-    selected.add(index)
-  }
-}
-
-function initialize() {
-  selected.clear()
-  selected.add(0)
-  for (let i = 1; i < props.scale.size; ++i) {
-    selected.add(i)
-  }
-}
-
 function modify() {
-  const subset = [...selected.values()]
+  const subset = [...modal.selected.values()]
   subset.sort((a, b) => a - b)
   emit('update:scale', props.scale.subset(subset))
 }
@@ -66,8 +51,8 @@ function modify() {
             v-for="i of props.scale.size - 1"
             :key="i"
             class="degree"
-            :class="{ selected: selected.has(i) }"
-            @click="toggle(i)"
+            :class="{ selected: modal.selected.has(i) }"
+            @click="modal.toggleSelected(i)"
           >
             {{ scale.getName(i) }}
           </button>

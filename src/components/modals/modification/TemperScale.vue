@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { DEFAULT_NUMBER_OF_COMPONENTS, MAX_GEO_SUBGROUP_SIZE } from '@/constants'
+import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
 import { Mapping, stretchToEdo, toPrimeMapping } from '@/tempering'
-import { computed, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
-import { makeState } from '@/components/modals/tempering-state'
-import { add, Fraction, PRIME_CENTS } from 'xen-dev-utils'
+import { Fraction, PRIME_CENTS } from 'xen-dev-utils'
 import { mapByVal, resolveMonzo, tenneyVals, vanishCommas } from 'temperaments'
 import { ExtendedMonzo, Interval, Scale, type IntervalOptions } from 'scale-workshop-core'
 import { splitText } from '@/utils'
+import { useTemperStore } from '@/stores/tempering'
 
 const props = defineProps<{
   scale: Scale
@@ -16,62 +16,27 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:scale', 'cancel'])
 
-// === Component state ===
-const method = ref<'mapping' | 'vals' | 'commas'>('mapping')
-const error = ref('')
-const state = makeState(method)
-// method: "mapping"
-const mappingString = ref('1200, 1897.2143, 2788.8573')
-// method: "vals"
-const valsString = state.valsString
-const convertToEdoSteps = ref(false)
-// medhod: "commas"
-const commasString = state.commasString
-// Generic
-const subgroupString = state.subgroupString
-const subgroupError = state.subgroupError
+const temper = useTemperStore()
+
 const subgroupInput = ref<HTMLInputElement | null>(null)
-// Advanced
-const showAdvanced = ref(false)
-const weightsString = state.weightsString
-const tempering = state.tempering
-const constraintsString = state.constraintsString
 
-// === Computed state ===
-const vals = state.vals
-const rawCommas = state.rawCommas
-const commas = state.commas
-const subgroup = state.subgroup
-const options = state.options
-const edoUnavailable = computed(() => vals.value.length !== 1)
-
-const constraintsDisabled = computed(() => subgroup.value.basis.length > MAX_GEO_SUBGROUP_SIZE)
-
-watch(subgroupError, (newValue) => subgroupInput.value!.setCustomValidity(newValue))
-
-// === Methods ===
-
-// Expand out the residual in the `ExtendedMonzo` and ignore cents offsets
-function toLongMonzo(monzo: ExtendedMonzo) {
-  const base = resolveMonzo(monzo.residual)
-  return add(
-    base,
-    monzo.vector.map((component) => component.valueOf())
-  )
-}
+watch(
+  () => temper.subgroupError,
+  (newValue) => subgroupInput.value!.setCustomValidity(newValue)
+)
 
 function modify() {
   try {
-    if (method.value === 'vals' && !edoUnavailable.value && !subgroupString.value.length) {
+    if (temper.method === 'vals' && !temper.edoUnavailable && !temper.subgroupString.length) {
       const monzos = [...Array(props.scale.size + 1).keys()].map((i) =>
-        toLongMonzo(props.scale.getMonzo(i))
+        temper.toLongMonzo(props.scale.getMonzo(i))
       )
       const octave = new Fraction(2)
       monzos.push(resolveMonzo(octave))
-      const steps = mapByVal(monzos, vals.value[0])
+      const steps = mapByVal(monzos, temper.vals[0])
       const edo = steps.pop()
       let scale: Scale
-      if (convertToEdoSteps.value) {
+      if (temper.convertToEdoSteps) {
         const options: IntervalOptions = {
           preferredEtDenominator: edo,
           preferredEtEquave: octave
@@ -109,51 +74,51 @@ function modify() {
       emit('update:scale', scale.mergeOptions({ centsFractionDigits: props.centsFractionDigits }))
     } else {
       let mapping: Mapping
-      if (method.value === 'mapping') {
-        const vector = splitText(mappingString.value).map((component) => parseFloat(component))
+      if (temper.method === 'mapping') {
+        const vector = splitText(temper.mappingString).map((component) => parseFloat(component))
         while (vector.length < DEFAULT_NUMBER_OF_COMPONENTS) {
           vector.push(PRIME_CENTS[vector.length])
         }
         mapping = new Mapping(vector.slice(0, DEFAULT_NUMBER_OF_COMPONENTS))
-      } else if (method.value === 'vals') {
-        if (constraintsDisabled.value) {
+      } else if (temper.method === 'vals') {
+        if (temper.constraintsDisabled) {
           // Subgroup is too large to use geometric methods. Use O(n²) projection instead.
-          const weights = options.value.weights
+          const weights = temper.options.weights
           // True constraints are not supported so CTE is interpreted as POTE.
-          const temperEquaves = options.value.temperEquaves && tempering.value !== 'CTE'
-          const jip = subgroup.value.jip()
-          const valVectors = vals.value.map((val) => subgroup.value.fromWarts(val))
+          const temperEquaves = temper.options.temperEquaves && temper.tempering !== 'CTE'
+          const jip = temper.subgroup.jip()
+          const valVectors = temper.vals.map((val) => temper.subgroup.fromWarts(val))
           let mappingVector = tenneyVals(valVectors, jip, weights)
           if (!temperEquaves) {
             mappingVector = mappingVector.map((m) => (jip[0] * m) / mappingVector[0])
           }
-          mapping = new Mapping(toPrimeMapping(mappingVector, subgroup.value))
+          mapping = new Mapping(toPrimeMapping(mappingVector, temper.subgroup))
         } else {
           mapping = Mapping.fromVals(
-            vals.value,
+            temper.vals,
             DEFAULT_NUMBER_OF_COMPONENTS,
-            subgroup.value,
-            options.value
+            temper.subgroup,
+            temper.options
           )
         }
       } else {
-        if (constraintsDisabled.value) {
+        if (temper.constraintsDisabled) {
           // Subgroup is too large to use geometric methods. Use O(n) gradient descent instead.
           // True constraints are not supported so CTE is interpreted as pure equaves.
-          const temperEquaves = options.value.temperEquaves && tempering.value !== 'CTE'
-          const weights = options.value.weights
-          const jip = subgroup.value.jip()
-          const commaMonzos = rawCommas.value.map(
-            (comma) => subgroup.value.toMonzoAndResidual(comma)[0]
+          const temperEquaves = temper.options.temperEquaves && temper.tempering !== 'CTE'
+          const weights = temper.options.weights
+          const jip = temper.subgroup.jip()
+          const commaMonzos = temper.rawCommas.map(
+            (comma) => temper.subgroup.toMonzoAndResidual(comma)[0]
           )
           const mappingVector = vanishCommas(commaMonzos, jip, weights, temperEquaves)
-          mapping = new Mapping(toPrimeMapping(mappingVector, subgroup.value))
+          mapping = new Mapping(toPrimeMapping(mappingVector, temper.subgroup))
         } else {
           mapping = Mapping.fromCommas(
-            commas.value,
+            temper.commas,
             DEFAULT_NUMBER_OF_COMPONENTS,
-            subgroup.value,
-            options.value
+            temper.subgroup,
+            temper.options
           )
         }
       }
@@ -164,9 +129,9 @@ function modify() {
     }
   } catch (error_) {
     if (error_ instanceof Error) {
-      error.value = error_.message
+      temper.error = error_.message
     } else {
-      error.value = '' + error_
+      temper.error = '' + error_
     }
   }
 }
@@ -178,7 +143,7 @@ function modify() {
       <h2>Temper scale</h2>
     </template>
     <template #body>
-      <div @click="error = ''">
+      <div @click="temper.error = ''">
         <div class="control-group">
           <div class="control radio-group">
             <label>Method</label>
@@ -187,8 +152,8 @@ function modify() {
                 type="radio"
                 id="method-mapping"
                 value="mapping"
-                @focus="error = ''"
-                v-model="method"
+                @focus="temper.error = ''"
+                v-model="temper.method"
               />
               <label for="method-mapping"> Mapping </label>
             </span>
@@ -197,8 +162,8 @@ function modify() {
                 type="radio"
                 id="method-vals"
                 value="vals"
-                @focus="error = ''"
-                v-model="method"
+                @focus="temper.error = ''"
+                v-model="temper.method"
               />
               <label for="method-vals"> Vals </label>
             </span>
@@ -208,79 +173,87 @@ function modify() {
                 type="radio"
                 id="method-commas"
                 value="commas"
-                @focus="error = ''"
-                v-model="method"
+                @focus="temper.error = ''"
+                v-model="temper.method"
               />
               <label for="method-commas"> Comma list </label>
             </span>
           </div>
 
-          <div class="control" v-show="method === 'mapping'">
+          <div class="control" v-show="temper.method === 'mapping'">
             <label for="mapping">Mapping</label>
-            <textarea id="mapping" @focus="error = ''" v-model="mappingString"></textarea>
+            <textarea
+              id="mapping"
+              @focus="temper.error = ''"
+              v-model="temper.mappingString"
+            ></textarea>
           </div>
 
-          <div class="control" v-show="method === 'vals'">
+          <div class="control" v-show="temper.method === 'vals'">
             <label for="vals">Vals</label>
             <input
               type="text"
               id="vals"
               placeholder="12 & 17c"
-              @focus="error = ''"
-              v-model="valsString"
+              @focus="temper.error = ''"
+              v-model="temper.valsString"
             />
           </div>
-          <div class="control" v-show="method === 'vals'">
+          <div class="control" v-show="temper.method === 'vals'">
             <div class="radio-group">
               <span>
                 <input
                   type="checkbox"
                   id="edo-steps"
-                  :disabled="edoUnavailable"
-                  v-model="convertToEdoSteps"
+                  :disabled="temper.edoUnavailable"
+                  v-model="temper.convertToEdoSteps"
                 />
-                <label for="edo-steps" :class="{ disabled: edoUnavailable }">
+                <label for="edo-steps" :class="{ disabled: temper.edoUnavailable }">
                   Convert to edo-steps</label
                 >
               </span>
             </div>
           </div>
 
-          <div class="control" v-show="method === 'commas'">
+          <div class="control" v-show="temper.method === 'commas'">
             <label for="commas">Comma list</label>
             <input
               type="text"
               id="commas"
               placeholder="225/224, 1029/1024"
-              @focus="error = ''"
-              v-model="commasString"
+              @focus="temper.error = ''"
+              v-model="temper.commasString"
             />
           </div>
 
-          <div class="control" v-show="method === 'vals' || method === 'commas'">
+          <div class="control" v-show="temper.method === 'vals' || temper.method === 'commas'">
             <label for="subgroup">Subgroup / Prime limit</label>
             <input
               type="text"
               ref="subgroupInput"
               id="subgroup"
-              :placeholder="method === 'vals' ? '2.3.5' : ''"
-              @focus="error = ''"
-              v-model="subgroupString"
+              :placeholder="temper.method === 'vals' ? '2.3.5' : ''"
+              @focus="temper.error = ''"
+              v-model="temper.subgroupString"
             />
           </div>
         </div>
-        <p class="section" :class="{ open: showAdvanced }" @click="showAdvanced = !showAdvanced">
+        <p
+          class="section"
+          :class="{ open: temper.showAdvanced }"
+          @click="temper.showAdvanced = !temper.showAdvanced"
+        >
           Advanced options
         </p>
-        <div class="control-group" v-show="showAdvanced">
+        <div class="control-group" v-show="temper.showAdvanced">
           <div class="control radio-group">
             <span>
               <input
                 type="radio"
                 id="tempering-TE"
                 value="TE"
-                @focus="error = ''"
-                v-model="tempering"
+                @focus="temper.error = ''"
+                v-model="temper.tempering"
               />
               <label for="tempering-TE"> TE </label>
             </span>
@@ -290,8 +263,8 @@ function modify() {
                 type="radio"
                 id="tempering-POTE"
                 value="POTE"
-                @focus="error = ''"
-                v-model="tempering"
+                @focus="temper.error = ''"
+                v-model="temper.tempering"
               />
               <label for="tempering-POTE"> POTE </label>
             </span>
@@ -301,36 +274,40 @@ function modify() {
                 type="radio"
                 id="tempering-CTE"
                 value="CTE"
-                @focus="error = ''"
-                :disabled="constraintsDisabled"
-                v-model="tempering"
+                @focus="temper.error = ''"
+                :disabled="temper.constraintsDisabled"
+                v-model="temper.tempering"
               />
               <label for="tempering-CTE"> CTE </label>
             </span>
           </div>
 
-          <div v-show="tempering === 'CTE'" class="control">
+          <div v-show="temper.tempering === 'CTE'" class="control">
             <label for="constraints">Constraints</label>
             <textarea
               id="constraints"
-              @focus="error = ''"
-              :disabled="constraintsDisabled"
-              v-model="constraintsString"
+              @focus="temper.error = ''"
+              :disabled="temper.constraintsDisabled"
+              v-model="temper.constraintsString"
             ></textarea>
           </div>
 
           <div class="control">
             <label for="weights">Weights</label>
-            <textarea id="weights" @focus="error = ''" v-model="weightsString"></textarea>
+            <textarea
+              id="weights"
+              @focus="temper.error = ''"
+              v-model="temper.weightsString"
+            ></textarea>
           </div>
         </div>
       </div>
     </template>
     <template #footer>
       <div class="btn-group">
-        <button @click="modify" :disabled="error.length !== 0">OK</button>
+        <button @click="modify" :disabled="temper.error.length !== 0">OK</button>
         <button @click="$emit('cancel')">Cancel</button>
-        <span class="error" v-show="error.length">⚠</span>
+        <span class="error" v-show="temper.error.length">⚠</span>
       </div>
     </template>
   </Modal>

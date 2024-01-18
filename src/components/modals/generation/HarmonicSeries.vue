@@ -1,21 +1,20 @@
 <script setup lang="ts">
 import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
-import { ref } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import { clamp } from 'xen-dev-utils'
 import { Scale } from 'scale-workshop-core'
+import { useModalStore } from '@/stores/modal'
 
 const emit = defineEmits(['update:scale', 'update:scaleName', 'cancel'])
 
-const lowestHarmonic = ref(8)
-const highestHarmonic = ref(16)
+const modal = useModalStore()
 
 function generate() {
-  const denominator = Math.max(1, Math.round(lowestHarmonic.value))
+  const denominator = Math.max(1, Math.round(modal.lowInteger))
   const greatestNumerator = clamp(
     denominator + 1,
     denominator + 1000,
-    Math.round(highestHarmonic.value)
+    Math.round(modal.highInteger)
   )
   const scale = Scale.fromHarmonicSeries(
     denominator,
@@ -41,7 +40,7 @@ function generate() {
             type="number"
             min="1"
             class="control"
-            v-model="lowestHarmonic"
+            v-model="modal.lowInteger"
           />
         </div>
         <div class="control">
@@ -51,7 +50,7 @@ function generate() {
             type="number"
             min="1"
             class="control"
-            v-model="highestHarmonic"
+            v-model="modal.highInteger"
           />
         </div>
       </div>

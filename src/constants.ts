@@ -34,3 +34,11 @@ export const FIFTH = new Interval(
   ExtendedMonzo.fromFraction('3/2', DEFAULT_NUMBER_OF_COMPONENTS),
   'ratio'
 )
+export const THIRD = new Interval(
+  ExtendedMonzo.fromFraction('5/4', DEFAULT_NUMBER_OF_COMPONENTS),
+  'ratio'
+)
+export const FIFTH_12TET = new Interval(
+  ExtendedMonzo.fromEqualTemperament('7/12', '2/1', DEFAULT_NUMBER_OF_COMPONENTS),
+  'equal temperament'
+)

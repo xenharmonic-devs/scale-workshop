@@ -3,30 +3,28 @@ import { ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { OCTAVE } from '@/constants'
-import { computedAndError, parseChordInput } from '@/utils'
 import { Scale } from 'scale-workshop-core'
+import { useModalStore } from '@/stores/modal'
 
 const emit = defineEmits(['update:scale', 'update:scaleName', 'cancel'])
 
-const basisString = ref('')
-const addUnity = ref(true)
-const equaveString = ref('2/1')
-const equave = ref(OCTAVE)
+const modal = useModalStore()
+
 const basisElement = ref<HTMLInputElement | null>(null)
-const [basis, basisError] = computedAndError(() => {
-  return parseChordInput(basisString.value)
-}, [])
-watch(basisError, (newError) => basisElement.value!.setCustomValidity(newError))
+watch(
+  () => modal.factorsError,
+  (newError) => basisElement.value!.setCustomValidity(newError)
+)
 
 function generate() {
   try {
-    const scale = Scale.fromCrossPolytope(basis.value, addUnity.value, equave.value)
-    let name = `Cross-polytope (${basisString.value}`
-    if (addUnity.value) {
+    const scale = Scale.fromCrossPolytope(modal.factors, modal.addUnity, modal.equave)
+    let name = `Cross-polytope (${modal.factorsString}`
+    if (modal.addUnity) {
       name += ' with 1/1'
     }
-    if (!equave.value.equals(OCTAVE)) {
-      name += ` over ${equave.value.toString()}`
+    if (!modal.equave.equals(OCTAVE)) {
+      name += ` over ${modal.equave.toString()}`
     }
     name += ')'
     emit('update:scaleName', name)
@@ -56,19 +54,19 @@ function generate() {
             type="text"
             class="control"
             placeholder="3 5 7 11"
-            v-model="basisString"
+            v-model="modal.factorsString"
           />
         </div>
         <div class="control checkbox-container">
-          <input type="checkbox" id="add-unity" v-model="addUnity" />
+          <input type="checkbox" id="add-unity" v-model="modal.addUnity" />
           <label for="add-unity">Include 1/1 (origin)</label>
         </div>
         <div class="control">
           <label for="equave">Equave</label>
           <ScaleLineInput
             id="equave"
-            @update:value="equave = $event"
-            v-model="equaveString"
+            @update:value="modal.equave = $event"
+            v-model="modal.equaveString"
             :defaultValue="OCTAVE"
           />
         </div>

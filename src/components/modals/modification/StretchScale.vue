@@ -1,39 +1,24 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
-import { ExtendedMonzo, Interval, type Scale } from 'scale-workshop-core'
-import { DEFAULT_NUMBER_OF_COMPONENTS, FIFTH } from '@/constants'
+import { type Scale } from 'scale-workshop-core'
+import { FIFTH, FIFTH_12TET } from '@/constants'
+import { useModalStore } from '@/stores/modal'
+
 const props = defineProps<{
   scale: Scale
   centsFractionDigits: number
   decimalFractionDigits: number
 }>()
+
 const emit = defineEmits(['update:scale', 'cancel'])
-const amount = ref(1.005)
 
-const equallyTemperedFifth = new Interval(
-  ExtendedMonzo.fromEqualTemperament('7/12', '2/1', DEFAULT_NUMBER_OF_COMPONENTS),
-  'equal temperament'
-)
-
-const referenceString = ref('')
-const reference = ref(FIFTH)
-
-const targetString = ref('')
-const target = ref(FIFTH)
-
-function calculateAmount() {
-  const calculated = target.value.totalCents() / reference.value.totalCents()
-  if (calculated >= 0.001 && calculated <= 999.999) {
-    amount.value = calculated
-  }
-}
+const modal = useModalStore()
 
 function modify() {
   emit(
     'update:scale',
-    props.scale.stretch(amount.value).mergeOptions({
+    props.scale.stretch(modal.stretchAmount).mergeOptions({
       centsFractionDigits: props.centsFractionDigits,
       decimalFractionDigits: props.decimalFractionDigits
     })
@@ -59,7 +44,7 @@ function modify() {
             min="0.001"
             max="999.999"
             step="0.001"
-            v-model="amount"
+            v-model="modal.stretchAmount"
           />
         </div>
         <hr />
@@ -68,9 +53,9 @@ function modify() {
           <ScaleLineInput
             id="reference"
             placeholder="7\12"
-            :defaultValue="equallyTemperedFifth"
-            @update:value="reference = $event"
-            v-model="referenceString"
+            :defaultValue="FIFTH_12TET"
+            @update:value="modal.reference = $event"
+            v-model="modal.referenceString"
           />
         </div>
         <div class="control">
@@ -79,13 +64,13 @@ function modify() {
             id="reference"
             placeholder="3/2"
             :defaultValue="FIFTH"
-            @update:value="target = $event"
-            v-model="targetString"
+            @update:value="modal.target = $event"
+            v-model="modal.targetString"
           />
         </div>
         <div class="control">
           <label for="stretch-into">Stretch reference into target</label>
-          <button @click="calculateAmount">Calculate</button>
+          <button @click="modal.calculateStretchAmount">Calculate</button>
         </div>
       </div>
     </template>

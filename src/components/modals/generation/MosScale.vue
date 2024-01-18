@@ -2,166 +2,42 @@ Interval
 <script setup lang="ts">
 import { OCTAVE } from '@/constants'
 import {
-  allForEdo,
-  anyForEdo,
   daughterMos,
-  getHardness,
-  makeEdoMap,
-  modeInfo,
   mos,
   mosWithDaughter,
   mosWithParent,
   parentMos,
-  tamnamsInfo,
   type MosScaleInfo
 } from 'moment-of-symmetry'
-import { computed, reactive, ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
-import { clamp, gcd } from 'xen-dev-utils'
 import { Scale } from 'scale-workshop-core'
+import { useModalStore } from '@/stores/modal'
 
 const emit = defineEmits(['update:scale', 'update:scaleName', 'update:keyColors', 'cancel'])
 
-// State required to generate MOS
-const numberOfLargeSteps = ref(5)
-const numberOfSmallSteps = ref(2)
-const sizeOfLargeStep = ref(2)
-const sizeOfSmallStep = ref(1)
-const up = ref(5)
-const equave = ref(OCTAVE)
-
-// State for key colors
-const colorMethod = ref<'none' | 'parent' | 'daughter'>('none')
-const colorAccidentals = ref<'flat' | 'sharp'>('sharp')
-
-// State to help select MOS parameters
-const method = ref<'direct' | 'pyramid' | 'edo'>('pyramid')
-const edo = ref(12)
-const equaveString = ref('2/1')
-const previewL = ref(0)
-const previewS = ref(0)
-
-// == Computed state ==
-
-// Sanity enforcement
-const safeNumLarge = computed(() => clamp(1, 1000, Math.round(numberOfLargeSteps.value)))
-const safeNumSmall = computed(() => clamp(1, 1000, Math.round(numberOfSmallSteps.value)))
-const safeSizeLarge = computed(() => Math.round(sizeOfLargeStep.value))
-const safeSizeSmall = computed(() => Math.round(sizeOfSmallStep.value))
-const boundedEdo = computed(() => {
-  const value = edo.value
-  if (isNaN(value) || !isFinite(value)) {
-    return 12
-  }
-  if (value < 2) {
-    return 2
-  }
-  return Math.round(value)
-})
-
-// Derived sanity
-const numberOfPeriods = computed(() => Math.abs(gcd(safeNumLarge.value, safeNumSmall.value)))
-const upMax = computed(() => safeNumLarge.value + safeNumSmall.value - numberOfPeriods.value)
-const safeUp = computed(() =>
-  Math.min(Math.floor(up.value / numberOfPeriods.value) * numberOfPeriods.value, upMax.value)
-)
-
-// Selections
-const edoMap = computed(() => makeEdoMap())
-const edoExtraMap = reactive<Map<number, MosScaleInfo[]>>(new Map())
-const edoList = computed(() => {
-  const edo_ = boundedEdo.value
-  if (!edoMap.value.has(edo_)) {
-    return [anyForEdo(edo_)].concat(edoExtraMap.get(edo_) || [])
-  }
-  return edoMap.value.get(edo_)!.concat(edoExtraMap.get(edo_) || [])
-})
-
-// Additional information
-const tamnamsName = computed(() => {
-  const info = tamnamsInfo(safeNumLarge.value, safeNumSmall.value)
-  if (info?.name === undefined) {
-    return ''
-  }
-  return info.name.split(';')[0]
-})
-const mosModeInfo = computed(() =>
-  modeInfo(safeNumLarge.value, safeNumSmall.value, safeUp.value, true)
-)
-
-// Derived state
-const hardness = computed(() => getHardness(safeSizeLarge.value, safeSizeSmall.value))
-const hostEd = computed(
-  () => safeNumLarge.value * safeSizeLarge.value + safeNumSmall.value * safeSizeSmall.value
-)
-const ed = computed(() => {
-  if (equave.value.equals(OCTAVE)) {
-    return `${hostEd.value}EDO`
-  }
-  return `${hostEd.value}ED${equaveString.value}`
-})
-const previewName = computed(() => {
-  const info = tamnamsInfo(previewL.value, previewS.value)
-  if (info?.name === undefined) {
-    return ''
-  }
-  return info.name
-})
-
-// Watchers
-watch(numberOfPeriods, (newValue) => {
-  up.value = Math.floor(up.value / newValue) * newValue
-})
-watch(upMax, (newValue) => {
-  up.value = Math.min(up.value, newValue)
-})
-
-// Methods
-function moreForEdo() {
-  const edo_ = boundedEdo.value
-  const existing = edoList.value
-  const extra = allForEdo(edo_, 5, 12, 5)
-  const more = []
-  for (const info of extra) {
-    let novel = true
-    for (const old of existing) {
-      if (
-        info.mosPattern === old.mosPattern &&
-        info.sizeOfLargeStep === old.sizeOfLargeStep &&
-        info.sizeOfSmallStep === old.sizeOfSmallStep
-      ) {
-        novel = false
-        break
-      }
-    }
-    if (novel) {
-      more.push(info)
-    }
-  }
-  edoExtraMap.set(edo_, more)
-}
+const modal = useModalStore()
 
 function generate() {
   let name: string
   let steps: number[]
-  if (colorMethod.value === 'none') {
+  if (modal.colorMethod === 'none') {
     steps = mos(
-      safeNumLarge.value,
-      safeNumSmall.value,
-      safeSizeLarge.value,
-      safeSizeSmall.value,
-      safeUp.value
+      modal.safeNumLarge,
+      modal.safeNumSmall,
+      modal.safeSizeLarge,
+      modal.safeSizeSmall,
+      modal.safeUp
     )
   } else {
-    const generator = colorMethod.value === 'parent' ? mosWithParent : mosWithDaughter
+    const generator = modal.colorMethod === 'parent' ? mosWithParent : mosWithDaughter
     const map = generator(
-      safeNumLarge.value,
-      safeNumSmall.value,
-      safeSizeLarge.value,
-      safeSizeSmall.value,
-      safeUp.value,
-      colorAccidentals.value === 'flat'
+      modal.safeNumLarge,
+      modal.safeNumSmall,
+      modal.safeSizeLarge,
+      modal.safeSizeSmall,
+      modal.safeUp,
+      modal.colorAccidentals === 'flat'
     )
     steps = [...map.keys()]
     const colors = [...map.values()].map((isParent) => (isParent ? 'white' : 'black'))
@@ -169,61 +45,61 @@ function generate() {
     emit('update:keyColors', colors)
   }
 
-  if (colorMethod.value === 'parent') {
-    const parent = parentMos(safeNumLarge.value, safeNumSmall.value)
-    name = `MOS ${safeNumLarge.value}L ${safeNumSmall.value}s (${parent.mosPattern} on white)`
-  } else if (colorMethod.value === 'daughter') {
+  if (modal.colorMethod === 'parent') {
+    const parent = parentMos(modal.safeNumLarge, modal.safeNumSmall)
+    name = `MOS ${modal.safeNumLarge}L ${modal.safeNumSmall}s (${parent.mosPattern} on white)`
+  } else if (modal.colorMethod === 'daughter') {
     const daughter = daughterMos(
-      safeNumLarge.value,
-      safeNumSmall.value,
-      safeSizeLarge.value,
-      safeSizeSmall.value
+      modal.safeNumLarge,
+      modal.safeNumSmall,
+      modal.safeSizeLarge,
+      modal.safeSizeSmall
     )
     name = 'MOS '
     if (daughter.hardness === 'equalized') {
       const equaveSteps = steps[steps.length - 1]
       name += `${equaveSteps}ED`
-      if (equave.value.equals(OCTAVE)) {
+      if (modal.equave.equals(OCTAVE)) {
         name += 'O'
       } else {
-        name += equave.value.toString()
+        name += modal.equave.toString()
       }
     } else {
       name += daughter.mosPattern
     }
-    name += ` (${safeNumLarge.value}L ${safeNumSmall.value}s on white)`
+    name += ` (${modal.safeNumLarge}L ${modal.safeNumSmall}s on white)`
   } else {
-    name = `MOS ${safeNumLarge.value}L ${safeNumSmall.value}s`
+    name = `MOS ${modal.safeNumLarge}L ${modal.safeNumSmall}s`
   }
   emit('update:scaleName', name)
 
-  const scale = Scale.fromEqualTemperamentSubset(steps, equave.value)
+  const scale = Scale.fromEqualTemperamentSubset(steps, modal.equave)
   emit('update:scale', scale)
 }
 
 // Actions that would take multiple lines in template code and get ruined by auto-formatting
 function pyramidMouseEnter(l: number, key: number) {
-  previewL.value = l
-  previewS.value = key + 1 - l
+  modal.previewL = l
+  modal.previewS = key + 1 - l
 }
 
 function pyramidClick(l: number, key: number) {
-  numberOfLargeSteps.value = l
-  numberOfSmallSteps.value = key + 1 - l
-  method.value = 'direct'
+  modal.numberOfLargeSteps = l
+  modal.numberOfSmallSteps = key + 1 - l
+  modal.method = 'direct'
 }
 
 function edoMouseEnter(info: MosScaleInfo) {
-  previewL.value = info.numberOfLargeSteps
-  previewS.value = info.numberOfSmallSteps
+  modal.previewL = info.numberOfLargeSteps
+  modal.previewS = info.numberOfSmallSteps
 }
 
 function edoClick(info: MosScaleInfo) {
-  numberOfLargeSteps.value = info.numberOfLargeSteps
-  numberOfSmallSteps.value = info.numberOfSmallSteps
-  sizeOfLargeStep.value = info.sizeOfLargeStep
-  sizeOfSmallStep.value = info.sizeOfSmallStep
-  method.value = 'direct'
+  modal.numberOfLargeSteps = info.numberOfLargeSteps
+  modal.numberOfSmallSteps = info.numberOfSmallSteps
+  modal.sizeOfLargeStep = info.sizeOfLargeStep
+  modal.sizeOfSmallStep = info.sizeOfSmallStep
+  modal.method = 'direct'
 }
 </script>
 
@@ -236,23 +112,23 @@ function edoClick(info: MosScaleInfo) {
       <div class="control-group">
         <div class="control radio-group">
           <span>
-            <input type="radio" id="method-direct" value="direct" v-model="method" />
+            <input type="radio" id="method-direct" value="direct" v-model="modal.method" />
             <label for="method-direct"> Direct </label>
           </span>
 
           <span>
-            <input type="radio" id="method-pyramid" value="pyramid" v-model="method" />
+            <input type="radio" id="method-pyramid" value="pyramid" v-model="modal.method" />
             <label for="method-pyramid"> Pyramid </label>
           </span>
 
           <span>
-            <input type="radio" id="method-edo" value="edo" v-model="method" />
+            <input type="radio" id="method-edo" value="edo" v-model="modal.method" />
             <label for="method-edo"> EDO </label>
           </span>
         </div>
       </div>
 
-      <div class="control-group" v-show="method === 'direct'">
+      <div class="control-group" v-show="modal.method === 'direct'">
         <div class="control">
           <label for="number-of-large-steps">Number of large steps</label>
           <input
@@ -260,7 +136,7 @@ function edoClick(info: MosScaleInfo) {
             type="number"
             min="1"
             max="1000"
-            v-model="numberOfLargeSteps"
+            v-model="modal.numberOfLargeSteps"
           />
         </div>
         <div class="control">
@@ -270,60 +146,67 @@ function edoClick(info: MosScaleInfo) {
             type="number"
             min="1"
             max="1000"
-            v-model="numberOfSmallSteps"
+            v-model="modal.numberOfSmallSteps"
           />
         </div>
         <div class="control">
           <label for="size-of-large-step">Size of large step</label>
-          <input id="size-of-large-step" type="number" v-model="sizeOfLargeStep" />
+          <input id="size-of-large-step" type="number" v-model="modal.sizeOfLargeStep" />
         </div>
         <div class="control">
           <label for="size-of-small-step">Size of small step</label>
-          <input id="size-of-small-step" type="number" v-model="sizeOfSmallStep" />
+          <input id="size-of-small-step" type="number" v-model="modal.sizeOfSmallStep" />
         </div>
         <div class="control">
           <label for="up">Bright generators up</label>
-          <input id="up" type="number" min="0" :max="upMax" :step="numberOfPeriods" v-model="up" />
+          <input
+            id="up"
+            type="number"
+            min="0"
+            :max="modal.upMax"
+            :step="modal.numberOfPeriods"
+            v-model="modal.up"
+          />
         </div>
         <div class="control">
           <label for="equave">Equave</label>
           <ScaleLineInput
             id="equave"
-            @update:value="equave = $event"
-            v-model="equaveString"
+            @update:value="modal.equave = $event"
+            v-model="modal.equaveString"
             :defaultValue="OCTAVE"
           />
         </div>
         <div class="control radio-group">
           <label>Generate key colors</label>
           <span>
-            <input type="radio" id="color-none" value="none" v-model="colorMethod" />
+            <input type="radio" id="color-none" value="none" v-model="modal.colorMethod" />
             <label for="color-none"> Off </label>
           </span>
           <span>
-            <input type="radio" id="color-parent" value="parent" v-model="colorMethod" />
+            <input type="radio" id="color-parent" value="parent" v-model="modal.colorMethod" />
             <label for="color-parent"> Parent MOS </label>
           </span>
           <span>
-            <input type="radio" id="color-daughter" value="daughter" v-model="colorMethod" />
+            <input type="radio" id="color-daughter" value="daughter" v-model="modal.colorMethod" />
             <label for="color-daughter"> Daughter MOS (expand scale) </label>
           </span>
         </div>
-        <div class="control radio-group" v-show="colorMethod !== 'none'">
+        <div class="control radio-group" v-show="modal.colorMethod !== 'none'">
           <label>Black keys are</label>
           <span>
-            <input type="radio" id="sharp" value="sharp" v-model="colorAccidentals" />
+            <input type="radio" id="sharp" value="sharp" v-model="modal.colorAccidentals" />
             <label for="sharp"> Sharp </label>
           </span>
           <span>
-            <input type="radio" id="flat" value="flat" v-model="colorAccidentals" />
+            <input type="radio" id="flat" value="flat" v-model="modal.colorAccidentals" />
             <label for="flat"> Flat </label>
           </span>
         </div>
       </div>
 
-      <div class="pyramid" @mouseleave="previewL = 0" v-show="method === 'pyramid'">
-        <div v-for="key of 11" :key="key" @mousemove.self="previewL = 0">
+      <div class="pyramid" @mouseleave="modal.previewL = 0" v-show="modal.method === 'pyramid'">
+        <div v-for="key of 11" :key="key" @mousemove.self="modal.previewL = 0">
           <button
             v-for="l of key"
             :key="l"
@@ -335,12 +218,12 @@ function edoClick(info: MosScaleInfo) {
         </div>
       </div>
 
-      <div class="control-group" @mouseleave="previewL = 0" v-show="method === 'edo'">
+      <div class="control-group" @mouseleave="modal.previewL = 0" v-show="modal.method === 'edo'">
         <div class="control">
           <label for="edo">EDO</label>
-          <input id="edo" type="number" min="2" class="control" v-model="edo" />
+          <input id="edo" type="number" min="2" class="control" v-model="modal.edo" />
         </div>
-        <span v-for="(info, i) of edoList" @mouseenter="edoMouseEnter(info)" :key="i">
+        <span v-for="(info, i) of modal.edoList" @mouseenter="edoMouseEnter(info)" :key="i">
           <button @click="edoClick(info)">
             {{ info.mosPattern }}
           </button>
@@ -348,10 +231,15 @@ function edoClick(info: MosScaleInfo) {
           <i v-if="info.name !== undefined">[{{ info.name.split(';')[0] }}]</i>
         </span>
         <button
-          @click="moreForEdo"
+          @click="modal.moreForEdo"
           v-if="
-            (edo === 17 || edo === 19 || edo === 21 || edo === 22 || edo === 23 || edo > 24) &&
-            !edoExtraMap.has(edo)
+            (modal.edo === 17 ||
+              modal.edo === 19 ||
+              modal.edo === 21 ||
+              modal.edo === 22 ||
+              modal.edo === 23 ||
+              modal.edo > 24) &&
+            !modal.edoExtraMap.has(modal.edo)
           "
         >
           More...
@@ -362,12 +250,13 @@ function edoClick(info: MosScaleInfo) {
       <div class="btn-group">
         <button @click="generate">OK</button>
         <button @click="$emit('cancel')">Cancel</button>
-        <template v-if="method === 'direct'">
-          {{ ed }}<i>{{ tamnamsName }}</i
-          >{{ mosModeInfo.mode }} {{ mosModeInfo.udp
-          }}<i v-if="mosModeInfo.modeName">"{{ mosModeInfo.modeName }}"</i><i>{{ hardness }}</i>
+        <template v-if="modal.method === 'direct'">
+          {{ modal.ed }}<i>{{ modal.tamnamsName }}</i
+          >{{ modal.mosModeInfo.mode }} {{ modal.mosModeInfo.udp
+          }}<i v-if="modal.mosModeInfo.modeName">"{{ modal.mosModeInfo.modeName }}"</i
+          ><i>{{ modal.hardness }}</i>
         </template>
-        <i v-else>{{ previewName }}</i>
+        <i v-else>{{ modal.previewName }}</i>
       </div>
     </template>
   </Modal>

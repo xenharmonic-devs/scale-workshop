@@ -2,7 +2,8 @@
 import { onMounted, ref } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import { Fraction } from 'xen-dev-utils'
-import type { IntervalOptions, IntervalType, Scale } from 'scale-workshop-core'
+import type { IntervalOptions, Scale } from 'scale-workshop-core'
+import { useModalStore } from '@/stores/modal'
 
 const props = defineProps<{
   scale: Scale
@@ -11,14 +12,11 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['update:scale', 'cancel'])
-const type = ref<IntervalType>('cents')
+
+const modal = useModalStore()
+
 const myCentsFractionDigits = ref(3)
 const myDecimalFractionDigits = ref(5)
-const preferredNumerator = ref<number>(0)
-const preferredDenominator = ref<number>(0)
-const preferredEtDenominator = ref<number>(0)
-const preferredEtEquaveNumerator = ref<number>(0)
-const preferredEtEquaveDenominator = ref<number>(1)
 
 onMounted(() => {
   myCentsFractionDigits.value = props.centsFractionDigits
@@ -30,23 +28,23 @@ function modify() {
     centsFractionDigits: myCentsFractionDigits.value,
     decimalFractionDigits: myDecimalFractionDigits.value
   }
-  if (preferredNumerator.value) {
-    options.preferredNumerator = preferredNumerator.value
+  if (modal.preferredNumerator) {
+    options.preferredNumerator = modal.preferredNumerator
   }
-  if (preferredDenominator.value) {
-    options.preferredDenominator = preferredDenominator.value
+  if (modal.preferredDenominator) {
+    options.preferredDenominator = modal.preferredDenominator
   }
-  if (preferredEtDenominator.value) {
-    options.preferredEtDenominator = preferredEtDenominator.value
+  if (modal.preferredEtDenominator) {
+    options.preferredEtDenominator = modal.preferredEtDenominator
   }
-  if (preferredEtEquaveNumerator.value) {
+  if (modal.preferredEtEquaveNumerator) {
     options.preferredEtEquave = new Fraction(
-      preferredEtEquaveNumerator.value,
-      preferredEtEquaveDenominator.value
+      modal.preferredEtEquaveNumerator,
+      modal.preferredEtEquaveDenominator
     )
   }
 
-  emit('update:scale', props.scale.asType(type.value, options))
+  emit('update:scale', props.scale.asType(modal.type, options))
 }
 </script>
 
@@ -60,7 +58,7 @@ function modify() {
         <p>Convert interval values to a different type.</p>
         <div class="control">
           <label for="type">Interval type</label>
-          <select id="type" class="control" v-model="type">
+          <select id="type" class="control" v-model="modal.type">
             <option value="cents">Cents</option>
             <option value="ratio">Ratio</option>
             <option value="equal temperament">Equal temperament</option>
@@ -69,39 +67,49 @@ function modify() {
           </select>
         </div>
 
-        <div class="control" v-if="type === 'cents'">
+        <div class="control" v-if="modal.type === 'cents'">
           <label for="cents-digits">Digits after decimal point</label>
           <input id="cents-digits" type="number" min="0" v-model="myCentsFractionDigits" />
         </div>
 
-        <div class="control" v-if="type === 'decimal'">
+        <div class="control" v-if="modal.type === 'decimal'">
           <label for="decimal-digits">Digits after decimal comma</label>
           <input id="decimal-digits" type="number" min="0" v-model="myDecimalFractionDigits" />
         </div>
 
-        <div class="control" v-if="type === 'ratio'">
+        <div class="control" v-if="modal.type === 'ratio'">
           <label for="numerator">Preferred numerator *</label>
-          <input id="numerator" type="number" min="0" v-model="preferredNumerator" />
+          <input id="numerator" type="number" min="0" v-model="modal.preferredNumerator" />
         </div>
-        <div class="control" v-if="type === 'ratio'">
+        <div class="control" v-if="modal.type === 'ratio'">
           <label for="denominator">Preferred denominator *</label>
-          <input id="denominator" type="number" min="0" v-model="preferredDenominator" />
+          <input id="denominator" type="number" min="0" v-model="modal.preferredDenominator" />
         </div>
 
-        <div class="control" v-if="type === 'equal temperament'">
+        <div class="control" v-if="modal.type === 'equal temperament'">
           <label for="edo">Preferred EDO *</label>
-          <input id="edo" type="number" min="0" v-model="preferredEtDenominator" />
+          <input id="edo" type="number" min="0" v-model="modal.preferredEtDenominator" />
         </div>
-        <div class="control" v-if="type === 'equal temperament'">
+        <div class="control" v-if="modal.type === 'equal temperament'">
           <label for="eq-numerator">Preferred equave numerator *</label>
-          <input id="eq-numeraotr" type="number" min="0" v-model="preferredEtEquaveNumerator" />
+          <input
+            id="eq-numeraotr"
+            type="number"
+            min="0"
+            v-model="modal.preferredEtEquaveNumerator"
+          />
         </div>
-        <div class="control" v-if="type === 'equal temperament'">
+        <div class="control" v-if="modal.type === 'equal temperament'">
           <label for="eq-denominator">Preferred equave denominator</label>
-          <input id="eq-denominator" type="number" min="1" v-model="preferredEtEquaveDenominator" />
+          <input
+            id="eq-denominator"
+            type="number"
+            min="1"
+            v-model="modal.preferredEtEquaveDenominator"
+          />
         </div>
 
-        <i v-if="type === 'ratio' || type === 'equal temperament'"
+        <i v-if="modal.type === 'ratio' || modal.type === 'equal temperament'"
           >*) Value of 0 means no preference.</i
         >
       </div>
