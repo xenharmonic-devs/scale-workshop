@@ -56,6 +56,17 @@ describe('URL encoder', () => {
     expect(arraysEqual(lines, expected)).toBeTruthy()
   })
 
+  it('can encode zero-of-edo', () => {
+    const lines = ['0\\1', '0\\12']
+    expect(encodeLines(lines)).toBe('B1_Bc')
+  })
+
+  it('can decode nothing-of-edo', () => {
+    const lines = decodeLines('B1_Bc')
+    const expected = ['\\1', '\\12']
+    expect(lines).toEqual(expected)
+  })
+
   it('can encode key colors', () => {
     const keyColors = ['blue', 'black', 'white', 'black', 'red', 'red']
     expect(encodeKeyColors(keyColors)).toBe('blue-~-red_red')

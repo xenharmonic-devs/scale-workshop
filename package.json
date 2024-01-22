@@ -20,7 +20,7 @@
     "moment-of-symmetry": "^0.3.4",
     "pinia": "^2.1.7",
     "qs": "^6.11.2",
-    "scale-workshop-core": "github:xenharmonic-devs/scale-workshop-core#v0.1.0",
+    "scale-workshop-core": "github:xenharmonic-devs/scale-workshop-core#v0.1.1",
     "temperaments": "^0.4.6",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5",
