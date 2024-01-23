@@ -372,7 +372,8 @@ const WAVEFORM_TO_LETTER: { [key: string]: string } = {
   didacus: 'd',
   bohlen: 'l',
   glass: 'g',
-  boethius: 'i'
+  boethius: 'i',
+  pythagorean: 'p'
 }
 
 const LETTER_TO_WAVEFORM: { [key: string]: string } = {
@@ -394,7 +395,8 @@ const LETTER_TO_WAVEFORM: { [key: string]: string } = {
   d: 'didacus',
   l: 'bohlen',
   g: 'glass',
-  i: 'boethius'
+  i: 'boethius',
+  p: 'pythagorean'
 }
 
 function millify(value: number) {
