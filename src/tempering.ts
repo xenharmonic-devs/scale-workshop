@@ -154,8 +154,8 @@ function mosPatternsRank2(
   maxLength?: number,
   options?: TuningOptions
 ) {
-  const numPeriods = temperament.numPeriodsGenerator()[0]
-  const [period, generator] = temperament.periodGenerator(options)
+  const numPeriods = temperament.numPeriodsGenerators()[0]
+  const [period, generator] = temperament.periodGenerators(options)
   return mosPatterns(generator / period, numPeriods, maxSize, maxLength)
 }
 
@@ -167,8 +167,9 @@ export function mosPatternsRank2FromVals(
   options?: TuningOptions
 ) {
   const temperament = Temperament.fromVals(vals, subgroup)
-  if (temperament.getRank() !== 2) {
-    throw new Error('Given vals do not define a rank 2 temperament')
+  const rank = temperament.getRank()
+  if (rank !== 2) {
+    throw new Error(`Given vals define a rank ${rank} temperament. Need rank 2.`)
   }
   return mosPatternsRank2(temperament, maxSize, maxLength, options)
 }
@@ -181,8 +182,9 @@ export function mosPatternsRank2FromCommas(
   options?: TuningOptions
 ) {
   const temperament = Temperament.fromCommas(commas, subgroup, true)
-  if (temperament.getRank() !== 2) {
-    throw new Error('Given commas do not define a rank 2 temperament')
+  const rank = temperament.getRank()
+  if (rank !== 2) {
+    throw new Error(`Given commas define a rank ${rank} temperament. Need rank 2.`)
   }
   return mosPatternsRank2(temperament, maxSize, maxLength, options)
 }
@@ -194,13 +196,13 @@ export type Rank2Params = {
 }
 
 function makeRank2(temperament: Temperament, size: number, options?: TuningOptions): Rank2Params {
-  const numPeriods = temperament.numPeriodsGenerator()[0]
+  const numPeriods = temperament.numPeriodsGenerators()[0]
   if (size % numPeriods) {
     throw new Error(`Given size '${size}' isn't a multiple of ${numPeriods}`)
   }
   const segmentSize = size / numPeriods
 
-  const [period, generator] = temperament.periodGenerator(options)
+  const [period, generator] = temperament.periodGenerators(options)
   const brightGenerator = toBrightGeneratorPerPeriod(generator / period, segmentSize) * period
 
   return { generator: brightGenerator, period, numPeriods }
@@ -213,8 +215,9 @@ export function makeRank2FromVals(
   options?: TuningOptions
 ) {
   const temperament = Temperament.fromVals(vals, subgroup)
-  if (temperament.getRank() !== 2) {
-    throw new Error('Given vals do not define a rank 2 temperament')
+  const rank = temperament.getRank()
+  if (rank !== 2) {
+    throw new Error(`Given vals define a rank ${rank} temperament. Need rank 2.`)
   }
   return makeRank2(temperament, size, options)
 }
@@ -226,8 +229,9 @@ export function makeRank2FromCommas(
   options?: TuningOptions
 ) {
   const temperament = Temperament.fromCommas(commas, subgroup, true)
-  if (temperament.getRank() !== 2) {
-    throw new Error('Given vals do not define a rank 2 temperament')
+  const rank = temperament.getRank()
+  if (rank !== 2) {
+    throw new Error(`Given commas define a rank ${rank} temperament. Need rank 2.`)
   }
   return makeRank2(temperament, size, options)
 }

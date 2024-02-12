@@ -22,23 +22,19 @@ function generate() {
   let name: string
   let steps: number[]
   if (modal.colorMethod === 'none') {
-    steps = mos(
-      modal.safeNumLarge,
-      modal.safeNumSmall,
-      modal.safeSizeLarge,
-      modal.safeSizeSmall,
-      modal.safeUp
-    )
+    steps = mos(modal.safeNumLarge, modal.safeNumSmall, {
+      sizeOfLargeStep: modal.safeSizeLarge,
+      sizeOfSmallStep: modal.safeSizeSmall,
+      up: modal.safeUp
+    })
   } else {
     const generator = modal.colorMethod === 'parent' ? mosWithParent : mosWithDaughter
-    const map = generator(
-      modal.safeNumLarge,
-      modal.safeNumSmall,
-      modal.safeSizeLarge,
-      modal.safeSizeSmall,
-      modal.safeUp,
-      modal.colorAccidentals === 'flat'
-    )
+    const map = generator(modal.safeNumLarge, modal.safeNumSmall, {
+      sizeOfLargeStep: modal.safeSizeLarge,
+      sizeOfSmallStep: modal.safeSizeSmall,
+      up: modal.safeUp,
+      accidentals: modal.colorAccidentals
+    })
     steps = [...map.keys()]
     const colors = [...map.values()].map((isParent) => (isParent ? 'white' : 'black'))
     colors.unshift(colors.pop()!)

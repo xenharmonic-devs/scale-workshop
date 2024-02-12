@@ -111,7 +111,7 @@ function generate() {
       consolidateCircle()
     }
     const lineOptions = { centsFractionDigits: props.centsFractionDigits }
-    let size_ = rank2.size
+    let size_ = rank2.safeSize
     let down_ = rank2.down
     const n = rank2.numPeriods
     // The option to fill in colors is not shown in circle UI so it's ignored here.
