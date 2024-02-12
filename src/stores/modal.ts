@@ -154,7 +154,7 @@ export const useModalStore = defineStore('modal', () => {
     return info.name.split(';')[0]
   })
   const mosModeInfo = computed(() =>
-    modeInfo(safeNumLarge.value, safeNumSmall.value, safeUp.value, true)
+    modeInfo(safeNumLarge.value, safeNumSmall.value, { up: safeUp.value, extraNames: true })
   )
   // Derived state
   const hardness = computed(() => getHardness(safeSizeLarge.value, safeSizeSmall.value))

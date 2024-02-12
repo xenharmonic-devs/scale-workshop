@@ -10,9 +10,13 @@ import { add } from 'xen-dev-utils'
 
 // Split text into (non-extended) monzos
 function splitCommas(text: string) {
-  return parseChordInput(text).map((interval) =>
-    interval.monzo.vector.map((component) => component.valueOf())
-  )
+  try {
+    return parseChordInput(text).map((interval) =>
+      interval.monzo.vector.map((component) => component.valueOf())
+    )
+  } catch {
+    return []
+  }
 }
 
 // The modals have subtly different semantics so we make copies of this state for each
@@ -152,7 +156,7 @@ export const useRank2Store = defineStore('rank2', () => {
     () => generator.value.totalCents() / period.value.totalCents()
   )
   const opposite = computed(() =>
-    isBright(generatorPerPeriod.value, size.value / numPeriods.value) ? 'dark' : 'bright'
+    isBright(generatorPerPeriod.value, safeSize.value / numPeriods.value) ? 'dark' : 'bright'
   )
 
   const [mosPatterns, mosPatternsError] = computedAndError(() => {
@@ -215,8 +219,15 @@ export const useRank2Store = defineStore('rank2', () => {
     return generator.value.totalCents() + fine
   })
 
+  const safeSize = computed(
+    () => Math.round(size.value / (numPeriods.value || 1)) * numPeriods.value
+  )
+  const safeUp = computed(() => Math.round(up.value / (numPeriods.value || 1)) * numPeriods.value)
+  const upMax = computed(() => safeSize.value - numPeriods.value)
+  const down = computed(() => upMax.value - safeUp.value)
+
   const generatorsPerPeriod = computed({
-    get: () => size.value / numPeriods.value,
+    get: () => safeSize.value / numPeriods.value,
     set: (newValue) => {
       const oldDown = down.value
       size.value = newValue * numPeriods.value
@@ -234,14 +245,6 @@ export const useRank2Store = defineStore('rank2', () => {
       size.value = Math.round(size.value / newValue) * newValue
       up.value = Math.round(up.value / newValue) * newValue
     }
-  })
-
-  const upMax = computed(() => {
-    return size.value - numPeriods.value
-  })
-
-  const down = computed(() => {
-    return upMax.value - up.value
   })
 
   watch(upMax, (newValue) => {
@@ -331,6 +334,8 @@ export const useRank2Store = defineStore('rank2', () => {
     circlePeriodCents,
     circleGeneratorCents,
     generatorsPerPeriod,
+    safeSize,
+    safeUp,
     calculateExpensiveMosPattern
   }
 })

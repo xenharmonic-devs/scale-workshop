@@ -40,7 +40,7 @@ function calculateGenerators() {
   } else {
     temperament = Temperament.fromCommas(lattice.commas, lattice.subgroup)
   }
-  const generators = temperament.generators(lattice.options)
+  const generators = temperament.periodGenerators(lattice.options)
   if (!generators.length) {
     alert('Unable to calculate generators.')
     return
