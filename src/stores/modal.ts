@@ -107,7 +107,8 @@ export const useModalStore = defineStore('modal', () => {
   const up = ref(5)
   // State for key colors
   const colorMethod = ref<'none' | 'parent' | 'daughter'>('none')
-  const colorAccidentals = ref<'flat' | 'sharp'>('sharp')
+  const parentColorAccidentals = ref<'flat' | 'sharp'>('sharp')
+  const daughterColorAccidentals = ref<'flat' | 'sharp' | 'both' | 'all'>('sharp')
   // State to help select MOS parameters
   const method = ref<'direct' | 'pyramid' | 'edo'>('pyramid')
   const edo = ref(12)
@@ -319,7 +320,8 @@ export const useModalStore = defineStore('modal', () => {
     sizeOfSmallStep,
     up,
     colorMethod,
-    colorAccidentals,
+    parentColorAccidentals,
+    daughterColorAccidentals,
     method,
     edo,
     previewL,

@@ -14,6 +14,14 @@ import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { Scale } from 'scale-workshop-core'
 import { useModalStore } from '@/stores/modal'
 
+const COLORS = {
+  parent: 'white',
+  sharp: 'navy',
+  flat: 'maroon',
+  both: 'black',
+  unknown: 'indigo'
+}
+
 const emit = defineEmits(['update:scale', 'update:scaleName', 'update:keyColors', 'cancel'])
 
 const modal = useModalStore()
@@ -27,16 +35,45 @@ function generate() {
       sizeOfSmallStep: modal.safeSizeSmall,
       up: modal.safeUp
     })
-  } else {
-    const generator = modal.colorMethod === 'parent' ? mosWithParent : mosWithDaughter
-    const map = generator(modal.safeNumLarge, modal.safeNumSmall, {
+  } else if (modal.colorMethod === 'parent') {
+    const map = mosWithParent(modal.safeNumLarge, modal.safeNumSmall, {
       sizeOfLargeStep: modal.safeSizeLarge,
       sizeOfSmallStep: modal.safeSizeSmall,
       up: modal.safeUp,
-      accidentals: modal.colorAccidentals
+      accidentals: modal.parentColorAccidentals
     })
     steps = [...map.keys()]
-    const colors = [...map.values()].map((isParent) => (isParent ? 'white' : 'black'))
+    steps.sort((a, b) => a - b)
+    const colors = steps.map((step) => (map.get(step) ? 'white' : 'black'))
+    colors.unshift(colors.pop()!)
+    emit('update:keyColors', colors)
+  } else {
+    let accidentals = modal.daughterColorAccidentals
+    if (accidentals === 'all') {
+      accidentals = 'both'
+    }
+    const map = mosWithDaughter(modal.safeNumLarge, modal.safeNumSmall, {
+      sizeOfLargeStep: modal.safeSizeLarge,
+      sizeOfSmallStep: modal.safeSizeSmall,
+      up: modal.safeUp,
+      accidentals
+    })
+    if (modal.daughterColorAccidentals === 'all') {
+      steps = [...Array(Math.max(...map.keys())).keys()]
+      steps.push(steps.length)
+      steps.shift()
+    } else {
+      steps = [...map.keys()]
+      steps.sort((a, b) => a - b)
+    }
+    let colors: string[]
+    if (modal.daughterColorAccidentals === 'sharp' || modal.daughterColorAccidentals === 'flat') {
+      // Piano-style layers expect black & white
+      colors = steps.map((step) => (map.get(step) === 'parent' ? 'white' : 'black'))
+    } else {
+      // Multi-layer piano not implemented in v2 series
+      colors = steps.map((s) => COLORS[map.get(s) ?? 'unknown'])
+    }
     colors.unshift(colors.pop()!)
     emit('update:keyColors', colors)
   }
@@ -52,7 +89,7 @@ function generate() {
       modal.safeSizeSmall
     )
     name = 'MOS '
-    if (daughter.hardness === 'equalized') {
+    if (daughter.hardness === 'equalized' || modal.daughterColorAccidentals === 'all') {
       const equaveSteps = steps[steps.length - 1]
       name += `${equaveSteps}ED`
       if (modal.equave.equals(OCTAVE)) {
@@ -188,15 +225,34 @@ function edoClick(info: MosScaleInfo) {
             <label for="color-daughter"> Daughter MOS (expand scale) </label>
           </span>
         </div>
-        <div class="control radio-group" v-show="modal.colorMethod !== 'none'">
+        <div class="control radio-group" v-show="modal.colorMethod === 'parent'">
           <label>Black keys are</label>
           <span>
-            <input type="radio" id="sharp" value="sharp" v-model="modal.colorAccidentals" />
+            <input type="radio" id="sharp" value="sharp" v-model="modal.parentColorAccidentals" />
             <label for="sharp"> Sharp </label>
           </span>
           <span>
-            <input type="radio" id="flat" value="flat" v-model="modal.colorAccidentals" />
+            <input type="radio" id="flat" value="flat" v-model="modal.parentColorAccidentals" />
             <label for="flat"> Flat </label>
+          </span>
+        </div>
+        <div class="control radio-group" v-show="modal.colorMethod === 'daughter'">
+          <label>Accidentals to include</label>
+          <span>
+            <input type="radio" id="sharp" value="sharp" v-model="modal.daughterColorAccidentals" />
+            <label for="sharp"> Sharp </label>
+          </span>
+          <span>
+            <input type="radio" id="flat" value="flat" v-model="modal.daughterColorAccidentals" />
+            <label for="flat"> Flat </label>
+          </span>
+          <span>
+            <input type="radio" id="both" value="both" v-model="modal.daughterColorAccidentals" />
+            <label for="both"> Both </label>
+          </span>
+          <span>
+            <input type="radio" id="all" value="all" v-model="modal.daughterColorAccidentals" />
+            <label for="all"> Full ET </label>
           </span>
         </div>
       </div>
