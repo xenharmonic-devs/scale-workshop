@@ -2,6 +2,8 @@
 import Modal from '@/components/ModalDialog.vue'
 import type { Scale } from 'scale-workshop-core'
 import { useModalStore } from '@/stores/modal'
+import { computed } from 'vue'
+import { centsToValue } from 'xen-dev-utils'
 
 const props = defineProps<{
   scale: Scale
@@ -10,6 +12,14 @@ const props = defineProps<{
 const emit = defineEmits(['update:scale', 'cancel'])
 
 const modal = useModalStore()
+
+const maxDenominator = computed(() => {
+  let maxCents = 0
+  for (let i = 0; i < props.scale.size; ++i) {
+    maxCents = Math.max(Math.abs(props.scale.getCents(i)))
+  }
+  return Math.floor(Number.MAX_SAFE_INTEGER / centsToValue(maxCents))
+})
 
 function modify() {
   emit('update:scale', props.scale.approximateHarmonics(modal.largeInteger))
@@ -29,6 +39,7 @@ function modify() {
             id="approximate-harmonics-denominator"
             type="number"
             min="1"
+            :max="maxDenominator"
             class="control"
             v-model="modal.largeInteger"
           />

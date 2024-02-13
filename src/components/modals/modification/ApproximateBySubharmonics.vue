@@ -29,6 +29,7 @@ function modify() {
             id="approximate-subharmonics-numerator"
             type="number"
             min="1"
+            :max="Number.MAX_SAFE_INTEGER"
             class="control"
             v-model="modal.largeInteger"
           />
