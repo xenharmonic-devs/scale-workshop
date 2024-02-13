@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
-import { computedAndError } from '@/utils'
+import { computedAndError, setAndReportValidity } from '@/utils'
 import { parseLine, type Interval } from 'scale-workshop-core'
 import { ref, watch } from 'vue'
 
@@ -18,24 +18,8 @@ const [value, error] = computedAndError(
   props.defaultValue
 )
 watch(value, (newValue) => emit('update:value', newValue), { immediate: true })
-watch(
-  element,
-  (newElement) => {
-    if (newElement) {
-      newElement.setCustomValidity(error.value)
-    }
-  },
-  { immediate: true }
-)
-watch(
-  error,
-  (newError) => {
-    if (element.value) {
-      element.value.setCustomValidity(newError)
-    }
-  },
-  { immediate: true }
-)
+watch(element, (newElement) => setAndReportValidity(newElement, error.value), { immediate: true })
+watch(error, (newError) => setAndReportValidity(element.value, newError), { immediate: true })
 </script>
 
 <template>

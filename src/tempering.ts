@@ -184,7 +184,13 @@ export function mosPatternsRank2FromCommas(
   const temperament = Temperament.fromCommas(commas, subgroup, true)
   const rank = temperament.getRank()
   if (rank !== 2) {
-    throw new Error(`Given commas define a rank ${rank} temperament. Need rank 2.`)
+    if (subgroup) {
+      throw new Error(`Given commas and subgroup define a rank ${rank} temperament. Need rank 2.`)
+    } else {
+      throw new Error(
+        `Given commas and inferred subgroup define a rank ${rank} temperament. Need rank 2.`
+      )
+    }
   }
   return mosPatternsRank2(temperament, maxSize, maxLength, options)
 }
@@ -231,7 +237,13 @@ export function makeRank2FromCommas(
   const temperament = Temperament.fromCommas(commas, subgroup, true)
   const rank = temperament.getRank()
   if (rank !== 2) {
-    throw new Error(`Given commas define a rank ${rank} temperament. Need rank 2.`)
+    if (subgroup) {
+      throw new Error(`Given commas and subgroup define a rank ${rank} temperament. Need rank 2.`)
+    } else {
+      throw new Error(
+        `Given commas and inferred subgroup define a rank ${rank} temperament. Need rank 2.`
+      )
+    }
   }
   return makeRank2(temperament, size, options)
 }

@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { OCTAVE } from '@/constants'
-import { computedAndError, parseChordInput } from '@/utils'
+import { computedAndError, parseChordInput, setAndReportValidity } from '@/utils'
 import { Scale } from 'scale-workshop-core'
 
 const props = defineProps<{
@@ -27,7 +27,7 @@ const [basis, basisError] = computedAndError(() => {
   }
   return chord
 }, [])
-watch(basisError, (newError) => basisElement.value!.setCustomValidity(newError))
+watch(basisError, (newError) => setAndReportValidity(basisElement.value, newError))
 
 function generate() {
   try {

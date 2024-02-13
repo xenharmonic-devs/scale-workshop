@@ -4,7 +4,7 @@ import { makeRank2FromVals, makeRank2FromCommas, type Rank2Params } from '@/temp
 import { ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import PeriodCircle from '@/components/PeriodCircle.vue'
-import { gapKeyColors } from '@/utils'
+import { gapKeyColors, setAndReportValidity } from '@/utils'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { ExtendedMonzo, Interval, Scale } from 'scale-workshop-core'
 import { useRank2Store } from '@/stores/tempering'
@@ -18,6 +18,8 @@ const rank2 = useRank2Store()
 
 const emit = defineEmits(['update:scaleName', 'update:scale', 'update:keyColors', 'cancel'])
 
+const commasInput = ref<HTMLInputElement | null>(null)
+const valsInput = ref<HTMLInputElement | null>(null)
 const subgroupInput = ref<HTMLInputElement | null>(null)
 
 // === Watchers ===
@@ -50,7 +52,20 @@ watch(
 
 watch(
   () => rank2.subgroupError,
-  (newValue) => subgroupInput.value!.setCustomValidity(newValue)
+  (newValue) => setAndReportValidity(subgroupInput.value, newValue)
+)
+
+watch(
+  () => rank2.mosPatternsError,
+  (newValue) => {
+    if (rank2.method === 'commas') {
+      setAndReportValidity(commasInput.value, newValue)
+      setAndReportValidity(valsInput.value, '')
+    } else if (rank2.method === 'vals') {
+      setAndReportValidity(commasInput.value, '')
+      setAndReportValidity(valsInput.value, newValue)
+    }
+  }
 )
 
 // === Methods ===
@@ -253,7 +268,13 @@ function generate() {
         <div class="control-group" v-show="rank2.method === 'vals'">
           <div class="control">
             <label for="vals">Vals</label>
-            <input type="text" id="vals" placeholder="12 & 17c" v-model="rank2.valsString" />
+            <input
+              ref="valsInput"
+              type="text"
+              id="vals"
+              placeholder="12 & 17c"
+              v-model="rank2.valsString"
+            />
           </div>
         </div>
 
@@ -261,6 +282,7 @@ function generate() {
           <div class="control">
             <label for="commas">Comma list</label>
             <input
+              ref="commasInput"
               type="text"
               id="commas"
               placeholder="225/224, 1029/1024"

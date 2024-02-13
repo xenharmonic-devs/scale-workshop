@@ -6,7 +6,7 @@ import Modal from '@/components/ModalDialog.vue'
 import { Fraction, PRIME_CENTS } from 'xen-dev-utils'
 import { mapByVal, resolveMonzo, tenneyVals, vanishCommas } from 'temperaments'
 import { ExtendedMonzo, Interval, Scale, type IntervalOptions } from 'scale-workshop-core'
-import { splitText } from '@/utils'
+import { setAndReportValidity, splitText } from '@/utils'
 import { useTemperStore } from '@/stores/tempering'
 
 const props = defineProps<{
@@ -22,7 +22,7 @@ const subgroupInput = ref<HTMLInputElement | null>(null)
 
 watch(
   () => temper.subgroupError,
-  (newValue) => subgroupInput.value!.setCustomValidity(newValue)
+  (newValue) => setAndReportValidity(subgroupInput.value, newValue)
 )
 
 function modify() {

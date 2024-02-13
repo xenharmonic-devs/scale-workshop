@@ -12,6 +12,7 @@ import {
 import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
 import { fractionToString, ExtendedMonzo, Interval, type Scale } from 'scale-workshop-core'
 import { useApproximateByRatiosStore } from '@/stores/approximate-by-ratios'
+import { setAndReportValidity } from '@/utils'
 
 const MAX_LENGTH = 128
 
@@ -96,9 +97,9 @@ const approximationsWithErrorsAndLimits = computed<Approximation[]>(() => {
 watch(approximationsWithErrorsAndLimits, (newValue) => {
   if (approximationSelect.value !== null) {
     if (!newValue.length || newValue[0].error > approx.maxError) {
-      approximationSelect.value.setCustomValidity('Error exceeds the maximum value.')
+      setAndReportValidity(approximationSelect.value, 'Error exceeds the maximum value.')
     } else {
-      approximationSelect.value.setCustomValidity('')
+      setAndReportValidity(approximationSelect.value, '')
     }
   }
   approx.approximationIndex = Math.min(approx.approximationIndex, newValue.length - 1)

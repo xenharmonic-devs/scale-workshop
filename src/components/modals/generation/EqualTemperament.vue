@@ -5,6 +5,7 @@ import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { ExtendedMonzo, Interval, Scale } from 'scale-workshop-core'
 import { useModalStore } from '@/stores/modal'
+import { setAndReportValidity } from '@/utils'
 
 const props = defineProps<{
   centsFractionDigits: number
@@ -21,9 +22,9 @@ watch(
   () => modal.divisions,
   (newValue) => {
     if (isNaN(newValue) || newValue === 0) {
-      divisionsElement.value!.setCustomValidity('Step size is zero')
+      setAndReportValidity(divisionsElement.value, 'Step size is zero')
     } else {
-      divisionsElement.value!.setCustomValidity('')
+      setAndReportValidity(divisionsElement.value, '')
     }
   }
 )

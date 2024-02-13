@@ -242,6 +242,17 @@ export function computedAndError<T>(
   return [value, error]
 }
 
+export function setAndReportValidity(
+  element: HTMLInputElement | HTMLSelectElement | HTMLObjectElement | null,
+  message: string
+) {
+  if (!element) {
+    return
+  }
+  element.setCustomValidity(message)
+  element.reportValidity()
+}
+
 // Calculates euclidean distance for monzos, as it assumes that if points are not of the same dimension, then the missing dimensions have a value of zero.
 export function monzoEuclideanDistance(
   equavePrimeIndex: number,
