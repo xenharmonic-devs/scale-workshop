@@ -434,26 +434,6 @@ onUnmounted(() => {
             </div>
           </template>
         </div>
-        <h2>Keyboard equave shift</h2>
-        <div class="control-group">
-          <p>
-            Trigger lower or higher notes. (Default shortcut keys: numpad
-            <code>/</code> and <code>*</code>)
-          </p>
-          <div class="control">
-            <input type="number" v-model="scale.equaveShift" />
-          </div>
-        </div>
-        <h2>Keyboard degree shift</h2>
-        <div class="control-group">
-          <p>
-            Shift down/up by one scale degree. (Default shortcut keys: numpad
-            <code>-</code> and <code>+</code>).
-          </p>
-          <div class="control">
-            <input type="number" v-model="scale.degreeShift" />
-          </div>
-        </div>
         <template v-if="scale.keyboardMode === 'isomorphic'">
           <h2>Isomorphic key mapping</h2>
           <p>
@@ -474,6 +454,49 @@ onUnmounted(() => {
             </div>
           </div>
         </template>
+        <template v-else>
+          <h2>Accidental colors</h2>
+          <p>These color(s) in your scale will be used to assemble the piano layout.</p>
+          <div v-if="scale.pianoMode === 'Zxc'" class="control-group">
+            <div class="control">
+              <label for="high-accidental-color">high</label>
+              <input type="text" id="high-accidental-color" v-model="scale.highAccidentalColor"/>
+            </div>
+            <div class="control">
+              <label for="middle-accidental-color">Middle</label>
+              <input type="text" id="middle-accidental-color" v-model="scale.middleAccidentalColor"/>
+            </div>
+            <div class="control">
+              <label for="low-accidental-color">Low</label>
+              <input type="text" id="low-accidental-color" v-model="scale.lowAccidentalColor"/>
+            </div>
+          </div>
+          <div v-else class="control-group">
+            <div class="control">
+              <input type="text" id="accidental-color" v-model="scale.accidentalColor"/>
+            </div>
+          </div>
+        </template>
+        <h2>Keyboard equave shift</h2>
+        <div class="control-group">
+          <p>
+            Trigger lower or higher notes. (Default shortcut keys: numpad
+            <code>/</code> and <code>*</code>)
+          </p>
+          <div class="control">
+            <input type="number" v-model="scale.equaveShift" />
+          </div>
+        </div>
+        <h2>Keyboard degree shift</h2>
+        <div class="control-group">
+          <p>
+            Shift down/up by one scale degree. (Default shortcut keys: numpad
+            <code>-</code> and <code>+</code>).
+          </p>
+          <div class="control">
+            <input type="number" v-model="scale.degreeShift" />
+          </div>
+        </div>
         <h2>Keyboard shortcuts</h2>
         <div class="control-group">
           <p><code>Shift</code> sustain currently held keys after release</p>

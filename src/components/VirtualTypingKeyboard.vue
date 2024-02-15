@@ -20,6 +20,7 @@ const props = defineProps<{
   keyboardMode: 'isomorphic' | 'piano'
   colorScheme: 'light' | 'dark'
   qwertyMapping: Map<string, number>
+  hasLeftOfZ: boolean
   isomorphicHorizontal: number
   isomorphicVertical: number
   noteOn: NoteOnCallback
@@ -80,16 +81,24 @@ const rows = computed(() => {
       } else {
         index = mapping.get(code)
       }
-      const color =
+      let color =
         index === undefined ? disabledFill.value : props.colorMap(index)
       const black = color.toLowerCase() === 'black'
+      let stroke = 'dimgray'
+      if (index === undefined) {
+        stroke = disabledFill.value
+      }
+      if (code === 'IntlBackslash' && !props.hasLeftOfZ) {
+        stroke = 'red'
+        color = disabledFill.value
+      }
       row.push({
         key: code,
         x: offsets[j] + 100 * i,
         y: 100 + 100 * j,
         index,
-        color: color,
-        stroke: index === undefined ? disabledFill.value : 'dimgray',
+        color,
+        stroke,
         class: {
           black,
           white: !black && index !== undefined,

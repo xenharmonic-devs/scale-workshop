@@ -122,16 +122,50 @@ export const useScaleStore = defineStore('scale', () => {
       }
       return indexByCode;
     } else if (pianoMode.value === 'QweZxc') {
-      throw new Error('TODO')
-    } else if (pianoMode.value === 'Zxc') {
+      const ys: number[] = []
+      // ZXCV & ASDF
+      if (!hasLeftOfZ.value) {
+        if (colorForIndex(firstIndex - 1) === black) {
+          firstIndex--
+        }
+        ys.push(3) // Dummy filler for the missing key
+      }
+      for (let i = firstIndex; i < firstIndex + 30; ++i) {
+        ys.push(colorForIndex(i) === black ? 2 : 3);
+      }
+      const {indexByCode} = pianoMap(ys);
+      if (!hasLeftOfZ.value) {
+        firstIndex-- // Correct for the dummy
+      }
+      for (const [code, index] of indexByCode) {
+        indexByCode.set(code, index + firstIndex)
+      }
+
+      // QWERTY & digits
+      firstIndex = baseMidiNote.value + degreeShift.value + scale.value.size * (equaveShift.value + 1);
+      if (colorForIndex(firstIndex - 1) === black) {
+        firstIndex--
+      }
+      ys.length = 0
+      for (let i = firstIndex; i < firstIndex + 30; ++i) {
+        ys.push(colorForIndex(i) === black ? 0 : 1);
+      }
+      const {indexByCode: qMap} = pianoMap(ys);
+      for (const [code, index] of qMap) {
+        indexByCode.set(code, index + firstIndex)
+      }
+
+      return indexByCode;
+    } else {
       const low = lowAccidentalColor.value.toLowerCase()
       const middle = middleAccidentalColor.value.toLowerCase()
       const high = highAccidentalColor.value.toLowerCase()
       const ys: number[] = []
       if (!hasLeftOfZ.value) {
-        if (![low, middle, high].includes(colorForIndex(firstIndex))) {
-          firstIndex++;
+        if ([low, middle, high].includes(colorForIndex(firstIndex - 1))) {
+          firstIndex--;
         }
+        ys.push(3) // Dummy filler for the missing key
       }
       for (let i = firstIndex; i < firstIndex + 60; ++i) {
         const color = colorForIndex(i)
@@ -146,12 +180,13 @@ export const useScaleStore = defineStore('scale', () => {
         }
       }
       const {indexByCode} = pianoMap(ys);
+      if (!hasLeftOfZ.value) {
+        firstIndex-- // Correct for the dummy
+      }
       for (const [code, index] of indexByCode) {
         indexByCode.set(code, index + firstIndex)
       }
       return indexByCode;
-    } else {
-      throw new Error('Unimplemented')
     }
   })
 

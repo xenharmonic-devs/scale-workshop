@@ -13,6 +13,7 @@ import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { useModalStore } from '@/stores/modal'
 
+// TODO: Use configured accidental colors
 const COLORS = {
   parent: 'white',
   sharp: 'navy',
