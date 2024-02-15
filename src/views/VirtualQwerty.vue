@@ -29,6 +29,7 @@ const baseIndex = computed(
       :keyboardMode="scale.keyboardMode"
       :colorScheme="state.colorScheme"
       :qwertyMapping="scale.qwertyMapping"
+      :hasLeftOfZ="scale.hasLeftOfZ"
       :isomorphicVertical="state.isomorphicVertical"
       :colorMap="scale.colorForIndex"
       :noteOn="noteOn"
