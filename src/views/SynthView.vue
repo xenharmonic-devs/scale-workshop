@@ -425,7 +425,7 @@ onUnmounted(() => {
               </span>
               <span>
                 <input type="radio" id="mode-qwe-zxc" value="QweZxc" v-model="scale.pianoMode" />
-                <label for="mode-zxc"> QWERTY & digits + ZXCV & ASDF separated by an equave</label>
+                <label for="mode-qwe-zxc"> QWERTY & digits + ZXCV & ASDF separated by an equave</label>
               </span>
               <span>
                 <input type="radio" id="mode-zxc" value="Zxc" v-model="scale.pianoMode" />

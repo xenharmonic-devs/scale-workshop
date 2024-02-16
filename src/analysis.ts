@@ -1,4 +1,5 @@
-import type { Scale } from 'scale-workshop-core'
+import { Interval } from "sonic-weave"
+import { mmod } from "xen-dev-utils"
 
 const EPSILON = 1e-6
 
@@ -101,12 +102,54 @@ export function utonalFundamental(frequencies: number[], maxDivisor = 23) {
 }
 
 // Interval matrix a.k.a the modes of a scale
-export function intervalMatrix(scale: Scale) {
-  const result = []
-  const columns = [...Array(scale.size + 1).keys()]
-  for (let i = 0; i < scale.size; ++i) {
-    const mode = scale.rotate(i)
-    result.push(columns.map((j) => mode.getInterval(j)))
+export function intervalMatrix(intervals: Interval[]) {
+  intervals = intervals.map(i => i.shallowClone())
+  // Simplify by removing formatting.
+  for (let i = 0; i < intervals.length; ++i) {
+    intervals[i].node = undefined
+    intervals[i].color = undefined
+    intervals[i].label = ''
+  }
+  const equave = intervals[intervals.length - 1]
+  const unison = new Interval(equave.value.div(equave.value), equave.domain)
+  const result = [[unison, ...intervals]]
+  for (let i = 0; i < intervals.length - 1; ++i) {
+    const root = intervals[i].value
+    const row = []
+    for (let j = 0; j < intervals.length; ++j) {
+      let value = intervals[j].value.div(root)
+      if (j < i) {
+        value = value.mul(equave.value)
+      }
+      row[mmod(j - i, intervals.length)] = new Interval(value, intervals[j].domain)
+    }
+    row.push(equave)
+    result.push(row)
+  }
+  return result
+}
+
+// TODO: would like to see a yellow border drawn over the boxes with the same label once you hover over a red box
+export function constantStructureViolations(matrix: Interval[][]) {
+  const result: boolean[][] = []
+  for (let i = 0; i < matrix.length; ++i) {
+    result.push(Array(matrix[i].length).fill(false))
+  }
+  for (let i = 0; i < matrix[0].length; ++i) {
+    for (let j = 0; j < matrix.length; ++j) {
+      if (result[j][i]) {
+        continue
+      }
+      const value = matrix[j][i].value
+      for (let k = i+1; k < matrix[0].length; ++k) {
+        for (let l = 0; l < matrix.length; ++l) {
+          if (matrix[l][k].value.strictEquals(value)) {
+            result[j][i] = true
+            result[l][k] = true
+          }
+        }
+      }
+    }
   }
   return result
 }
