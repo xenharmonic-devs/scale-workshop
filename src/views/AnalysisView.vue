@@ -1,15 +1,19 @@
 <script setup lang="ts">
-import { intervalMatrix } from '@/analysis'
+import { constantStructureViolations, intervalMatrix } from '@/analysis'
 import ChordWheel from '@/components/ChordWheel.vue'
-import { computed, ref } from 'vue'
-import { reverseParseInterval, type Interval, type IntervalOptions } from 'scale-workshop-core'
+import { computed, reactive, ref } from 'vue'
 import { useAudioStore } from '@/stores/audio'
 import { useStateStore } from '@/stores/state'
+import type { Interval } from 'sonic-weave'
+import { useScaleStore } from '@/stores/scale'
+import { mmod } from 'xen-dev-utils'
 
+// TODO: Make customizable
 const MAX_SCALE_SIZE = 100
 
 const audio = useAudioStore()
 const state = useStateStore()
+const scale = useScaleStore()
 
 const cellFormat = ref<'best' | 'cents' | 'decimal'>('best')
 const trailLongevity = ref(70)
@@ -31,9 +35,9 @@ const backgroundRBG = computed<[number, number, number]>(() => {
     .getPropertyValue('--color-background')
     .trim()
     .toLowerCase()
-  if (css === '#fff') {
+  if (css === '#fff' || css === '#fefdfe') {
     return [255, 255, 255]
-  } else if (css === '#000') {
+  } else if (css === '#000' || css === '#060206') {
     return [0, 0, 0]
   } else {
     throw new Error('General color parsing not implemented')
@@ -50,42 +54,57 @@ const strokeStyle = computed(() => {
 // While interval.name suffices for the tuning table
 // we want more accurate results here.
 function formatMatrixCell(interval: Interval) {
-  // We don't have much space so let's not waste it on insignificant digits.
-  const options: IntervalOptions = {
-    centsFractionDigits: 1,
-    decimalFractionDigits: 3
-  }
-  interval = interval.mergeOptions(options)
-
   if (cellFormat.value === 'cents') {
-    return interval.centsString()
+    return interval.totalCents().toFixed(1)
   }
   if (cellFormat.value === 'decimal') {
     // Consistent with tuning table localization.
-    return interval.decimalString().replace(',', '.')
+    return interval.valueOf().toFixed(3)
   }
 
-  // Monzos are too long.
-  if (interval.type === 'monzo') {
-    return interval.centsString()
-  }
-  // Composite intervals are too long or not accurate.
-  if (interval.isComposite()) {
-    return interval.centsString()
-  }
-  // If we're here the name should faithfully represent the interval.
-  // Reverse parsing takes care of obscure corner cases.
-  return reverseParseInterval(interval)
+  return interval.toString()
 }
 
-const matrix = computed(() => {
-  return intervalMatrix(
-    state.scale.head(MAX_SCALE_SIZE).mergeOptions({
-      centsFractionDigits: 1,
-      decimalFractionDigits: 3
-    })
-  ).map((row) => row.map(formatMatrixCell))
-})
+const highlights = reactive<boolean[][]>([])
+
+const matrix = computed(() => intervalMatrix(scale.relativeIntervals))
+
+const matrixRows = computed(() => matrix.value.map((row) => row.map(formatMatrixCell)))
+
+const violations = computed(() => constantStructureViolations(matrix.value))
+
+function highlight(y: number, x: number) {
+  if (highlights.length !== matrix.value.length) {
+    highlights.length = 0
+    for (let i = 0; i < matrix.value.length; ++i) {
+      highlights.push(Array(matrix.value[i].length).fill(false))
+    }
+  }
+  // Look at other violators
+  if (violations.value[y][x]) {
+    const value = matrix.value[y][x].value
+    for (let i = 0; i < matrix.value.length; ++i) {
+      for (let j = 0; j < matrix.value[i].length; ++j) {
+        if (violations.value[i][j]) {
+          highlights[i][j] = matrix.value[i][j].value.strictEquals(value)
+        } else {
+          highlights[i][j] = false
+        }
+      }
+    }
+    return
+  }
+  // Look at own column
+  for (let i = 0; i < matrix.value.length; ++i) {
+    for (let j = 0; j < matrix.value[i].length; ++j) {
+      highlights[i][j] = false
+    }
+  }
+  const value = matrix.value[y][x].value
+  for (let i = 0; i < matrix.value.length; ++i) {
+    highlights[i][x] = matrix.value[i][x].value.strictEquals(value)
+  }
+}
 </script>
 
 <template>
@@ -95,14 +114,14 @@ const matrix = computed(() => {
       <table>
         <tr>
           <th></th>
-          <th v-for="i of Math.min(state.scale.size, MAX_SCALE_SIZE)" :key="i">
+          <th v-for="i of Math.min(scale.scale.size, MAX_SCALE_SIZE)" :key="i">
             {{ i - 1 + state.intervalMatrixIndexing }}
           </th>
-          <th>({{ state.scale.size + state.intervalMatrixIndexing }})</th>
+          <th>({{ scale.scale.size + state.intervalMatrixIndexing }})</th>
         </tr>
-        <tr v-for="(row, i) of matrix" :key="i">
-          <th>{{ formatMatrixCell(state.scale.getInterval(i)) }}</th>
-          <td v-for="(name, j) of row" :key="j">{{ name }}</td>
+        <tr v-for="(row, i) of matrixRows" :key="i">
+          <th>{{ scale.labels[mmod(i - 1, scale.labels.length)] }}</th>
+          <td v-for="(name, j) of row" :key="j" :class="{violator: violations[i][j], highlight: (highlights[i] ?? [])[j]}" @mouseover="highlight(i, j)">{{ name }}</td>
         </tr>
       </table>
     </div>
@@ -235,6 +254,15 @@ main {
 .interval-matrix table {
   border-collapse: collapse;
   text-align: center;
+}
+.violator {
+  color: red;
+}
+.highlight {
+  text-decoration: underline;
+}
+.violator.highlight {
+  background-color: rgba(255, 255, 100, 0.8);
 }
 
 /* Content layout (medium) */

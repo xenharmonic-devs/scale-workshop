@@ -268,7 +268,7 @@ export const useScaleStore = defineStore('scale', () => {
         throw new Error('Context corruption detected');
       }
       const ev = visitor.createExpressionVisitor();
-      const rl = relin.bind(ev);
+      const rl = relin.bind(ev); // TODO: Just relative
       relativeIntervals.value = intervals.map(i => rl(i));
       const ratios = relativeIntervals.value.map(i => i.value.valueOf())
       let visitorBaseFrequency = mtof(baseMidiNote.value);
