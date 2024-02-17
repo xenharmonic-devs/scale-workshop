@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { constantStructureViolations, intervalMatrix } from '@/analysis'
+import { constantStructureViolations, freeEquallyTemperedChord, intervalMatrix, rootedEquallyTemperedChord } from '@/analysis'
 import ChordWheel from '@/components/ChordWheel.vue'
+import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { computed, reactive, ref } from 'vue'
 import { useAudioStore } from '@/stores/audio'
 import { useStateStore } from '@/stores/state'
 import type { Interval } from 'sonic-weave'
 import { useScaleStore } from '@/stores/scale'
 import { mmod } from 'xen-dev-utils'
+import { OCTAVE } from '@/constants'
 
 // TODO: Make customizable
 const MAX_SCALE_SIZE = 100
@@ -19,6 +21,11 @@ const cellFormat = ref<'best' | 'cents' | 'decimal'>('best')
 const trailLongevity = ref(70)
 const maxOtonalRoot = ref(16)
 const maxUtonalRoot = ref(23)
+
+const maxDivisions = ref(31)
+const equave = ref(OCTAVE)
+const equaveString = ref('2/1')
+const errorModel = ref<'rooted' | 'free'>('rooted')
 
 const intervalMatrixIndexingRadio = computed({
   get: () => state.intervalMatrixIndexing.toString(),
@@ -81,6 +88,29 @@ const heldScaleDegrees = computed(() => {
     }
   }
   return result
+})
+
+const equallyTemperedChordData = computed(() => {
+  if (!audio.virtualSynth) {
+    return {
+      error: 0,
+      degrees: [],
+      divisions: 1
+    }
+  }
+  const frequencies = audio.virtualSynth.voices.map((voice) => voice.frequency)
+  const equaveCents = equave.value.totalCents()
+  if (errorModel.value === 'rooted') {
+    return rootedEquallyTemperedChord(frequencies, maxDivisions.value, equaveCents)
+  }
+  return freeEquallyTemperedChord(frequencies, maxDivisions.value, equaveCents)
+})
+
+const nedjiProjector = computed(() => {
+  if (equave.value.equals(OCTAVE)) {
+    return ''
+  }
+  return `<${equave.value.toString()}>`
 })
 
 function highlight(y?: number, x?: number) {
@@ -225,17 +255,52 @@ function highlight(y?: number, x?: number) {
               v-model="trailLongevity"
             />
           </div>
-        </div>
-        <div class="control-group">
           <div class="control">
             <label for="otonal-root">Maximum root (otonal)</label>
             <input id="otonal-root" type="number" class="control" min="1" v-model="maxOtonalRoot" />
           </div>
-        </div>
-        <div class="control-group">
           <div class="control">
             <label for="utonal-root">Maximum root (utonal)</label>
             <input id="utonal-root" type="number" class="control" min="1" v-model="maxUtonalRoot" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bicolumns-container">
+      <h2>Equally tempered chord</h2>
+      <div class="column">
+        <p class="chord-data">
+          <b>Chord:</b> [{{ equallyTemperedChordData.degrees.join(',') }}] \ {{ equallyTemperedChordData.divisions }}{{ nedjiProjector }}
+        </p>
+        <p class="chord-data">
+          <b>Error:</b> {{ equallyTemperedChordData.error.toFixed(5) }} c
+        </p>
+      </div>
+      <div class="column">
+        <div class="control-group">
+          <div class="control">
+            <label for="divisions">Maximum divisions of the equave</label>
+            <input id="divisions" type="number" class="control" min="1" v-model="maxDivisions" />
+          </div>
+          <div class="control">
+            <label for="equave">Equave</label>
+            <ScaleLineInput
+              id="equave"
+              @update:value="equave = $event"
+              v-model="equaveString"
+              :defaultValue="OCTAVE"
+            />
+          </div>
+          <div class="control radio-group">
+            <label>Error model</label>
+            <span>
+              <input type="radio" id="error-rooted" value="rooted" v-model="errorModel"/>
+              <label for="error-rooted"> Rooted </label>
+            </span>
+            <span>
+              <input type="radio" id="error-free" value="free" v-model="errorModel"/>
+              <label for="error-free"> Free </label>
+            </span>
           </div>
         </div>
       </div>
@@ -286,7 +351,7 @@ main {
 }
 
 /* Content layout (medium) */
-div.columns-container {
+div.columns-container, div.bicolumns-container {
   column-count: 2;
   column-gap: 1rem;
   overflow: hidden;
@@ -310,5 +375,10 @@ div.column {
   border: 1px solid var(--color-border);
   max-width: 100%;
   height: auto;
+}
+
+/* Equally tempered chord */
+.chord-data {
+  font-size: 1.2em;
 }
 </style>

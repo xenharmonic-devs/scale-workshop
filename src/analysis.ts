@@ -1,5 +1,5 @@
 import { Interval } from "sonic-weave"
-import { mmod } from "xen-dev-utils"
+import { mmod, valueToCents } from "xen-dev-utils"
 
 const EPSILON = 1e-6
 
@@ -101,6 +101,143 @@ export function utonalFundamental(frequencies: number[], maxDivisor = 23) {
   return divisor * frequencies[0]
 }
 
+/**
+ * Calculate the maximum deviation of a set of pitches from an equal grid in pitch-space.
+ * @param pitches Array of pitches measured in cents.
+ * @param gridCents The distance in cents between two grid lines of the equal division e.g. `100.0`.
+ * @returns The maximum distance in cents from a grid "line" in the set.
+ */
+export function misalignment(pitches: number[], gridCents: number) {
+  const gridPitches = pitches.map(
+    (pitch) => Math.round(pitch / gridCents) * gridCents
+  );
+  let error = 0;
+  for (let i = 0; i < pitches.length; ++i) {
+    error = Math.max(error, Math.abs(pitches[i] - gridPitches[i]));
+  }
+  return error;
+}
+
+/**
+ * Align a set of pitches on an equal division of pitch-space such that the maximum absolute error is minimized.
+ * @param pitches An array of pitches measured in cents.
+ * @param gridCents The distance in cents between two grid lines of the equal division e.g. `100.0`.
+ * @returns The minimum misalignment achievable measured in cents and the pitches snapped to the grid.
+ */
+export function alignCents(pitches: number[], gridCents: number) {
+  // The error function we're trying to optimize is piecewise linear.
+
+  if (!pitches.length) {
+    return {
+      error: 0,
+      degrees: [],
+    }
+  }
+
+  // Find the segment where the global optimum lies.
+  let optimalPitches: number[];
+  let minError = Infinity;
+  for (let i = 0; i < pitches.length; ++i) {
+    const aligned = pitches.map((pitch) => pitch - pitches[i]);
+    const error = misalignment(aligned, gridCents);
+    if (error < minError) {
+      optimalPitches = aligned;
+      minError = error;
+    }
+  }
+
+  // Calculate the shape of the segment.
+  const degrees = optimalPitches!.map((pitch) => Math.round(pitch / gridCents));
+  let minOffset = Infinity;
+  let maxOffset = -Infinity;
+  let root = Infinity;
+  for (let i = 0; i < degrees.length; ++i) {
+    const offset = optimalPitches![i] - degrees[i] * gridCents;
+    minOffset = Math.min(minOffset, offset);
+    maxOffset = Math.max(maxOffset, offset);
+    if (degrees[i] < root) {
+      root = degrees[i];
+    }
+  }
+
+  // Calculate minimum achievable absolute error.
+  const error = 0.5 * Math.abs(minOffset) + 0.5 * Math.abs(maxOffset);
+  // Move root to grid origin.
+  for (let i = 0; i < degrees.length; ++i) {
+    degrees[i] -= root;
+  }
+  return {
+    error,
+    degrees,
+  };
+}
+
+/**
+ * Align a set of ratios in frequency-space on an equal division of pitch-space such that the maximum absolute error is minimized.
+ * @param ratios An array of frequency ratios.
+ * @param gridCents The distance in cents between two grid lines of the equal division e.g. `100.0`.
+ * @returns The minimum misalignment achievable measured in cents and the pitches snapped to the grid.
+ */
+export function alignValues(ratios: number[], gridCents: number) {
+  return alignCents(ratios.map(valueToCents), gridCents);
+}
+
+/**
+ * Find an equally tempered chord that best approximates the given frequencies with the root of the chord fixed to a grid line.
+ * @param frequencies Array of frequencies in the chord with the root first.
+ * @param maxDivisions Maximum divisions of the equave.
+ * @param equaveCents The size of the equave measured in cents.
+ * @returns The minimum achievable error. The number of divisions of the given equave. The degrees of the chord.
+ */
+export function rootedEquallyTemperedChord(frequencies: number[], maxDivisions: number, equaveCents = 1200) {
+  const root = valueToCents(Math.abs(frequencies[0]))
+  const pitches = frequencies.map((f) => valueToCents(Math.abs(f)) - root)
+  let bestError = Infinity
+  let bestDivisions = maxDivisions
+  for (let divisions = 1; divisions <= maxDivisions; ++divisions) {
+    const error = misalignment(pitches, equaveCents / divisions)
+    if (error < bestError) {
+      bestError = error
+      bestDivisions = divisions
+    }
+  }
+  const gridCents = equaveCents / bestDivisions
+  const degrees = pitches.map(pitch => Math.round(pitch / gridCents))
+  return {
+    error: bestError,
+    divisions: bestDivisions,
+    degrees,
+  }
+}
+
+/**
+ * Find an equally tempered chord that best approximates the given frequencies with the root free to move.
+ * @param frequencies Array of frequencies in the chord with the root first.
+ * @param maxDivisions Maximum divisions of the equave.
+ * @param equaveCents The size of the equave measured in cents.
+ * @returns The minimum achievable error. The number of divisions of the given equave. The degrees of the chord.
+ */
+export function freeEquallyTemperedChord(frequencies: number[], maxDivisions: number, equaveCents = 1200) {
+  const root = valueToCents(Math.abs(frequencies[0]))
+  const pitches = frequencies.map((f) => valueToCents(Math.abs(f)) - root)
+  let bestError = Infinity
+  let bestDivisions = maxDivisions
+  let bestDegrees: number[] = []
+  for (let divisions = 1; divisions <= maxDivisions; ++divisions) {
+    const {error, degrees} = alignCents(pitches, equaveCents / divisions)
+    if (error < bestError) {
+      bestError = error
+      bestDivisions = divisions
+      bestDegrees = degrees
+    }
+  }
+  return {
+    error: bestError,
+    divisions: bestDivisions,
+    degrees: bestDegrees,
+  }
+}
+
 // Interval matrix a.k.a the modes of a scale
 export function intervalMatrix(intervals: Interval[]) {
   intervals = intervals.map(i => i.shallowClone())
@@ -129,7 +266,6 @@ export function intervalMatrix(intervals: Interval[]) {
   return result
 }
 
-// TODO: would like to see a yellow border drawn over the boxes with the same label once you hover over a red box
 export function constantStructureViolations(matrix: Interval[][]) {
   const result: boolean[][] = []
   for (let i = 0; i < matrix.length; ++i) {
