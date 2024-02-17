@@ -3,7 +3,7 @@ import { midiNoteNumberToEnharmonics, type AccidentalStyle } from "@/utils"
 import { defineStore } from "pinia"
 import { computed, ref, watch } from "vue"
 import { Fraction, mmod, mtof } from "xen-dev-utils"
-import { getSourceVisitor, parseAST, relin, Interval, TimeMonzo, str, centsColor, factorColor } from "sonic-weave"
+import { getSourceVisitor, parseAST, relative, Interval, TimeMonzo, str, centsColor, factorColor } from "sonic-weave"
 import { DEFAULT_NUMBER_OF_COMPONENTS, INTERVALS_12TET, MIDI_NOTE_COLORS, MIDI_NOTE_NAMES, NUMBER_OF_NOTES, TET12 } from "@/constants"
 import { pianoMap } from "isomorphic-qwerty"
 
@@ -268,8 +268,8 @@ export const useScaleStore = defineStore('scale', () => {
         throw new Error('Context corruption detected');
       }
       const ev = visitor.createExpressionVisitor();
-      const rl = relin.bind(ev); // TODO: Just relative
-      relativeIntervals.value = intervals.map(i => rl(i));
+      const rel = relative.bind(ev);
+      relativeIntervals.value = intervals.map(i => rel(i));
       const ratios = relativeIntervals.value.map(i => i.value.valueOf())
       let visitorBaseFrequency = mtof(baseMidiNote.value);
       if (visitor.rootContext.unisonFrequency) {

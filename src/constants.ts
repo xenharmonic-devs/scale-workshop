@@ -54,11 +54,11 @@ export const FIFTH_12TET = new Interval(
   TimeMonzo.fromEqualTemperament('7/12', 2, DEFAULT_NUMBER_OF_COMPONENTS),
   'logarithmic'
 )
-// Used as a relin default so the domain is linear
+
 export const INTERVALS_12TET = [...Array(12).keys()].map(
   (i) =>
     new Interval(
       TimeMonzo.fromEqualTemperament(new Fraction(i + 1, 12), 2, DEFAULT_NUMBER_OF_COMPONENTS),
-      'linear',
+      'logarithmic',
     )
 )

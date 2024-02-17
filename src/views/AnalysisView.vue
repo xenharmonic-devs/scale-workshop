@@ -73,7 +73,17 @@ const matrixRows = computed(() => matrix.value.map((row) => row.map(formatMatrix
 
 const violations = computed(() => constantStructureViolations(matrix.value))
 
-function highlight(y: number, x: number) {
+const heldScaleDegrees = computed(() => {
+  const result: Set<number> = new Set()
+  for (const midiIndex of state.heldNotes.keys()) {
+    if (state.heldNotes.get(midiIndex)! > 0) {
+      result.add(mmod(midiIndex - scale.baseMidiNote, scale.scale.size))
+    }
+  }
+  return result
+})
+
+function highlight(y?: number, x?: number) {
   if (highlights.length !== matrix.value.length) {
     highlights.length = 0
     for (let i = 0; i < matrix.value.length; ++i) {
@@ -81,7 +91,7 @@ function highlight(y: number, x: number) {
     }
   }
   // Look at other violators
-  if (violations.value[y][x]) {
+  if (y !== undefined && x !== undefined && violations.value[y][x]) {
     const value = matrix.value[y][x].value
     for (let i = 0; i < matrix.value.length; ++i) {
       for (let j = 0; j < matrix.value[i].length; ++j) {
@@ -94,12 +104,18 @@ function highlight(y: number, x: number) {
     }
     return
   }
-  // Look at own column
+
+  // Reset highlights
   for (let i = 0; i < matrix.value.length; ++i) {
     for (let j = 0; j < matrix.value[i].length; ++j) {
       highlights[i][j] = false
     }
   }
+  if (y === undefined || x === undefined) {
+    return
+  }
+
+  // Look at own column
   const value = matrix.value[y][x].value
   for (let i = 0; i < matrix.value.length; ++i) {
     highlights[i][x] = matrix.value[i][x].value.strictEquals(value)
@@ -111,7 +127,7 @@ function highlight(y: number, x: number) {
   <main>
     <h2>Interval matrix (modes)</h2>
     <div class="control-group interval-matrix">
-      <table>
+      <table @mouseleave="highlight()">
         <tr>
           <th></th>
           <th v-for="i of Math.min(scale.scale.size, MAX_SCALE_SIZE)" :key="i">
@@ -120,7 +136,7 @@ function highlight(y: number, x: number) {
           <th>({{ scale.scale.size + state.intervalMatrixIndexing }})</th>
         </tr>
         <tr v-for="(row, i) of matrixRows" :key="i">
-          <th>{{ scale.labels[mmod(i - 1, scale.labels.length)] }}</th>
+          <th :class="{held: heldScaleDegrees.has(i)}">{{ scale.labels[mmod(i - 1, scale.labels.length)] }}</th>
           <td v-for="(name, j) of row" :key="j" :class="{violator: violations[i][j], highlight: (highlights[i] ?? [])[j]}" @mouseover="highlight(i, j)">{{ name }}</td>
         </tr>
       </table>
@@ -263,6 +279,10 @@ main {
 }
 .violator.highlight {
   background-color: rgba(255, 255, 100, 0.8);
+}
+.held {
+  background-color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 /* Content layout (medium) */
