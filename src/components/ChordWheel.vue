@@ -157,7 +157,7 @@ function draw(time: DOMHighResTimeStamp) {
   if (props.type === 'otonal') {
     text = chord.join(':')
   } else {
-    text = '1/(' + chord.join(':') + ')'
+    text = '/' + chord.join(':')
   }
   const textWidth = ctx.measureText(text).width
   if (textWidth * 10 < width * 8) {
