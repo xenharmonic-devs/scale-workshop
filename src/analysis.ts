@@ -196,7 +196,7 @@ export function rootedEquallyTemperedChord(frequencies: number[], maxDivisions: 
   let bestDivisions = maxDivisions
   for (let divisions = 1; divisions <= maxDivisions; ++divisions) {
     const error = misalignment(pitches, equaveCents / divisions)
-    if (error < bestError) {
+    if (error + EPSILON < bestError) {
       bestError = error
       bestDivisions = divisions
     }
@@ -225,7 +225,7 @@ export function freeEquallyTemperedChord(frequencies: number[], maxDivisions: nu
   let bestDegrees: number[] = []
   for (let divisions = 1; divisions <= maxDivisions; ++divisions) {
     const {error, degrees} = alignCents(pitches, equaveCents / divisions)
-    if (error < bestError) {
+    if (error + EPSILON < bestError) {
       bestError = error
       bestDivisions = divisions
       bestDegrees = degrees

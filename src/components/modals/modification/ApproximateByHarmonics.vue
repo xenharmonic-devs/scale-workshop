@@ -3,6 +3,7 @@ import Modal from '@/components/ModalDialog.vue'
 import { useModalStore } from '@/stores/modal'
 import { computed } from 'vue'
 import { useScaleStore } from '@/stores/scale';
+import { valueToCents } from 'xen-dev-utils';
 
 const emit = defineEmits(['done', 'cancel'])
 
@@ -11,11 +12,21 @@ const scale = useScaleStore()
 
 const maxDenominator = computed(() => {
   let maxRatio = 1
-  for (let i = 0; i < scale.scale.size; ++i) {
-    maxRatio = Math.max(maxRatio, Math.abs(scale.scale.getRatio(i)), 1 / Math.abs(scale.scale.getRatio(i)))
+  for (const ratio of scale.scale.intervalRatios) {
+    maxRatio = Math.max(maxRatio, Math.abs(ratio), 1 / Math.abs(ratio))
   }
   return Math.floor(Number.MAX_SAFE_INTEGER / maxRatio)
 })
+
+const error = computed(() => {
+  let result = 0;
+  for (const ratio of scale.scale.intervalRatios) {
+    const approximand = Math.abs(ratio * modal.largeInteger)
+    const harmonic = Math.round(approximand)
+    result = Math.max(result, Math.abs(valueToCents(approximand / harmonic)))
+  }
+  return result;
+});
 
 function modify(expand = true) {
   scale.sourceText += `\ntoHarmonics(${modal.largeInteger})`
@@ -46,6 +57,7 @@ function modify(expand = true) {
             v-model="modal.largeInteger"
           />
         </div>
+        <p>Error: {{ error.toFixed(5) }} c</p>
       </div>
     </template>
     <template #footer>

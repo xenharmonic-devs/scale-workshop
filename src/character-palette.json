@@ -14,6 +14,8 @@
   "÷": "Division symbol. E.g. <code>9/8 ÷ 81/80</code> is <code>10/9</code>.",
   "·": "Dot product. E.g. <code>3/2 · 12@</code> is <code>7</code> i.e. a fifth is seven steps of 12-tone equal temperament.",
   "⊗": "Tensoring symbol. Calculate all products between two arrays. E.g. <code>[9/8, 4/3, 3/2]⊗[1/1, 5/4]</code>.",
+  "⊕": "Reciprocal of the sum of of reciprocals. E.g. <code>2⊕3</code>.",
+  "⊖": "Reciprocal of the difference of reciprocals. E.g. <code>9/8⊖6</code>.",
   "α": "Interordinal nominal alpha. <code>α4</code> is a semioctave above <code>E4</code>.",
   "β": "Interordinal nominal beta. <code>β4</code> is a semioctave above <code>F4</code>.",
   "γ": "Interordinal nominal gamma. <code>γ4</code> is a semioctave below <code>G4</code>.",
