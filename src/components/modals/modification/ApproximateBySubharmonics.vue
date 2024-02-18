@@ -2,11 +2,23 @@
 import Modal from '@/components/ModalDialog.vue'
 import { useModalStore } from '@/stores/modal'
 import { useScaleStore } from '@/stores/scale';
+import { computed } from 'vue';
+import { valueToCents } from 'xen-dev-utils';
 
 const emit = defineEmits(['done', 'cancel'])
 
 const modal = useModalStore()
 const scale = useScaleStore()
+
+const error = computed(() => {
+  let result = 0;
+  for (const ratio of scale.scale.intervalRatios) {
+    const denominator = Math.round(modal.largeInteger / ratio)
+    const approximation = modal.largeInteger / denominator
+    result = Math.max(result, Math.abs(valueToCents(Math.abs(approximation / ratio))))
+  }
+  return result;
+});
 
 function modify(expand = true) {
   scale.sourceText += `\ntoSubharmonics(${modal.largeInteger})`
@@ -37,6 +49,7 @@ function modify(expand = true) {
             v-model="modal.largeInteger"
           />
         </div>
+        <p>Error: {{ error.toFixed(5) }} c</p>
       </div>
     </template>
     <template #footer>

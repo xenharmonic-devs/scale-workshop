@@ -33,10 +33,7 @@ const scaleTickDirections = computed(() => {
   if (props.scale === null) {
     return []
   }
-  const result = []
-  for (let i = 1; i < props.scale.size + 1; ++i) {
-    result.push(valueToCents(Math.abs(props.scale.getRatio(i))))
-  }
+  const result = props.scale.intervalRatios.map(r => valueToCents(Math.abs(r)))
   const angleScale = (2 * Math.PI) / periodCents.value
   return result
     .map((cents) => cents * angleScale)
