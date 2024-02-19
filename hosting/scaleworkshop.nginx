@@ -1,0 +1,36 @@
+server {
+  server_name scaleworkshop.plainsound.org;
+
+  location /static/ {
+    alias /var/www/scaleworkshop-static/;
+    add_header Access-Control-Allow-Origin *;
+  }
+
+  location / {
+    root /var/www/scaleworkshop;
+    index index.html;
+    try_files $uri $uri/ /index.html;
+
+    # Cache settings for everything except index.html
+    expires 1y;
+
+    # Cache settings for index.html
+    if ($uri = '') {
+      expires 1m;
+    }
+    if ($uri = '/') {
+      expires 1m;
+    }
+    if ($uri = 'index.html') {
+      expires 1m;
+    }
+    if ($uri = '/index.html') {
+      expires 1m;
+    }
+
+    add_header Cache-Control "public";
+  }
+
+  # HTTPS configuration omitted for security
+}
+# HTTPS redirect omitted for security

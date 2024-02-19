@@ -1,9 +1,10 @@
 # Change log
 
 ## (UNRELEASED)
- * Documentation: Move changelog to a dedicated file [#556](https://github.com/xenharmonic-devs/scale-workshop/issues/556)
  * Bug fix: Fix the bottom row of virtual QWERTY being offset by one [#452](https://github.com/xenharmonic-devs/scale-workshop/issues/452)
  * Bug fix: Fix the equave shift keys on virtual QWERTY [#564](https://github.com/xenharmonic-devs/scale-workshop/issues/563)
+ * Documentation: Move changelog to a dedicated file [#556](https://github.com/xenharmonic-devs/scale-workshop/issues/556)
+ * Documentation: Include an example NGINX config [#470](https://github.com/xenharmonic-devs/scale-workshop/issues/470)
 
 ## 2.3.6
  * Feature: Be more informative about why vals or commas do not span a rank-2 temperament [#540](https://github.com/xenharmonic-devs/scale-workshop/issues/540)
