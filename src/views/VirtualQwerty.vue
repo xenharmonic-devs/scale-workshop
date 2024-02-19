@@ -37,8 +37,8 @@ defineEmits(['update:equaveShift', 'update:degreeShift'])
       :degreeDownCode="state.degreeDownCode"
       :equaveShift="state.equaveShift"
       :degreeShift="state.degreeShift"
-      @update:equaveShift="$emit('update:equaveShift', $event)"
-      @update:degreeShift="$emit('update:degreeShift', $event)"
+      @update:equaveShift="state.equaveShift = $event"
+      @update:degreeShift="state.degreeShift = $event"
     ></VirtualTypingKeyboard>
   </main>
 </template>
