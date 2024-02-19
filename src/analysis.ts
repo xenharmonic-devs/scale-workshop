@@ -1,5 +1,5 @@
 import { Interval } from "sonic-weave"
-import { mmod, valueToCents } from "xen-dev-utils"
+import { arraysEqual, circleDistance, mmod, valueToCents } from "xen-dev-utils"
 
 const EPSILON = 1e-6
 
@@ -236,6 +236,111 @@ export function freeEquallyTemperedChord(frequencies: number[], maxDivisions: nu
     divisions: bestDivisions,
     degrees: bestDegrees,
   }
+}
+
+export type Shell = {
+  harmonics: number[];
+  degrees: number[];
+}
+
+/**
+ * Fast variant of sonic-weave's vertically aligned object returning an array of harmonics.
+ */
+export function vao(denominator: number, maxNumerator: number, divisions: number, tolerance: number, equaveCents: number) {
+  const gridCents = equaveCents / divisions;
+  const witnesses: number[] = [];
+  const denominatorCents = valueToCents(denominator);
+  const harmonics = [];
+  const degrees = [];
+  search: for (let numerator = denominator; numerator < maxNumerator; ++numerator) {
+    const cents = valueToCents(numerator) - denominatorCents;
+    const degree = Math.round(cents / gridCents);
+    if (Math.abs(cents - degree * gridCents) > tolerance) {
+      continue;
+    }
+    for (const existing of witnesses) {
+      if (circleDistance(cents, existing, equaveCents) < EPSILON) {
+        continue search;
+      }
+    }
+    witnesses.push(cents);
+    harmonics.push(numerator);
+    degrees.push(degree);
+  }
+  return {
+    harmonics,
+    degrees,
+  };
+}
+
+function* subshells(shell: number[]) {
+  if (shell.length <= 1) {
+    return;
+  }
+  for (let i = 1; i < shell.length; ++i) {
+    const subshell = [...shell];
+    subshell.splice(i, 1);
+    yield subshell;
+  }
+}
+
+function subsetOf(a: number[], b: number[]) {
+  for (const value of a) {
+    if (!b.includes(value)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+// TODO: Optimize! This is way too slow to be user-friendly.
+/**
+ * Vertically aligned objects that are free to offset the root to stay withing the given tolerance.
+ */
+export function freeVAOs(denominator: number, maxNumerator: number, divisions: number, tolerance: number, equaveCents: number, maxDepth = 5, maxShells = 50): Shell[] {
+  const gridCents = equaveCents / divisions;
+
+  // Generate the largest possible object.
+  const superShell = vao(denominator, maxNumerator, divisions, 2 * tolerance, equaveCents).harmonics;
+
+  const {error, degrees} = alignValues(superShell, gridCents);
+
+  // Very unlikely but worth the shot.
+  if (error <= tolerance) {
+    return [{harmonics: superShell, degrees}];
+  }
+
+  // Start breaking the super-shell into smaller sub-shells.
+  const result: Shell[] = [];
+  const badShells = [superShell];
+  while (badShells.length) {
+    const shell = badShells.shift()!;
+    if (!shell.length) {
+      continue;
+    }
+    search: for (const subshell of subshells(shell)) {
+      for (const existing of result) {
+        if (subsetOf(subshell, existing.harmonics)) {
+          continue search;
+        }
+      }
+      for (const existing of badShells) {
+        if (arraysEqual(subshell, existing)) {
+          continue search;
+        }
+      }
+      const {error, degrees} = alignValues(subshell, gridCents);
+      if (error <= tolerance) {
+        result.push({harmonics: subshell, degrees});
+        if (result.length >= maxShells) {
+          return result;
+        }
+      } else if (subshell.length >= superShell.length - maxDepth) {
+        badShells.push(subshell);
+      }
+    }
+  }
+  return result;
 }
 
 // Interval matrix a.k.a the modes of a scale

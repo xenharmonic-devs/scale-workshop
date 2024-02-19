@@ -8,6 +8,9 @@ const emit = defineEmits(['done', 'mouseenter'])
 
 const scale = useScaleStore()
 
+const ConcordanceShellModal = defineAsyncComponent(
+  () => import('@/components/modals/generation/ConcordanceShell.vue')
+)
 const CpsModal = defineAsyncComponent(
   () => import('@/components/modals/generation/CombinationProductSet.vue')
 )
@@ -52,6 +55,7 @@ const element = ref<typeof DropdownGroup | null>(null)
 const scalaFile = ref<HTMLInputElement | null>(null)
 const anamarkFile = ref<HTMLInputElement | null>(null)
 
+const showConcordanceShellModal = ref(false)
 const showCpsModal = ref(false)
 const showEnumerateModal = ref(false)
 const showEqualTemperamentModal = ref(false)
@@ -68,6 +72,7 @@ const showSubharmonicModal = ref(false)
 
 function updateSourceAndHideModals(source: string) {
   scale.sourceText = source
+  showConcordanceShellModal.value = false
   showCpsModal.value = false
   showEnumerateModal.value = false
   showEqualTemperamentModal.value = false
@@ -133,6 +138,7 @@ defineExpose({blur})
       <a href="#" @click="showEulerGenusModal = true"><li>Euler-Fokker genus</li></a>
       <a href="#" @click="showLatticeModal = true"><li>Span Lattice</li></a>
       <a href="#" @click="showGeneratorSequenceModal = true"><li>Generator sequence</li></a>
+      <a href="#" @click="showConcordanceShellModal = true"><li>Concordance shell</li></a>
       <li class="divider"></li>
       <a href="#" @click="scalaFile!.click()"><li>Import .scl</li></a>
       <a href="#" @click="anamarkFile!.click()"><li>Import .tun</li></a>
@@ -182,6 +188,12 @@ defineExpose({blur})
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
       @cancel="showGeneratorSequenceModal = false"
+    />
+    <ConcordanceShellModal
+      v-if="showConcordanceShellModal"
+      @update:scaleName="scale.name = $event"
+      @update:source="updateSourceAndHideModals"
+      @cancel="showConcordanceShellModal = false"
     />
     <CpsModal
       v-if="showCpsModal"

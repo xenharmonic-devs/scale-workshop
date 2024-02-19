@@ -13,6 +13,7 @@ import {
   allForEdo
 } from 'moment-of-symmetry'
 import { TimeMonzo, hasConstantStructure, parseChord } from 'sonic-weave'
+import { freeVAOs, vao } from '@/analysis'
 
 export const useModalStore = defineStore('modal', () => {
   // Generic
@@ -378,6 +379,23 @@ export const useModalStore = defineStore('modal', () => {
   const tolerance = ref(3.5)
   const coalescingAction = ref<'avg' | 'havg' | 'geoavg' | 'lowest' | 'highest' | 'simplest'>('simplest');
 
+  // Concordance shell
+  const mediumInteger = ref(32)
+  const errorModel = ref<'rooted' | 'free'>('rooted')
+  const vaoIndex = ref(0)
+  const vaos = computed(() => {
+    // TODO: Fix freeVAOs
+    // eslint-disable-next-line no-constant-condition
+    if (errorModel.value === 'rooted' || true) {
+      return [vao(mediumInteger.value, largeInteger.value, largeDivisions.value, tolerance.value, equave.value.totalCents())]
+    }
+    return freeVAOs(mediumInteger.value, largeInteger.value, largeDivisions.value, tolerance.value, equave.value.totalCents())
+  });
+
+  watch([mediumInteger, largeInteger, largeDivisions, tolerance, equave, errorModel], () => {
+    vaoIndex.value = 0
+  })
+
   return {
     // Generic
     equaveString,
@@ -467,6 +485,12 @@ export const useModalStore = defineStore('modal', () => {
     ed,
     previewName,
     moreForEdo,
+
+    // Concordance shell
+    mediumInteger,
+    vaoIndex,
+    vaos,
+    errorModel,
 
     // Approximate by harmonics/subharmonics
     largeInteger,
