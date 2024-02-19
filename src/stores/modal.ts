@@ -128,7 +128,14 @@ export const useModalStore = defineStore('modal', () => {
   const numPeriods = ref(1);
   const size = ref(5);
   const generatorsString = ref('');
-  const [generators, generatorsError] = computedAndError(() => parseChord(generatorsString.value), []);
+  const [generators, generatorsError] = computedAndError(() => {
+    let source = generatorsString.value
+    // Enumerated chords mean something different in the context of GS
+    if (source.includes(':')) {
+      source = 'geodiff(' + source + ')'
+    }
+    return parseChord(source)
+  }, []);
   const constantStructureSizes = reactive<number[]>([]);
   // These sizes are per period.
   const maxSizeComputed = ref(2);
