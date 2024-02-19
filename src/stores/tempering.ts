@@ -155,8 +155,15 @@ export const useRank2Store = defineStore('rank2', () => {
   const generatorPerPeriod = computed(
     () => generator.value.totalCents() / period.value.totalCents()
   )
+  const safeNumPeriods = computed(() => {
+    const value = Math.abs(parseInt(numPeriods.value as unknown as string, 10))
+    if (isNaN(value)) {
+      return 1
+    }
+    return value || 1
+  })
   const opposite = computed(() =>
-    isBright(generatorPerPeriod.value, safeSize.value / numPeriods.value) ? 'dark' : 'bright'
+    isBright(generatorPerPeriod.value, safeSize.value / safeNumPeriods.value) ? 'dark' : 'bright'
   )
 
   const [mosPatterns, mosPatternsError] = computedAndError(() => {
@@ -165,7 +172,7 @@ export const useRank2Store = defineStore('rank2', () => {
       if (!generatorString.value.length) {
         return []
       }
-      return getMosPatterns(generatorPerPeriod.value, numPeriods.value, MAX_SIZE, MAX_LENGTH)
+      return getMosPatterns(generatorPerPeriod.value, safeNumPeriods.value, MAX_SIZE, MAX_LENGTH)
     } else if (method.value === 'vals') {
       // Don't show error in the default configuration
       if (!vals.value.length || !subgroupString.value.length) {
@@ -220,17 +227,17 @@ export const useRank2Store = defineStore('rank2', () => {
   })
 
   const safeSize = computed(
-    () => Math.round(size.value / (numPeriods.value || 1)) * numPeriods.value
+    () => Math.round(size.value / safeNumPeriods.value) * safeNumPeriods.value
   )
-  const safeUp = computed(() => Math.round(up.value / (numPeriods.value || 1)) * numPeriods.value)
-  const upMax = computed(() => safeSize.value - numPeriods.value)
+  const safeUp = computed(() => Math.round(up.value / safeNumPeriods.value) * safeNumPeriods.value)
+  const upMax = computed(() => safeSize.value - safeNumPeriods.value)
   const down = computed(() => upMax.value - safeUp.value)
 
   const generatorsPerPeriod = computed({
-    get: () => safeSize.value / numPeriods.value,
+    get: () => safeSize.value / safeNumPeriods.value,
     set: (newValue) => {
       const oldDown = down.value
-      size.value = newValue * numPeriods.value
+      size.value = newValue * safeNumPeriods.value
       // Attempt to preserve "down" rather than "up".
       // It makes more sense that circle generators are appended in the positive direction.
       up.value = Math.max(0, upMax.value - oldDown)
@@ -241,6 +248,7 @@ export const useRank2Store = defineStore('rank2', () => {
 
   // Force scale size and generator stack to align with the multi-MOS
   watch(numPeriods, (newValue) => {
+    newValue = Math.round(newValue)
     if (newValue > 1) {
       size.value = Math.round(size.value / newValue) * newValue
       up.value = Math.round(up.value / newValue) * newValue
@@ -265,7 +273,7 @@ export const useRank2Store = defineStore('rank2', () => {
       if (method.value === 'generator') {
         expensiveMosPatterns.value = getMosPatterns(
           generator.value.totalCents() / period.value.totalCents(),
-          numPeriods.value,
+          safeNumPeriods.value,
           MAX_SIZE,
           MAX_LENGTH
         )
@@ -293,7 +301,7 @@ export const useRank2Store = defineStore('rank2', () => {
         // The functionality is retained in case we ever tweak the UI.
         expensiveMosPatterns.value = getMosPatterns(
           circleGeneratorCents.value / circlePeriodCents.value,
-          numPeriods.value,
+          safeNumPeriods.value,
           MAX_SIZE,
           MAX_LENGTH
         )
@@ -318,6 +326,7 @@ export const useRank2Store = defineStore('rank2', () => {
     size,
     up,
     numPeriods,
+    safeNumPeriods,
     periodStretch,
     generatorFineCents,
     showAdvanced,

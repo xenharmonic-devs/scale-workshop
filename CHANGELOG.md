@@ -1,8 +1,9 @@
 # Change log
 
-## (UNRELEASED)
+## 2.3.7
  * Bug fix: Fix the bottom row of virtual QWERTY being offset by one [#452](https://github.com/xenharmonic-devs/scale-workshop/issues/452)
  * Bug fix: Fix the equave shift keys on virtual QWERTY [#564](https://github.com/xenharmonic-devs/scale-workshop/issues/563)
+ * Bug fix: Fix rank-2 modal crashing when clearing number of periods [#573](https://github.com/xenharmonic-devs/scale-workshop/issues/573)
  * Documentation: Move changelog to a dedicated file [#556](https://github.com/xenharmonic-devs/scale-workshop/issues/556)
  * Documentation: Include an example NGINX config [#470](https://github.com/xenharmonic-devs/scale-workshop/issues/470)
 

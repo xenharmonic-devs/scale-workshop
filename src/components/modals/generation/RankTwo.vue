@@ -128,7 +128,7 @@ function generate() {
     const lineOptions = { centsFractionDigits: props.centsFractionDigits }
     let size_ = rank2.safeSize
     let down_ = rank2.down
-    const n = rank2.numPeriods
+    const n = rank2.safeNumPeriods
     // The option to fill in colors is not shown in circle UI so it's ignored here.
     if (rank2.colorMethod === 'gaps' && rank2.method !== 'circle') {
       const colors = Array(n)
@@ -311,7 +311,7 @@ function generate() {
               :generatorCents="rank2.circleGeneratorCents"
               :periodCents="rank2.circlePeriodCents"
               :size="rank2.generatorsPerPeriod"
-              :up="rank2.up / rank2.numPeriods"
+              :up="rank2.safeUp / rank2.safeNumPeriods"
               @update:generatorCents="updateCircleGenerator"
             />
           </div>
