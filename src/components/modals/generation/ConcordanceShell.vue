@@ -107,19 +107,17 @@ function generate(shell = true, expand = true) {
             :defaultValue="OCTAVE"
           />
         </div>
-        <!-- Disabled to protect the innocent. Please fix analysis.freeVAOs
-          <div class="control radio-group">
-            <label>Error model</label>
-            <span>
-              <input type="radio" id="error-rooted" value="rooted" v-model="modal.errorModel"/>
-              <label for="error-rooted"> Rooted </label>
-            </span>
-            <span>
-              <input type="radio" id="error-free" value="free" v-model="modal.errorModel"/>
-              <label for="error-free"> Free </label>
-            </span>
-          </div>
-        -->
+        <div class="control radio-group">
+          <label>Error model</label>
+          <span>
+            <input type="radio" id="error-rooted" value="rooted" v-model="modal.errorModel"/>
+            <label for="error-rooted"> Rooted </label>
+          </span>
+          <span>
+            <input type="radio" id="error-free" value="free" v-model="modal.errorModel"/>
+            <label for="error-free"> Free </label>
+          </span>
+        </div>
         <div class="control">
           <label for="vao">Vertically aligned object</label>
           <select id="vao" v-model="modal.vaoIndex">

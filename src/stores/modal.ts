@@ -384,9 +384,7 @@ export const useModalStore = defineStore('modal', () => {
   const errorModel = ref<'rooted' | 'free'>('rooted')
   const vaoIndex = ref(0)
   const vaos = computed(() => {
-    // TODO: Fix freeVAOs
-    // eslint-disable-next-line no-constant-condition
-    if (errorModel.value === 'rooted' || true) {
+    if (errorModel.value === 'rooted') {
       return [vao(mediumInteger.value, largeInteger.value, largeDivisions.value, tolerance.value, equave.value.totalCents())]
     }
     return freeVAOs(mediumInteger.value, largeInteger.value, largeDivisions.value, tolerance.value, equave.value.totalCents())

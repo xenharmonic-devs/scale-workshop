@@ -1,5 +1,5 @@
 import { Interval } from "sonic-weave"
-import { arraysEqual, circleDistance, mmod, valueToCents } from "xen-dev-utils"
+import { circleDistance, mmod, valueToCents } from "xen-dev-utils"
 
 const EPSILON = 1e-6
 
@@ -273,6 +273,7 @@ export function vao(denominator: number, maxNumerator: number, divisions: number
   };
 }
 
+/*
 function* subshells(shell: number[]) {
   if (shell.length <= 1) {
     return;
@@ -283,6 +284,7 @@ function* subshells(shell: number[]) {
     yield subshell;
   }
 }
+*/
 
 function subsetOf(a: number[], b: number[]) {
   for (const value of a) {
@@ -293,16 +295,63 @@ function subsetOf(a: number[], b: number[]) {
   return true;
 }
 
-// TODO: Optimize! This is way too slow to be user-friendly.
+// TODO: Optimize! This is still too slow to be user-friendly.
 /**
  * Vertically aligned objects that are free to offset the root to stay withing the given tolerance.
  */
-export function freeVAOs(denominator: number, maxNumerator: number, divisions: number, tolerance: number, equaveCents: number, maxDepth = 5, maxShells = 50): Shell[] {
+export function freeVAOs(denominator: number, maxNumerator: number, divisions: number, tolerance: number, equaveCents: number, minSize = 5, maxShells = 20, gas = 10000): Shell[] {
   const gridCents = equaveCents / divisions;
 
   // Generate the largest possible object.
   const superShell = vao(denominator, maxNumerator, divisions, 2 * tolerance, equaveCents).harmonics;
 
+  const root = superShell.shift()!;
+  const result: Shell[] = [];
+  function accumulate(harmonics: number[], remaining: number[], degrees: number[]) {
+    if (harmonics.length + remaining.length < minSize) {
+      return;
+    }
+    if (result.length >= maxShells) {
+      return;
+    }
+    let grew = false;
+    while (remaining.length) {
+      if (gas-- < 0) {
+        return;
+      }
+      const candidate = [...harmonics];
+      candidate.push(remaining.pop()!)
+      const {error, degrees} = alignValues(candidate, gridCents);
+      if (error <= tolerance) {
+        grew = true;
+        accumulate(candidate, [...remaining], degrees)
+      }
+    }
+    if (!grew) {
+      for (const existing of result) {
+        if (subsetOf(harmonics, existing.harmonics)) {
+          return
+        }
+      }
+      result.push({
+        harmonics,
+        degrees
+      })
+    }
+  }
+  superShell.reverse();
+  accumulate([root], superShell, [0])
+  result.sort((a, b) => b.harmonics.length - a.harmonics.length);
+
+  if (!result.length) {
+    // Out of gas or something. Bail out.
+    return [vao(denominator, maxNumerator, divisions, tolerance, equaveCents)];
+  }
+
+  return result;
+
+  // Alternative implementation.
+  /*
   const {error, degrees} = alignValues(superShell, gridCents);
 
   // Very unlikely but worth the shot.
@@ -341,6 +390,7 @@ export function freeVAOs(denominator: number, maxNumerator: number, divisions: n
     }
   }
   return result;
+  */
 }
 
 // Interval matrix a.k.a the modes of a scale
