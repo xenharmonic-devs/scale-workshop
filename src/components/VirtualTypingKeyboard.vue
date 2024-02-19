@@ -2,7 +2,7 @@
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { mmod } from 'xen-dev-utils'
 import type { Keyboard, CoordinateKeyboardEvent } from 'isomorphic-qwerty'
-import { CODES_LAYER_1 } from 'isomorphic-qwerty'
+import { CODES_LAYER_1, COORDS_BY_CODE } from 'isomorphic-qwerty'
 import { LEFT_MOUSE_BTN } from '@/constants'
 
 /** Unimplemented features:
@@ -78,7 +78,8 @@ const rows = computed(() => {
       }
       let index
       if (props.keyboardMode === 'isomorphic') {
-        index = base + i * horizontal + (2 - j) * vertical
+        const [x, y] = COORDS_BY_CODE.get(code)!
+        index = base + x * horizontal + (2 - y) * vertical
       } else {
         index = mapping!.get(code)
       }
