@@ -9,7 +9,7 @@
   --color-border-hover: #eee;
   --color-drop-shadow: rgba(0, 0, 0, 0.5);
 
-  --color-heading: #000;
+  --color-heading: #080008;
   --color-text: #000;
   --color-text-mute: #777;
 
@@ -45,7 +45,7 @@
   --color-border-hover: #111;
   --color-drop-shadow: rgba(200, 100, 200, 0.5);
 
-  --color-heading: #fff;
+  --color-heading: #fff8ff;
   --color-text: #fff;
   --color-text-mute: #555;
 
@@ -96,4 +96,9 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  font-weight: bold;
+  color: var(--color-heading);
 }

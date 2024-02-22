@@ -1,6 +1,6 @@
 {
   "name": "scale-workshop",
-  "version": "3.0.0-alpha.17",
+  "version": "3.0.0-alpha.18",
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
@@ -16,18 +16,19 @@
   },
   "dependencies": {
     "isomorphic-qwerty": "^0.0.2",
+    "ji-lattice": "^0.0.1",
     "jszip": "^3.10.1",
     "moment-of-symmetry": "^0.4.0",
     "pinia": "^2.1.7",
     "qs": "^6.11.2",
+    "sonic-weave": "github:xenharmonic-devs/sonic-weave",
+    "sw-synth": "^0.1.0",
     "temperaments": "^0.5.2",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5",
     "webmidi": "^3.1.7",
     "xen-dev-utils": "^0.2.6",
-    "xen-midi": "^0.1.2",
-    "sonic-weave": "github:xenharmonic-devs/sonic-weave",
-    "sw-synth": "^0.1.0"
+    "xen-midi": "^0.1.2"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.6.0",

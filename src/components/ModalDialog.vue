@@ -121,7 +121,7 @@ watch(
   box-shadow: var(--color-drop-shadow) 0px 0px 200px;
   max-height: 100vh;
   max-width: 100vw;
-  width: 20rem;
+  min-width: 20rem;
   transition: all 0.3s ease;
   display: flex;
   flex-flow: column;

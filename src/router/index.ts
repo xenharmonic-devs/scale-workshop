@@ -42,12 +42,12 @@ const router = createRouter({
       name: 'analysis',
       component: () => import('../views/AnalysisView.vue')
     },
-    /*
     {
       path: '/lattice',
       name: 'lattice',
       component: () => import('../views/LatticeView.vue')
     },
+    /*
     {
       path: '/midi',
       name: 'midi',

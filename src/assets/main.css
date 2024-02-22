@@ -2,7 +2,6 @@
 h2 {
   border-bottom: 1px solid var(--color-border);
   font-size: 1.1em;
-  font-weight: bold;
   width: 100%;
   margin-bottom: 1rem;
 }

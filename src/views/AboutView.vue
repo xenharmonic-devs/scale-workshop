@@ -7,7 +7,7 @@ const TAGLINES = [
   ["Powered by SonicWeave", ""],
   ["We are friends now, right?", "dotu_mtr"],
   ["Any JI scale is a NEJI if you're brave enough.", "fredg999"],
-  ["Complaining about ordinals is such a 0st world problem...", "Lumi Pakkanen"],
+  ["Ranting about ordinals is such a 0st world problem...", "Lumi Pakkanen"],
 ];
 
 const tagline = computed(() => TAGLINES[Math.floor(Math.random() * TAGLINES.length)])
@@ -46,6 +46,8 @@ const tagline = computed(() => TAGLINES[Math.floor(Math.random() * TAGLINES.leng
         Videco - <i>developer</i> <br />
         Inthar - <i>developer</i> <br />
         Kraig Grady - <i>lattice advisor</i>
+        Kite Giedraitis - <i>notation advisor</i>
+        Scott Dakota - <i>lattice advisor / generator sequence advisor</i>
       </p>
     </div>
   </div>

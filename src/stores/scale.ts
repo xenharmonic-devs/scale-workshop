@@ -281,9 +281,9 @@ export const useScaleStore = defineStore('scale', () => {
         if (autoColors.value === 'silver') {
           colors.value = intervals.map((interval, i) => interval.color?.value ?? (i === intervals.length - 1 ? 'gray' : 'silver'));
         } else if (autoColors.value === 'cents') {
-          colors.value = intervals.map(interval => centsColor(interval).value)
+          colors.value = intervals.map(interval => interval.color?.value ?? centsColor(interval).value)
         } else {
-          colors.value = intervals.map(interval => factorColor(interval).value)
+          colors.value = intervals.map(interval => interval.color?.value ?? factorColor(interval).value)
         }
         labels.value = intervals.map((interval) => interval.label || name(interval));
         error.value = '';

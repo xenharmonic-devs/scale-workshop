@@ -12,6 +12,8 @@ export const useStateStore = defineStore('state', () => {
   const heldNotes = reactive(new Map<number, number>())
   const typingActive = ref(true)
 
+  const latticeType = ref<'ji' | 'et'>('et')
+
   // These user preferences are fetched from local storage.
   const storage = window.localStorage
   const newline = ref(storage.getItem('newline') ?? UNIX_NEWLINE)
@@ -85,6 +87,7 @@ export const useStateStore = defineStore('state', () => {
     isomorphicHorizontal,
     heldNotes,
     typingActive,
+    latticeType,
     // Persistent state
     newline,
     colorScheme,
