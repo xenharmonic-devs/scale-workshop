@@ -105,6 +105,7 @@ export const useGridStore = defineStore('grid', () => {
       maxY: maxY.value,
       edgeVectors: edgeVectors.value,
       gridLines: {delta1: gridlines1.value, delta2: gridlines2.value, diagonal1: diagonals1.value, diagonal2: diagonals2.value},
+      mergeEdges: true,
     }
   })
 

@@ -1,6 +1,6 @@
 {
   "name": "scale-workshop",
-  "version": "3.0.0-alpha.18",
+  "version": "3.0.0-alpha.19",
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "isomorphic-qwerty": "^0.0.2",
-    "ji-lattice": "^0.0.1",
+    "ji-lattice": "github:xenharmonic-devs/ji-lattice#merge-edges",
     "jszip": "^3.10.1",
     "moment-of-symmetry": "^0.4.0",
     "pinia": "^2.1.7",

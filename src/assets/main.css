@@ -45,6 +45,7 @@ select {
   border: 1px solid var(--color-border);
   border-radius: 3px;
   width: 6rem;
+  line-height: var(--base-line-height);
 }
 optgroup {
   font-weight: bold;

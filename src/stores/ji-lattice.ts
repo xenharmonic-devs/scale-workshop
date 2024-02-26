@@ -55,6 +55,7 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
       verticalCoordinates,
       maxDistance: maxDistance.value,
       edgeMonzos: edgeMonzos.value,
+      mergeEdges: true,
     };
   });
 
