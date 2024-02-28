@@ -1,6 +1,6 @@
 {
   "name": "scale-workshop",
-  "version": "3.0.0-alpha.20",
+  "version": "3.0.0-alpha.21",
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
@@ -27,7 +27,7 @@
     "vue": "^3.3.4",
     "vue-router": "^4.2.5",
     "webmidi": "^3.1.7",
-    "xen-dev-utils": "^0.2.6",
+    "xen-dev-utils": "github:xenharmonic-devs/xen-dev-utils",
     "xen-midi": "^0.1.2"
   },
   "devDependencies": {
