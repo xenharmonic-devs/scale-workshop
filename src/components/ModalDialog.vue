@@ -120,7 +120,7 @@ watch(
   background-color: var(--color-background);
   box-shadow: var(--color-drop-shadow) 0px 0px 200px;
   max-height: 100vh;
-  max-width: 100vw;
+  max-width: 22rem;
   min-width: 20rem;
   transition: all 0.3s ease;
   display: flex;
@@ -131,6 +131,7 @@ watch(
 }
 .modal-body {
   overflow-y: auto;
+  padding-right: 0.5rem;
 }
 .modal-footer {
   border-top: 1px solid var(--color-border);

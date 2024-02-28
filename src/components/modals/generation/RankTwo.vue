@@ -155,7 +155,7 @@ function generate(expand = true) {
 </script>
 
 <template>
-  <Modal extraStyle="width: 30rem" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal extraStyle="min-width: 30rem;max-width: 31rem" @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate rank 2 temperament</h2>
     </template>

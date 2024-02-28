@@ -18,7 +18,7 @@
     "isomorphic-qwerty": "^0.0.2",
     "ji-lattice": "github:xenharmonic-devs/ji-lattice#merge-edges",
     "jszip": "^3.10.1",
-    "moment-of-symmetry": "^0.4.0",
+    "moment-of-symmetry": "github:xenharmonic-devs/moment-of-symmetry",
     "pinia": "^2.1.7",
     "qs": "^6.11.2",
     "sonic-weave": "github:xenharmonic-devs/sonic-weave",

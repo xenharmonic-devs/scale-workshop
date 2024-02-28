@@ -128,7 +128,7 @@ function edoClick(info: MosScaleInfo) {
 </script>
 
 <template>
-  <Modal extraStyle="width: 40rem" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal extraStyle="min-width: 40rem;max-width: 41rem" @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate MOS scale</h2>
     </template>

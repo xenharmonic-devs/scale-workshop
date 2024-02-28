@@ -165,7 +165,7 @@ function generate(expand = true) {
 }
 </script>
 <template>
-  <Modal extraStyle="width: 25rem" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate historical temperament</h2>
     </template>

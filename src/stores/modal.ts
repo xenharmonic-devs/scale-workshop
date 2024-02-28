@@ -291,21 +291,17 @@ export const useModalStore = defineStore('modal', () => {
     const existing = edoList.value
     const extra = allForEdo(edo_, 5, 12, 5)
     const more = []
-    for (const info of extra) {
-      let novel = true
+    collecting: for (const info of extra) {
       for (const old of existing) {
         if (
           info.mosPattern === old.mosPattern &&
           info.sizeOfLargeStep === old.sizeOfLargeStep &&
           info.sizeOfSmallStep === old.sizeOfSmallStep
         ) {
-          novel = false
-          break
+          continue collecting;
         }
       }
-      if (novel) {
-        more.push(info)
-      }
+      more.push(info)
     }
     edoExtraMap.set(edo_, more)
   }
