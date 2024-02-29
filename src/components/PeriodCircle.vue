@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { LEFT_MOUSE_BTN } from '@/constants'
+import { generatorRanges } from 'moment-of-symmetry'
 import type { Scale } from 'scale-workshop-core'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { mmod } from 'xen-dev-utils'
 
+const TAU = 2 * Math.PI
 const CIRCLE_RADIUS = 40
+const MOS_RANGE_RADIUS = 41
 const SCALE_TICK_HEIGHT = 4
 const GENERATOR_TICK_HEIGHT = 5
 
@@ -13,9 +17,40 @@ const props = defineProps<{
   periodCents: number | null
   size: number
   up: number
+  numPeriods: number
 }>()
 
 const emit = defineEmits(['update:generatorCents'])
+
+const ranges = computed(() =>
+  generatorRanges(props.size).map((r) => ({
+    ...r,
+    lowerBound: r.lowerBound.valueOf(),
+    upperBound: r.upperBound.valueOf()
+  }))
+)
+
+const paths = computed(() => {
+  let bright = ''
+  let dark = ''
+  for (const range of ranges.value) {
+    const theta1 = TAU * range.lowerBound
+    const theta2 = TAU * range.upperBound
+    const x1 = 50 + MOS_RANGE_RADIUS * Math.sin(theta1)
+    const y1 = 50 - MOS_RANGE_RADIUS * Math.cos(theta1)
+    const x2 = 50 + MOS_RANGE_RADIUS * Math.sin(theta2)
+    const y2 = 50 - MOS_RANGE_RADIUS * Math.cos(theta2)
+    const largeArcFlag = theta2 - theta1 > Math.PI ? 1 : 0
+    const arc = `M ${x1} ${y1} A ${MOS_RANGE_RADIUS} ${MOS_RANGE_RADIUS} 0 ${largeArcFlag} 1 ${x2} ${y2}`
+    if (range.bright) {
+      bright += arc
+    } else {
+      dark += arc
+    }
+  }
+
+  return { bright, dark }
+})
 
 const periodCents = computed(() => {
   if (props.periodCents !== null) {
@@ -25,6 +60,19 @@ const periodCents = computed(() => {
     return props.scale.equave.totalCents()
   }
   return 1200
+})
+
+const mosLabel = computed(() => {
+  if (props.generatorCents === null) {
+    return ''
+  }
+  const g = mmod(props.generatorCents / periodCents.value, 1)
+  for (const range of ranges.value) {
+    if (g >= range.lowerBound && g <= range.upperBound) {
+      return `${range.numberOfLargeSteps * props.numPeriods}L ${range.numberOfSmallSteps * props.numPeriods}s`
+    }
+  }
+  return ''
 })
 
 const scaleTickDirections = computed(() => {
@@ -216,6 +264,13 @@ onUnmounted(() => {
     @touchmove="onTouchMove"
     ref="container"
   >
+    <path :d="paths.dark" stroke-width="0.5%" class="dark" fill="none" />
+    <path :d="paths.bright" stroke-width="0.5%" class="bright" fill="none" />
+
+    <text x="50%" y="50%" font-size="4" text-anchor="middle" dominant-baseline="middle">
+      {{ mosLabel }}
+    </text>
+
     <line
       v-for="(attrs, index) of generatorTrajectory"
       :key="index"
@@ -290,5 +345,12 @@ svg text {
 
 svg text.generator {
   fill: var(--color-accent-text-btn);
+}
+
+path.bright {
+  stroke: #23ff23;
+}
+path.dark {
+  stroke: #007200;
 }
 </style>
