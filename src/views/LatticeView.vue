@@ -17,7 +17,7 @@ const jiLattice = useJiLatticeStore()
 const grid = useGridStore()
 
 const showConfig = ref(false)
-const jiPreset = ref<'nothing'|'grady'|'grady3'|'dakota'|'pr72'>('grady')
+const jiPreset = ref<'nothing'|'grady'|'grady3'|'dakota'|'pr72'|'pe72'>('grady')
 const etPreset = ref<'nothing'|'12'|'53'|'311'|'b13'>('12')
 
 const extraEdgesElement = ref<HTMLInputElement | null>(null)
@@ -52,6 +52,9 @@ watch(jiPreset, (newValue) => {
       return
     case 'pr72':
       jiLattice.pr72()
+      return
+    case 'pe72':
+      jiLattice.pe72()
       return
   }
 });
@@ -106,7 +109,8 @@ watch(etPreset, (newValue) => {
                 <option value="nothing">--Select preset--</option>
                 <option value="grady">Kraig Grady</option>
                 <option value="dakota">Scott Dakota's PR24</option>
-                <option value="pr72">Prime ring 72</option>
+                <option value="pr72">Scott Dakota's PR72</option>
+                <option value="pe72">Prime Ellipse 72</option>
                 <option value="grady3">K. Grady tritaves</option>
               </select>
             </div>

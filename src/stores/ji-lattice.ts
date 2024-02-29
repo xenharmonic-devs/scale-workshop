@@ -1,6 +1,6 @@
 import { computed, reactive, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
-import { kraigGrady9, type LatticeOptions, scottDakota24, primeRing72 } from 'ji-lattice'
+import { kraigGrady9, type LatticeOptions, scottDakota24, primeRing72, align } from 'ji-lattice'
 import { LOG_PRIMES, mmod } from 'xen-dev-utils'
 import { computedAndError } from '@/utils'
 import { parseChord } from 'sonic-weave'
@@ -103,6 +103,21 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
     edgesString.value = '6/5'
   }
 
+  function pe72(equaveIndex = 0) {
+    size.value = 4
+    const logs = LOG_PRIMES.slice(0, 72)
+    if (equaveIndex !== 0) {
+      logs.unshift(logs.splice(equaveIndex, 1)[0]);
+    }
+    const pr = primeRing72(logs, false);
+    align(pr, 1, 2);
+    horizontalCoordinates.length = 0;
+    horizontalCoordinates.push(...pr.horizontalCoordinates.map(Math.round));
+    verticalCoordinates.length = 0;
+    verticalCoordinates.push(...pr.verticalCoordinates.map(Math.round));
+    edgesString.value = '6/5'
+  }
+
   return {
     // State
     horizontalCoordinates,
@@ -123,5 +138,6 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
     kraigGrady,
     scott24,
     pr72,
+    pe72,
   }
 })
