@@ -2,6 +2,7 @@
 
 ## 2.3.8
  * Feature: Rank-2 circle now displays generator ranges of valid MOS patterns [#580](https://github.com/xenharmonic-devs/scale-workshop/issues/580)
+ * Bug fix: Pressing "More" for EDO inside the MOS modal now produces all supported MOS patterns
  * Bug fix: CPS and Span lattice modals now report basis parsing errors [#585](https://github.com/xenharmonic-devs/scale-workshop/issues/585)
  * Bug fix: MOS pattern errors no longer steal focus from the subgroup input during rank-2 generation [#587](https://github.com/xenharmonic-devs/scale-workshop/issues/587)
 
