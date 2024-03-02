@@ -320,6 +320,7 @@ function generate() {
               :periodCents="rank2.circlePeriodCents"
               :size="rank2.generatorsPerPeriod"
               :up="rank2.safeUp / rank2.safeNumPeriods"
+              :numPeriods="rank2.safeNumPeriods"
               @update:generatorCents="updateCircleGenerator"
             />
           </div>

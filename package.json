@@ -17,7 +17,7 @@
   "dependencies": {
     "isomorphic-qwerty": "^0.0.2",
     "jszip": "^3.10.1",
-    "moment-of-symmetry": "^0.4.0",
+    "moment-of-symmetry": "^0.4.1",
     "pinia": "^2.1.7",
     "qs": "^6.11.2",
     "scale-workshop-core": "github:xenharmonic-devs/scale-workshop-core#v0.1.2",
@@ -25,7 +25,7 @@
     "vue": "^3.3.4",
     "vue-router": "^4.2.5",
     "webmidi": "^3.1.7",
-    "xen-dev-utils": "^0.2.6",
+    "xen-dev-utils": "^0.2.7",
     "xen-midi": "^0.1.2"
   },
   "devDependencies": {
