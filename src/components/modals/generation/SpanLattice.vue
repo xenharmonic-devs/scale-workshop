@@ -6,6 +6,7 @@ import { DEFAULT_NUMBER_OF_COMPONENTS, OCTAVE } from '@/constants'
 import Temperament from 'temperaments'
 import { ExtendedMonzo, Interval, Scale, type IntervalOptions } from 'scale-workshop-core'
 import { useLatticeStore } from '@/stores/tempering'
+import { setAndReportValidity } from '@/utils'
 
 const props = defineProps<{
   centsFractionDigits: number
@@ -18,7 +19,7 @@ const lattice = useLatticeStore()
 const basisElement = ref<HTMLInputElement | null>(null)
 watch(
   () => lattice.basisError,
-  (newError) => basisElement.value!.setCustomValidity(newError)
+  (newError) => setAndReportValidity(basisElement.value, newError)
 )
 
 function fromCents(cents: number) {
