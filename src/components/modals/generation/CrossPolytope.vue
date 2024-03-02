@@ -5,6 +5,7 @@ import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { OCTAVE } from '@/constants'
 import { Scale } from 'scale-workshop-core'
 import { useModalStore } from '@/stores/modal'
+import { setAndReportValidity } from '@/utils'
 
 const emit = defineEmits(['update:scale', 'update:scaleName', 'cancel'])
 
@@ -13,7 +14,7 @@ const modal = useModalStore()
 const basisElement = ref<HTMLInputElement | null>(null)
 watch(
   () => modal.factorsError,
-  (newError) => basisElement.value!.setCustomValidity(newError)
+  (newError) => setAndReportValidity(basisElement.value, newError)
 )
 
 function generate() {
