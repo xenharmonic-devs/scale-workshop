@@ -2,7 +2,8 @@ import { computed, reactive, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { DEFAULT_NUMBER_OF_COMPONENTS, FIFTH, OCTAVE } from '@/constants'
 import { Fraction, centsToValue, circleDifference, lcm } from 'xen-dev-utils'
-import { parseLine } from 'scale-workshop-core'
+import { Interval, TimeMonzo } from 'sonic-weave'
+import { parseInterval } from '@/utils'
 
 export const useHistoricalStore = defineStore('historical', () => {
   const method = ref<'simple' | 'target' | 'well temperament'>('simple')
@@ -18,7 +19,7 @@ export const useHistoricalStore = defineStore('historical', () => {
 
   const pureGenerator = ref(FIFTH)
   const pureGeneratorString = ref('3/2')
-  const target = ref(parseLine('7/4', DEFAULT_NUMBER_OF_COMPONENTS))
+  const target = ref(new Interval(TimeMonzo.fromFraction('7/4', DEFAULT_NUMBER_OF_COMPONENTS), 'linear'))
   const targetString = ref('7/4')
   const searchRange = ref(11)
   const period = ref(OCTAVE)
@@ -26,7 +27,7 @@ export const useHistoricalStore = defineStore('historical', () => {
   const pureExponent = ref(10)
   const temperingStrength = ref(1)
 
-  const wellComma = ref(parseLine('531441/524288', DEFAULT_NUMBER_OF_COMPONENTS))
+  const wellComma = ref(new Interval(TimeMonzo.fromFraction('531441/524288', DEFAULT_NUMBER_OF_COMPONENTS), 'linear'))
   const wellCommaString = ref('531441/524288')
   const wellCommaFractionStrings = reactive<Map<number, string>>(
     new Map([
@@ -45,6 +46,8 @@ export const useHistoricalStore = defineStore('historical', () => {
   )
 
   const selectedWellPreset = ref('vallotti')
+
+  const up = computed(() => size.value - 1 - down.value);
 
   type Candidate = {
     exponent: number
@@ -81,9 +84,9 @@ export const useHistoricalStore = defineStore('historical', () => {
   })
 
   const wellIntervals = computed(() => {
-    const comma = wellComma.value.asType('any')
+    const comma = wellComma.value.value
     // Not a generator in the strictest sense. It accumulates offsets along the way.
-    let generator = FIFTH.mul(0).asType('any')
+    let generator = FIFTH.value.pow(0)
 
     // Unison
     const result = [generator]
@@ -94,23 +97,23 @@ export const useHistoricalStore = defineStore('historical', () => {
       try {
         frac = new Fraction(wellCommaFractionStrings.get(-i - 1) ?? '0')
       } catch {
-        /* empty */
+        // empty
       }
-      generator = generator.sub(FIFTH).sub(comma.mul(frac)).mmod(OCTAVE)
+      generator = generator.div(FIFTH.value).div(comma.pow(frac)).reduce(OCTAVE.value)
       result.unshift(generator)
     }
 
     // Along the spiral of fifths
-    generator = FIFTH.mul(0).asType('any')
+    generator = FIFTH.value.pow(0)
     // Note that this intentionally overshoots by one to reach the enharmonic
     for (let i = 0; i < size.value - down.value; ++i) {
       let frac = new Fraction(0)
       try {
         frac = new Fraction(wellCommaFractionStrings.get(i) ?? '0')
       } catch {
-        /* empty */
+        // empty
       }
-      generator = generator.add(FIFTH).add(comma.mul(frac)).mmod(OCTAVE)
+      generator = generator.mul(FIFTH.value).mul(comma.pow(frac)).reduce(OCTAVE.value)
       result.push(generator)
     }
 
@@ -119,31 +122,33 @@ export const useHistoricalStore = defineStore('historical', () => {
 
   const ZERO = new Fraction(0)
 
-  const allWellCommasAreZero = computed(() => {
-    const d = down.value
+  const wellCommaFractions = computed(() => {
+    const result: Fraction[] = [];
     for (let i = 0; i < size.value; ++i) {
-      let frac: Fraction
+      let frac = ZERO;
       try {
-        frac = new Fraction(wellCommaFractionStrings.get(i) ?? '0')
+        frac = new Fraction(wellCommaFractionStrings.get(i - down.value) ?? '0');
       } catch {
-        return false
+        // Empty
       }
-      if (wellCommaFractionStrings.has(i - d) && !ZERO.equals(frac)) {
-        return false
-      }
+      result.push(frac);
     }
-    return true
+    return result;
+  })
+
+  const allWellCommasAreZero = computed(() => {
+    return wellCommaFractions.value.every(f => f.n === 0);
   })
 
   // This is a simplified and linearized model of beating
   function equalizeBeating() {
-    const monzo = generator.value.monzo
+    const monzo = generator.value.value
     const g = monzo.valueOf()
     let multiGenExponent = 1
     if (!monzo.cents) {
-      multiGenExponent = monzo.vector.reduce((denom, component) => lcm(component.d, denom), 1)
+      multiGenExponent = monzo.primeExponents.reduce((denom, component) => lcm(component.d, denom), 1)
     }
-    const t = target.value.monzo.valueOf()
+    const t = target.value.valueOf()
 
     const generatorMaxBeats = Math.abs(g * (1 - centsToValue(tempering.value * multiGenExponent)))
     const targetMaxBeats = Math.abs(t * (1 - centsToValue(tempering.value * pureExponent.value)))
@@ -185,7 +190,7 @@ export const useHistoricalStore = defineStore('historical', () => {
       name: 'Helmholtz aka Schismatic',
       down: 11,
       size: 24,
-      generator: '3/2 - 1\\8<32805/32768>'
+      generator: '3/2 % 32805/32768/^8'
     },
     twelve: {
       name: '12-tone equal temperament',
@@ -194,33 +199,33 @@ export const useHistoricalStore = defineStore('historical', () => {
     },
     eight: {
       name: '1/8-comma Meantone',
-      generator: '3/2 - 1\\8<531441/524288>',
+      generator: '3/2 % 531441/524288/^8',
       down: 5
     },
     sixth: {
       name: '1/6-comma Meantone',
       down: 5,
-      generator: '3/2 - 1\\6<531441/524288>'
+      generator: '3/2 % 531441/524288/^6'
     },
     fifth: {
       name: '1/5-comma Meantone',
       down: 3,
-      generator: '3/2 - 1\\5<81/80>'
+      generator: '3/2 % 81/80/^5'
     },
     quarter: {
       name: '1/4-comma Meantone',
       down: 3,
-      generator: '3/2 - 1\\4<81/80>'
+      generator: '3/2 % 81/80/^4'
     },
     twosevenths: {
       name: '2/7-comma Meantone',
       down: 3,
-      generator: '3/2 - 2\\7<81/80>'
+      generator: '3/2 % 81/80^2/7'
     },
     third: {
       name: '1/3-comma Meantone',
       down: 3,
-      generator: '3/2 - 1\\3<81/80>'
+      generator: '3/2 % 81/80/^3'
     }
   }
 
@@ -354,8 +359,8 @@ export const useHistoricalStore = defineStore('historical', () => {
   // Sort by wideness of the generator
   presetKeys.sort(
     (a, b) =>
-      parseLine(presets[b].generator, DEFAULT_NUMBER_OF_COMPONENTS).totalCents() -
-      parseLine(presets[a].generator, DEFAULT_NUMBER_OF_COMPONENTS).totalCents()
+      parseInterval(presets[b].generator).totalCents() -
+      parseInterval(presets[a].generator).totalCents()
   )
 
   const wellPresetKeys: string[] = [...Object.keys(wellPresets)]
@@ -394,7 +399,7 @@ export const useHistoricalStore = defineStore('historical', () => {
     const preset = presets[value]
     size.value = preset.size ?? 12
     down.value = preset.down
-    generator.value = parseLine(preset.generator, DEFAULT_NUMBER_OF_COMPONENTS)
+    generator.value = parseInterval(preset.generator)
     generatorString.value = preset.generator
   }
 
@@ -408,7 +413,7 @@ export const useHistoricalStore = defineStore('historical', () => {
     size.value = 12
     down.value = preset.down
     wellCommaString.value = preset.comma
-    wellComma.value = parseLine(preset.comma, DEFAULT_NUMBER_OF_COMPONENTS)
+    wellComma.value = parseInterval(preset.comma)
     const fracs = preset.commaFractions.split(',')
     wellCommaFractionStrings.clear()
     for (let i = 0; i < fracs.length; ++i) {
@@ -429,6 +434,7 @@ export const useHistoricalStore = defineStore('historical', () => {
     generatorString,
     size,
     down,
+    up,
     format,
     selectedPreset,
     pureGenerator,
@@ -443,6 +449,7 @@ export const useHistoricalStore = defineStore('historical', () => {
     wellComma,
     wellCommaString,
     wellCommaFractionStrings,
+    wellCommaFractions,
     selectedWellPreset,
     candidates,
     tempering,

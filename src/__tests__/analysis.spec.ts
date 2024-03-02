@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import { arraysEqual } from 'xen-dev-utils'
+import { arraysEqual, valueToCents } from 'xen-dev-utils'
 
-import { otonalFundamental, utonalFundamental } from '../analysis'
+import { alignValues, misalignment, otonalFundamental, utonalFundamental } from '../analysis'
+
+const EPSILON = 1e-4;
 
 describe('Otonal balancer', () => {
   it('can figure out that the major chord in 12edo approximates 4:5:6', () => {
@@ -28,3 +30,20 @@ describe('Utonal balancer', () => {
     ).toBeTruthy()
   })
 })
+
+describe("Equal-division deviation minimizer", () => {
+  it("can figure out the optimal alignment of 4:5:6 on 12edo", () => {
+    const minimumAchievableError = alignValues([4, 5, 6], 100.0).error;
+    expect(minimumAchievableError).closeTo(7.8206, EPSILON);
+
+    // Attempt (and fail) to find a counter-example
+    const pitches = [4, 5, 6].map(valueToCents);
+    for (let i = 0; i < 100; ++i) {
+      const offset = Math.random() * 1200;
+      const candidate = pitches.map((pitch) => pitch + offset);
+      expect(misalignment(candidate, 100.0)).toBeGreaterThanOrEqual(
+        minimumAchievableError
+      );
+    }
+  });
+});

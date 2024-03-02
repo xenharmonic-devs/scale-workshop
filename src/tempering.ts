@@ -11,7 +11,6 @@ import {
 } from 'temperaments'
 import { DEFAULT_NUMBER_OF_COMPONENTS } from './constants'
 import { PRIME_CENTS, valueToCents, type FractionValue, type Monzo } from 'xen-dev-utils'
-import { Interval, Scale } from 'scale-workshop-core'
 
 export function toPrimeMapping(mapping: number[], subgroup: Subgroup) {
   const result = subgroup.toPrimeMapping(mapping)
@@ -105,6 +104,7 @@ export class Mapping {
     return new Mapping(this.vector.map((component) => component * purifier))
   }
 
+  /*
   apply(interval: Interval): Interval
   apply(scale: Scale): Scale
   apply(intervalOrScale: Interval | Scale): Interval | Scale {
@@ -128,8 +128,10 @@ export class Mapping {
     const intervals = scale.intervals.map((interval) => this.apply(interval))
     return new Scale(intervals, this.apply(scale.equave), scale.baseFrequency)
   }
+  */
 }
 
+/*
 // (TE-)optimized equal temperaments
 export function makeRank1(val: Val | string | number, subgroup: SubgroupValue, weights?: Weights) {
   subgroup = new Subgroup(subgroup)
@@ -147,6 +149,7 @@ export function makeRank1(val: Val | string | number, subgroup: SubgroupValue, w
   })
   return mapping.apply(scale)
 }
+*/
 
 function mosPatternsRank2(
   temperament: Temperament,
@@ -248,6 +251,7 @@ export function makeRank2FromCommas(
   return makeRank2(temperament, size, options)
 }
 
+/*
 export function stretchToEdo(interval: Interval, steps: number, edo: number): Interval
 export function stretchToEdo(scale: Scale, steps: number[], edo: number): Scale
 export function stretchToEdo(
@@ -283,3 +287,4 @@ export function stretchToEdo(
     scale.baseFrequency
   )
 }
+*/

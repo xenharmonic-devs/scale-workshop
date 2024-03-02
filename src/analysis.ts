@@ -1,4 +1,5 @@
-import type { Scale } from 'scale-workshop-core'
+import { Interval } from "sonic-weave"
+import { circleDistance, mmod, valueToCents } from "xen-dev-utils"
 
 const EPSILON = 1e-6
 
@@ -100,13 +101,346 @@ export function utonalFundamental(frequencies: number[], maxDivisor = 23) {
   return divisor * frequencies[0]
 }
 
+/**
+ * Calculate the maximum deviation of a set of pitches from an equal grid in pitch-space.
+ * @param pitches Array of pitches measured in cents.
+ * @param gridCents The distance in cents between two grid lines of the equal division e.g. `100.0`.
+ * @returns The maximum distance in cents from a grid "line" in the set.
+ */
+export function misalignment(pitches: number[], gridCents: number) {
+  const gridPitches = pitches.map(
+    (pitch) => Math.round(pitch / gridCents) * gridCents
+  );
+  let error = 0;
+  for (let i = 0; i < pitches.length; ++i) {
+    error = Math.max(error, Math.abs(pitches[i] - gridPitches[i]));
+  }
+  return error;
+}
+
+/**
+ * Align a set of pitches on an equal division of pitch-space such that the maximum absolute error is minimized.
+ * @param pitches An array of pitches measured in cents.
+ * @param gridCents The distance in cents between two grid lines of the equal division e.g. `100.0`.
+ * @returns The minimum misalignment achievable measured in cents and the pitches snapped to the grid.
+ */
+export function alignCents(pitches: number[], gridCents: number) {
+  // The error function we're trying to optimize is piecewise linear.
+
+  if (!pitches.length) {
+    return {
+      error: 0,
+      degrees: [],
+    }
+  }
+
+  // Find the segment where the global optimum lies.
+  let optimalPitches: number[];
+  let minError = Infinity;
+  for (let i = 0; i < pitches.length; ++i) {
+    const aligned = pitches.map((pitch) => pitch - pitches[i]);
+    const error = misalignment(aligned, gridCents);
+    if (error < minError) {
+      optimalPitches = aligned;
+      minError = error;
+    }
+  }
+
+  // Calculate the shape of the segment.
+  const degrees = optimalPitches!.map((pitch) => Math.round(pitch / gridCents));
+  let minOffset = Infinity;
+  let maxOffset = -Infinity;
+  let root = Infinity;
+  for (let i = 0; i < degrees.length; ++i) {
+    const offset = optimalPitches![i] - degrees[i] * gridCents;
+    minOffset = Math.min(minOffset, offset);
+    maxOffset = Math.max(maxOffset, offset);
+    if (degrees[i] < root) {
+      root = degrees[i];
+    }
+  }
+
+  // Calculate minimum achievable absolute error.
+  const error = 0.5 * Math.abs(minOffset) + 0.5 * Math.abs(maxOffset);
+  // Move root to grid origin.
+  for (let i = 0; i < degrees.length; ++i) {
+    degrees[i] -= root;
+  }
+  return {
+    error,
+    degrees,
+  };
+}
+
+/**
+ * Align a set of ratios in frequency-space on an equal division of pitch-space such that the maximum absolute error is minimized.
+ * @param ratios An array of frequency ratios.
+ * @param gridCents The distance in cents between two grid lines of the equal division e.g. `100.0`.
+ * @returns The minimum misalignment achievable measured in cents and the pitches snapped to the grid.
+ */
+export function alignValues(ratios: number[], gridCents: number) {
+  return alignCents(ratios.map(valueToCents), gridCents);
+}
+
+/**
+ * Find an equally tempered chord that best approximates the given frequencies with the root of the chord fixed to a grid line.
+ * @param frequencies Array of frequencies in the chord with the root first.
+ * @param maxDivisions Maximum divisions of the equave.
+ * @param equaveCents The size of the equave measured in cents.
+ * @returns The minimum achievable error. The number of divisions of the given equave. The degrees of the chord.
+ */
+export function rootedEquallyTemperedChord(frequencies: number[], maxDivisions: number, equaveCents = 1200) {
+  const root = valueToCents(Math.abs(frequencies[0]))
+  const pitches = frequencies.map((f) => valueToCents(Math.abs(f)) - root)
+  let bestError = Infinity
+  let bestDivisions = maxDivisions
+  for (let divisions = 1; divisions <= maxDivisions; ++divisions) {
+    const error = misalignment(pitches, equaveCents / divisions)
+    if (error + EPSILON < bestError) {
+      bestError = error
+      bestDivisions = divisions
+    }
+  }
+  const gridCents = equaveCents / bestDivisions
+  const degrees = pitches.map(pitch => Math.round(pitch / gridCents))
+  return {
+    error: bestError,
+    divisions: bestDivisions,
+    degrees,
+  }
+}
+
+/**
+ * Find an equally tempered chord that best approximates the given frequencies with the root free to move.
+ * @param frequencies Array of frequencies in the chord with the root first.
+ * @param maxDivisions Maximum divisions of the equave.
+ * @param equaveCents The size of the equave measured in cents.
+ * @returns The minimum achievable error. The number of divisions of the given equave. The degrees of the chord.
+ */
+export function freeEquallyTemperedChord(frequencies: number[], maxDivisions: number, equaveCents = 1200) {
+  const root = valueToCents(Math.abs(frequencies[0]))
+  const pitches = frequencies.map((f) => valueToCents(Math.abs(f)) - root)
+  let bestError = Infinity
+  let bestDivisions = maxDivisions
+  let bestDegrees: number[] = []
+  for (let divisions = 1; divisions <= maxDivisions; ++divisions) {
+    const {error, degrees} = alignCents(pitches, equaveCents / divisions)
+    if (error + EPSILON < bestError) {
+      bestError = error
+      bestDivisions = divisions
+      bestDegrees = degrees
+    }
+  }
+  return {
+    error: bestError,
+    divisions: bestDivisions,
+    degrees: bestDegrees,
+  }
+}
+
+export type Shell = {
+  harmonics: number[];
+  degrees: number[];
+}
+
+/**
+ * Fast variant of sonic-weave's vertically aligned object returning an array of harmonics.
+ */
+export function vao(denominator: number, maxNumerator: number, divisions: number, tolerance: number, equaveCents: number) {
+  const gridCents = equaveCents / divisions;
+  const witnesses: number[] = [];
+  const denominatorCents = valueToCents(denominator);
+  const harmonics = [];
+  const degrees = [];
+  search: for (let numerator = denominator; numerator < maxNumerator; ++numerator) {
+    const cents = valueToCents(numerator) - denominatorCents;
+    const degree = Math.round(cents / gridCents);
+    if (Math.abs(cents - degree * gridCents) > tolerance) {
+      continue;
+    }
+    for (const existing of witnesses) {
+      if (circleDistance(cents, existing, equaveCents) < EPSILON) {
+        continue search;
+      }
+    }
+    witnesses.push(cents);
+    harmonics.push(numerator);
+    degrees.push(degree);
+  }
+  return {
+    harmonics,
+    degrees,
+  };
+}
+
+/*
+function* subshells(shell: number[]) {
+  if (shell.length <= 1) {
+    return;
+  }
+  for (let i = 1; i < shell.length; ++i) {
+    const subshell = [...shell];
+    subshell.splice(i, 1);
+    yield subshell;
+  }
+}
+*/
+
+function subsetOf(a: number[], b: number[]) {
+  for (const value of a) {
+    if (!b.includes(value)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+// TODO: Optimize! This is still too slow to be user-friendly.
+/**
+ * Vertically aligned objects that are free to offset the root to stay withing the given tolerance.
+ */
+export function freeVAOs(denominator: number, maxNumerator: number, divisions: number, tolerance: number, equaveCents: number, minSize = 5, maxShells = 20, gas = 10000): Shell[] {
+  const gridCents = equaveCents / divisions;
+
+  // Generate the largest possible object.
+  const superShell = vao(denominator, maxNumerator, divisions, 2 * tolerance, equaveCents).harmonics;
+
+  const root = superShell.shift()!;
+  const result: Shell[] = [];
+  function accumulate(harmonics: number[], remaining: number[], degrees: number[]) {
+    if (harmonics.length + remaining.length < minSize) {
+      return;
+    }
+    if (result.length >= maxShells) {
+      return;
+    }
+    let grew = false;
+    while (remaining.length) {
+      if (gas-- < 0) {
+        return;
+      }
+      const candidate = [...harmonics];
+      candidate.push(remaining.pop()!)
+      const {error, degrees} = alignValues(candidate, gridCents);
+      if (error <= tolerance) {
+        grew = true;
+        accumulate(candidate, [...remaining], degrees)
+      }
+    }
+    if (!grew) {
+      for (const existing of result) {
+        if (subsetOf(harmonics, existing.harmonics)) {
+          return
+        }
+      }
+      result.push({
+        harmonics,
+        degrees
+      })
+    }
+  }
+  superShell.reverse();
+  accumulate([root], superShell, [0])
+  result.sort((a, b) => b.harmonics.length - a.harmonics.length);
+
+  if (!result.length) {
+    // Out of gas or something. Bail out.
+    return [vao(denominator, maxNumerator, divisions, tolerance, equaveCents)];
+  }
+
+  return result;
+
+  // Alternative implementation.
+  /*
+  const {error, degrees} = alignValues(superShell, gridCents);
+
+  // Very unlikely but worth the shot.
+  if (error <= tolerance) {
+    return [{harmonics: superShell, degrees}];
+  }
+
+  // Start breaking the super-shell into smaller sub-shells.
+  const result: Shell[] = [];
+  const badShells = [superShell];
+  while (badShells.length) {
+    const shell = badShells.shift()!;
+    if (!shell.length) {
+      continue;
+    }
+    search: for (const subshell of subshells(shell)) {
+      for (const existing of result) {
+        if (subsetOf(subshell, existing.harmonics)) {
+          continue search;
+        }
+      }
+      for (const existing of badShells) {
+        if (arraysEqual(subshell, existing)) {
+          continue search;
+        }
+      }
+      const {error, degrees} = alignValues(subshell, gridCents);
+      if (error <= tolerance) {
+        result.push({harmonics: subshell, degrees});
+        if (result.length >= maxShells) {
+          return result;
+        }
+      } else if (subshell.length >= superShell.length - maxDepth) {
+        badShells.push(subshell);
+      }
+    }
+  }
+  return result;
+  */
+}
+
 // Interval matrix a.k.a the modes of a scale
-export function intervalMatrix(scale: Scale) {
-  const result = []
-  const columns = [...Array(scale.size + 1).keys()]
-  for (let i = 0; i < scale.size; ++i) {
-    const mode = scale.rotate(i)
-    result.push(columns.map((j) => mode.getInterval(j)))
+export function intervalMatrix(intervals: Interval[]) {
+  intervals = intervals.map(i => i.shallowClone())
+  // Simplify by removing formatting.
+  for (let i = 0; i < intervals.length; ++i) {
+    intervals[i].node = undefined
+    intervals[i].color = undefined
+    intervals[i].label = ''
+  }
+  const equave = intervals[intervals.length - 1]
+  const unison = new Interval(equave.value.div(equave.value), equave.domain)
+  const result = [[unison, ...intervals]]
+  for (let i = 0; i < intervals.length - 1; ++i) {
+    const root = intervals[i].value
+    const row = []
+    for (let j = 0; j < intervals.length; ++j) {
+      let value = intervals[j].value.div(root)
+      if (j < i) {
+        value = value.mul(equave.value)
+      }
+      row[mmod(j - i, intervals.length)] = new Interval(value, intervals[j].domain)
+    }
+    row.push(equave)
+    result.push(row)
+  }
+  return result
+}
+
+export function constantStructureViolations(matrix: Interval[][]) {
+  const result: boolean[][] = []
+  for (let i = 0; i < matrix.length; ++i) {
+    result.push(Array(matrix[i].length).fill(false))
+  }
+  for (let i = 0; i < matrix[0].length; ++i) {
+    for (let j = 0; j < matrix.length; ++j) {
+      if (result[j][i]) {
+        continue
+      }
+      const value = matrix[j][i].value
+      for (let k = i+1; k < matrix[0].length; ++k) {
+        for (let l = 0; l < matrix.length; ++l) {
+          if (matrix[l][k].value.strictEquals(value)) {
+            result[j][i] = true
+            result[l][k] = true
+          }
+        }
+      }
+    }
   }
   return result
 }

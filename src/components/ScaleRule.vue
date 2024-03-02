@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import type { Scale } from 'scale-workshop-core'
+import type { Scale } from '@/scale';
 import { computed } from 'vue'
-import { mmod } from 'xen-dev-utils'
+import { mmod, valueToCents } from 'xen-dev-utils'
 
 const props = defineProps<{
   scale: Scale
 }>()
 
 const ticksAndColors = computed(() => {
-  const equaveCents = props.scale.equave.totalCents()
+  const equaveCents = valueToCents(props.scale.equaveRatio)
   const result = []
 
   for (let i = 0; i < props.scale.size; ++i) {
-    const cents = props.scale.getMonzo(i).toCents()
+    const cents = valueToCents(props.scale.intervalRatios[i])
     const tick = cents / equaveCents
     let color = 'var(--color-text)'
     if (tick < 0) {
@@ -21,6 +21,7 @@ const ticksAndColors = computed(() => {
       color = 'red'
     }
     if (!isNaN(tick) && isFinite(tick)) {
+      // mmod(1, 1) === 0 so we don't have to push the unison tick
       result.push([`${0.5 + 99 * mmod(tick, 1)}%`, color])
     }
   }

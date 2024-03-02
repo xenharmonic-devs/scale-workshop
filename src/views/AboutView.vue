@@ -1,10 +1,24 @@
+<script setup lang="ts">
+import { computed } from 'vue';
+
+const TAGLINES = [
+  ["Because there are more than 12 notes.", "Sean Archibald"],
+  ["Electric Tunaloo", ""],
+  ["Powered by SonicWeave", ""],
+  ["We are friends now, right?", "dotu_mtr"],
+  ["Any JI scale is a NEJI if you're brave enough.", "fredg999"],
+  ["Ranting about ordinals is such a 0st world problem...", "Lumi Pakkanen"],
+];
+
+const tagline = computed(() => TAGLINES[Math.floor(Math.random() * TAGLINES.length)])
+</script>
+
 <template>
   <div class="about">
     <img alt="Scale Workshop logo" class="logo" src="@/assets/logo.svg" width="100" height="100" />
-    <h1>Scale Workshop 2</h1>
-    <p>
-      <em>Because there are more than 12 notes</em>
-    </p>
+    <h1>Scale Workshop 3</h1>
+    <blockquote :class="{cited: !!tagline[1]}">{{ tagline[0] }}</blockquote>
+    <cite v-if="tagline[1]">&mdash; {{ tagline[1] }}</cite>
     <div class="control-group">
       <div class="control centered">
         <a
@@ -32,6 +46,8 @@
         Videco - <i>developer</i> <br />
         Inthar - <i>developer</i> <br />
         Kraig Grady - <i>lattice advisor</i>
+        Kite Giedraitis - <i>notation advisor</i>
+        Scott Dakota - <i>lattice advisor / generator sequence advisor</i>
       </p>
     </div>
   </div>
@@ -48,6 +64,12 @@
 }
 .centered {
   justify-content: center;
+}
+.cited::before {
+  content: open-quote;
+}
+.cited::after {
+  content: close-quote;
 }
 hr {
   width: 100%;

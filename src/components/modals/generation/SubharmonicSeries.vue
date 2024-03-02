@@ -1,28 +1,26 @@
 <script setup lang="ts">
-import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
 import Modal from '@/components/ModalDialog.vue'
 import { clamp } from 'xen-dev-utils'
-import { Scale } from 'scale-workshop-core'
 import { useModalStore } from '@/stores/modal'
+import { expandCode } from '@/utils';
 
-const emit = defineEmits(['update:scale', 'update:scaleName', 'cancel'])
+const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
 const modal = useModalStore()
 
-function generate() {
-  const leastDenominator = Math.max(1, Math.round(modal.lowInteger))
-  const numerator = clamp(
-    leastDenominator + 1,
-    leastDenominator + 1000,
+function generate(expand = true) {
+  const numerator = Math.max(1, Math.round(modal.lowInteger))
+  const greatestDenominator = clamp(
+    numerator + 1,
+    numerator + 1000,
     Math.round(modal.highInteger)
   )
-  const scale = Scale.fromSubharmonicSeries(
-    numerator,
-    leastDenominator,
-    DEFAULT_NUMBER_OF_COMPONENTS
-  )
-  emit('update:scaleName', `Subharmonics ${leastDenominator}-${numerator}`)
-  emit('update:scale', scale)
+  let source = `/${greatestDenominator}::${numerator}`
+  if (expand) {
+    source = expandCode(source)
+  }
+  emit('update:scaleName', `Subharmonics ${numerator}-${greatestDenominator}`)
+  emit('update:source', source)
 }
 </script>
 
@@ -53,6 +51,13 @@ function generate() {
             v-model="modal.highInteger"
           />
         </div>
+      </div>
+    </template>
+    <template #footer>
+      <div class="btn-group">
+        <button @click="() => generate(true)">OK</button>
+        <button @click="$emit('cancel')">Cancel</button>
+        <button @click="() => generate(false)">Raw</button>
       </div>
     </template>
   </Modal>

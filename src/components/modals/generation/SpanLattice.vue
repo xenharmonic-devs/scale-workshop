@@ -2,37 +2,24 @@
 import { ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
-import { DEFAULT_NUMBER_OF_COMPONENTS, OCTAVE } from '@/constants'
+import { OCTAVE } from '@/constants'
 import Temperament from 'temperaments'
-import { ExtendedMonzo, Interval, Scale, type IntervalOptions } from 'scale-workshop-core'
 import { useLatticeStore } from '@/stores/tempering'
 import { setAndReportValidity } from '@/utils'
+import { useStateStore } from '@/stores/state'
+import { arrayToString, expandCode, parseInterval } from '@/utils'
+import { Interval, timeMonzoAs } from 'sonic-weave'
 
-const props = defineProps<{
-  centsFractionDigits: number
-}>()
-
-const emit = defineEmits(['update:scale', 'update:scaleName', 'cancel'])
+const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
 const lattice = useLatticeStore()
+const state = useStateStore()
 
 const basisElement = ref<HTMLInputElement | null>(null)
 watch(
   () => lattice.basisError,
   (newError) => setAndReportValidity(basisElement.value, newError)
 )
-
-function fromCents(cents: number) {
-  const options: IntervalOptions = {
-    centsFractionDigits: props.centsFractionDigits
-  }
-  return new Interval(
-    ExtendedMonzo.fromCents(cents, DEFAULT_NUMBER_OF_COMPONENTS),
-    'cents',
-    undefined,
-    options
-  )
-}
 
 function calculateGenerators() {
   let temperament: Temperament
@@ -41,43 +28,45 @@ function calculateGenerators() {
   } else {
     temperament = Temperament.fromCommas(lattice.commas, lattice.subgroup)
   }
-  const generators = temperament.periodGenerators(lattice.options)
-  if (!generators.length) {
+  let periodGenerators: number[];
+  try {
+    periodGenerators = temperament.periodGenerators(lattice.options)
+  } catch {
     alert('Unable to calculate generators.')
     return
   }
 
-  lattice.equave = fromCents(generators[0])
-  lattice.equaveString = lattice.equave.centsString()
+  lattice.equaveString = periodGenerators[0].toFixed(state.centsFractionDigits)
+  lattice.equave = parseInterval(lattice.equaveString)
 
-  lattice.basisString = generators
-    .slice(1)
-    .map((generator) => fromCents(generator).centsString())
-    .join(' ')
-
+  lattice.basisString = periodGenerators.slice(1).map(g => g.toFixed(state.centsFractionDigits)).join(' ')
   lattice.method = 'generators'
 }
 
-function updateDimension(index: number, event: Event) {
+function updateUps(index: number, event: Event) {
   const value = parseInt((event.target as HTMLInputElement).value)
-  lattice.dimensions[index] = value
+  lattice.ups[index] = value
+}
+
+function updateDowns(index: number, event: Event) {
+  const value = parseInt((event.target as HTMLInputElement).value)
+  lattice.downs[index] = value
 }
 
 function flip(index: number) {
-  const generator = lattice.basis[index].neg().mmod(
-    lattice.equave.mergeOptions({
-      centsFractionDigits: props.centsFractionDigits
-    })
-  )
+  const b = lattice.basis[index]
+  const domain = b.domain
+  const generator = b.value.inverse().reduce(lattice.equave.value)
+  const node = timeMonzoAs(generator, b.node)
   const newBasis = [...lattice.basis]
-  newBasis.splice(index, 1, generator)
+  newBasis.splice(index, 1, new Interval(generator, domain, node, b))
   lattice.basisString = newBasis.map((gen) => gen.toString()).join(' ')
 }
 
-function generate() {
+function generate(expand = true) {
   try {
-    const scale = Scale.fromLattice(lattice.basis, lattice.dimensions, lattice.equave)
-    let name = `Lattice (${lattice.dimensions.slice(0, lattice.basis.length)} of ${
+    const source = `spanLattice(${arrayToString(lattice.basis)}, ${arrayToString(lattice.ups)}, ${arrayToString(lattice.downs)}, ${lattice.equave.toString()})`
+    let name = `Lattice (${lattice.dimensions} of ${
       lattice.basisString
     }`
     if (lattice.basis.length === 0) {
@@ -88,7 +77,11 @@ function generate() {
     }
     name += ')'
     emit('update:scaleName', name)
-    emit('update:scale', scale)
+    if (expand) {
+      emit('update:source', expandCode(source))
+    } else {
+      emit('update:source', source)
+    }
   } catch (error) {
     if (error instanceof Error) {
       alert(error.message)
@@ -140,20 +133,27 @@ function generate() {
               v-model="lattice.basisString"
             />
           </div>
-          <label>Generators up from 1/1</label>
+          <label>Generators up/down from 1/1</label>
           <div
             class="control"
-            v-for="(dimension, i) of lattice.dimensions.slice(0, lattice.basis.length)"
+            v-for="(_, i) of lattice.basis"
             :key="i"
           >
-            <label>Generator {{ lattice.basis[i] }}</label>
+            <label>Generator {{ lattice.basis[i].toString() }}</label>
             <button @click="flip(i)">Flip</button>
             <input
               type="number"
-              min="1"
+              min="0"
               max="99"
-              :value="dimension"
-              @input="updateDimension(i, $event)"
+              :value="lattice.ups[i]"
+              @input="updateUps(i, $event)"
+            />
+            <input
+              type="number"
+              min="0"
+              max="99"
+              :value="lattice.downs[i]"
+              @input="updateDowns(i, $event)"
             />
           </div>
           <div class="control">
@@ -238,8 +238,9 @@ function generate() {
     </template>
     <template #footer>
       <div class="btn-group">
-        <button @click="generate" :disabled="lattice.method !== 'generators'">OK</button>
+        <button @click="generate(true)" :disabled="lattice.method !== 'generators'">OK</button>
         <button @click="$emit('cancel')">Cancel</button>
+        <button @click="generate(false)" :disabled="lattice.method !== 'generators'">Raw</button>
       </div>
     </template>
   </Modal>

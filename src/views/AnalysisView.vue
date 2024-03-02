@@ -1,20 +1,31 @@
 <script setup lang="ts">
-import { intervalMatrix } from '@/analysis'
+import { constantStructureViolations, freeEquallyTemperedChord, intervalMatrix, rootedEquallyTemperedChord } from '@/analysis'
 import ChordWheel from '@/components/ChordWheel.vue'
-import { computed, ref } from 'vue'
-import { reverseParseInterval, type Interval, type IntervalOptions } from 'scale-workshop-core'
+import ScaleLineInput from '@/components/ScaleLineInput.vue'
+import { computed, reactive, ref } from 'vue'
 import { useAudioStore } from '@/stores/audio'
 import { useStateStore } from '@/stores/state'
+import type { Interval } from 'sonic-weave'
+import { useScaleStore } from '@/stores/scale'
+import { mmod } from 'xen-dev-utils'
+import { OCTAVE } from '@/constants'
 
+// TODO: Make customizable
 const MAX_SCALE_SIZE = 100
 
 const audio = useAudioStore()
 const state = useStateStore()
+const scale = useScaleStore()
 
 const cellFormat = ref<'best' | 'cents' | 'decimal'>('best')
 const trailLongevity = ref(70)
 const maxOtonalRoot = ref(16)
 const maxUtonalRoot = ref(23)
+
+const maxDivisions = ref(31)
+const equave = ref(OCTAVE)
+const equaveString = ref('2/1')
+const errorModel = ref<'rooted' | 'free'>('rooted')
 
 const intervalMatrixIndexingRadio = computed({
   get: () => state.intervalMatrixIndexing.toString(),
@@ -31,9 +42,9 @@ const backgroundRBG = computed<[number, number, number]>(() => {
     .getPropertyValue('--color-background')
     .trim()
     .toLowerCase()
-  if (css === '#fff') {
+  if (css === '#fff' || css === '#fefdfe') {
     return [255, 255, 255]
-  } else if (css === '#000') {
+  } else if (css === '#000' || css === '#060206') {
     return [0, 0, 0]
   } else {
     throw new Error('General color parsing not implemented')
@@ -50,59 +61,113 @@ const strokeStyle = computed(() => {
 // While interval.name suffices for the tuning table
 // we want more accurate results here.
 function formatMatrixCell(interval: Interval) {
-  // We don't have much space so let's not waste it on insignificant digits.
-  const options: IntervalOptions = {
-    centsFractionDigits: 1,
-    decimalFractionDigits: 3
-  }
-  interval = interval.mergeOptions(options)
-
   if (cellFormat.value === 'cents') {
-    return interval.centsString()
+    return interval.totalCents().toFixed(1)
   }
   if (cellFormat.value === 'decimal') {
     // Consistent with tuning table localization.
-    return interval.decimalString().replace(',', '.')
+    return interval.valueOf().toFixed(3)
   }
 
-  // Monzos are too long.
-  if (interval.type === 'monzo') {
-    return interval.centsString()
-  }
-  // Composite intervals are too long or not accurate.
-  if (interval.isComposite()) {
-    return interval.centsString()
-  }
-  // If we're here the name should faithfully represent the interval.
-  // Reverse parsing takes care of obscure corner cases.
-  return reverseParseInterval(interval)
+  return interval.toString()
 }
 
-const matrix = computed(() => {
-  return intervalMatrix(
-    state.scale.head(MAX_SCALE_SIZE).mergeOptions({
-      centsFractionDigits: 1,
-      decimalFractionDigits: 3
-    })
-  ).map((row) => row.map(formatMatrixCell))
+const highlights = reactive<boolean[][]>([])
+
+const matrix = computed(() => intervalMatrix(scale.relativeIntervals))
+
+const matrixRows = computed(() => matrix.value.map((row) => row.map(formatMatrixCell)))
+
+const violations = computed(() => constantStructureViolations(matrix.value))
+
+const heldScaleDegrees = computed(() => {
+  const result: Set<number> = new Set()
+  for (const midiIndex of state.heldNotes.keys()) {
+    if (state.heldNotes.get(midiIndex)! > 0) {
+      result.add(mmod(midiIndex - scale.baseMidiNote, scale.scale.size))
+    }
+  }
+  return result
 })
+
+const equallyTemperedChordData = computed(() => {
+  if (!audio.virtualSynth) {
+    return {
+      error: 0,
+      degrees: [],
+      divisions: 1
+    }
+  }
+  const frequencies = audio.virtualSynth.voices.map((voice) => voice.frequency)
+  const equaveCents = equave.value.totalCents()
+  if (errorModel.value === 'rooted') {
+    return rootedEquallyTemperedChord(frequencies, maxDivisions.value, equaveCents)
+  }
+  return freeEquallyTemperedChord(frequencies, maxDivisions.value, equaveCents)
+})
+
+const nedjiProjector = computed(() => {
+  if (equave.value.equals(OCTAVE)) {
+    return ''
+  }
+  return `<${equave.value.toString()}>`
+})
+
+function highlight(y?: number, x?: number) {
+  if (highlights.length !== matrix.value.length) {
+    highlights.length = 0
+    for (let i = 0; i < matrix.value.length; ++i) {
+      highlights.push(Array(matrix.value[i].length).fill(false))
+    }
+  }
+  // Look at other violators
+  if (y !== undefined && x !== undefined && violations.value[y][x]) {
+    const value = matrix.value[y][x].value
+    for (let i = 0; i < matrix.value.length; ++i) {
+      for (let j = 0; j < matrix.value[i].length; ++j) {
+        if (violations.value[i][j]) {
+          highlights[i][j] = matrix.value[i][j].value.strictEquals(value)
+        } else {
+          highlights[i][j] = false
+        }
+      }
+    }
+    return
+  }
+
+  // Reset highlights
+  for (let i = 0; i < matrix.value.length; ++i) {
+    for (let j = 0; j < matrix.value[i].length; ++j) {
+      highlights[i][j] = false
+    }
+  }
+  if (y === undefined || x === undefined) {
+    return
+  }
+
+  // Look at own column
+  const value = matrix.value[y][x].value
+  for (let i = 0; i < matrix.value.length; ++i) {
+    highlights[i][x] = matrix.value[i][x].value.strictEquals(value)
+  }
+}
 </script>
 
 <template>
   <main>
     <h2>Interval matrix (modes)</h2>
     <div class="control-group interval-matrix">
-      <table>
+      <table @mouseleave="highlight()">
         <tr>
           <th></th>
-          <th v-for="i of Math.min(state.scale.size, MAX_SCALE_SIZE)" :key="i">
+          <th v-for="i of Math.min(scale.scale.size, MAX_SCALE_SIZE)" :key="i">
             {{ i - 1 + state.intervalMatrixIndexing }}
           </th>
-          <th>({{ state.scale.size + state.intervalMatrixIndexing }})</th>
+          <th>({{ scale.scale.size + state.intervalMatrixIndexing }})</th>
         </tr>
-        <tr v-for="(row, i) of matrix" :key="i">
-          <th>{{ formatMatrixCell(state.scale.getInterval(i)) }}</th>
-          <td v-for="(name, j) of row" :key="j">{{ name }}</td>
+        <tr v-for="(row, i) of matrixRows" :key="i">
+          <th :class="{held: heldScaleDegrees.has(i)}">{{ scale.labels[mmod(i - 1, scale.labels.length)] }}</th>
+          <td v-for="(name, j) of row" :key="j" :class="{violator: violations[i][j], highlight: (highlights[i] ?? [])[j]}" @mouseover="highlight(i, j)">{{ name }}</td>
         </tr>
       </table>
     </div>
@@ -190,17 +255,52 @@ const matrix = computed(() => {
               v-model="trailLongevity"
             />
           </div>
-        </div>
-        <div class="control-group">
           <div class="control">
             <label for="otonal-root">Maximum root (otonal)</label>
             <input id="otonal-root" type="number" class="control" min="1" v-model="maxOtonalRoot" />
           </div>
-        </div>
-        <div class="control-group">
           <div class="control">
             <label for="utonal-root">Maximum root (utonal)</label>
             <input id="utonal-root" type="number" class="control" min="1" v-model="maxUtonalRoot" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bicolumns-container">
+      <h2>Equally tempered chord</h2>
+      <div class="column">
+        <p class="chord-data">
+          <b>Chord:</b> [{{ equallyTemperedChordData.degrees.join(',') }}] \ {{ equallyTemperedChordData.divisions }}{{ nedjiProjector }}
+        </p>
+        <p class="chord-data">
+          <b>Error:</b> {{ equallyTemperedChordData.error.toFixed(5) }} c
+        </p>
+      </div>
+      <div class="column">
+        <div class="control-group">
+          <div class="control">
+            <label for="divisions">Maximum divisions of the equave</label>
+            <input id="divisions" type="number" class="control" min="1" v-model="maxDivisions" />
+          </div>
+          <div class="control">
+            <label for="equave">Equave</label>
+            <ScaleLineInput
+              id="equave"
+              @update:value="equave = $event"
+              v-model="equaveString"
+              :defaultValue="OCTAVE"
+            />
+          </div>
+          <div class="control radio-group">
+            <label>Error model</label>
+            <span>
+              <input type="radio" id="error-rooted" value="rooted" v-model="errorModel"/>
+              <label for="error-rooted"> Rooted </label>
+            </span>
+            <span>
+              <input type="radio" id="error-free" value="free" v-model="errorModel"/>
+              <label for="error-free"> Free </label>
+            </span>
           </div>
         </div>
       </div>
@@ -236,9 +336,22 @@ main {
   border-collapse: collapse;
   text-align: center;
 }
+.violator {
+  color: red;
+}
+.highlight {
+  text-decoration: underline;
+}
+.violator.highlight {
+  background-color: rgba(255, 255, 100, 0.8);
+}
+.held {
+  background-color: var(--color-accent);
+  color: var(--color-accent-text);
+}
 
 /* Content layout (medium) */
-div.columns-container {
+div.columns-container, div.bicolumns-container {
   column-count: 2;
   column-gap: 1rem;
   overflow: hidden;
@@ -262,5 +375,10 @@ div.column {
   border: 1px solid var(--color-border);
   max-width: 100%;
   height: auto;
+}
+
+/* Equally tempered chord */
+.chord-data {
+  font-size: 1.2em;
 }
 </style>

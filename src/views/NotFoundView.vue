@@ -4,58 +4,20 @@
  */
 
 import OctaplexPortal from '@/components/modals/generation/SummonOctaplex.vue'
-import { encodeQuery } from '@/url-encode'
-import type { Scale } from 'scale-workshop-core'
-import { nextTick, ref } from 'vue'
-import { useRouter, type LocationQuery } from 'vue-router'
-import { version } from '../../package.json'
-import { useAudioStore } from '@/stores/audio'
-import { useStateStore } from '@/stores/state'
+import { useRouter } from 'vue-router'
+import { useScaleStore } from '@/stores/scale'
+import { ref } from 'vue';
 
 const ritualInProgress = ref(false)
 
 const router = useRouter()
+const scale = useScaleStore()
 
-const state = useStateStore()
-
-const audio = useAudioStore()
-
-function openTheGates(scale: Scale) {
-  state.scale = scale
-
-  // Unfortunately we need to encode the state here.
-  // Simply navigating to "/" triggers decoding of the default empty state.
-  nextTick(() => {
-    const encodedState = {
-      scaleName: state.scaleName,
-      scaleLines: state.scaleLines,
-      baseFrequency: state.scale.baseFrequency,
-      baseMidiNote: state.baseMidiNote,
-      keyColors: state.keyColors,
-      isomorphicHorizontal: state.isomorphicHorizontal,
-      isomorphicVertical: state.isomorphicVertical,
-      keyboardMode: state.keyboardMode,
-      pianoMode: state.pianoMode,
-      equaveShift: state.equaveShift,
-      degreeShift: state.degreeShift,
-
-      waveform: audio.waveform,
-      attackTime: audio.attackTime,
-      decayTime: audio.decayTime,
-      sustainLevel: audio.sustainLevel,
-      releaseTime: audio.releaseTime,
-
-      pingPongDelayTime: audio.pingPongDelayTime,
-      pingPongFeedback: audio.pingPongFeedback,
-      pingPongSeparation: audio.pingPongSeparation,
-      pingPongGain: audio.pingPongGain
-    }
-
-    const query = encodeQuery(encodedState) as LocationQuery
-    query.version = version
-
-    router.push({ path: '/', query })
-  })
+function openTheGates(source: string) {
+  scale.sourceText = source
+  scale.computeScale()
+  ritualInProgress.value = false
+  router.push({ path: '/'})
 }
 </script>
 
@@ -71,8 +33,8 @@ function openTheGates(scale: Scale) {
     <Teleport to="body">
       <OctaplexPortal
         :show="ritualInProgress"
-        @update:scaleName="state.scaleName = $event"
-        @update:scale="openTheGates"
+        @update:scaleName="scale.name = $event"
+        @update:source="openTheGates"
         @cancel="ritualInProgress = false"
       />
     </Teleport>
