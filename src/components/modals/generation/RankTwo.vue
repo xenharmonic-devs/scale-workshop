@@ -58,6 +58,14 @@ watch(
 watch(
   () => rank2.mosPatternsError,
   (newValue) => {
+    if (document.activeElement === subgroupInput.value) {
+      setAndReportValidity(valsInput.value, '')
+      setAndReportValidity(commasInput.value, '')
+      setAndReportValidity(subgroupInput.value, newValue)
+      return
+    } else {
+      setAndReportValidity(subgroupInput.value, '')
+    }
     if (rank2.method === 'commas') {
       setAndReportValidity(commasInput.value, newValue)
       setAndReportValidity(valsInput.value, '')
