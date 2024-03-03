@@ -2,8 +2,8 @@ import { Scale } from "@/scale"
 import { midiNoteNumberToEnharmonics, type AccidentalStyle } from "@/utils"
 import { defineStore } from "pinia"
 import { computed, ref, watch } from "vue"
-import { Fraction, mmod, mtof } from "xen-dev-utils"
-import { getSourceVisitor, parseAST, relative, Interval, TimeMonzo, str, centsColor, factorColor } from "sonic-weave"
+import { mmod, mtof } from "xen-dev-utils"
+import { getSourceVisitor, parseAST, relative, Interval, TimeMonzo, str, centsColor, factorColor, type SonicWeaveValue, StatementVisitor } from "sonic-weave"
 import { DEFAULT_NUMBER_OF_COMPONENTS, INTERVALS_12TET, MIDI_NOTE_COLORS, MIDI_NOTE_NAMES, NUMBER_OF_NOTES, TET12 } from "@/constants"
 import { pianoMap } from "isomorphic-qwerty"
 
@@ -211,20 +211,21 @@ export const useScaleStore = defineStore('scale', () => {
   watch(hasLeftOfZ, (newValue) => window.localStorage.setItem('hasLeftOfZ', newValue.toString()))
 
   // Local helpers
-  function getVisitor() {
-    const visitor = getSourceVisitor();
+  function getGlobalVisitor() {
+    // Inject global variables
+    const _ = Interval.fromInteger(baseMidiNote.value);
+    const baseFreq = new Interval(TimeMonzo.fromArbitraryFrequency(baseFrequency.value), 'linear');
+    const extraBuiltins: Record<string, SonicWeaveValue> = {
+      scaleName: name.value,
+      _,
+      baseMidiNote: _,
+      baseFrequency: baseFreq,
+    }
+    const visitor = getSourceVisitor(true, extraBuiltins);
     // TODO: Make this a user preference.
     visitor.rootContext.gas = 10000;
 
-    // Inject global variables
-    visitor.immutables.set('scaleName', name.value);
-    const _ = Interval.fromInteger(baseMidiNote.value);
-    visitor.mutables.set('_', _)
-    visitor.immutables.set('baseMidiNote', _)
-    const baseFreq = new Interval(TimeMonzo.fromValue(baseFrequency.value), 'linear');
-    baseFreq.value.timeExponent = new Fraction(-1);
-    visitor.immutables.set('baseFrequency', baseFreq);
-
+    // Declare base nominal and unison frequency
     const prefixAst = parseAST(sourcePrefix.value);
     for (const statement of prefixAst.body) {
       visitor.visit(statement);
@@ -235,7 +236,8 @@ export const useScaleStore = defineStore('scale', () => {
 
   // Methods
   function getVisitors() {
-    const visitor = getVisitor()
+    const globalVisitor = getGlobalVisitor()
+    const visitor = new StatementVisitor(globalVisitor.rootContext, globalVisitor);
     const defaults = visitor.clone()
     defaults.rootContext = defaults.rootContext.clone()
 
@@ -243,7 +245,7 @@ export const useScaleStore = defineStore('scale', () => {
     for (const statement of ast.body) {
       const interupt = visitor.visit(statement);
       if (interupt) {
-        throw new Error('Illegal statement');
+        throw new Error('Illegal statement.');
       }
     }
     return {
@@ -254,19 +256,17 @@ export const useScaleStore = defineStore('scale', () => {
 
   function computeScale() {
     try {
-      const visitor = getVisitor()
+      const globalVisitor = getGlobalVisitor()
+      const visitor = new StatementVisitor(globalVisitor.rootContext, globalVisitor);
       const ast = parseAST(sourceText.value);
       for (const statement of ast.body) {
         const interupt = visitor.visit(statement);
         if (interupt) {
-          throw new Error('Illegal statement');
+          throw new Error('Illegal statement.');
         }
       }
 
-      const intervals = visitor.mutables.get('$') as Interval[];
-      if (!Array.isArray(intervals)) {
-        throw new Error('Context corruption detected');
-      }
+      const intervals = visitor.getCurrentScale();
       const ev = visitor.createExpressionVisitor();
       const rel = relative.bind(ev);
       relativeIntervals.value = intervals.map(i => rel(i));
