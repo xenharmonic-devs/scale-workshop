@@ -29,11 +29,12 @@ watch(edgesElement, (newElement) => setAndReportValidity(newElement, grid.edgesE
 watch(() => grid.edgesError, (newError) => setAndReportValidity(edgesElement.value, newError), { immediate: true })
 
 const heldNotes = computed(() => {
+  const perm = scale.latticePermutation;
   const result: Set<number> = new Set()
   for (const midiIndex of state.heldNotes.keys()) {
     if (state.heldNotes.get(midiIndex)! > 0) {
       // Offset by 1 to match relativeIntervals
-      result.add(mmod(midiIndex - scale.baseMidiNote - 1, scale.scale.size))
+      result.add(perm[mmod(midiIndex - scale.baseMidiNote - 1, scale.scale.size)])
     }
   }
   return result
@@ -81,9 +82,20 @@ watch(etPreset, (newValue) => {
 <template>
   <main class="lattice-container">
     <h2>Lattice visualization</h2>
-    <!--<ScaleLattice :scale="state.scale" :heldScaleDegrees="heldScaleDegrees" />-->
-    <JustIntonationLattice v-if="state.latticeType === 'ji'" :labels="scale.labels" :colors="scale.colors" :relativeIntervals="scale.relativeIntervals" :heldNotes="heldNotes" />
-    <GridLattice v-else :labels="scale.labels" :colors="scale.colors" :relativeIntervals="scale.relativeIntervals" :heldNotes="heldNotes" />
+    <JustIntonationLattice
+      v-if="state.latticeType === 'ji'"
+      :labels="scale.latticeLabels"
+      :colors="scale.latticeColors"
+      :relativeIntervals="scale.latticeIntervals"
+      :heldNotes="heldNotes"
+    />
+    <GridLattice
+      v-else
+      :labels="scale.latticeLabels"
+      :colors="scale.latticeColors"
+      :relativeIntervals="scale.latticeIntervals"
+      :heldNotes="heldNotes"
+    />
     <button @click="showConfig = true">Configure</button>
     <Modal :show="showConfig" @confirm="showConfig = false" @cancel="showConfig = false">
       <template #header>
@@ -129,6 +141,10 @@ watch(etPreset, (newValue) => {
             <div class="control checkbox-container">
               <input type="checkbox" id="show-labels" v-model="jiLattice.showLabels" />
               <label for="show-labels"> Show labels</label>
+            </div>
+            <div class="control checkbox-container">
+              <input type="checkbox" id="draw-arrows" v-model="jiLattice.drawArrows" />
+              <label for="draw-arrows"> Indicate order w/ arrows</label>
             </div>
             <div class="control">
               <label for="extra-edges">Extra edges</label>

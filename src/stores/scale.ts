@@ -3,7 +3,7 @@ import { midiNoteNumberToEnharmonics, type AccidentalStyle } from "@/utils"
 import { defineStore } from "pinia"
 import { computed, ref, watch } from "vue"
 import { mmod, mtof } from "xen-dev-utils"
-import { getSourceVisitor, parseAST, relative, Interval, TimeMonzo, str, centsColor, factorColor, type SonicWeaveValue, StatementVisitor } from "sonic-weave"
+import { getSourceVisitor, parseAST, relative, Interval, TimeMonzo, str, centsColor, factorColor, type SonicWeaveValue, StatementVisitor, ExpressionVisitor, builtinNode } from "sonic-weave"
 import { DEFAULT_NUMBER_OF_COMPONENTS, INTERVALS_12TET, MIDI_NOTE_COLORS, MIDI_NOTE_NAMES, NUMBER_OF_NOTES, TET12 } from "@/constants"
 import { pianoMap } from "isomorphic-qwerty"
 
@@ -48,6 +48,7 @@ export const useScaleStore = defineStore('scale', () => {
   const autoColors = ref<'silver' | 'cents' | 'factors'>('silver');
   const sourceText = ref('')
   const relativeIntervals = ref(INTERVALS_12TET);
+  const latticeIntervals = ref(INTERVALS_12TET);
   const scale = ref(new Scale(TET12, baseFrequency.value ,baseMidiNote.value));
   const colors = ref(defaultColors(baseMidiNote.value));
   const labels = ref(defaultLabels(baseMidiNote.value, accidentalPreference.value));
@@ -84,6 +85,33 @@ export const useScaleStore = defineStore('scale', () => {
   const frequencies = computed(() =>
     scale.value.getFrequencyRange(0, NUMBER_OF_NOTES)
   )
+
+  const latticePermutation = computed(() => {
+    const intervals = relativeIntervals.value;
+    const result: number[] = [];
+    tracking: for (let i = 0; i < intervals.length; ++i) {
+      for (const id of intervals[i].trackingIds) {
+        if (id < 1) {
+          result.push(-id);
+          continue tracking;
+        }
+      }
+      result.push(i);
+    }
+    return result;
+  });
+
+  const inverseLatticePermutation = computed(() => {
+    const result: number[] = [];
+    for (let i = 0; i < latticePermutation.value.length; ++i) {
+      // XXX: JS is one wild language.
+      result[latticePermutation.value[i]] = i;
+    }
+    return result;
+  });
+
+  const latticeLabels = computed(() => inverseLatticePermutation.value.map(i => labels.value[i]));
+  const latticeColors = computed(() => inverseLatticePermutation.value.map(i => colors.value[i]));
 
   /**
    * Obtain the lowercased color corresponding to specified MIDI index
@@ -210,6 +238,19 @@ export const useScaleStore = defineStore('scale', () => {
   watch(accidentalPreference, (newValue) => localStorage.setItem('accidentalPreference', newValue))
   watch(hasLeftOfZ, (newValue) => window.localStorage.setItem('hasLeftOfZ', newValue.toString()))
 
+  function latticeView(this: ExpressionVisitor) {
+    const scale = this.getCurrentScale();
+    for (let i = 0; i < scale.length; ++i) {
+      scale[i] = scale[i].shallowClone();
+      // XXX: Abuses the fact that SonicWeave tracking ids are positive.
+      scale[i].trackingIds.add(-i);
+    }
+    const rel = relative.bind(this);
+    latticeIntervals.value = scale.map(i => rel(i));
+  }
+  latticeView.__doc__ = 'Store the current scale to be displayed in the lattice tab.'
+  latticeView.__node__ = builtinNode(latticeView)
+
   // Local helpers
   function getGlobalVisitor() {
     // Inject global variables
@@ -220,6 +261,7 @@ export const useScaleStore = defineStore('scale', () => {
       _,
       baseMidiNote: _,
       baseFrequency: baseFreq,
+      latticeView,
     }
     const visitor = getSourceVisitor(true, extraBuiltins);
     // TODO: Make this a user preference.
@@ -256,6 +298,7 @@ export const useScaleStore = defineStore('scale', () => {
 
   function computeScale() {
     try {
+      latticeIntervals.value = []
       const globalVisitor = getGlobalVisitor()
       const visitor = new StatementVisitor(globalVisitor.rootContext, globalVisitor);
       const ast = parseAST(sourceText.value);
@@ -270,6 +313,9 @@ export const useScaleStore = defineStore('scale', () => {
       const ev = visitor.createExpressionVisitor();
       const rel = relative.bind(ev);
       relativeIntervals.value = intervals.map(i => rel(i));
+      if (!latticeIntervals.value.length) {
+        latticeIntervals.value = relativeIntervals.value
+      }
       const ratios = relativeIntervals.value.map(i => i.value.valueOf())
       let visitorBaseFrequency = mtof(baseMidiNote.value);
       if (visitor.rootContext.unisonFrequency) {
@@ -327,6 +373,11 @@ export const useScaleStore = defineStore('scale', () => {
     relativeIntervals,
     colors,
     labels,
+    latticePermutation,
+    inverseLatticePermutation,
+    latticeIntervals,
+    latticeColors,
+    latticeLabels,
     error,
     keyboardMode,
     equaveShift,
