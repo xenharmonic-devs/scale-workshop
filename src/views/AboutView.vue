@@ -45,9 +45,10 @@ const tagline = computed(() => TAGLINES[Math.floor(Math.random() * TAGLINES.leng
         Forrest Cahoon - <i>developer</i> <br />
         Videco - <i>developer</i> <br />
         Inthar - <i>developer</i> <br />
-        Kraig Grady - <i>lattice advisor</i>
-        Kite Giedraitis - <i>notation advisor</i>
-        Scott Dakota - <i>lattice advisor / generator sequence advisor</i>
+        Kraig Grady - <i>lattice advisor</i> <br />
+        Kite Giedraitis - <i>notation advisor</i> <br />
+        Scott Dakota - <i>lattice advisor / generator sequence advisor</i> <br />
+        Richie Greene - <i>quality assurance</i>
       </p>
     </div>
   </div>

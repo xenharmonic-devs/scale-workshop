@@ -308,7 +308,7 @@ line.edge.border {
 }
 line.edge.auxiliary {
   stroke: var(--color-accent-mute);
-  stroke-dasharray: 1;
+  stroke-dasharray: 3 1;
 }
 
 marker#arrow {
@@ -318,6 +318,7 @@ marker#arrow {
 path.arrow {
   fill: none;
   stroke: var(--color-indicator);
+  stroke-dasharray: 1;
 }
 
 circle.node:not(.held) {

@@ -82,8 +82,8 @@ const arrows = computed(() => {
     let u = x2 - x1;
     let v = y2 - y1;
     const r = Math.hypot(u, v);
-    u = u / r * store.size * 1.6;
-    v = v / r * store.size * 1.6;
+    u = u / r * store.size * 2;
+    v = v / r * store.size * 2;
     result.push({d: `M ${x1} ${y1} A ${r * 2.5} ${r * 2.5} 0 0 ${i % 2} ${x2 - u} ${y2 - v}`});
   }
   return result;
@@ -131,8 +131,8 @@ watch(() => [svgElement.value, lattice.value, props.labels, store.labelOffset, s
         viewBox="0 0 10 10"
         refX="5"
         refY="5"
-        markerWidth="6"
-        markerHeight="6"
+        markerWidth="10"
+        markerHeight="10"
         orient="auto-start-reverse">
         <path d="M 0 0 L 10 5 L 0 10 z" />
       </marker>
