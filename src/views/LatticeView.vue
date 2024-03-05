@@ -97,7 +97,7 @@ watch(etPreset, (newValue) => {
       :heldNotes="heldNotes"
     />
     <button @click="showConfig = true">Configure</button>
-    <Modal :show="showConfig" @confirm="showConfig = false" @cancel="showConfig = false">
+    <Modal :show="showConfig" @confirm="showConfig = false" @cancel="showConfig = false" :right="true">
       <template #header>
         <h2>Lattice configuration</h2>
       </template>
@@ -132,7 +132,7 @@ watch(etPreset, (newValue) => {
             </div>
             <div class="control">
               <label for="size">Text size</label>
-              <input id="size" type="number" min="1" v-model="jiLattice.size"/>
+              <input id="size" type="number" min="0.5" step="0.5" v-model="jiLattice.size"/>
             </div>
             <div class="control">
               <label for="label-offset">Text offset</label>
@@ -145,6 +145,10 @@ watch(etPreset, (newValue) => {
             <div class="control checkbox-container">
               <input type="checkbox" id="draw-arrows" v-model="jiLattice.drawArrows" />
               <label for="draw-arrows"> Indicate order w/ arrows</label>
+            </div>
+            <div class="control checkbox-container">
+              <input type="checkbox" id="gray-extras" v-model="jiLattice.grayExtras" />
+              <label for="gray-extras"> Gray extra edges</label>
             </div>
             <div class="control">
               <label for="extra-edges">Extra edges</label>
@@ -294,14 +298,26 @@ line.edge.gridline {
   stroke: var(--color-background-soft);
 }
 line.edge.primary {
-  stroke: var(--color-text);
+  stroke: var(--color-accent);
 }
 line.edge.custom {
-  stroke: var(--color-heading);
+  stroke: var(--color-accent-deeper);
+}
+line.edge.border {
+  stroke: var(--color-border);
 }
 line.edge.auxiliary {
   stroke: var(--color-accent-mute);
   stroke-dasharray: 1;
+}
+
+marker#arrow {
+  fill: var(--color-indicator);
+}
+
+path.arrow {
+  fill: none;
+  stroke: var(--color-indicator);
 }
 
 circle.node:not(.held) {
@@ -317,7 +333,7 @@ circle.node.auxiliary {
 
 text.node-label {
   font-family: sans-serif;
-  fill: var(--color-accent-text-btn);
+  fill: var(--color-text);
   text-anchor: middle;
   stroke: var(--color-background);
 }

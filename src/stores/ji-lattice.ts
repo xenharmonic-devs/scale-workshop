@@ -17,6 +17,7 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
   const showLabels = ref(true)
   const rotation = ref(0)
   const drawArrows = ref(false)
+  const grayExtras = ref(false)
 
   const [edges, edgesError] = computedAndError(() => {
     return parseChord(edgesString.value)
@@ -130,6 +131,7 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
     showLabels,
     rotation,
     drawArrows,
+    grayExtras,
     // Computed state
     edgeMonzos,
     edgesError,

@@ -51,6 +51,13 @@ const lattice = computed(() => {
       edge.y2 = c * y2 + s * x2;
     }
   }
+  if (store.grayExtras) {
+    for (const edge of result.edges) {
+      if (edge.type === 'custom') {
+        (edge as any).type = 'border';
+      }
+    }
+  }
   return result;
 })
 
@@ -58,11 +65,13 @@ const arrows = computed(() => {
   if (!store.drawArrows) {
     return [];
   }
+  const s = Math.sin(2 * Math.PI * store.rotation / 360)
+  const c = Math.cos(2 * Math.PI * store.rotation / 360)
   const coords: [number, number][] = [];
   for (const monzo of monzos.value) {
     const x = dot(store.horizontalCoordinates, monzo);
     const y = dot(store.verticalCoordinates, monzo);
-    coords.push([x, y]);
+    coords.push([c * x - s * y, c * y + s * x]);
   }
   const result = [];
   for (let i = 1; i < coords.length; ++i) {
@@ -125,7 +134,7 @@ watch(() => [svgElement.value, lattice.value, props.labels, store.labelOffset, s
         markerWidth="6"
         markerHeight="6"
         orient="auto-start-reverse">
-        <path d="M 0 0 L 10 5 L 0 10 z" fill="red"/>
+        <path d="M 0 0 L 10 5 L 0 10 z" />
       </marker>
     </defs>
 
@@ -142,8 +151,7 @@ watch(() => [svgElement.value, lattice.value, props.labels, store.labelOffset, s
       :key="i"
       v-bind="a"
       :stroke-width="store.size * 0.2"
-      stroke="red"
-      fill="none"
+      class="arrow"
       marker-end="url(#arrow)" />
 
     <circle
@@ -166,7 +174,7 @@ watch(() => [svgElement.value, lattice.value, props.labels, store.labelOffset, s
         :x="v.x"
         :y="v.y - store.labelOffset * store.size"
         :font-size="`${3 * store.size}px`"
-        :stroke-width="store.size * 0.05"
+        :stroke-width="store.size * 0.08"
       >
         {{ labels[v.index!] }}
       </text>
