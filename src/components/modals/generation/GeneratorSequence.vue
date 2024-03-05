@@ -50,16 +50,44 @@ watch(selectedPreset, newValue => {
   updateCS();
 });
 
-function generate(expand = true) {
+function generate(kind: 'expanded' | 'raw' | 'lattice' = 'expanded') {
   let name = `Generator sequence ${modal.generatorsString}`
-  let source = `gs(${arrayToString(modal.generators)}, ${modal.size}`
   if (!modal.period.equals(OCTAVE) || modal.numPeriods !== 1) {
     name += ` over ${modal.periodString}`
-    source += `, ${modal.period.toString()}, ${modal.numPeriods}`
   }
-  source += ')'
+  let source = ''
+  if (kind === 'lattice') {
+    source = modal.generators.map(g => g.toString()).join(';')
+    source += '\n'
+    const s = Math.round(modal.size / modal.numPeriods) - 1;
+    const repeats = Math.floor(s / modal.generators.length);
+    if (repeats) {
+      source += `flatRepeat(${repeats})\n`
+    }
+    const remaining = s - repeats * modal.generators.length;
+    if (remaining) {
+      source += modal.generators.slice(0, remaining).map(g => g.toString()).join(';');
+      source += '\n'
+    }
+    source += 'stack()\n'
+    source += modal.period.toString();
+    source += '\n'
+    source += 'reduce()\n'
+    if (modal.numPeriods !== 1) {
+      source += `repeat(${modal.numPeriods})\n`
+    }
+    source += 'unshift(pop())\n'
+    source += 'latticeView()\n'
+    source += 'sort()\n'
+  } else {
+    source = `gs(${arrayToString(modal.generators)}, ${modal.size}`
+    if (!modal.period.equals(OCTAVE) || modal.numPeriods !== 1) {
+      source += `, ${modal.period.toString()}, ${modal.numPeriods}`
+    }
+    source += ')'
+  }
   emit('update:scaleName', name)
-  if (expand) {
+  if (kind === 'expanded') {
     emit('update:source', expandCode(source))
   } else {
     emit('update:source', source)
@@ -128,9 +156,10 @@ function generate(expand = true) {
     </template>
     <template #footer>
       <div class="btn-group">
-        <button @click="() => generate(true)">OK</button>
+        <button @click="() => generate('expanded')">OK</button>
         <button @click="$emit('cancel')">Cancel</button>
-        <button @click="() => generate(false)">Raw</button>
+        <button @click="() => generate('lattice')">Lattice</button>
+        <button @click="() => generate('raw')">Raw</button>
       </div>
     </template>
   </Modal>
