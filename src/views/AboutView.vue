@@ -5,9 +5,10 @@ const TAGLINES = [
   ["Because there are more than 12 notes.", "Sean Archibald"],
   ["Electric Tunaloo", ""],
   ["Powered by SonicWeave", ""],
-  ["We are friends now, right?", "dotu_mtr"],
+  ["We are friends now, right?", "dotuXil"],
   ["Any JI scale is a NEJI if you're brave enough.", "fredg999"],
   ["Ranting about ordinals is such a 0st world problem...", "Lumi Pakkanen"],
+  ["You should put spoob in the credits as well.", "Puhts"],
 ];
 
 const tagline = computed(() => TAGLINES[Math.floor(Math.random() * TAGLINES.length)])
@@ -48,7 +49,8 @@ const tagline = computed(() => TAGLINES[Math.floor(Math.random() * TAGLINES.leng
         Kraig Grady - <i>lattice advisor</i> <br />
         Kite Giedraitis - <i>notation advisor</i> <br />
         Scott Dakota - <i>lattice advisor / generator sequence advisor</i> <br />
-        Richie Greene - <i>quality assurance</i>
+        Richie Greene - <i>quality assurance</i> <br />
+        <span class="spoob">Spoob<img src="@/assets/img/spoob.png"/></span> - <i>emotional support</i>
       </p>
     </div>
   </div>
@@ -82,5 +84,14 @@ hr {
 #contributors h2 {
   border: unset;
   text-align: center;
+}
+.spoob > img {
+  display: none;
+}
+.spoob:hover > img {
+  display: inline;
+  position: absolute;
+  bottom: 0;
+  z-index: 1;
 }
 </style>
