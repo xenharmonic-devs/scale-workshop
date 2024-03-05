@@ -9,6 +9,8 @@ const TAGLINES = [
   ["Any JI scale is a NEJI if you're brave enough.", "fredg999"],
   ["Ranting about ordinals is such a 0st world problem...", "Lumi Pakkanen"],
   ["You should put spoob in the credits as well.", "Puhts"],
+  ["yknow, if you just changed how long a second is, everything can become 432hz", "Ropal"],
+  ["some eyes are exotemperaments", "akselai"],
 ];
 
 const tagline = computed(() => TAGLINES[Math.floor(Math.random() * TAGLINES.length)])
