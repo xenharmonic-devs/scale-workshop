@@ -11,6 +11,10 @@ const TAGLINES = [
   ["You should put spoob in the credits as well.", "Puhts"],
   ["yknow, if you just changed how long a second is, everything can become 432hz", "Ropal"],
   ["some eyes are exotemperaments", "akselai"],
+
+  ["Also Try Scala!", ""],
+  ["Also Try XenPaper!", ""],
+  ["Also Try Xen-calc!", ""],
 ];
 
 const tagline = computed(() => TAGLINES[Math.floor(Math.random() * TAGLINES.length)])
