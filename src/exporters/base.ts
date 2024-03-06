@@ -1,3 +1,4 @@
+import type { Scale } from "@/scale"
 import type { Interval } from "sonic-weave"
 
 export type ExporterParams = {
@@ -7,6 +8,7 @@ export type ExporterParams = {
   baseFrequency: number
   baseMidiNote: number
   midiOctaveOffset: number
+  scale: Scale
   name?: string
   scaleUrl?: string
   description?: string
@@ -32,9 +34,6 @@ export class BaseExporter {
 
   validateParams() {
     for (const interval of this.params.relativeIntervals) {
-      if (interval.domain === 'cologarithmic') {
-        throw new Error('Cannot export vals.');
-      }
       if (!interval.isRelative()) {
         throw new Error('Intervals must be given relative to the base frequency.');
       }

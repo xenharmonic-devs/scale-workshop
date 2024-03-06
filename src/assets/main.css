@@ -82,6 +82,7 @@ button:hover,
   background-color: var(--color-accent);
   border-color: var(--color-accent);
 }
+.btn.disabled,
 button:disabled {
   cursor: not-allowed;
   color: var(--color-accent-mute);
