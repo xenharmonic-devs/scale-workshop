@@ -1,7 +1,7 @@
 # Change log
 
 ## 2.4.0 (Unreleased)
- * (TODO) Feature: Export scales for Ableton Live 12 [#601](https://github.com/xenharmonic-devs/scale-workshop/issues/601)
+ * Feature: Export scales for Ableton Live 12 [#601](https://github.com/xenharmonic-devs/scale-workshop/issues/601)
  * Feature: MOS patterns supported by EDO can be sorted by size or hardness [#599](https://github.com/xenharmonic-devs/scale-workshop/issues/599)
  * Bug fix: The frequency for 1/1 is now at MIDI note for base frequency even in "White only" mode [#603](https://github.com/xenharmonic-devs/scale-workshop/issues/603)
 
