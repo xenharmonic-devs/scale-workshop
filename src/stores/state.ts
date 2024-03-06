@@ -12,6 +12,7 @@ import { computeWhiteIndices } from '@/midi'
 import { mapWhiteAsdfBlackQwerty, mapWhiteQweZxcBlack123Asd } from '@/keyboard-mapping'
 import { arraysEqual } from 'xen-dev-utils'
 import type { AccidentalStyle } from '@/utils'
+import { midiKeyInfo } from 'xen-midi'
 
 export const useStateStore = defineStore('state', () => {
   // Nonpersistent state of the application
@@ -77,6 +78,15 @@ export const useStateStore = defineStore('state', () => {
   const baseIndex = computed(
     () => baseMidiNote.value + equaveShift.value * scale.size + degreeShift.value
   )
+
+  // Offset such that base MIDI note doesn't move in "simple" white mode.
+  const whiteModeOffset = computed(() => {
+    const baseInfo = midiKeyInfo(baseMidiNote.value)
+    if (baseInfo.whiteNumber === undefined) {
+      return baseMidiNote.value - baseInfo.sharpOf - 1
+    }
+    return baseMidiNote.value - baseInfo.whiteNumber
+  })
 
   // For midi mapping
   const whiteIndices = computed(() => computeWhiteIndices(baseMidiNote.value, keyColors.value))
@@ -228,6 +238,7 @@ export const useStateStore = defineStore('state', () => {
     // Computed state
     frequencies,
     baseIndex,
+    whiteModeOffset,
     whiteIndices,
     keyboardMapping,
     // Methods

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { WHITE_MODE_OFFSET } from '@/constants'
 import { computeWhiteIndices } from '@/midi'
 import { computed } from 'vue'
 import { midiKeyInfo } from 'xen-midi'
 
 const props = defineProps<{
   baseMidiNote: number
+  whiteModeOffset: number
   midiWhiteMode: 'off' | 'simple' | 'blackAverage' | 'keyColors'
   keyColors: string[]
   activeKeys: Set<number>
@@ -34,10 +34,10 @@ function keyLabel(chromaticNumber: number) {
     return [(chromaticNumber - props.baseMidiNote).toString()]
   } else if (props.midiWhiteMode === 'simple') {
     if (info.whiteNumber !== undefined) {
-      return [(info.whiteNumber + WHITE_MODE_OFFSET - props.baseMidiNote).toString()]
+      return [(info.whiteNumber + props.whiteModeOffset - props.baseMidiNote).toString()]
     }
   } else if (props.midiWhiteMode === 'blackAverage') {
-    const offset = WHITE_MODE_OFFSET - props.baseMidiNote
+    const offset = props.whiteModeOffset - props.baseMidiNote
     if (info.whiteNumber === undefined) {
       return [(info.flatOf + offset).toString(), '\u2295', (info.sharpOf + offset).toString()]
     } else {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, reactive, watch } from 'vue'
 import { RouterLink, RouterView, useRouter, type LocationQuery } from 'vue-router'
-import { NEWLINE_TEST, WHITE_MODE_OFFSET } from '@/constants'
+import { NEWLINE_TEST } from '@/constants'
 import { ScaleWorkshopOneData } from '@/scale-workshop-one'
 import type { Input, Output } from 'webmidi'
 import { MidiIn, midiKeyInfo, MidiOut } from 'xen-midi'
@@ -228,19 +228,19 @@ function midiNoteOn(index: number, rawAttack?: number) {
     if (info.whiteNumber === undefined) {
       frequency = NaN
     } else {
-      info.whiteNumber += WHITE_MODE_OFFSET
+      info.whiteNumber += state.whiteModeOffset
       frequency = state.getFrequency(info.whiteNumber)
       tuningTableKeyOn(info.whiteNumber)
     }
   } else if (whiteMode === 'blackAverage') {
     if (info.whiteNumber === undefined) {
-      info.flatOf += WHITE_MODE_OFFSET
-      info.sharpOf += WHITE_MODE_OFFSET
+      info.flatOf += state.whiteModeOffset
+      info.sharpOf += state.whiteModeOffset
       frequency = Math.sqrt(state.getFrequency(info.flatOf) * state.getFrequency(info.sharpOf))
       tuningTableKeyOn(info.flatOf)
       tuningTableKeyOn(info.sharpOf)
     } else {
-      info.whiteNumber += WHITE_MODE_OFFSET
+      info.whiteNumber += state.whiteModeOffset
       frequency = state.getFrequency(info.whiteNumber)
       tuningTableKeyOn(info.whiteNumber)
     }

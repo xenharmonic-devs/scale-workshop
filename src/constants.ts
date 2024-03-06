@@ -15,9 +15,6 @@ export const NUMBER_OF_NOTES = 128
 // Browser interaction
 export const LEFT_MOUSE_BTN = 0
 
-// Offset such that default base MIDI note doesn't move in "simple" white mode.
-export const WHITE_MODE_OFFSET = 69 - 40
-
 // === Sanity limits for tempering ===
 
 // Anything larger than this isn't evaluated interactively

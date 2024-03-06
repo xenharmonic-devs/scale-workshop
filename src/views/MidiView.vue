@@ -205,6 +205,7 @@ onUnmounted(() => {
         <div class="piano-container">
           <MidiPiano
             :baseMidiNote="state.baseMidiNote"
+            :whiteModeOffset="state.whiteModeOffset"
             :midiWhiteMode="midi.whiteMode"
             :keyColors="state.keyColors"
             :activeKeys="activeKeys"
