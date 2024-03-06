@@ -2,14 +2,14 @@
 import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import { Input, Output, WebMidi, type NoteMessageEvent, type MessageEvent } from 'webmidi'
 import MidiPiano from '@/components/MidiPiano.vue'
-import { useStateStore } from '@/stores/state'
 import { useMidiStore } from '@/stores/midi'
+import { useScaleStore } from '@/stores/scale'
 
 const props = defineProps<{
   midiInputChannels: Set<number>
 }>()
 
-const state = useStateStore()
+const scale = useScaleStore()
 const midi = useMidiStore()
 
 const inputs = reactive<Input[]>([])
@@ -204,9 +204,9 @@ onUnmounted(() => {
         </div>
         <div class="piano-container">
           <MidiPiano
-            :baseMidiNote="state.baseMidiNote"
+            :baseMidiNote="scale.baseMidiNote"
             :midiWhiteMode="midi.whiteMode"
-            :keyColors="state.keyColors"
+            :keyColors="scale.colors"
             :activeKeys="activeKeys"
           />
         </div>

@@ -47,13 +47,11 @@ const router = createRouter({
       name: 'lattice',
       component: () => import('../views/LatticeView.vue')
     },
-    /*
     {
       path: '/midi',
       name: 'midi',
       component: () => import('../views/MidiView.vue')
     },
-    */
     {
       path: '/prefs',
       name: 'preferencess',

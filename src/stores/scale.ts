@@ -6,6 +6,7 @@ import { mmod, mtof } from "xen-dev-utils"
 import { getSourceVisitor, parseAST, relative, Interval, TimeMonzo, str, centsColor, factorColor, type SonicWeaveValue, StatementVisitor, ExpressionVisitor, builtinNode } from "sonic-weave"
 import { DEFAULT_NUMBER_OF_COMPONENTS, INTERVALS_12TET, MIDI_NOTE_COLORS, MIDI_NOTE_NAMES, NUMBER_OF_NOTES, TET12 } from "@/constants"
 import { pianoMap } from "isomorphic-qwerty"
+import { computeWhiteIndices } from "@/midi"
 
 // Colors from #1 to #12 inclusive.
 function defaultColors(base: number) {
@@ -220,6 +221,9 @@ export const useScaleStore = defineStore('scale', () => {
 
   const splitAccidentals = computed(() =>  pianoMode.value === 'Zxc')
 
+  // For midi mapping
+  const whiteIndices = computed(() => computeWhiteIndices(baseMidiNote.value, colors.value))
+
   // State synchronization
   watch([baseMidiNote, accidentalPreference], () => {
     enharmonic.value = enharmonics.value[0]
@@ -394,6 +398,7 @@ export const useScaleStore = defineStore('scale', () => {
     frequencies,
     qwertyMapping,
     splitAccidentals,
+    whiteIndices,
     // Methods
     getVisitors,
     computeScale,

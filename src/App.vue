@@ -97,17 +97,14 @@ function tuningTableKeyOff(index: number) {
 // === MIDI input / output ===
 
 
-// const midiOut = computed(() => new MidiOut(midi.output as Output, midi.outputChannels))
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function emptyOff(rawRelease: number) {}
+const midiOut = computed(() => new MidiOut(midi.output as Output, midi.outputChannels))
 
 function sendNoteOn(frequency: number, rawAttack: number) {
   frequency = clamp(-24000, 24000, frequency);
-  // const midiOff = midiOut.value.sendNoteOn(frequency, rawAttack)
+  const midiOff = midiOut.value.sendNoteOn(frequency, rawAttack)
 
   if (audio.synth === null || audio.virtualSynth === null) {
-    return emptyOff;
+    return midiOff;
   }
 
   // Trigger web audio API synth.
@@ -118,19 +115,19 @@ function sendNoteOn(frequency: number, rawAttack: number) {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const off = (rawRelease: number) => {
-    // midiOff(rawRelease)
+    midiOff(rawRelease)
     synthOff()
     virtualOff()
   }
 
   return off
 }
-/*
+
 function midiNoteOn(index: number, rawAttack?: number) {
   if (rawAttack === undefined) {
     rawAttack = 80
   }
-  let frequency = state.frequencies[index]
+  let frequency = scale.frequencies[index]
   if (!midi.velocityOn) {
     rawAttack = 80
   }
@@ -138,7 +135,7 @@ function midiNoteOn(index: number, rawAttack?: number) {
   // Store state to ensure consistent note off.
   const info = midiKeyInfo(index)
   const whiteMode = midi.whiteMode
-  const indices = state.whiteIndices
+  const indices = scale.whiteIndices
 
   if (whiteMode === 'off') {
     tuningTableKeyOn(index)
@@ -147,19 +144,19 @@ function midiNoteOn(index: number, rawAttack?: number) {
       frequency = NaN
     } else {
       info.whiteNumber += WHITE_MODE_OFFSET
-      frequency = state.getFrequency(info.whiteNumber)
+      frequency = scale.getFrequency(info.whiteNumber)
       tuningTableKeyOn(info.whiteNumber)
     }
   } else if (whiteMode === 'blackAverage') {
     if (info.whiteNumber === undefined) {
       info.flatOf += WHITE_MODE_OFFSET
       info.sharpOf += WHITE_MODE_OFFSET
-      frequency = Math.sqrt(state.getFrequency(info.flatOf) * state.getFrequency(info.sharpOf))
+      frequency = Math.sqrt(scale.getFrequency(info.flatOf) * scale.getFrequency(info.sharpOf))
       tuningTableKeyOn(info.flatOf)
       tuningTableKeyOn(info.sharpOf)
     } else {
       info.whiteNumber += WHITE_MODE_OFFSET
-      frequency = state.getFrequency(info.whiteNumber)
+      frequency = scale.getFrequency(info.whiteNumber)
       tuningTableKeyOn(info.whiteNumber)
     }
   } else if (whiteMode === 'keyColors') {
@@ -171,12 +168,12 @@ function midiNoteOn(index: number, rawAttack?: number) {
         if (index === indices[info.sharpOf + 1]) {
           frequency = NaN
         } else {
-          frequency = state.getFrequency(index)
+          frequency = scale.getFrequency(index)
           tuningTableKeyOn(index)
         }
       } else {
         index = indices[info.whiteNumber]
-        frequency = state.getFrequency(index)
+        frequency = scale.getFrequency(index)
         tuningTableKeyOn(index)
       }
     } else {
@@ -249,7 +246,6 @@ watch(
     }
   }
 )
-*/
 
 // === Virtual and typing keyboard ===
 function keyboardNoteOn(index: number) {
@@ -438,7 +434,7 @@ onUnmounted(() => {
 function panic() {
   console.log('Firing global key off.')
   typingKeyboard.deactivate()
-  // midiIn.deactivate()
+  midiIn.deactivate()
   if (midi.output !== null) {
     midi.output.sendAllNotesOff({
       channels: [...midi.outputChannels]
@@ -464,7 +460,7 @@ function panic() {
         <RouterLink to="/qwerty">Virtual QWERTY</RouterLink>
       </li>
       <li><RouterLink to="/synth">Synth</RouterLink></li>
-      <!--<li><RouterLink to="/midi">MIDI I/O</RouterLink></li>-->
+      <li><RouterLink to="/midi">MIDI I/O</RouterLink></li>
       <li><RouterLink to="/prefs">Preferences</RouterLink></li>
     </ul>
     <div id="app-tray" class="hidden-sm">
@@ -484,6 +480,7 @@ function panic() {
   </nav>
   <RouterView
     :noteOn="keyboardNoteOn"
+    :midiInputChannels="midiInputChannels"
     :typingKeyboard="typingKeyboard"
     @panic="panic"
   />
