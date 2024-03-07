@@ -273,7 +273,7 @@ function edoClick(info: MosScaleInfo) {
       <div class="control-group" @mouseleave="modal.previewL = 0" v-show="modal.method === 'edo'">
         <div class="control">
           <label for="edo">EDO</label>
-          <input id="edo" type="number" min="2" class="control" v-model="modal.edo" />
+          <input id="edo" type="number" min="2" v-model="modal.edo" />
         </div>
         <span v-for="(info, i) of modal.edoList" @mouseenter="edoMouseEnter(info)" :key="i">
           <button @click="edoClick(info)">
@@ -282,20 +282,21 @@ function edoClick(info: MosScaleInfo) {
           {{ info.hardness }}
           <i v-if="info.name !== undefined">[{{ info.name.split(';')[0] }}]</i>
         </span>
-        <button
-          @click="modal.moreForEdo"
-          v-if="
-            (modal.edo === 17 ||
-              modal.edo === 19 ||
-              modal.edo === 21 ||
-              modal.edo === 22 ||
-              modal.edo === 23 ||
-              modal.edo > 24) &&
-            !modal.edoExtraMap.has(modal.edo)
-          "
-        >
-          More...
-        </button>
+        <button @click="modal.sortByHardness">Sort by hardness</button>
+        <button @click="modal.sortBySize">Sort by size</button>
+        <button @click="modal.moreForEdo">Discover</button>
+        <div class="control">
+          <label for="min-size">Minimum size</label>
+          <input id="min-size" type="number" min="2" v-model="modal.minSize" />
+        </div>
+        <div class="control">
+          <label for="max-size">Maximum size</label>
+          <input id="max-size" type="number" :min="modal.minSize" v-model="modal.maxSize" />
+        </div>
+        <div class="control">
+          <label for="max-hardness">Maximum hardness</label>
+          <input id="max-hardness" type="number" min="2" v-model="modal.maxHardness" />
+        </div>
       </div>
     </template>
     <template #footer>

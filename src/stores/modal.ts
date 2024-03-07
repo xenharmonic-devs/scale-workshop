@@ -7,7 +7,6 @@ import {
   anyForEdo,
   makeEdoMap,
   tamnamsInfo,
-  type MosScaleInfo,
   modeInfo,
   getHardness,
   allForEdo
@@ -137,14 +136,16 @@ export const useModalStore = defineStore('modal', () => {
     Math.min(Math.floor(up.value / numberOfPeriods.value) * numberOfPeriods.value, upMax.value)
   )
   // Selections
-  const edoMap = computed(() => makeEdoMap())
-  const edoExtraMap = reactive<Map<number, MosScaleInfo[]>>(new Map())
+  const edoMap = reactive(makeEdoMap())
+  const minSize = ref(5)
+  const maxSize = ref(12)
+  const maxHardness = ref(5)
   const edoList = computed(() => {
     const edo_ = boundedEdo.value
-    if (!edoMap.value.has(edo_)) {
-      return [anyForEdo(edo_)].concat(edoExtraMap.get(edo_) || [])
+    if (edoMap.has(edo_)) {
+      return edoMap.get(edo_)!
     }
-    return edoMap.value.get(edo_)!.concat(edoExtraMap.get(edo_) || [])
+    return [anyForEdo(edo_)]
   })
   // Additional information
   const tamnamsName = computed(() => {
@@ -182,29 +183,36 @@ export const useModalStore = defineStore('modal', () => {
   watch(upMax, (newValue) => {
     up.value = Math.min(up.value, newValue)
   })
+  watch(minSize, (newValue) => {
+    maxSize.value = Math.max(maxSize.value, newValue)
+  })
   // Methods
+  function sortByHardness() {
+    const edo_ = boundedEdo.value
+    const patterns = edoMap.get(edo_) ?? [anyForEdo(edo_)]
+    patterns.sort(
+      (a, b) =>
+        a.sizeOfLargeStep * b.sizeOfSmallStep - b.sizeOfLargeStep * a.sizeOfSmallStep ||
+        a.numberOfLargeSteps - b.numberOfLargeSteps
+    )
+    edoMap.set(edo_, patterns)
+  }
+  function sortBySize() {
+    const edo_ = boundedEdo.value
+    const patterns = edoMap.get(edo_) ?? [anyForEdo(edo_)]
+    patterns.sort(
+      (a, b) =>
+        a.numberOfLargeSteps + a.numberOfSmallSteps - b.numberOfLargeSteps - b.numberOfSmallSteps ||
+        a.numberOfLargeSteps - b.numberOfLargeSteps
+    )
+    edoMap.set(edo_, patterns)
+  }
   function moreForEdo() {
     const edo_ = boundedEdo.value
-    const existing = edoList.value
-    const extra = allForEdo(edo_, 5, 12, 5)
-    const more = []
-    for (const info of extra) {
-      let novel = true
-      for (const old of existing) {
-        if (
-          info.mosPattern === old.mosPattern &&
-          info.sizeOfLargeStep === old.sizeOfLargeStep &&
-          info.sizeOfSmallStep === old.sizeOfSmallStep
-        ) {
-          novel = false
-          break
-        }
-      }
-      if (novel) {
-        more.push(info)
-      }
-    }
-    edoExtraMap.set(edo_, more)
+    edoMap.set(
+      edo_,
+      allForEdo(edo_, minSize.value, Math.min(edo_, maxSize.value), maxHardness.value)
+    )
   }
 
   // Approximate by harmonics/subharmonics
@@ -335,7 +343,9 @@ export const useModalStore = defineStore('modal', () => {
     upMax,
     safeUp,
     edoMap,
-    edoExtraMap,
+    minSize,
+    maxSize,
+    maxHardness,
     edoList,
     tamnamsName,
     mosModeInfo,
@@ -343,6 +353,8 @@ export const useModalStore = defineStore('modal', () => {
     hostEd,
     ed,
     previewName,
+    sortByHardness,
+    sortBySize,
     moreForEdo,
 
     // Approximate by harmonics/subharmonics
