@@ -5,12 +5,17 @@ import type { ExporterParams } from '@/exporters/base';
 import { useScaleStore } from '@/stores/scale';
 import { useStateStore } from '@/stores/state';
 import { sanitizeFilename } from '@/utils';
-import { ref } from 'vue';
+import { defineAsyncComponent, ref } from 'vue';
+
+const KorgExportModal = defineAsyncComponent(
+  () => import('@/components/modals/export/KorgExport.vue')
+)
 
 const state = useStateStore()
 const scale = useScaleStore()
 
 const exportTextClipboard = ref("[URL sharing disabled]")
+const showKorgExportModal = ref(false)
 
 function copyToClipboard() {
   exportTextClipboard.value = 'No!'
@@ -47,6 +52,20 @@ function doExport(exporter: ExporterKey) {
 }
 </script>
 <template>
+  <Teleport to="body">
+    <KorgExportModal
+      v-if="showKorgExportModal"
+      @confirm="showKorgExportModal = false"
+      @cancel="showKorgExportModal = false"
+      :newline="state.newline"
+      :scaleName="scale.name"
+      :baseMidiNote="scale.baseMidiNote"
+      :baseFrequency="scale.baseFrequency"
+      :relativeIntervals="scale.relativeIntervals"
+      :midiOctaveOffset="-1"
+      :scale="scale.scale"
+    />
+  </Teleport>
   <h2>Export current settings</h2>
   <a href="#" class="btn disabled" @click="copyToClipboard">
     <p><strong>Share scale</strong></p>
@@ -85,6 +104,10 @@ function doExport(exporter: ExporterKey) {
   <a href="#" class="btn" @click="doExport('sytrus')">
     <p><strong>Sytrus pitch map (.fnv)</strong></p>
     <p>Envelope state file for the pitch envelope in Image-Line Sytrus</p>
+  </a>
+  <a href="#" class="btn" @click="showKorgExportModal = true">
+    <p><strong>Korg Sound Librarian scale (.mnlgtuns + others)</strong></p>
+    <p>Tuning formats for use with Monologue, Minilogue, Minilogue XD, and Prologue synthesizers</p>
   </a>
   <a href="#" class="btn" @click="doExport('deflemask')">
     <p><strong>Deflemask reference (.txt)</strong></p>
