@@ -381,7 +381,16 @@ function confirmPreset() {
       <div class="control-group">
         <h2>Scale data</h2>
         <div class="control">
-          <textarea id="scale-data" ref="scaleDataArea" rows="12" v-model="joinedLines"></textarea>
+          <textarea
+            id="scale-data"
+            ref="scaleDataArea"
+            rows="12"
+            autocapitalize="off"
+            autocomplete="off"
+            autocorrect="off"
+            spellcheck="false"
+            v-model="joinedLines"
+          ></textarea>
         </div>
       </div>
 
