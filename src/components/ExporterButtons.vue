@@ -10,12 +10,16 @@ import { defineAsyncComponent, ref } from 'vue';
 const KorgExportModal = defineAsyncComponent(
   () => import('@/components/modals/export/KorgExport.vue')
 )
+const MtsSysexExportModal = defineAsyncComponent(
+  () => import('@/components/modals/export/MtsSysexExport.vue')
+)
 
 const state = useStateStore()
 const scale = useScaleStore()
 
 const exportTextClipboard = ref("[URL sharing disabled]")
 const showKorgExportModal = ref(false)
+const showMtsSysexExportModal = ref(false)
 
 function copyToClipboard() {
   exportTextClipboard.value = 'No!'
@@ -65,6 +69,19 @@ function doExport(exporter: ExporterKey) {
       :midiOctaveOffset="-1"
       :scale="scale.scale"
     />
+
+    <MtsSysexExportModal
+      v-if="showMtsSysexExportModal"
+      @confirm="showMtsSysexExportModal = false"
+      @cancel="showMtsSysexExportModal = false"
+      :newline="state.newline"
+      :scaleName="scale.name"
+      :baseMidiNote="scale.baseMidiNote"
+      :baseFrequency="scale.baseFrequency"
+      :relativeIntervals="scale.relativeIntervals"
+      :midiOctaveOffset="-1"
+      :scale="scale.scale"
+    />
   </Teleport>
   <h2>Export current settings</h2>
   <a href="#" class="btn disabled" @click="copyToClipboard">
@@ -90,12 +107,24 @@ function doExport(exporter: ExporterKey) {
     <p><strong>Scala keyboard mapping (.kbm)</strong></p>
     <p>Maps an accompanying .scl file to start on a specific MIDI note and frequency</p>
   </a>
+  <a href="#" class="btn" @click="doExport('maxmsp')">
+    <p><strong>Max/MSP coll tuning (.txt)</strong></p>
+    <p>List of frequencies (Hz) in a text file to load into a Max/MSP coll object</p>
+  </a>
+  <a href="#" class="btn" @click="doExport('puredata')">
+    <p><strong>PureData text tuning (.txt)</strong></p>
+    <p>List of frequencies (Hz) in a text file to load into a PureData text object</p>
+  </a>
   <a href="#" class="btn" @click="doExport('kontakt')">
     <p><strong>Kontakt tuning script (.txt)</strong></p>
     <p>
       Tuning script for Native Instruments Kontakt. Some instrument libraries allow this custom
       script
     </p>
+  </a>
+  <a href="#" class="btn" @click="doExport('soniccouture')">
+    <p><strong>Soniccouture tuning file (.nka)</strong></p>
+    <p>For Soniccouture sample libraries</p>
   </a>
   <a href="#" class="btn" @click="doExport('harmor')">
     <p><strong>Harmor pitch map (.fnv)</strong></p>
@@ -112,6 +141,10 @@ function doExport(exporter: ExporterKey) {
   <a href="#" class="btn" @click="doExport('deflemask')">
     <p><strong>Deflemask reference (.txt)</strong></p>
     <p>List of 'fine tune' values for Deflemask</p>
+  </a>
+  <a href="#" class="btn" @click="showMtsSysexExportModal = true">
+    <p><strong>MTS Sysex Bulk Tuning Dump (.syx)</strong></p>
+    <p>Binary data of a Bulk Tuning Dump SysEx message</p>
   </a>
   <h3>Documentation</h3>
   <p>You can read about the new syntax <a href="https://github.com/xenharmonic-devs/sonic-weave?tab=readme-ov-file#sonic-weave" target="_blank">here</a>.</p>

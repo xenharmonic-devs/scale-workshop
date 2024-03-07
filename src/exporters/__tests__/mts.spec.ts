@@ -49,6 +49,4 @@ describe('MTS exporter', () => {
       'vrtx5APwYW8zLF0CVgkcBE3z/kGSXYKfDHDrd0oh8xI='
     )
   })
-
-  return
 })

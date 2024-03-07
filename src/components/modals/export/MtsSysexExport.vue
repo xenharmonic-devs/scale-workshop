@@ -3,15 +3,18 @@ import MtsSysexExporter from '@/exporters/mts-sysex'
 import { sanitizeFilename } from '@/utils'
 import { ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
-import type { Scale } from 'scale-workshop-core'
 import { clamp } from 'xen-dev-utils'
 import type { ExporterParams } from '@/exporters/base'
+import type { Scale } from '@/scale'
+import type { Interval } from 'sonic-weave'
 
 const props = defineProps<{
   newline: string
   scaleName: string
   baseMidiNote: number
+  baseFrequency: number
   midiOctaveOffset: number
+  relativeIntervals: Interval[]
   scale: Scale
 }>()
 
@@ -55,6 +58,8 @@ function doExport() {
     scale: props.scale,
     filename: sanitizeFilename(props.scaleName),
     baseMidiNote: props.baseMidiNote,
+    baseFrequency: props.baseFrequency,
+    relativeIntervals: props.relativeIntervals,
     midiOctaveOffset: props.midiOctaveOffset,
     name: name.value,
     presetIndex: parseInt(presetIndex.value)

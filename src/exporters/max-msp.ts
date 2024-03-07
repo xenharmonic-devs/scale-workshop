@@ -4,12 +4,10 @@ import { BaseExporter, type ExporterParams } from '@/exporters/base'
 export default class MaxMSPExporter extends BaseExporter {
   static tuningMaxSize = 128
 
-  params: ExporterParams
   appTitle: string
 
   constructor(params: ExporterParams) {
-    super()
-    this.params = params
+    super(params)
     this.appTitle = params.appTitle || APP_TITLE
   }
 
@@ -28,7 +26,7 @@ export default class MaxMSPExporter extends BaseExporter {
       file +=
         i +
         ', ' +
-        this.params.scale.getFrequency(i - this.params.baseMidiNote).toFixed(7) +
+        this.params.scale.getFrequency(i).toFixed(7) +
         ';' +
         this.params.newline
     }

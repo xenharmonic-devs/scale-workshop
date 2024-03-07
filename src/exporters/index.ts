@@ -4,11 +4,9 @@ import { AnaMarkV1Exporter, AnaMarkV2Exporter } from '@/exporters/anamark'
 import KontaktExporter from '@/exporters/kontakt'
 import DeflemaskExporter from '@/exporters/deflemask'
 import { HarmorExporter, SytrusExporter } from '@/exporters/image-line'
-/*
-import MaxMSPExporter from '@/exporters/max-msp'
 import PureDataExporter from '@/exporters/pure-data'
 import SoniccoutureExporter from '@/exporters/soniccouture'
-*/
+import MaxMSPExporter from '@/exporters/max-msp'
 
 const EXPORTERS = {
   scalascl: ScalaSclExporter,
@@ -18,12 +16,10 @@ const EXPORTERS = {
   kontakt: KontaktExporter,
   harmor: HarmorExporter,
   sytrus: SytrusExporter,
-  deflemask: DeflemaskExporter
-  /*
-  maxmsp: MaxMSPExporter,
+  deflemask: DeflemaskExporter,
   puredata: PureDataExporter,
   soniccouture: SoniccoutureExporter,
-  */
+  maxmsp: MaxMSPExporter,
 }
 
 export type ExporterKey = keyof typeof EXPORTERS
