@@ -71,6 +71,25 @@ function doExport(exporter: ExporterKey) {
     <p><strong>Scala keyboard mapping (.kbm)</strong></p>
     <p>Maps an accompanying .scl file to start on a specific MIDI note and frequency</p>
   </a>
+  <a href="#" class="btn" @click="doExport('kontakt')">
+    <p><strong>Kontakt tuning script (.txt)</strong></p>
+    <p>
+      Tuning script for Native Instruments Kontakt. Some instrument libraries allow this custom
+      script
+    </p>
+  </a>
+  <a href="#" class="btn" @click="doExport('harmor')">
+    <p><strong>Harmor pitch map (.fnv)</strong></p>
+    <p>Envelope state file for the pitch envelope in Image-Line Harmor</p>
+  </a>
+  <a href="#" class="btn" @click="doExport('sytrus')">
+    <p><strong>Sytrus pitch map (.fnv)</strong></p>
+    <p>Envelope state file for the pitch envelope in Image-Line Sytrus</p>
+  </a>
+  <a href="#" class="btn" @click="doExport('deflemask')">
+    <p><strong>Deflemask reference (.txt)</strong></p>
+    <p>List of 'fine tune' values for Deflemask</p>
+  </a>
   <h3>Documentation</h3>
   <p>You can read about the new syntax <a href="https://github.com/xenharmonic-devs/sonic-weave?tab=readme-ov-file#sonic-weave" target="_blank">here</a>.</p>
   <p>Remember to check out the <a href="https://github.com/xenharmonic-devs/sonic-weave/tree/main/examples" target="_blank">examples</a> too.</p>

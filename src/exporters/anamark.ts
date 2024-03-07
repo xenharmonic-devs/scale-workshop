@@ -6,18 +6,16 @@ class AnaMarkExporter extends BaseExporter {
   static tuningMaxSize = 128
   static baseFrequency = mtof(0)
 
-  params: ExporterParams
   version: number
   appTitle: string
   date: Date
   sourceText: string
 
   constructor(params: ExporterParams, version: number) {
+    super(params)
     if (params.sourceText === undefined) {
       throw new Error('Missing text lines')
     }
-    super(params)
-    this.params = params
     this.version = version
     this.appTitle = params.appTitle || APP_TITLE
     this.date = params.date || new Date()

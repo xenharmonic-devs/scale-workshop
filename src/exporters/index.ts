@@ -1,10 +1,10 @@
 import type { ExporterParams } from '@/exporters/base'
 import { ScalaSclExporter, ScalaKbmExporter } from '@/exporters/scala'
 import { AnaMarkV1Exporter, AnaMarkV2Exporter } from '@/exporters/anamark'
-/*
+import KontaktExporter from '@/exporters/kontakt'
 import DeflemaskExporter from '@/exporters/deflemask'
 import { HarmorExporter, SytrusExporter } from '@/exporters/image-line'
-import KontaktExporter from '@/exporters/kontakt'
+/*
 import MaxMSPExporter from '@/exporters/max-msp'
 import PureDataExporter from '@/exporters/pure-data'
 import SoniccoutureExporter from '@/exporters/soniccouture'
@@ -15,14 +15,14 @@ const EXPORTERS = {
   scalakbm: ScalaKbmExporter,
   anamarkv1: AnaMarkV1Exporter,
   anamarkv2: AnaMarkV2Exporter,
-  /*
-  maxmsp: MaxMSPExporter,
-  puredata: PureDataExporter,
   kontakt: KontaktExporter,
-  soniccouture: SoniccoutureExporter,
   harmor: HarmorExporter,
   sytrus: SytrusExporter,
   deflemask: DeflemaskExporter
+  /*
+  maxmsp: MaxMSPExporter,
+  puredata: PureDataExporter,
+  soniccouture: SoniccoutureExporter,
   */
 }
 

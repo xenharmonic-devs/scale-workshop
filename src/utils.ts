@@ -94,17 +94,20 @@ export function debounce(func: (...args: any[]) => void, timeout = 300) {
   }
 }
 
+const MIDI_NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+
 /**
  * Convert an integer MIDI note number to a name such as A4.
  * @param noteNumber MIDI note number to convert.
  * @param octaveOffset Defaults to the English standard: 69 = A4. An offset of zero results in the French standard 69 = A5.
  * @returns String representation of the MIDI note number.
+ */
 export function midiNoteNumberToName(noteNumber: number, octaveOffset = -1) {
   const remainder = mmod(noteNumber, 12)
   const quotient = (noteNumber - remainder) / 12 + octaveOffset
   return MIDI_NOTE_NAMES[remainder] + quotient.toString()
 }
-*/
+
 
 export function sanitizeFilename(input: string) {
   input = input.trim()

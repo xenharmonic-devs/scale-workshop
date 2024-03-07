@@ -13,8 +13,9 @@ describe('Image-line exporters', () => {
 
     // Raw binary files are inconvenient so we're content with hashes.
     expect(createHash('sha256').update(content).digest('base64')).toBe(
-      'xptUh5uz/VHYwQ4xfalMQJJdI3Iqd/pSy+/kfnfKO1s='
+      'N8zUnnSynllC7frwlQzp5Tkvo/TgYBrPJkfZip1ljZs='
     )
+    // Note that the contents are floating-point sensitive to minor changes in frequency calculation
   })
 
   it('can handle all line types (Sytrus)', () => {
@@ -23,7 +24,7 @@ describe('Image-line exporters', () => {
     const content = exporter.getFileContents(4)
 
     expect(createHash('sha256').update(content).digest('base64')).toBe(
-      'cExG3YK8wwzPLW6TDq/T2E8FEUZewHk/JLF9hixvRqo='
+      'GR/TxsBZm7Bihd1wlSE5HiNrDTDUTPFUP3vK5geAYII='
     )
   })
 })
