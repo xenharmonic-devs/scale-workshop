@@ -1,6 +1,8 @@
 import type { Scale } from "@/scale"
 import type { Interval } from "sonic-weave"
 
+export type LineFormat = 'label' | 'cents' | 'frequency' | 'decimal' | 'degree'
+
 export type ExporterParams = {
   newline: string
   filename: string
@@ -9,13 +11,14 @@ export type ExporterParams = {
   baseMidiNote: number
   midiOctaveOffset: number
   scale: Scale
+  labels: string[]
   name?: string
   scaleUrl?: string
   description?: string
   sourceText?: string // May contain invalid lines
   appTitle?: string
   date?: Date
-  format?: 'name' | 'cents' | 'frequency' | 'decimal' | 'degree'
+  format?: LineFormat
   basePeriod?: number
   baseDegree?: number
   centsRoot?: number

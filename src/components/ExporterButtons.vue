@@ -13,6 +13,9 @@ const KorgExportModal = defineAsyncComponent(
 const MtsSysexExportModal = defineAsyncComponent(
   () => import('@/components/modals/export/MtsSysexExport.vue')
 )
+const ReaperExportModal = defineAsyncComponent(
+  () => import('@/components/modals/export/ReaperExport.vue')
+)
 
 const state = useStateStore()
 const scale = useScaleStore()
@@ -20,6 +23,7 @@ const scale = useScaleStore()
 const exportTextClipboard = ref("[URL sharing disabled]")
 const showKorgExportModal = ref(false)
 const showMtsSysexExportModal = ref(false)
+const showReaperExportModal = ref(false)
 
 function copyToClipboard() {
   exportTextClipboard.value = 'No!'
@@ -45,6 +49,7 @@ function doExport(exporter: ExporterKey) {
     baseFrequency: scale.baseFrequency,
     baseMidiNote: scale.baseMidiNote,
     scale: scale.scale,
+    labels: scale.labels,
     midiOctaveOffset: -1,
     description: scale.name,
     sourceText: scale.sourceText,
@@ -68,6 +73,7 @@ function doExport(exporter: ExporterKey) {
       :relativeIntervals="scale.relativeIntervals"
       :midiOctaveOffset="-1"
       :scale="scale.scale"
+      :labels="scale.labels"
     />
 
     <MtsSysexExportModal
@@ -81,6 +87,21 @@ function doExport(exporter: ExporterKey) {
       :relativeIntervals="scale.relativeIntervals"
       :midiOctaveOffset="-1"
       :scale="scale.scale"
+      :labels="scale.labels"
+    />
+
+    <ReaperExportModal
+      v-if="showReaperExportModal"
+      @confirm="showReaperExportModal = false"
+      @cancel="showReaperExportModal = false"
+      :newline="state.newline"
+      :scaleName="scale.name"
+      :baseMidiNote="scale.baseMidiNote"
+      :baseFrequency="scale.baseFrequency"
+      :relativeIntervals="scale.relativeIntervals"
+      :midiOctaveOffset="-1"
+      :scale="scale.scale"
+      :labels="scale.labels"
     />
   </Teleport>
   <h2>Export current settings</h2>
@@ -141,6 +162,10 @@ function doExport(exporter: ExporterKey) {
   <a href="#" class="btn" @click="doExport('deflemask')">
     <p><strong>Deflemask reference (.txt)</strong></p>
     <p>List of 'fine tune' values for Deflemask</p>
+  </a>
+  <a href="#" class="btn" @click="showReaperExportModal = true">
+    <p><strong>Reaper note name map (.txt)</strong></p>
+    <p>Displays custom note names on Reaper's piano roll</p>
   </a>
   <a href="#" class="btn" @click="showMtsSysexExportModal = true">
     <p><strong>MTS Sysex Bulk Tuning Dump (.syx)</strong></p>

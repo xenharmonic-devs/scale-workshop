@@ -6,7 +6,7 @@ import { Fraction } from 'xen-dev-utils'
 export function getTestData(appTitle: string) {
   // TODO: Cover absolute intervals (in line data; these are all relative)
   const relativeIntervals = [
-    new Interval(TimeMonzo.fromCents(100, 3), 'logarithmic', {type: 'CentsLiteral', whole: 100n, fractional: ''}),
+    new Interval(TimeMonzo.fromEqualTemperament('100/1200', 2, 3), 'logarithmic', {type: 'CentsLiteral', whole: 100n, fractional: ''}),
     new Interval(
       TimeMonzo.fromEqualTemperament(new Fraction(4, 5), new Fraction(2), 3),
       'logarithmic',
@@ -32,6 +32,7 @@ export function getTestData(appTitle: string) {
     baseFrequency: 440,
     midiOctaveOffset: 0,
     sourceText: '100.\n4\\5\n5/3\n1,3591409142295225r\n3486784401/3276800000\n2/1',
+    labels: ['100.', '4\\5', '5/3', '1,3591409142295225r', '3486784401/3276800000', '2/1'],
     date: new Date('2022-02-22T20:22Z')
   }
   return params

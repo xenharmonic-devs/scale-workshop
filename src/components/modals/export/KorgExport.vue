@@ -14,6 +14,7 @@ const props = defineProps<{
   baseFrequency: number
   midiOctaveOffset: number
   relativeIntervals: Interval[]
+  labels: string[]
   scale: Scale
 }>()
 
@@ -48,6 +49,7 @@ async function doExport() {
     newline: props.newline,
     scale: props.scale,
     relativeIntervals: props.relativeIntervals,
+    labels: props.labels,
     baseFrequency: props.baseFrequency,
     filename: sanitizeFilename(props.scaleName),
     baseMidiNote: props.baseMidiNote,

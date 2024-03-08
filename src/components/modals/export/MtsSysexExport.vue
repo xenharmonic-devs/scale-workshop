@@ -16,6 +16,7 @@ const props = defineProps<{
   midiOctaveOffset: number
   relativeIntervals: Interval[]
   scale: Scale
+  labels: string[]
 }>()
 
 const emit = defineEmits(['confirm', 'cancel'])
@@ -61,6 +62,7 @@ function doExport() {
     baseFrequency: props.baseFrequency,
     relativeIntervals: props.relativeIntervals,
     midiOctaveOffset: props.midiOctaveOffset,
+    labels: props.labels,
     name: name.value,
     presetIndex: parseInt(presetIndex.value)
   }
