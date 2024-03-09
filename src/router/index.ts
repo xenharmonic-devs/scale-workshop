@@ -47,6 +47,11 @@ const router = createRouter({
       name: 'lattice',
       component: () => import('../views/LatticeView.vue')
     },
+    {
+      path: '/trainer',
+      name: 'ear-trainer',
+      component: () => import('../views/EarTrainerView.vue')
+    },
     /*
     {
       path: '/midi',

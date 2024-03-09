@@ -463,6 +463,7 @@ function panic() {
       <li v-if="state.showVirtualQwerty">
         <RouterLink to="/qwerty">Virtual QWERTY</RouterLink>
       </li>
+      <li><RouterLink to="/trainer">Ear Trainer</RouterLink></li>
       <li><RouterLink to="/synth">Synth</RouterLink></li>
       <!--<li><RouterLink to="/midi">MIDI I/O</RouterLink></li>-->
       <li><RouterLink to="/prefs">Preferences</RouterLink></li>
