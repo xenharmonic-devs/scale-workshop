@@ -1,9 +1,6 @@
-import { computed, reactive, ref, watch } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
-import { DEFAULT_NUMBER_OF_COMPONENTS, UNIX_NEWLINE } from '@/constants'
-import { computeWhiteIndices } from '@/midi'
-import { mapWhiteAsdfBlackQwerty, mapWhiteQweZxcBlack123Asd } from '@/keyboard-mapping'
-import { arraysEqual } from 'xen-dev-utils'
+import { UNIX_NEWLINE } from '@/constants'
 
 export const useStateStore = defineStore('state', () => {
   const isomorphicVertical = ref(5)
@@ -34,23 +31,6 @@ export const useStateStore = defineStore('state', () => {
   const equaveDownCode = ref(storage.getItem('equaveDownCode') ?? 'NumpadDivide')
   const degreeUpCode = ref(storage.getItem('degreeUpCode') ?? 'NumpadAdd')
   const degreeDownCode = ref(storage.getItem('degreeDownCode') ?? 'NumpadSubtract')
-
-  /*
-  // For midi mapping
-  const whiteIndices = computed(() => computeWhiteIndices(baseMidiNote.value, keyColors.value))
-
-  const keyboardMapping = computed<Map<string, number>>(() => {
-    const size = scale.size
-    const baseIndex = baseMidiNote.value + equaveShift.value * size + degreeShift.value
-    if (pianoMode.value === 'Asdf') {
-      return mapWhiteAsdfBlackQwerty(keyColors.value, baseMidiNote.value, baseIndex)
-    } else if (pianoMode.value === 'QweZxc0') {
-      return mapWhiteQweZxcBlack123Asd(keyColors.value, size, baseMidiNote.value, baseIndex, 0)
-    } else {
-      return mapWhiteQweZxcBlack123Asd(keyColors.value, size, baseMidiNote.value, baseIndex, 1)
-    }
-  })
-  */
 
   // Local storage watchers
   watch(newline, (newValue) => window.localStorage.setItem('newline', newValue))
@@ -100,8 +80,5 @@ export const useStateStore = defineStore('state', () => {
     equaveDownCode,
     degreeUpCode,
     degreeDownCode,
-    // Computed state
-    // whiteIndices,
-    // keyboardMapping,
   }
 })
