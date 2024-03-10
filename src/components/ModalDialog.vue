@@ -13,7 +13,7 @@ const props = defineProps({
   right: {
     default: false,
     type: Boolean
-  },
+  }
 })
 
 const emit = defineEmits(['confirm', 'cancel'])
@@ -77,7 +77,7 @@ watch(
 
 <template>
   <Transition name="modal">
-    <div v-if="show" :class="{'modal-mask': true, right}" @mousedown.self="$emit('cancel')">
+    <div v-if="show" :class="{ 'modal-mask': true, right }" @mousedown.self="$emit('cancel')">
       <div class="modal-wrapper">
         <div class="modal-container" :style="extraStyle">
           <div class="modal-header">

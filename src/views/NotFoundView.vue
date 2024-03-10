@@ -6,7 +6,7 @@
 import OctaplexPortal from '@/components/modals/generation/SummonOctaplex.vue'
 import { useRouter } from 'vue-router'
 import { useScaleStore } from '@/stores/scale'
-import { ref } from 'vue';
+import { ref } from 'vue'
 
 const ritualInProgress = ref(false)
 
@@ -17,7 +17,7 @@ function openTheGates(source: string) {
   scale.sourceText = source
   scale.computeScale()
   ritualInProgress.value = false
-  router.push({ path: '/'})
+  router.push({ path: '/' })
 }
 </script>
 

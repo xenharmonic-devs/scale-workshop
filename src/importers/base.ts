@@ -29,7 +29,9 @@ export abstract class TextImporter {
     const reader = new FileReader()
 
     return new Promise<ImportResult>((resolve, reject) => {
-      reader.addEventListener('load', () => resolve(this.parseText(reader.result as string, files[0].name)))
+      reader.addEventListener('load', () =>
+        resolve(this.parseText(reader.result as string, files[0].name))
+      )
       reader.addEventListener('error', reject)
       reader.readAsText(files[0])
     })

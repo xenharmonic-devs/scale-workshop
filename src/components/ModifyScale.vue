@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { defineAsyncComponent, ref } from 'vue';
-import { useScaleStore } from '@/stores/scale';
-import { useModalStore } from '@/stores/modal';
-import { useApproximateByRatiosStore } from '@/stores/approximate-by-ratios';
-import DropdownGroup from '@/components/DropdownGroup.vue';
+import { defineAsyncComponent, ref } from 'vue'
+import { useScaleStore } from '@/stores/scale'
+import { useModalStore } from '@/stores/modal'
+import { useApproximateByRatiosStore } from '@/stores/approximate-by-ratios'
+import DropdownGroup from '@/components/DropdownGroup.vue'
 
 const emit = defineEmits(['done', 'mouseenter'])
 
@@ -103,9 +103,9 @@ function closeModals() {
 }
 
 function expandAndQuit() {
-  const {visitor, defaults} = scale.getVisitors()
-  scale.sourceText = visitor.expand(defaults);
-  scale.computeScale();
+  const { visitor, defaults } = scale.getVisitors()
+  scale.sourceText = visitor.expand(defaults)
+  scale.computeScale()
   emit('done')
 }
 
@@ -141,12 +141,12 @@ function clickApproximateByRatios() {
 
 function blur() {
   if (!element.value) {
-    return;
+    return
   }
   element.value.blur()
 }
 
-defineExpose({blur})
+defineExpose({ blur })
 </script>
 <template>
   <DropdownGroup ref="element" title="Modify scale" @mouseenter="$emit('mouseenter')">
@@ -162,8 +162,12 @@ defineExpose({blur})
       <a href="#" @click="showEnumerateModal = true"><li>Enumerate</li></a>
       <a href="#" @click="showCoalesceModal = true"><li>Coalesce duplicates</li></a>
       <a href="#" @click="clickApproximateByRatios"><li>Approximate by ratios</li></a>
-      <a href="#" @click="showApproximateByHarmonicsModal = true"><li>Approximate by harmonics</li></a>
-      <a href="#" @click="showApproximateBySubharmonicsModal = true"><li>Approximate by subharmonics</li></a>
+      <a href="#" @click="showApproximateByHarmonicsModal = true"
+        ><li>Approximate by harmonics</li></a
+      >
+      <a href="#" @click="showApproximateBySubharmonicsModal = true"
+        ><li>Approximate by subharmonics</li></a
+      >
       <a href="#" @click="showEqualizeModal = true"><li>Equalize</li></a>
       <a href="#" @click="showTemperModal = true"><li>Temper</li></a>
       <a href="#" @click="showMergeOffsetsModal = true"><li>Merge offsets</li></a>
@@ -192,11 +196,7 @@ defineExpose({blur})
       @done="closeModals"
       @cancel="showCoalesceModal = false"
     />
-    <ConvertModal
-      v-if="showConvertModal"
-      @done="closeModals"
-      @cancel="showConvertModal = false"
-    />
+    <ConvertModal v-if="showConvertModal" @done="closeModals" @cancel="showConvertModal = false" />
     <EnumerateModal
       v-if="showEnumerateModal"
       @done="closeModals"
@@ -207,40 +207,16 @@ defineExpose({blur})
       @done="closeModals"
       @cancel="showEqualizeModal = false"
     />
-    <ExpandModal
-      v-if="showExpandModal"
-      @done="closeModals"
-      @cancel="showExpandModal = false"
-    />
+    <ExpandModal v-if="showExpandModal" @done="closeModals" @cancel="showExpandModal = false" />
     <MergeOffsetsModal
       v-if="showMergeOffsetsModal"
       @done="closeModals"
       @cancel="showMergeOffsetsModal = false"
     />
-    <RandomModal
-      v-if="showRandomModal"
-      @done="closeModals"
-      @cancel="showRandomModal = false"
-    />
-    <RotateModal
-      v-if="showRotateModal"
-      @done="closeModals"
-      @cancel="showRotateModal = false"
-    />
-    <StretchModal
-      v-if="showStretchModal"
-      @done="closeModals"
-      @cancel="showStretchModal = false"
-    />
-    <SubsetModal
-      v-if="showSubsetModal"
-      @done="closeModals"
-      @cancel="showSubsetModal = false"
-    />
-    <TemperModal
-      v-if="showTemperModal"
-      @done="closeModals"
-      @cancel="showTemperModal = false"
-    />
+    <RandomModal v-if="showRandomModal" @done="closeModals" @cancel="showRandomModal = false" />
+    <RotateModal v-if="showRotateModal" @done="closeModals" @cancel="showRotateModal = false" />
+    <StretchModal v-if="showStretchModal" @done="closeModals" @cancel="showStretchModal = false" />
+    <SubsetModal v-if="showSubsetModal" @done="closeModals" @cancel="showSubsetModal = false" />
+    <TemperModal v-if="showTemperModal" @done="closeModals" @cancel="showTemperModal = false" />
   </Teleport>
 </template>

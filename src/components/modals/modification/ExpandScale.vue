@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Modal from '@/components/ModalDialog.vue'
-import { useScaleStore } from '@/stores/scale';
-import { ref } from 'vue';
+import { useScaleStore } from '@/stores/scale'
+import { ref } from 'vue'
 
 const emit = defineEmits(['done', 'cancel'])
 
@@ -18,9 +18,9 @@ function modify() {
   if (bleach.value) {
     scale.sourceText += ';bleach'
   }
-  const {visitor, defaults} = scale.getVisitors()
+  const { visitor, defaults } = scale.getVisitors()
   scale.sourceText = visitor.expand(defaults)
-  scale.computeScale();
+  scale.computeScale()
   emit('done')
 }
 </script>

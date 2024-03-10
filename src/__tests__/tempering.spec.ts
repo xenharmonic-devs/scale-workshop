@@ -46,9 +46,9 @@ describe('Tempered scale generation', () => {
     expect(arraysEqual(sizes, [6, 9, 12, 15, 27])).toBeTruthy()
 
     const { generator, period, numPeriods } = makeRank2FromVals(vals, sizes[2], limit, options)
-    expect(period).toBeCloseTo(400);
-    expect(generator + period).toBeCloseTo(valueToCents(3 / 2));
-    expect(numPeriods).toBe(3);
+    expect(period).toBeCloseTo(400)
+    expect(generator + period).toBeCloseTo(valueToCents(3 / 2))
+    expect(numPeriods).toBe(3)
   })
 
   it('generates POTE meantone from a comma', () => {

@@ -32,8 +32,11 @@ export class ScalaSclExporter extends BaseExporter {
       const monzo = intervals[i].value.abs()
       file += ' '
       if (monzo.isFractional()) {
-        const {numerator, denominator} = monzo.toBigNumeratorDenominator()
-        if (numerator <= ScalaSclExporter.maxInteger && denominator <= ScalaSclExporter.maxInteger) {
+        const { numerator, denominator } = monzo.toBigNumeratorDenominator()
+        if (
+          numerator <= ScalaSclExporter.maxInteger &&
+          denominator <= ScalaSclExporter.maxInteger
+        ) {
           file += `${numerator}/${denominator}`
         } else {
           file += monzo.toCents().toFixed(6)

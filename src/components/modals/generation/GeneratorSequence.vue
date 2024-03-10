@@ -3,8 +3,8 @@ import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { arrayToString, debounce, expandCode } from '@/utils'
 import { useModalStore } from '@/stores/modal'
-import { OCTAVE } from '@/constants';
-import { ref, watch } from 'vue';
+import { OCTAVE } from '@/constants'
+import { ref, watch } from 'vue'
 
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
@@ -17,38 +17,46 @@ watch(
 )
 
 const presets = {
-  zarlino: {name: 'Zarlino', generators: '5/4, 6/5', size: 7},
-  diasem: {name: 'Tas/Diasem', generators: '7/6, 8/7', size: 9},
-  zil: {name: 'Zil', generators: '8/7, 7/6, 8/7, 7/6, 8/7, 7/6, 8/7, 189/160, 8/7, 7/6', size: 14},
-  porcusmine: {name: 'Porcusmine', generators: '9/5, 50/27', size: 8},
-  mavila: {name: 'Mavila detemper', generators: '3/2, 3/2, 64/45', size: 9},
-  rhombi: {name: 'Rhombi', generators: '14/9, 11/7, 52/33, 81/52', size: 14},
-  dwyn: {name: 'Dwyn', generators: '25/24, 21/20, 22/21, 23/22, 24/23, 21/20, 22/21, 23/22, 24/23', size: 16},
-  magic: {name: 'Magic detemper', generators: '16/13, 20/16, 25/20, 31/25, 39/31', size: 10},
-  porcupine: {name: 'Porcupine detemper', generators: '10/9, 11/10, 12/11', size: 7},
-  bleu: {name: 'Bleu detemper', generators: '24/22, 26/24, 28/26, 31/28, 33/31', size: 9},
-  machine: {name: 'Machine detemper', generators: '8/7, 9/8, 112/99, 9/8', size: 11},
-  slendric: {name: 'Slendric detemper', generators: '8/7, 147/128, 8/7', size: 6},
-};
+  zarlino: { name: 'Zarlino', generators: '5/4, 6/5', size: 7 },
+  diasem: { name: 'Tas/Diasem', generators: '7/6, 8/7', size: 9 },
+  zil: {
+    name: 'Zil',
+    generators: '8/7, 7/6, 8/7, 7/6, 8/7, 7/6, 8/7, 189/160, 8/7, 7/6',
+    size: 14
+  },
+  porcusmine: { name: 'Porcusmine', generators: '9/5, 50/27', size: 8 },
+  mavila: { name: 'Mavila detemper', generators: '3/2, 3/2, 64/45', size: 9 },
+  rhombi: { name: 'Rhombi', generators: '14/9, 11/7, 52/33, 81/52', size: 14 },
+  dwyn: {
+    name: 'Dwyn',
+    generators: '25/24, 21/20, 22/21, 23/22, 24/23, 21/20, 22/21, 23/22, 24/23',
+    size: 16
+  },
+  magic: { name: 'Magic detemper', generators: '16/13, 20/16, 25/20, 31/25, 39/31', size: 10 },
+  porcupine: { name: 'Porcupine detemper', generators: '10/9, 11/10, 12/11', size: 7 },
+  bleu: { name: 'Bleu detemper', generators: '24/22, 26/24, 28/26, 31/28, 33/31', size: 9 },
+  machine: { name: 'Machine detemper', generators: '8/7, 9/8, 112/99, 9/8', size: 11 },
+  slendric: { name: 'Slendric detemper', generators: '8/7, 147/128, 8/7', size: 6 }
+}
 
-const selectedPreset = ref<keyof typeof presets | ''>('');
+const selectedPreset = ref<keyof typeof presets | ''>('')
 
 const updateCS = debounce(() => modal.computeConstantStructureSizes(20))
 
 const moreCS = debounce(() => modal.computeConstantStructureSizes(modal.maxSizeComputed + 15))
 
-watch(selectedPreset, newValue => {
+watch(selectedPreset, (newValue) => {
   if (!newValue) {
-    return;
+    return
   }
-  const preset = presets[newValue];
-  modal.generatorsString = preset.generators;
-  modal.size = preset.size;
-  modal.periodString = '2/1';
-  modal.period = OCTAVE;
-  modal.numPeriods = 1;
-  updateCS();
-});
+  const preset = presets[newValue]
+  modal.generatorsString = preset.generators
+  modal.size = preset.size
+  modal.periodString = '2/1'
+  modal.period = OCTAVE
+  modal.numPeriods = 1
+  updateCS()
+})
 
 function generate(kind: 'expanded' | 'raw' | 'lattice' = 'expanded') {
   let name = `Generator sequence ${modal.generatorsString}`
@@ -57,20 +65,23 @@ function generate(kind: 'expanded' | 'raw' | 'lattice' = 'expanded') {
   }
   let source = ''
   if (kind === 'lattice') {
-    source = modal.generators.map(g => g.toString()).join(';')
+    source = modal.generators.map((g) => g.toString()).join(';')
     source += '\n'
-    const s = Math.round(modal.size / modal.numPeriods) - 1;
-    const repeats = Math.floor(s / modal.generators.length);
+    const s = Math.round(modal.size / modal.numPeriods) - 1
+    const repeats = Math.floor(s / modal.generators.length)
     if (repeats) {
       source += `flatRepeat(${repeats})\n`
     }
-    const remaining = s - repeats * modal.generators.length;
+    const remaining = s - repeats * modal.generators.length
     if (remaining) {
-      source += modal.generators.slice(0, remaining).map(g => g.toString()).join(';');
+      source += modal.generators
+        .slice(0, remaining)
+        .map((g) => g.toString())
+        .join(';')
       source += '\n'
     }
     source += 'stack()\n'
-    source += modal.period.toString();
+    source += modal.period.toString()
     source += '\n'
     source += 'reduce()\n'
     if (modal.numPeriods !== 1) {
@@ -116,7 +127,14 @@ function generate(kind: 'expanded' | 'raw' | 'lattice' = 'expanded') {
         </div>
         <div class="control">
           <label for="size">Scale size</label>
-          <input id="size" type="number" :min="modal.numPeriods" max="999" :step="modal.numPeriods" v-model="modal.size">
+          <input
+            id="size"
+            type="number"
+            :min="modal.numPeriods"
+            max="999"
+            :step="modal.numPeriods"
+            v-model="modal.size"
+          />
         </div>
         <label>Sizes of constant structure</label>
         <div class="btn-group">
@@ -127,14 +145,18 @@ function generate(kind: 'expanded' | 'raw' | 'lattice' = 'expanded') {
           >
             {{ size }}
           </button>
-          <button v-if="modal.generators.length" @click="moreCS">More ({{ modal.maxSizeComputed * modal.numPeriods }}+)</button>
+          <button v-if="modal.generators.length" @click="moreCS">
+            More ({{ modal.maxSizeComputed * modal.numPeriods }}+)
+          </button>
           <button v-else disabled>(No generators)</button>
         </div>
         <div class="control">
           <label for="preset">Presets</label>
           <select v-model="selectedPreset">
             <option value="">--Select preset--</option>
-            <option v-for="(preset, key) of presets" :key="key" :value="key">{{ preset.name }}</option>
+            <option v-for="(preset, key) of presets" :key="key" :value="key">
+              {{ preset.name }}
+            </option>
           </select>
         </div>
         <div class="control">
@@ -149,9 +171,16 @@ function generate(kind: 'expanded' | 'raw' | 'lattice' = 'expanded') {
           />
         </div>
         <div class="control">
-            <label for="num-periods">Number of periods</label>
-            <input id="num-periods" type="number" min="1" max="99" v-model="modal.numPeriods" @input="updateCS" />
-          </div>
+          <label for="num-periods">Number of periods</label>
+          <input
+            id="num-periods"
+            type="number"
+            min="1"
+            max="99"
+            v-model="modal.numPeriods"
+            @input="updateCS"
+          />
+        </div>
       </div>
     </template>
     <template #footer>

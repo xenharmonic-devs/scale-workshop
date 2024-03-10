@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Scale } from '@/scale';
+import type { Scale } from '@/scale'
 import { computed } from 'vue'
 import { mmod, valueToCents } from 'xen-dev-utils'
 

@@ -49,8 +49,14 @@ watch(
   (newValue) => setAndReportValidity(subgroupInput.value, newValue)
 )
 
-watch(() => rank2.commasError, (newValue) => setAndReportValidity(commasInput.value, newValue))
-watch(() => rank2.valsError, (newValue) => setAndReportValidity(valsInput.value, newValue))
+watch(
+  () => rank2.commasError,
+  (newValue) => setAndReportValidity(commasInput.value, newValue)
+)
+watch(
+  () => rank2.valsError,
+  (newValue) => setAndReportValidity(valsInput.value, newValue)
+)
 
 watch(
   () => rank2.mosPatternsError,
@@ -163,7 +169,11 @@ function generate(expand = true) {
 </script>
 
 <template>
-  <Modal extraStyle="min-width: 30rem;max-width: 31rem" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal
+    extraStyle="min-width: 30rem;max-width: 31rem"
+    @confirm="generate"
+    @cancel="$emit('cancel')"
+  >
     <template #header>
       <h2>Generate rank 2 temperament</h2>
     </template>
@@ -435,11 +445,17 @@ function generate(expand = true) {
     </template>
     <template #footer>
       <div class="btn-group">
-        <button @click="generate(true)" :disabled="rank2.method === 'vals' || rank2.method === 'commas'">
+        <button
+          @click="generate(true)"
+          :disabled="rank2.method === 'vals' || rank2.method === 'commas'"
+        >
           OK
         </button>
         <button @click="$emit('cancel')">Cancel</button>
-        <button @click="generate(false)" :disabled="rank2.method === 'vals' || rank2.method === 'commas'">
+        <button
+          @click="generate(false)"
+          :disabled="rank2.method === 'vals' || rank2.method === 'commas'"
+        >
           Raw
         </button>
         <span class="error" v-show="rank2.error.length">⚠</span>

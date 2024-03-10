@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from 'vue'
 
 defineProps<{
   title: string
@@ -8,7 +8,7 @@ defineEmits(['mouseenter'])
 const element = ref<HTMLLIElement | null>(null)
 function blur() {
   if (!element.value) {
-    return;
+    return
   }
   element.value.blur()
 
@@ -19,7 +19,7 @@ function blur() {
     }
   }
 }
-defineExpose({blur})
+defineExpose({ blur })
 </script>
 <template>
   <li ref="element" class="btn-dropdown-group" @mouseenter="$emit('mouseenter')">

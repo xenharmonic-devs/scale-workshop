@@ -106,7 +106,7 @@ function modifyAndAdvance() {
     alert('No approximation satisfying criteria found!')
   } else {
     const fraction = approximationsWithErrorsAndLimits.value[approx.approximationIndex].fraction
-    const i = approx.degree - 1;
+    const i = approx.degree - 1
     scale.sourceText += `\n$[${i}] = ${fraction.toFraction()} colorOf($[${i}]) labelOf($[${i}])`
   }
   approx.degree = Math.min(scale.scale.size, approx.degree + 1)
@@ -115,10 +115,10 @@ function modifyAndAdvance() {
 
 function modify(expand = true) {
   if (expand) {
-    const {visitor, defaults} = scale.getVisitors()
+    const { visitor, defaults } = scale.getVisitors()
     scale.sourceText = visitor.expand(defaults)
   }
-  scale.computeScale();
+  scale.computeScale()
   emit('done')
 }
 </script>
@@ -133,7 +133,13 @@ function modify(expand = true) {
         <p>Select scale degrees and apply rational replacements one by one.</p>
         <div class="control">
           <label for="degree">Scale Degree</label>
-          <input type="number" id="degree" min="1" :max="scale.scale.size" v-model="approx.degree" />
+          <input
+            type="number"
+            id="degree"
+            min="1"
+            :max="scale.scale.size"
+            v-model="approx.degree"
+          />
         </div>
         <div class="control">
           <label for="interval">Interval</label>
@@ -152,8 +158,7 @@ function modify(expand = true) {
               :key="i"
               :value="i"
             >
-              {{ approximation.fraction.toFraction() }} |
-              {{ approximation.error.toFixed(5) }} |
+              {{ approximation.fraction.toFraction() }} | {{ approximation.error.toFixed(5) }} |
               {{ approximation.limit }}
             </option>
           </select>

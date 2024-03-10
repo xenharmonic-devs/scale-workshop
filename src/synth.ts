@@ -1,8 +1,8 @@
 // Classic variants are from Scale Workshop 2, they're softer on SW3.
 
-import { AperiodicWave } from "sw-synth"
-import { centsToValue, valueToCents } from "xen-dev-utils"
-import { ceilPow2 } from "./utils"
+import { AperiodicWave } from 'sw-synth'
+import { centsToValue, valueToCents } from 'xen-dev-utils'
+import { ceilPow2 } from './utils'
 
 export const BASIC_WAVEFORMS = ['sine', 'square', 'sawtooth', 'triangle']
 export const CUSTOM_WAVEFORMS = [
@@ -26,12 +26,21 @@ export const CUSTOM_WAVEFORMS = [
   'didacus-classic',
   'bohlen-classic',
   'glass-classic',
-  'boethius-classic',
+  'boethius-classic'
 ]
 export const WAVEFORMS = BASIC_WAVEFORMS.concat(CUSTOM_WAVEFORMS)
 export const PERIODIC_WAVES: Record<string, PeriodicWave> = {}
 
-export const APERIODIC_WAVEFORMS = ['tin', 'bronze', 'steel', 'silver', 'platinum', 'pelog', 'slendro', '12-TET']
+export const APERIODIC_WAVEFORMS = [
+  'tin',
+  'bronze',
+  'steel',
+  'silver',
+  'platinum',
+  'pelog',
+  'slendro',
+  '12-TET'
+]
 export const APERIODIC_WAVES: Record<string, AperiodicWave> = {}
 
 export function initializePeriodic(audioContext: BaseAudioContext) {
@@ -81,7 +90,7 @@ export function initializePeriodic(audioContext: BaseAudioContext) {
   // N squared and cubed waveforms (harmonic entries in the metallic series)
   const goldComponents = new Float32Array(101)
   for (let n = 1; n <= 10; ++n) {
-    goldComponents[n*n] = n ** -0.75
+    goldComponents[n * n] = n ** -0.75
   }
   PERIODIC_WAVES.gold = audioContext.createPeriodicWave(zeros, goldComponents)
 
@@ -172,50 +181,56 @@ export function initializePeriodic(audioContext: BaseAudioContext) {
 }
 
 function initializeAperiodic(audioContext: BaseAudioContext) {
-  const ns = [...Array(129).keys()];
-  ns.shift();
-  const tinSpectrum = ns.map(n => n ** (8/9));
-  const bronzeSpectrum = ns.map(n => n ** (4/3));
-  const steelSpectrum = ns.map(n => n ** 1.5);
-  const silverSpectrum = ns.map(n => n ** (5/3));
-  const platinumSpectrum = ns.slice(0, 32).map(n => n ** 2.5);
-  const amplitudes = ns.map(n => 0.3 * n ** -1.5);
-  const maxNumberOfVoices = 7;
-  const tolerance = 0.1; // In cents
-  APERIODIC_WAVES['tin'] = new AperiodicWave(audioContext, tinSpectrum, amplitudes, maxNumberOfVoices, tolerance);
-  APERIODIC_WAVES['steel'] = new AperiodicWave(audioContext, steelSpectrum, amplitudes, maxNumberOfVoices, tolerance);
-  APERIODIC_WAVES['bronze'] = new AperiodicWave(audioContext, bronzeSpectrum, amplitudes, maxNumberOfVoices, tolerance);
-  APERIODIC_WAVES['silver'] = new AperiodicWave(audioContext, silverSpectrum, amplitudes, maxNumberOfVoices, tolerance);
-  APERIODIC_WAVES['platinum'] = new AperiodicWave(audioContext, platinumSpectrum, amplitudes.slice(0, 32), maxNumberOfVoices, tolerance);
+  const ns = [...Array(129).keys()]
+  ns.shift()
+  const tinSpectrum = ns.map((n) => n ** (8 / 9))
+  const bronzeSpectrum = ns.map((n) => n ** (4 / 3))
+  const steelSpectrum = ns.map((n) => n ** 1.5)
+  const silverSpectrum = ns.map((n) => n ** (5 / 3))
+  const platinumSpectrum = ns.slice(0, 32).map((n) => n ** 2.5)
+  const amplitudes = ns.map((n) => 0.3 * n ** -1.5)
+  const maxNumberOfVoices = 7
+  const tolerance = 0.1 // In cents
+  APERIODIC_WAVES['tin'] = new AperiodicWave(
+    audioContext,
+    tinSpectrum,
+    amplitudes,
+    maxNumberOfVoices,
+    tolerance
+  )
+  APERIODIC_WAVES['steel'] = new AperiodicWave(
+    audioContext,
+    steelSpectrum,
+    amplitudes,
+    maxNumberOfVoices,
+    tolerance
+  )
+  APERIODIC_WAVES['bronze'] = new AperiodicWave(
+    audioContext,
+    bronzeSpectrum,
+    amplitudes,
+    maxNumberOfVoices,
+    tolerance
+  )
+  APERIODIC_WAVES['silver'] = new AperiodicWave(
+    audioContext,
+    silverSpectrum,
+    amplitudes,
+    maxNumberOfVoices,
+    tolerance
+  )
+  APERIODIC_WAVES['platinum'] = new AperiodicWave(
+    audioContext,
+    platinumSpectrum,
+    amplitudes.slice(0, 32),
+    maxNumberOfVoices,
+    tolerance
+  )
 
   const pelogSpectrum = [
-    0,
-    670,
-    1215,
-    1885,
-    2430,
-    2700,
-    3380,
-    4315,
-    4430,
-    4980,
-    5645,
-    5810,
-    6075,
-    6195,
-    6345,
-    6615,
-    6745,
-    6860,
-    7025,
-    7290,
-    7410,
-    7560,
-    7830,
-    7960,
-    8075,
-    8240
-  ].map(c => centsToValue(0.999 * c))
+    0, 670, 1215, 1885, 2430, 2700, 3380, 4315, 4430, 4980, 5645, 5810, 6075, 6195, 6345, 6615,
+    6745, 6860, 7025, 7290, 7410, 7560, 7830, 7960, 8075, 8240
+  ].map((c) => centsToValue(0.999 * c))
   const pelogAmplitudes = pelogSpectrum.map((_, i) => (i + 1) ** -1.2)
   pelogAmplitudes[1] = 0.1
   pelogAmplitudes[4] = 0.3
@@ -227,52 +242,42 @@ function initializeAperiodic(audioContext: BaseAudioContext) {
   pelogAmplitudes.push(0.09)
   pelogSpectrum.push(64)
   pelogAmplitudes.push(0.06)
-  APERIODIC_WAVES['pelog'] = new AperiodicWave(audioContext, pelogSpectrum, pelogAmplitudes.map(a => 0.33 * a), maxNumberOfVoices, tolerance)
+  APERIODIC_WAVES['pelog'] = new AperiodicWave(
+    audioContext,
+    pelogSpectrum,
+    pelogAmplitudes.map((a) => 0.33 * a),
+    maxNumberOfVoices,
+    tolerance
+  )
 
   const slendroSpectrum = [
-    0,
-    717,
-    1208,
-    1682,
-    1925,
-    2416,
-    2647,
-    3371,
-    3624,
-    4579,
-    4832,
-    5063,
-    5549,
-    5787,
-    6040,
-    6271,
-    6514,
-    6757,
-    6995,
-    7248,
-    7479,
-    7722,
-    7965,
-    8203
+    0, 717, 1208, 1682, 1925, 2416, 2647, 3371, 3624, 4579, 4832, 5063, 5549, 5787, 6040, 6271,
+    6514, 6757, 6995, 7248, 7479, 7722, 7965, 8203
   ].map(centsToValue)
   const slendroAmplitudes = slendroSpectrum.map((_, i) => (i + 1) ** -1.5)
   slendroAmplitudes[1] = 0.01
   for (let h = 2; h < 128; ++h) {
     for (let i = 0; i < slendroSpectrum.length; ++i) {
       if (Math.abs(Math.log(slendroSpectrum[i] / h)) < 0.01) {
-        slendroSpectrum[i] = Math.cbrt(h * slendroSpectrum[i]**2);
-        slendroAmplitudes[i] = 1.5 * (i + 1) ** -0.9;
-        break;
+        slendroSpectrum[i] = Math.cbrt(h * slendroSpectrum[i] ** 2)
+        slendroAmplitudes[i] = 1.5 * (i + 1) ** -0.9
+        break
       }
     }
   }
 
-  APERIODIC_WAVES['slendro'] = new AperiodicWave(audioContext, slendroSpectrum, slendroAmplitudes.map(a => 0.3 * a), maxNumberOfVoices, tolerance)
+  APERIODIC_WAVES['slendro'] = new AperiodicWave(
+    audioContext,
+    slendroSpectrum,
+    slendroAmplitudes.map((a) => 0.3 * a),
+    maxNumberOfVoices,
+    tolerance
+  )
 
   const twelveSpectrumCents = []
   const twelveAmplitudes = []
   for (let h = 1; h <= 128; ++h) {
-    const cents = valueToCents(h);
+    const cents = valueToCents(h)
     const closest = Math.round(cents / 100) * 100
     if (Math.abs(cents - closest) < 15) {
       twelveSpectrumCents.push((3 * closest + cents) / 4)
@@ -283,12 +288,18 @@ function initializeAperiodic(audioContext: BaseAudioContext) {
       }
     }
   }
-  APERIODIC_WAVES['12-TET'] = new AperiodicWave(audioContext, twelveSpectrumCents.map(centsToValue), twelveAmplitudes, maxNumberOfVoices, tolerance);
+  APERIODIC_WAVES['12-TET'] = new AperiodicWave(
+    audioContext,
+    twelveSpectrumCents.map(centsToValue),
+    twelveAmplitudes,
+    maxNumberOfVoices,
+    tolerance
+  )
 }
 
 export function initializeCustomWaves(audioContext: BaseAudioContext) {
-  initializePeriodic(audioContext);
-  initializeAperiodic(audioContext);
+  initializePeriodic(audioContext)
+  initializeAperiodic(audioContext)
 }
 
 // Simple feedback loop bouncing sound between left and right channels.

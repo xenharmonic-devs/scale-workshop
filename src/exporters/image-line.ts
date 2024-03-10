@@ -28,8 +28,7 @@ class ImageLineExporter extends BaseExporter {
     const pointsUint32 = new Uint32Array(points)
     for (let i = 0; i < ImageLineExporter.numberOfNotes; i++) {
       const edo12cents = (i - 69) * 100
-      const offset =
-        frequencyToCentOffset(scale.getFrequency(i)) - edo12cents
+      const offset = frequencyToCentOffset(scale.getFrequency(i)) - edo12cents
       const normalizedOffset = ((offset / 1200 + baseFreqOffset) / range) * 0.5 + 0.5
       const yCoord = clamp(0, 1, normalizedOffset)
       pointsDoubles[i * 3 + 1] = yCoord

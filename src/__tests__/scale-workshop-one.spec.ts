@@ -57,7 +57,7 @@ describe('Scale Workshop 1 compatibility layer', () => {
 
     expect(intervals[2].value.toFraction().equals(new Fraction(3, 2))).toBeTruthy()
 
-    const {fractionOfEquave, equave} = intervals[3].value.toEqualTemperament()
+    const { fractionOfEquave, equave } = intervals[3].value.toEqualTemperament()
     expect(fractionOfEquave.equals(new Fraction(4, 5))).toBeTruthy()
     expect(equave.equals(new Fraction(2, 1))).toBeTruthy()
 

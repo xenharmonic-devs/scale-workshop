@@ -254,7 +254,12 @@ onUnmounted(() => {
           <div class="control radio-group">
             <label>Synth type</label>
             <span>
-              <input type="radio" id="type-oscillator" value="oscillator" v-model="audio.synthType" />
+              <input
+                type="radio"
+                id="type-oscillator"
+                value="oscillator"
+                v-model="audio.synthType"
+              />
               <label for="type-oscillator"> Oscillator </label>
             </span>
 
@@ -271,14 +276,26 @@ onUnmounted(() => {
           <template v-if="audio.synthType === 'unison'">
             <div class="control">
               <label for="stack-size">Unison stack size</label>
-              <input id="stack-size" min="2" max="9" type="number" v-model="audio.stackSize">
+              <input id="stack-size" min="2" max="9" type="number" v-model="audio.stackSize" />
             </div>
             <label for="unison-spread">Unison spread</label>
-            <input id="unison-spread" class="control" type="range" min="0.01" max="100" step="any" v-model="unisonSpread">
+            <input
+              id="unison-spread"
+              class="control"
+              type="range"
+              min="0.01"
+              max="100"
+              step="any"
+              v-model="unisonSpread"
+            />
           </template>
           <div class="control">
             <label for="waveform">Waveform</label>
-            <select v-if="audio.synthType === 'aperiodic'" class="control" v-model="audio.aperiodicWaveform">
+            <select
+              v-if="audio.synthType === 'aperiodic'"
+              class="control"
+              v-model="audio.aperiodicWaveform"
+            >
               <option v-for="waveform of APERIODIC_WAVEFORMS" :value="waveform" :key="waveform">
                 {{ waveform }}
               </option>
@@ -425,7 +442,9 @@ onUnmounted(() => {
               </span>
               <span>
                 <input type="radio" id="mode-qwe-zxc" value="QweZxc" v-model="scale.pianoMode" />
-                <label for="mode-qwe-zxc"> QWERTY & digits + ZXCV & ASDF separated by an equave</label>
+                <label for="mode-qwe-zxc">
+                  QWERTY & digits + ZXCV & ASDF separated by an equave</label
+                >
               </span>
               <span>
                 <input type="radio" id="mode-zxc" value="Zxc" v-model="scale.pianoMode" />
@@ -460,20 +479,24 @@ onUnmounted(() => {
           <div v-if="scale.pianoMode === 'Zxc'" class="control-group">
             <div class="control">
               <label for="high-accidental-color">high</label>
-              <input type="text" id="high-accidental-color" v-model="scale.highAccidentalColor"/>
+              <input type="text" id="high-accidental-color" v-model="scale.highAccidentalColor" />
             </div>
             <div class="control">
               <label for="middle-accidental-color">Middle</label>
-              <input type="text" id="middle-accidental-color" v-model="scale.middleAccidentalColor"/>
+              <input
+                type="text"
+                id="middle-accidental-color"
+                v-model="scale.middleAccidentalColor"
+              />
             </div>
             <div class="control">
               <label for="low-accidental-color">Low</label>
-              <input type="text" id="low-accidental-color" v-model="scale.lowAccidentalColor"/>
+              <input type="text" id="low-accidental-color" v-model="scale.lowAccidentalColor" />
             </div>
           </div>
           <div v-else class="control-group">
             <div class="control">
-              <input type="text" id="accidental-color" v-model="scale.accidentalColor"/>
+              <input type="text" id="accidental-color" v-model="scale.accidentalColor" />
             </div>
           </div>
         </template>

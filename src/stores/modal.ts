@@ -126,9 +126,9 @@ export const useModalStore = defineStore('modal', () => {
   // Generator sequence
   const periodString = ref('2/1')
   const period = ref(OCTAVE)
-  const numPeriods = ref(1);
-  const size = ref(5);
-  const generatorsString = ref('');
+  const numPeriods = ref(1)
+  const size = ref(5)
+  const generatorsString = ref('')
   const [generators, generatorsError] = computedAndError(() => {
     let source = generatorsString.value
     // Enumerated chords mean something different in the context of GS
@@ -136,70 +136,70 @@ export const useModalStore = defineStore('modal', () => {
       source = 'geodiff(' + source + ')'
     }
     return parseChord(source)
-  }, []);
-  const constantStructureSizes = reactive<number[]>([]);
+  }, [])
+  const constantStructureSizes = reactive<number[]>([])
   // These sizes are per period.
-  const maxSizeComputed = ref(2);
+  const maxSizeComputed = ref(2)
   function computeConstantStructureSizes(maxSize: number) {
     if (isNaN(numPeriods.value)) {
-      return;
+      return
     }
     if (maxSize <= maxSizeComputed.value) {
-      return;
+      return
     }
-    const p = period.value.value;
+    const p = period.value.value
     if (p.timeExponent.n) {
-      return;
+      return
     }
-    const monzos = generators.value.map(g => g.value);
+    const monzos = generators.value.map((g) => g.value)
     if (!monzos.length) {
-      return;
+      return
     }
     for (const monzo of monzos) {
       if (monzo.timeExponent.n) {
-        return;
+        return
       }
     }
-    const scale: TimeMonzo[] = [p];
+    const scale: TimeMonzo[] = [p]
     let accumulator = new TimeMonzo(new Fraction(0), [])
     for (let j = 0; j < maxSizeComputed.value; ++j) {
-      accumulator = accumulator.mul(monzos[mmod(j, monzos.length)]);
-      scale.push(accumulator.reduce(p, true));
+      accumulator = accumulator.mul(monzos[mmod(j, monzos.length)])
+      scale.push(accumulator.reduce(p, true))
     }
     for (let i = maxSizeComputed.value; i < maxSize; ++i) {
-      accumulator = accumulator.mul(monzos[mmod(i, monzos.length)]);
-      scale.push(accumulator.reduce(p, true));
-      scale.sort((a, b) => a.compare(b));
+      accumulator = accumulator.mul(monzos[mmod(i, monzos.length)])
+      scale.push(accumulator.reduce(p, true))
+      scale.sort((a, b) => a.compare(b))
       if (hasConstantStructure(scale)) {
         // These sizes are for the full scale.
-        constantStructureSizes.push(scale.length * numPeriods.value);
+        constantStructureSizes.push(scale.length * numPeriods.value)
       }
     }
-    maxSizeComputed.value = maxSize;
+    maxSizeComputed.value = maxSize
   }
   watch([generators, period, numPeriods], () => {
-    maxSizeComputed.value = 2;
-    constantStructureSizes.length = 0;
+    maxSizeComputed.value = 2
+    constantStructureSizes.length = 0
   })
   watch(size, (newValue) => {
-    newValue = parseInt(newValue as unknown as string, 10);
+    newValue = parseInt(newValue as unknown as string, 10)
     if (isNaN(newValue) || isNaN(numPeriods.value)) {
-      return;
+      return
     }
     if (newValue % numPeriods.value) {
-      size.value = Math.ceil(newValue / numPeriods.value) * numPeriods.value;
+      size.value = Math.ceil(newValue / numPeriods.value) * numPeriods.value
     }
     if (newValue < 1) {
-      size.value = 1;
+      size.value = 1
     }
-  });
+  })
   watch(numPeriods, (newValue) => {
-    newValue = parseInt(newValue as unknown as string, 10);
+    newValue = parseInt(newValue as unknown as string, 10)
     if (isNaN(newValue) || isNaN(size.value)) {
-      return;
+      return
     }
-    size.value = Math.ceil(size.value / newValue) * newValue;
-  });
+    size.value = Math.ceil(size.value / newValue) * newValue
+  })
 
   // === MOS ===
   // State required to generate MOS
@@ -298,7 +298,7 @@ export const useModalStore = defineStore('modal', () => {
           info.sizeOfLargeStep === old.sizeOfLargeStep &&
           info.sizeOfSmallStep === old.sizeOfSmallStep
         ) {
-          continue collecting;
+          continue collecting
         }
       }
       more.push(info)
@@ -310,7 +310,9 @@ export const useModalStore = defineStore('modal', () => {
   const largeInteger = ref(128)
 
   // Convert type
-  const type = ref<'decimal' | 'fraction' | 'radical' | 'cents' | 'FJS' | 'absoluteFJS' | 'nedji' | 'monzo'>('cents')
+  const type = ref<
+    'decimal' | 'fraction' | 'radical' | 'cents' | 'FJS' | 'absoluteFJS' | 'nedji' | 'monzo'
+  >('cents')
   const preferredNumerator = ref<number>(0)
   const preferredDenominator = ref<number>(0)
   const preferredEtNumerator = ref<number>(0)
@@ -373,7 +375,9 @@ export const useModalStore = defineStore('modal', () => {
 
   // Coalesce
   const tolerance = ref(3.5)
-  const coalescingAction = ref<'avg' | 'havg' | 'geoavg' | 'lowest' | 'highest' | 'simplest'>('simplest');
+  const coalescingAction = ref<'avg' | 'havg' | 'geoavg' | 'lowest' | 'highest' | 'simplest'>(
+    'simplest'
+  )
 
   // Concordance shell
   const mediumInteger = ref(32)
@@ -381,10 +385,24 @@ export const useModalStore = defineStore('modal', () => {
   const vaoIndex = ref(0)
   const vaos = computed(() => {
     if (errorModel.value === 'rooted') {
-      return [vao(mediumInteger.value, largeInteger.value, largeDivisions.value, tolerance.value, equave.value.totalCents())]
+      return [
+        vao(
+          mediumInteger.value,
+          largeInteger.value,
+          largeDivisions.value,
+          tolerance.value,
+          equave.value.totalCents()
+        )
+      ]
     }
-    return freeVAOs(mediumInteger.value, largeInteger.value, largeDivisions.value, tolerance.value, equave.value.totalCents())
-  });
+    return freeVAOs(
+      mediumInteger.value,
+      largeInteger.value,
+      largeDivisions.value,
+      tolerance.value,
+      equave.value.totalCents()
+    )
+  })
 
   watch([mediumInteger, largeInteger, largeDivisions, tolerance, equave, errorModel], () => {
     vaoIndex.value = 0
@@ -529,6 +547,6 @@ export const useModalStore = defineStore('modal', () => {
 
     // Coalesce
     tolerance,
-    coalescingAction,
+    coalescingAction
   }
 })

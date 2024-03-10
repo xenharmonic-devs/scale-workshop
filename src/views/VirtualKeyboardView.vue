@@ -3,7 +3,7 @@ import VirtualKeyboard from '@/components/VirtualKeyboard.vue'
 import VirtualPiano from '@/components/VirtualPiano.vue'
 import { useStateStore } from '@/stores/state'
 import { useScaleStore } from '@/stores/scale'
-import { computed } from 'vue';
+import { computed } from 'vue'
 
 defineProps<{
   noteOn: NoteOnCallback

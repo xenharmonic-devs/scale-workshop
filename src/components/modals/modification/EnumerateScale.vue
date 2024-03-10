@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Modal from '@/components/ModalDialog.vue'
-import { useScaleStore } from '@/stores/scale';
+import { useScaleStore } from '@/stores/scale'
 
 const emit = defineEmits(['done', 'cancel'])
 
@@ -8,60 +8,59 @@ const scale = useScaleStore()
 
 function overtonal() {
   scale.sourceText += ';elevate();simplify;repr'
-  const {visitor, defaults} = scale.getVisitors()
+  const { visitor, defaults } = scale.getVisitors()
   const overtones = visitor.mutables.get('$') as unknown as string[]
   visitor.mutables.set('$', [])
   scale.sourceText = visitor.expand(defaults)
   if (scale.sourceText) {
     scale.sourceText += '\n'
   }
-  scale.sourceText += overtones.join(':');
-  scale.computeScale();
+  scale.sourceText += overtones.join(':')
+  scale.computeScale()
   emit('done')
 }
 
 function undertonal() {
   scale.sourceText += ';reflect();elevate();simplify;repr'
-  const {visitor, defaults} = scale.getVisitors()
+  const { visitor, defaults } = scale.getVisitors()
   const undertones = visitor.mutables.get('$') as unknown as string[]
   visitor.mutables.set('$', [])
   scale.sourceText = visitor.expand(defaults)
   if (scale.sourceText) {
     scale.sourceText += '\n'
   }
-  scale.sourceText += '/' + undertones.join(':');
-  scale.computeScale();
+  scale.sourceText += '/' + undertones.join(':')
+  scale.computeScale()
   emit('done')
 }
 
 function retroversion() {
   scale.sourceText += ';retrovert();elevate();simplify;repr'
-  const {visitor, defaults} = scale.getVisitors()
+  const { visitor, defaults } = scale.getVisitors()
   const tones = visitor.mutables.get('$') as unknown as string[]
   visitor.mutables.set('$', [])
   scale.sourceText = visitor.expand(defaults)
   if (scale.sourceText) {
     scale.sourceText += '\n'
   }
-  scale.sourceText += 'retroverted(' + tones.join(':') + ')';
-  scale.computeScale();
+  scale.sourceText += 'retroverted(' + tones.join(':') + ')'
+  scale.computeScale()
   emit('done')
 }
 
 function revposition() {
   scale.sourceText += ';revpose();elevate();simplify;repr'
-  const {visitor, defaults} = scale.getVisitors()
+  const { visitor, defaults } = scale.getVisitors()
   const tones = visitor.mutables.get('$') as unknown as string[]
   visitor.mutables.set('$', [])
   scale.sourceText = visitor.expand(defaults)
   if (scale.sourceText) {
     scale.sourceText += '\n'
   }
-  scale.sourceText += 'revposed(' + tones.join(':') + ')';
-  scale.computeScale();
+  scale.sourceText += 'revposed(' + tones.join(':') + ')'
+  scale.computeScale()
   emit('done')
 }
-
 </script>
 
 <template>

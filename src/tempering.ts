@@ -4,7 +4,7 @@ import {
   type SubgroupValue,
   Temperament,
   type TuningOptions,
-  Subgroup,
+  Subgroup
 } from 'temperaments'
 import { DEFAULT_NUMBER_OF_COMPONENTS } from './constants'
 import { PRIME_CENTS, type FractionValue, type Monzo } from 'xen-dev-utils'

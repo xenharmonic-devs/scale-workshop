@@ -1,11 +1,11 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import { shortestEdge, type GridOptions} from 'ji-lattice'
+import { shortestEdge, type GridOptions } from 'ji-lattice'
 import { LOG_PRIMES, mmod } from 'xen-dev-utils'
 import { Val, evaluateExpression, parseChord } from 'sonic-weave'
 import { computedAndError } from '@/utils'
 
-const TWELVE = evaluateExpression('12@', false) as Val;
+const TWELVE = evaluateExpression('12@', false) as Val
 
 export const useGridStore = defineStore('grid', () => {
   // View
@@ -37,24 +37,23 @@ export const useGridStore = defineStore('grid', () => {
 
   const val = computed<Val>(() => {
     try {
-      const val = evaluateExpression(valString.value);
-      console.log(val);
+      const val = evaluateExpression(valString.value)
       if (val instanceof Val) {
-        return val;
+        return val
       }
     } catch {
       /* empty */
     }
     try {
-      const val = evaluateExpression(valString.value.trim() + '@');
+      const val = evaluateExpression(valString.value.trim() + '@')
       if (val instanceof Val) {
-        return val;
+        return val
       }
     } catch {
       /* empty */
     }
     return TWELVE
-  });
+  })
 
   const modulus = computed(() => val.value.divisions.round().valueOf())
 
@@ -74,20 +73,20 @@ export const useGridStore = defineStore('grid', () => {
       minX: minX.value,
       maxX: maxX.value,
       minY: minY.value,
-      maxY: maxY.value,
+      maxY: maxY.value
     }
 
-    const result: number[][] = [];
+    const result: number[][] = []
     try {
       for (const edge of edges.value) {
         const step = edge.dot(val.value).valueOf()
         result.push(shortestEdge(step, options))
       }
     } catch {
-      return [];
+      return []
     }
 
-    return result;
+    return result
   })
 
   const gridOptions = computed<GridOptions>(() => {
@@ -104,8 +103,13 @@ export const useGridStore = defineStore('grid', () => {
       minY: minY.value,
       maxY: maxY.value,
       edgeVectors: edgeVectors.value,
-      gridLines: {delta1: gridlines1.value, delta2: gridlines2.value, diagonal1: diagonals1.value, diagonal2: diagonals2.value},
-      mergeEdges: true,
+      gridLines: {
+        delta1: gridlines1.value,
+        delta2: gridlines2.value,
+        diagonal1: diagonals1.value,
+        diagonal2: diagonals2.value
+      },
+      mergeEdges: true
     }
   })
 
@@ -125,10 +129,10 @@ export const useGridStore = defineStore('grid', () => {
     viewCenterY.value = -0.1
 
     valString.value = `${divisions}p`
-    delta1.value = mmod(Math.round(divisions * LOG_PRIMES[1] / LOG_PRIMES[0]), divisions)
+    delta1.value = mmod(Math.round((divisions * LOG_PRIMES[1]) / LOG_PRIMES[0]), divisions)
     delta1X.value = 1
     delta1Y.value = 0
-    delta2.value = mmod(Math.round(divisions * LOG_PRIMES[2] / LOG_PRIMES[0]), divisions)
+    delta2.value = mmod(Math.round((divisions * LOG_PRIMES[2]) / LOG_PRIMES[0]), divisions)
     delta2X.value = 0
     delta2Y.value = -1
     gridlines1.value = true
@@ -147,10 +151,10 @@ export const useGridStore = defineStore('grid', () => {
     viewCenterY.value = -0.1
 
     valString.value = `b${divisions}p`
-    delta1.value = mmod(Math.round(divisions * LOG_PRIMES[2] / LOG_PRIMES[1]), divisions)
+    delta1.value = mmod(Math.round((divisions * LOG_PRIMES[2]) / LOG_PRIMES[1]), divisions)
     delta1X.value = 1
     delta1Y.value = 0
-    delta2.value = mmod(Math.round(divisions * LOG_PRIMES[3] / LOG_PRIMES[1]), divisions)
+    delta2.value = mmod(Math.round((divisions * LOG_PRIMES[3]) / LOG_PRIMES[1]), divisions)
     delta2X.value = 0
     delta2Y.value = -1
     gridlines1.value = true
@@ -169,10 +173,10 @@ export const useGridStore = defineStore('grid', () => {
     viewCenterY.value = 0
 
     valString.value = `${divisions}p`
-    delta1.value = mmod(Math.round(divisions * LOG_PRIMES[1] / LOG_PRIMES[0]), divisions)
+    delta1.value = mmod(Math.round((divisions * LOG_PRIMES[1]) / LOG_PRIMES[0]), divisions)
     delta1X.value = 6
     delta1Y.value = 0
-    delta2.value = mmod(Math.round(divisions * LOG_PRIMES[2] / LOG_PRIMES[0]), divisions)
+    delta2.value = mmod(Math.round((divisions * LOG_PRIMES[2]) / LOG_PRIMES[0]), divisions)
     delta2X.value = 3
     delta2Y.value = -5
     gridlines1.value = true
@@ -239,6 +243,6 @@ export const useGridStore = defineStore('grid', () => {
     square,
     squareBP,
     tonnetz,
-    preset311,
+    preset311
   }
 })

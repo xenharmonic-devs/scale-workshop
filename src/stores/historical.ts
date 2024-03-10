@@ -19,7 +19,9 @@ export const useHistoricalStore = defineStore('historical', () => {
 
   const pureGenerator = ref(FIFTH)
   const pureGeneratorString = ref('3/2')
-  const target = ref(new Interval(TimeMonzo.fromFraction('7/4', DEFAULT_NUMBER_OF_COMPONENTS), 'linear'))
+  const target = ref(
+    new Interval(TimeMonzo.fromFraction('7/4', DEFAULT_NUMBER_OF_COMPONENTS), 'linear')
+  )
   const targetString = ref('7/4')
   const searchRange = ref(11)
   const period = ref(OCTAVE)
@@ -27,7 +29,9 @@ export const useHistoricalStore = defineStore('historical', () => {
   const pureExponent = ref(10)
   const temperingStrength = ref(1)
 
-  const wellComma = ref(new Interval(TimeMonzo.fromFraction('531441/524288', DEFAULT_NUMBER_OF_COMPONENTS), 'linear'))
+  const wellComma = ref(
+    new Interval(TimeMonzo.fromFraction('531441/524288', DEFAULT_NUMBER_OF_COMPONENTS), 'linear')
+  )
   const wellCommaString = ref('531441/524288')
   const wellCommaFractionStrings = reactive<Map<number, string>>(
     new Map([
@@ -47,7 +51,7 @@ export const useHistoricalStore = defineStore('historical', () => {
 
   const selectedWellPreset = ref('vallotti')
 
-  const up = computed(() => size.value - 1 - down.value);
+  const up = computed(() => size.value - 1 - down.value)
 
   type Candidate = {
     exponent: number
@@ -123,21 +127,21 @@ export const useHistoricalStore = defineStore('historical', () => {
   const ZERO = new Fraction(0)
 
   const wellCommaFractions = computed(() => {
-    const result: Fraction[] = [];
+    const result: Fraction[] = []
     for (let i = 0; i < size.value; ++i) {
-      let frac = ZERO;
+      let frac = ZERO
       try {
-        frac = new Fraction(wellCommaFractionStrings.get(i - down.value) ?? '0');
+        frac = new Fraction(wellCommaFractionStrings.get(i - down.value) ?? '0')
       } catch {
         // Empty
       }
-      result.push(frac);
+      result.push(frac)
     }
-    return result;
+    return result
   })
 
   const allWellCommasAreZero = computed(() => {
-    return wellCommaFractions.value.every(f => f.n === 0);
+    return wellCommaFractions.value.every((f) => f.n === 0)
   })
 
   // This is a simplified and linearized model of beating
@@ -146,7 +150,10 @@ export const useHistoricalStore = defineStore('historical', () => {
     const g = monzo.valueOf()
     let multiGenExponent = 1
     if (!monzo.cents) {
-      multiGenExponent = monzo.primeExponents.reduce((denom, component) => lcm(component.d, denom), 1)
+      multiGenExponent = monzo.primeExponents.reduce(
+        (denom, component) => lcm(component.d, denom),
+        1
+      )
     }
     const t = target.value.valueOf()
 

@@ -33,7 +33,7 @@ export default class ReaperExporter extends BaseExporter {
         index = mmod(index, scale.size)
       }
 
-      if (format === 'label' && (index > 0 && index <= labels.length)) {
+      if (format === 'label' && index > 0 && index <= labels.length) {
         file += labels[index - 1]
       } else if (format === 'degree') {
         file += `${index + baseDegree}/${scale.size}`
@@ -65,7 +65,12 @@ export default class ReaperExporter extends BaseExporter {
               file += value.totalCents().toFixed(digits)
             }
           } else {
-            file += new Interval(value, interval.domain, timeMonzoAs(value, interval.node), interval).toString()
+            file += new Interval(
+              value,
+              interval.domain,
+              timeMonzoAs(value, interval.node),
+              interval
+            ).toString()
           }
         }
       }

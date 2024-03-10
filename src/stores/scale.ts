@@ -1,25 +1,45 @@
-import { Scale } from "@/scale"
-import { midiNoteNumberToEnharmonics, type AccidentalStyle } from "@/utils"
-import { defineStore } from "pinia"
-import { computed, ref, watch } from "vue"
-import { mmod, mtof } from "xen-dev-utils"
-import { getSourceVisitor, parseAST, relative, Interval, TimeMonzo, str, centsColor, factorColor, type SonicWeaveValue, StatementVisitor, ExpressionVisitor, builtinNode } from "sonic-weave"
-import { DEFAULT_NUMBER_OF_COMPONENTS, INTERVALS_12TET, MIDI_NOTE_COLORS, MIDI_NOTE_NAMES, NUMBER_OF_NOTES, TET12 } from "@/constants"
-import { pianoMap } from "isomorphic-qwerty"
-import { computeWhiteIndices } from "@/midi"
+import { Scale } from '@/scale'
+import { midiNoteNumberToEnharmonics, type AccidentalStyle } from '@/utils'
+import { defineStore } from 'pinia'
+import { computed, ref, watch } from 'vue'
+import { mmod, mtof } from 'xen-dev-utils'
+import {
+  getSourceVisitor,
+  parseAST,
+  relative,
+  Interval,
+  TimeMonzo,
+  str,
+  centsColor,
+  factorColor,
+  type SonicWeaveValue,
+  StatementVisitor,
+  ExpressionVisitor,
+  builtinNode
+} from 'sonic-weave'
+import {
+  DEFAULT_NUMBER_OF_COMPONENTS,
+  INTERVALS_12TET,
+  MIDI_NOTE_COLORS,
+  MIDI_NOTE_NAMES,
+  NUMBER_OF_NOTES,
+  TET12
+} from '@/constants'
+import { pianoMap } from 'isomorphic-qwerty'
+import { computeWhiteIndices } from '@/midi'
 
 // Colors from #1 to #12 inclusive.
 function defaultColors(base: number) {
-  return [...Array(12).keys()].map(i => MIDI_NOTE_COLORS[mmod(base + 1 + i, 12)])
+  return [...Array(12).keys()].map((i) => MIDI_NOTE_COLORS[mmod(base + 1 + i, 12)])
 }
 
 // Labels from #1 to #12 inclusive.
 function defaultLabels(base: number, accidentalStyle: AccidentalStyle) {
-  const result = [...Array(12).keys()].map(i => MIDI_NOTE_NAMES[mmod(base + 1 + i, 12)])
+  const result = [...Array(12).keys()].map((i) => MIDI_NOTE_NAMES[mmod(base + 1 + i, 12)])
   if (accidentalStyle === 'ASCII') {
     return result
   }
-  return result.map(n => n.replace('#', '♯'))
+  return result.map((n) => n.replace('#', '♯'))
 }
 
 export const useScaleStore = defineStore('scale', () => {
@@ -31,12 +51,13 @@ export const useScaleStore = defineStore('scale', () => {
   // Some keyboards like FI have a handy key left of 'Z'
   const hasLeftOfZ = ref(localStorage.getItem('hasLeftOfZ') === 'true')
 
-
   const name = ref('')
   const baseMidiNote = ref(60)
-  const enharmonics = computed(() => midiNoteNumberToEnharmonics(baseMidiNote.value, accidentalPreference.value))
+  const enharmonics = computed(() =>
+    midiNoteNumberToEnharmonics(baseMidiNote.value, accidentalPreference.value)
+  )
   const enharmonic = ref(enharmonics.value[0])
-  const userBaseFrequency = ref(261.63);
+  const userBaseFrequency = ref(261.63)
   const autoFrequency = ref(true)
   const baseFrequency = computed({
     get() {
@@ -46,13 +67,13 @@ export const useScaleStore = defineStore('scale', () => {
       userBaseFrequency.value = value
     }
   })
-  const autoColors = ref<'silver' | 'cents' | 'factors'>('silver');
+  const autoColors = ref<'silver' | 'cents' | 'factors'>('silver')
   const sourceText = ref('')
-  const relativeIntervals = ref(INTERVALS_12TET);
-  const latticeIntervals = ref(INTERVALS_12TET);
-  const scale = ref(new Scale(TET12, baseFrequency.value ,baseMidiNote.value));
-  const colors = ref(defaultColors(baseMidiNote.value));
-  const labels = ref(defaultLabels(baseMidiNote.value, accidentalPreference.value));
+  const relativeIntervals = ref(INTERVALS_12TET)
+  const latticeIntervals = ref(INTERVALS_12TET)
+  const scale = ref(new Scale(TET12, baseFrequency.value, baseMidiNote.value))
+  const colors = ref(defaultColors(baseMidiNote.value))
+  const labels = ref(defaultLabels(baseMidiNote.value, accidentalPreference.value))
   const error = ref('')
 
   // Keyboard mode affects both physical qwerty and virtual keyboards
@@ -78,41 +99,39 @@ export const useScaleStore = defineStore('scale', () => {
   const sourcePrefix = computed(() => {
     const base = `numComponents(${DEFAULT_NUMBER_OF_COMPONENTS})\n`
     if (autoFrequency.value) {
-      return `${base}${enharmonic.value} = mtof(_) = 1/1`;
+      return `${base}${enharmonic.value} = mtof(_) = 1/1`
     }
-    return `${base}${enharmonic.value} = baseFrequency = 1/1`;
+    return `${base}${enharmonic.value} = baseFrequency = 1/1`
   })
 
-  const frequencies = computed(() =>
-    scale.value.getFrequencyRange(0, NUMBER_OF_NOTES)
-  )
+  const frequencies = computed(() => scale.value.getFrequencyRange(0, NUMBER_OF_NOTES))
 
   const latticePermutation = computed(() => {
-    const intervals = relativeIntervals.value;
-    const result: number[] = [];
+    const intervals = relativeIntervals.value
+    const result: number[] = []
     tracking: for (let i = 0; i < intervals.length; ++i) {
       for (const id of intervals[i].trackingIds) {
         if (id < 1) {
-          result.push(-id);
-          continue tracking;
+          result.push(-id)
+          continue tracking
         }
       }
-      result.push(i);
+      result.push(i)
     }
-    return result;
-  });
+    return result
+  })
 
   const inverseLatticePermutation = computed(() => {
-    const result: number[] = [];
+    const result: number[] = []
     for (let i = 0; i < latticePermutation.value.length; ++i) {
       // XXX: JS is one wild language.
-      result[latticePermutation.value[i]] = i;
+      result[latticePermutation.value[i]] = i
     }
-    return result;
-  });
+    return result
+  })
 
-  const latticeLabels = computed(() => inverseLatticePermutation.value.map(i => labels.value[i]));
-  const latticeColors = computed(() => inverseLatticePermutation.value.map(i => colors.value[i]));
+  const latticeLabels = computed(() => inverseLatticePermutation.value.map((i) => labels.value[i]))
+  const latticeColors = computed(() => inverseLatticePermutation.value.map((i) => colors.value[i]))
 
   /**
    * Obtain the lowercased color corresponding to specified MIDI index
@@ -134,7 +153,7 @@ export const useScaleStore = defineStore('scale', () => {
   // QWERTY mapping is coupled to key colors
   const qwertyMapping = computed<Map<string, number>>(() => {
     const black = accidentalColor.value.toLowerCase()
-    let firstIndex = baseMidiNote.value + degreeShift.value + scale.value.size * equaveShift.value;
+    let firstIndex = baseMidiNote.value + degreeShift.value + scale.value.size * equaveShift.value
     if (pianoMode.value === 'Asdf') {
       if (colorForIndex(firstIndex - 1) === black) {
         firstIndex--
@@ -143,13 +162,13 @@ export const useScaleStore = defineStore('scale', () => {
       // Max = 30 overshoots quite a bit, but it's a nice round number.
       const ys: number[] = []
       for (let i = firstIndex; i < firstIndex + 30; ++i) {
-        ys.push(colorForIndex(i) === black ? 1 : 2);
+        ys.push(colorForIndex(i) === black ? 1 : 2)
       }
-      const {indexByCode} = pianoMap(ys);
+      const { indexByCode } = pianoMap(ys)
       for (const [code, index] of indexByCode) {
         indexByCode.set(code, index + firstIndex)
       }
-      return indexByCode;
+      return indexByCode
     } else if (pianoMode.value === 'QweZxc') {
       const ys: number[] = []
       // ZXCV & ASDF
@@ -160,9 +179,9 @@ export const useScaleStore = defineStore('scale', () => {
         ys.push(3) // Dummy filler for the missing key
       }
       for (let i = firstIndex; i < firstIndex + 30; ++i) {
-        ys.push(colorForIndex(i) === black ? 2 : 3);
+        ys.push(colorForIndex(i) === black ? 2 : 3)
       }
-      const {indexByCode} = pianoMap(ys);
+      const { indexByCode } = pianoMap(ys)
       if (!hasLeftOfZ.value) {
         firstIndex-- // Correct for the dummy
       }
@@ -171,20 +190,21 @@ export const useScaleStore = defineStore('scale', () => {
       }
 
       // QWERTY & digits
-      firstIndex = baseMidiNote.value + degreeShift.value + scale.value.size * (equaveShift.value + 1);
+      firstIndex =
+        baseMidiNote.value + degreeShift.value + scale.value.size * (equaveShift.value + 1)
       if (colorForIndex(firstIndex - 1) === black) {
         firstIndex--
       }
       ys.length = 0
       for (let i = firstIndex; i < firstIndex + 30; ++i) {
-        ys.push(colorForIndex(i) === black ? 0 : 1);
+        ys.push(colorForIndex(i) === black ? 0 : 1)
       }
-      const {indexByCode: qMap} = pianoMap(ys);
+      const { indexByCode: qMap } = pianoMap(ys)
       for (const [code, index] of qMap) {
         indexByCode.set(code, index + firstIndex)
       }
 
-      return indexByCode;
+      return indexByCode
     } else {
       const low = lowAccidentalColor.value.toLowerCase()
       const middle = middleAccidentalColor.value.toLowerCase()
@@ -192,7 +212,7 @@ export const useScaleStore = defineStore('scale', () => {
       const ys: number[] = []
       if (!hasLeftOfZ.value) {
         if ([low, middle, high].includes(colorForIndex(firstIndex - 1))) {
-          firstIndex--;
+          firstIndex--
         }
         ys.push(3) // Dummy filler for the missing key
       }
@@ -208,18 +228,18 @@ export const useScaleStore = defineStore('scale', () => {
           ys.push(3)
         }
       }
-      const {indexByCode} = pianoMap(ys);
+      const { indexByCode } = pianoMap(ys)
       if (!hasLeftOfZ.value) {
         firstIndex-- // Correct for the dummy
       }
       for (const [code, index] of indexByCode) {
         indexByCode.set(code, index + firstIndex)
       }
-      return indexByCode;
+      return indexByCode
     }
   })
 
-  const splitAccidentals = computed(() =>  pianoMode.value === 'Zxc')
+  const splitAccidentals = computed(() => pianoMode.value === 'Zxc')
 
   // For midi mapping
   const whiteIndices = computed(() => computeWhiteIndices(baseMidiNote.value, colors.value))
@@ -227,7 +247,7 @@ export const useScaleStore = defineStore('scale', () => {
   // State synchronization
   watch([baseMidiNote, accidentalPreference], () => {
     enharmonic.value = enharmonics.value[0]
-  });
+  })
 
   // Sanity watchers
   watch(baseMidiNote, (newValue) => {
@@ -243,14 +263,14 @@ export const useScaleStore = defineStore('scale', () => {
   watch(hasLeftOfZ, (newValue) => window.localStorage.setItem('hasLeftOfZ', newValue.toString()))
 
   function latticeView(this: ExpressionVisitor) {
-    const scale = this.getCurrentScale();
+    const scale = this.getCurrentScale()
     for (let i = 0; i < scale.length; ++i) {
-      scale[i] = scale[i].shallowClone();
+      scale[i] = scale[i].shallowClone()
       // XXX: Abuses the fact that SonicWeave tracking ids are positive.
-      scale[i].trackingIds.add(-i);
+      scale[i].trackingIds.add(-i)
     }
-    const rel = relative.bind(this);
-    latticeIntervals.value = scale.map(i => rel(i));
+    const rel = relative.bind(this)
+    latticeIntervals.value = scale.map((i) => rel(i))
   }
   latticeView.__doc__ = 'Store the current scale to be displayed in the lattice tab.'
   latticeView.__node__ = builtinNode(latticeView)
@@ -258,23 +278,23 @@ export const useScaleStore = defineStore('scale', () => {
   // Local helpers
   function getGlobalVisitor() {
     // Inject global variables
-    const _ = Interval.fromInteger(baseMidiNote.value);
-    const baseFreq = new Interval(TimeMonzo.fromArbitraryFrequency(baseFrequency.value), 'linear');
+    const _ = Interval.fromInteger(baseMidiNote.value)
+    const baseFreq = new Interval(TimeMonzo.fromArbitraryFrequency(baseFrequency.value), 'linear')
     const extraBuiltins: Record<string, SonicWeaveValue> = {
       scaleName: name.value,
       _,
       baseMidiNote: _,
       baseFrequency: baseFreq,
-      latticeView,
+      latticeView
     }
-    const visitor = getSourceVisitor(true, extraBuiltins);
+    const visitor = getSourceVisitor(true, extraBuiltins)
     // TODO: Make this a user preference.
-    visitor.rootContext.gas = 10000;
+    visitor.rootContext.gas = 10000
 
     // Declare base nominal and unison frequency
-    const prefixAst = parseAST(sourcePrefix.value);
+    const prefixAst = parseAST(sourcePrefix.value)
     for (const statement of prefixAst.body) {
-      visitor.visit(statement);
+      visitor.visit(statement)
     }
 
     return visitor
@@ -283,71 +303,78 @@ export const useScaleStore = defineStore('scale', () => {
   // Methods
   function getVisitors() {
     const globalVisitor = getGlobalVisitor()
-    const visitor = new StatementVisitor(globalVisitor.rootContext, globalVisitor);
+    const visitor = new StatementVisitor(globalVisitor.rootContext, globalVisitor)
     const defaults = visitor.clone()
     defaults.rootContext = defaults.rootContext.clone()
 
-    const ast = parseAST(sourceText.value);
+    const ast = parseAST(sourceText.value)
     for (const statement of ast.body) {
-      const interupt = visitor.visit(statement);
+      const interupt = visitor.visit(statement)
       if (interupt) {
-        throw new Error('Illegal statement.');
+        throw new Error('Illegal statement.')
       }
     }
     return {
       defaults,
       visitor
-    };
+    }
   }
 
   function computeScale() {
     try {
       latticeIntervals.value = []
       const globalVisitor = getGlobalVisitor()
-      const visitor = new StatementVisitor(globalVisitor.rootContext, globalVisitor);
-      const ast = parseAST(sourceText.value);
+      const visitor = new StatementVisitor(globalVisitor.rootContext, globalVisitor)
+      const ast = parseAST(sourceText.value)
       for (const statement of ast.body) {
-        const interupt = visitor.visit(statement);
+        const interupt = visitor.visit(statement)
         if (interupt) {
-          throw new Error('Illegal statement.');
+          throw new Error('Illegal statement.')
         }
       }
 
-      const intervals = visitor.getCurrentScale();
-      const ev = visitor.createExpressionVisitor();
-      const rel = relative.bind(ev);
-      relativeIntervals.value = intervals.map(i => rel(i));
+      const intervals = visitor.getCurrentScale()
+      const ev = visitor.createExpressionVisitor()
+      const rel = relative.bind(ev)
+      relativeIntervals.value = intervals.map((i) => rel(i))
       if (!latticeIntervals.value.length) {
         latticeIntervals.value = relativeIntervals.value
       }
-      const ratios = relativeIntervals.value.map(i => i.value.valueOf())
-      let visitorBaseFrequency = mtof(baseMidiNote.value);
+      const ratios = relativeIntervals.value.map((i) => i.value.valueOf())
+      let visitorBaseFrequency = mtof(baseMidiNote.value)
       if (visitor.rootContext.unisonFrequency) {
-        visitorBaseFrequency = visitor.rootContext.unisonFrequency.valueOf();
+        visitorBaseFrequency = visitor.rootContext.unisonFrequency.valueOf()
       }
       if (ratios.length) {
-        const name = str.bind(ev);
-        scale.value = new Scale(ratios, visitorBaseFrequency, baseMidiNote.value);
+        const name = str.bind(ev)
+        scale.value = new Scale(ratios, visitorBaseFrequency, baseMidiNote.value)
         if (autoColors.value === 'silver') {
-          colors.value = intervals.map((interval, i) => interval.color?.value ?? (i === intervals.length - 1 ? 'gray' : 'silver'));
+          colors.value = intervals.map(
+            (interval, i) =>
+              interval.color?.value ?? (i === intervals.length - 1 ? 'gray' : 'silver')
+          )
         } else if (autoColors.value === 'cents') {
-          colors.value = intervals.map(interval => interval.color?.value ?? centsColor(interval).value)
+          colors.value = intervals.map(
+            (interval) => interval.color?.value ?? centsColor(interval).value
+          )
         } else {
-          colors.value = intervals.map(interval => interval.color?.value ?? factorColor(interval).value)
+          colors.value = intervals.map(
+            (interval) => interval.color?.value ?? factorColor(interval).value
+          )
         }
-        labels.value = intervals.map((interval) => interval.label || name(interval));
-        error.value = '';
+        labels.value = intervals.map((interval) => interval.label || name(interval))
+        error.value = ''
       } else {
-        scale.value = new Scale(TET12, visitorBaseFrequency, baseMidiNote.value);
-        colors.value = defaultColors(baseMidiNote.value);
-        labels.value = defaultLabels(baseMidiNote.value, accidentalPreference.value);
-        error.value = 'Empty scale defaults to 12-tone equal temperament.';
+        scale.value = new Scale(TET12, visitorBaseFrequency, baseMidiNote.value)
+        colors.value = defaultColors(baseMidiNote.value)
+        labels.value = defaultLabels(baseMidiNote.value, accidentalPreference.value)
+        error.value = 'Empty scale defaults to 12-tone equal temperament.'
       }
     } catch (e) {
       if (e instanceof Error) {
-        error.value = e.message;
+        error.value = e.message
       } else if (typeof e === 'string') {
-        error.value = e;
+        error.value = e
       }
     }
   }
@@ -404,6 +431,6 @@ export const useScaleStore = defineStore('scale', () => {
     computeScale,
     getFrequency,
     colorForIndex,
-    labelForIndex,
+    labelForIndex
   }
 })

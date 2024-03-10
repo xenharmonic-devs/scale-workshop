@@ -31,35 +31,41 @@ function generate() {
   let steps: number[]
   let colors: string[] = []
   if (modal.colorMethod === 'none') {
-    steps = mos(
-      modal.safeNumLarge,
-      modal.safeNumSmall,
-      {sizeOfLargeStep: modal.safeSizeLarge, sizeOfSmallStep: modal.safeSizeSmall, up: modal.safeUp}
-    )
+    steps = mos(modal.safeNumLarge, modal.safeNumSmall, {
+      sizeOfLargeStep: modal.safeSizeLarge,
+      sizeOfSmallStep: modal.safeSizeSmall,
+      up: modal.safeUp
+    })
   } else if (modal.colorMethod === 'parent') {
-    const map = mosWithParent(modal.safeNumLarge, modal.safeNumSmall, {sizeOfLargeStep: modal.safeSizeLarge, sizeOfSmallStep: modal.safeSizeSmall, up: modal.safeUp, accidentals: modal.parentColorAccidentals});
+    const map = mosWithParent(modal.safeNumLarge, modal.safeNumSmall, {
+      sizeOfLargeStep: modal.safeSizeLarge,
+      sizeOfSmallStep: modal.safeSizeSmall,
+      up: modal.safeUp,
+      accidentals: modal.parentColorAccidentals
+    })
     steps = [...map.keys()]
-    steps.sort((a, b) => a - b);
-    colors = steps.map(s => map.get(s) ? 'white' : 'black')
+    steps.sort((a, b) => a - b)
+    colors = steps.map((s) => (map.get(s) ? 'white' : 'black'))
   } else {
-    let accidentals = modal.daughterColorAccidentals;
+    let accidentals = modal.daughterColorAccidentals
     if (accidentals === 'all') {
       accidentals = 'both'
     }
-    const map = mosWithDaughter(
-      modal.safeNumLarge,
-      modal.safeNumSmall,
-      {sizeOfLargeStep: modal.safeSizeLarge, sizeOfSmallStep: modal.safeSizeSmall, up: modal.safeUp, accidentals}
-    )
+    const map = mosWithDaughter(modal.safeNumLarge, modal.safeNumSmall, {
+      sizeOfLargeStep: modal.safeSizeLarge,
+      sizeOfSmallStep: modal.safeSizeSmall,
+      up: modal.safeUp,
+      accidentals
+    })
     if (modal.daughterColorAccidentals === 'all') {
       steps = [...Array(Math.max(...map.keys())).keys()]
       steps.push(steps.length)
       steps.shift()
     } else {
       steps = [...map.keys()]
-      steps.sort((a, b) => a - b);
+      steps.sort((a, b) => a - b)
     }
-    colors = steps.map(s => COLORS[map.get(s) ?? 'unknown'])
+    colors = steps.map((s) => COLORS[map.get(s) ?? 'unknown'])
   }
 
   if (modal.colorMethod === 'parent') {
@@ -90,11 +96,11 @@ function generate() {
   }
   emit('update:scaleName', name)
 
-  const projector = modal.equave.compare(OCTAVE) ? `<${modal.equave.toString()}>` : '';
-  const divisions = steps[steps.length - 1];
+  const projector = modal.equave.compare(OCTAVE) ? `<${modal.equave.toString()}>` : ''
+  const divisions = steps[steps.length - 1]
   let source = ''
   for (let i = 0; i < steps.length; ++i) {
-    const color = colors[i] ? ' ' + colors[i] : '';
+    const color = colors[i] ? ' ' + colors[i] : ''
     source += `${steps[i]}\\${divisions}${projector}${color}\n`
   }
 
@@ -128,7 +134,11 @@ function edoClick(info: MosScaleInfo) {
 </script>
 
 <template>
-  <Modal extraStyle="min-width: 40rem;max-width: 41rem" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal
+    extraStyle="min-width: 40rem;max-width: 41rem"
+    @confirm="generate"
+    @cancel="$emit('cancel')"
+  >
     <template #header>
       <h2>Generate MOS scale</h2>
     </template>

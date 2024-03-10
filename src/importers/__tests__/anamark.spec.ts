@@ -7,7 +7,10 @@ import UNIT_TEST_SCALE from './unittestscale.tun?raw'
 describe('Anamark importer', () => {
   it('can parse text', () => {
     const importer = new AnaMarkImporter()
-    const { sourceText, name, baseMidiNote, baseFrequency } = importer.parseText(UNIT_TEST_SCALE, 'unittestscale.tun')
+    const { sourceText, name, baseMidiNote, baseFrequency } = importer.parseText(
+      UNIT_TEST_SCALE,
+      'unittestscale.tun'
+    )
     const lines = sourceText.split('\n')
 
     expect(lines[0]).toBe('111.00000')

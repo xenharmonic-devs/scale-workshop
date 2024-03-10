@@ -2,8 +2,8 @@
 import Modal from '@/components/ModalDialog.vue'
 import { useModalStore } from '@/stores/modal'
 import { computed } from 'vue'
-import { useScaleStore } from '@/stores/scale';
-import { valueToCents } from 'xen-dev-utils';
+import { useScaleStore } from '@/stores/scale'
+import { valueToCents } from 'xen-dev-utils'
 
 const emit = defineEmits(['done', 'cancel'])
 
@@ -19,22 +19,22 @@ const maxDenominator = computed(() => {
 })
 
 const error = computed(() => {
-  let result = 0;
+  let result = 0
   for (const ratio of scale.scale.intervalRatios) {
     const approximand = Math.abs(ratio * modal.largeInteger)
     const harmonic = Math.round(approximand)
     result = Math.max(result, Math.abs(valueToCents(approximand / harmonic)))
   }
-  return result;
-});
+  return result
+})
 
 function modify(expand = true) {
   scale.sourceText += `\ntoHarmonics(${modal.largeInteger})`
   if (expand) {
-    const {visitor, defaults} = scale.getVisitors()
+    const { visitor, defaults } = scale.getVisitors()
     scale.sourceText = visitor.expand(defaults)
   }
-  scale.computeScale();
+  scale.computeScale()
   emit('done')
 }
 </script>

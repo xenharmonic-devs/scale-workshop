@@ -2,7 +2,7 @@
 import Modal from '@/components/ModalDialog.vue'
 import { expandCode } from '@/utils'
 import { useModalStore } from '@/stores/modal'
-import { parseChord } from 'sonic-weave';
+import { parseChord } from 'sonic-weave'
 
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
@@ -11,7 +11,7 @@ const modal = useModalStore()
 function generate(expand = true) {
   try {
     const intervals = parseChord(modal.chord) // TODO: Computed store property instead
-    let source = intervals.map(i => i.toString()).join(':')
+    let source = intervals.map((i) => i.toString()).join(':')
     emit('update:scaleName', `Chord ${modal.chord}`)
     if (modal.retrovertChord) {
       source = `retroverted(${source})`

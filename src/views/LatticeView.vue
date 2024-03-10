@@ -6,7 +6,7 @@ import GridLattice from '@/components/GridLattice.vue'
 import JustIntonationLattice from '@/components/JustIntonationLattice.vue'
 import Modal from '@/components/ModalDialog.vue'
 import { useStateStore } from '@/stores/state'
-import { useScaleStore } from '@/stores/scale';
+import { useScaleStore } from '@/stores/scale'
 import { useJiLatticeStore } from '@/stores/ji-lattice'
 import { useGridStore } from '@/stores/grid'
 import { setAndReportValidity } from '@/utils'
@@ -17,19 +17,31 @@ const jiLattice = useJiLatticeStore()
 const grid = useGridStore()
 
 const showConfig = ref(false)
-const jiPreset = ref<'nothing'|'grady'|'grady3'|'dakota'|'pr72'|'pe72'>('grady')
-const etPreset = ref<'nothing'|'12'|'53'|'311'|'b13'>('12')
+const jiPreset = ref<'nothing' | 'grady' | 'grady3' | 'dakota' | 'pr72' | 'pe72'>('grady')
+const etPreset = ref<'nothing' | '12' | '53' | '311' | 'b13'>('12')
 
 const extraEdgesElement = ref<HTMLInputElement | null>(null)
-watch(extraEdgesElement, (newElement) => setAndReportValidity(newElement, jiLattice.edgesError), { immediate: true })
-watch(() => jiLattice.edgesError, (newError) => setAndReportValidity(extraEdgesElement.value, newError), { immediate: true })
+watch(extraEdgesElement, (newElement) => setAndReportValidity(newElement, jiLattice.edgesError), {
+  immediate: true
+})
+watch(
+  () => jiLattice.edgesError,
+  (newError) => setAndReportValidity(extraEdgesElement.value, newError),
+  { immediate: true }
+)
 
 const edgesElement = ref<HTMLInputElement | null>(null)
-watch(edgesElement, (newElement) => setAndReportValidity(newElement, grid.edgesError), { immediate: true })
-watch(() => grid.edgesError, (newError) => setAndReportValidity(edgesElement.value, newError), { immediate: true })
+watch(edgesElement, (newElement) => setAndReportValidity(newElement, grid.edgesError), {
+  immediate: true
+})
+watch(
+  () => grid.edgesError,
+  (newError) => setAndReportValidity(edgesElement.value, newError),
+  { immediate: true }
+)
 
 const heldNotes = computed(() => {
-  const perm = scale.latticePermutation;
+  const perm = scale.latticePermutation
   const result: Set<number> = new Set()
   for (const midiIndex of state.heldNotes.keys()) {
     if (state.heldNotes.get(midiIndex)! > 0) {
@@ -41,7 +53,7 @@ const heldNotes = computed(() => {
 })
 
 watch(jiPreset, (newValue) => {
-  switch(newValue) {
+  switch (newValue) {
     case 'grady':
       jiLattice.kraigGrady()
       return
@@ -58,10 +70,10 @@ watch(jiPreset, (newValue) => {
       jiLattice.pe72()
       return
   }
-});
+})
 
 watch(etPreset, (newValue) => {
-  switch(newValue) {
+  switch (newValue) {
     case '12':
       grid.square(12)
       return
@@ -75,8 +87,7 @@ watch(etPreset, (newValue) => {
       grid.squareBP(13)
       return
   }
-});
-
+})
 </script>
 
 <template>
@@ -97,7 +108,12 @@ watch(etPreset, (newValue) => {
       :heldNotes="heldNotes"
     />
     <button @click="showConfig = true">Configure</button>
-    <Modal :show="showConfig" @confirm="showConfig = false" @cancel="showConfig = false" :right="true">
+    <Modal
+      :show="showConfig"
+      @confirm="showConfig = false"
+      @cancel="showConfig = false"
+      :right="true"
+    >
       <template #header>
         <h2>Lattice configuration</h2>
       </template>
@@ -106,11 +122,11 @@ watch(etPreset, (newValue) => {
           <div class="control radio-group">
             <label>Lattice type</label>
             <span>
-              <input type="radio" id="ji" value="ji" v-model="state.latticeType"/>
+              <input type="radio" id="ji" value="ji" v-model="state.latticeType" />
               <label for="ji"> Just intonation </label>
             </span>
             <span>
-              <input type="radio" id="et" value="et" v-model="state.latticeType"/>
+              <input type="radio" id="et" value="et" v-model="state.latticeType" />
               <label for="et"> Equal temperament </label>
             </span>
           </div>
@@ -128,15 +144,21 @@ watch(etPreset, (newValue) => {
             </div>
             <div class="control">
               <label for="max-distance">Maximum connection distance</label>
-              <input id="max-distance" type="number" min="0" max="2" v-model="jiLattice.maxDistance" />
+              <input
+                id="max-distance"
+                type="number"
+                min="0"
+                max="2"
+                v-model="jiLattice.maxDistance"
+              />
             </div>
             <div class="control">
               <label for="size">Text size</label>
-              <input id="size" type="number" min="0.5" step="0.5" v-model="jiLattice.size"/>
+              <input id="size" type="number" min="0.5" step="0.5" v-model="jiLattice.size" />
             </div>
             <div class="control">
               <label for="label-offset">Text offset</label>
-              <input id="label-offset" type="number" step="0.1" v-model="jiLattice.labelOffset"/>
+              <input id="label-offset" type="number" step="0.1" v-model="jiLattice.labelOffset" />
             </div>
             <div class="control checkbox-container">
               <input type="checkbox" id="show-labels" v-model="jiLattice.showLabels" />
@@ -163,15 +185,15 @@ watch(etPreset, (newValue) => {
             </div>
             <div class="control">
               <label for="rotation">Rotation</label>
-              <input type="number" id="rotation" step="15" v-model="jiLattice.rotation"/>
+              <input type="number" id="rotation" step="15" v-model="jiLattice.rotation" />
             </div>
             <div class="control">
               <label for="horizontals">Horizontal coordinates</label>
-              <input id="horizontals" type="text" v-model="jiLattice.horizontals"/>
+              <input id="horizontals" type="text" v-model="jiLattice.horizontals" />
             </div>
             <div class="control">
               <label for="verticals">Vertical coordinates</label>
-              <input id="verticals" type="text" v-model="jiLattice.verticals"/>
+              <input id="verticals" type="text" v-model="jiLattice.verticals" />
             </div>
           </template>
           <template v-else>
@@ -187,33 +209,33 @@ watch(etPreset, (newValue) => {
             </div>
             <div class="control">
               <label for="val">Val</label>
-              <input type="text" id="val" placeholder="17[^5]" v-model="grid.valString"/>
+              <input type="text" id="val" placeholder="17[^5]" v-model="grid.valString" />
             </div>
             <hr />
             <div class="control">
               <label for="delta1">Offset 1</label>
-              <input type="number" id="delta1" v-model="grid.delta1"/>
+              <input type="number" id="delta1" v-model="grid.delta1" />
             </div>
             <div class="control">
               <label for="delta1X">x1</label>
-              <input type="number" id="delta1X" v-model="grid.delta1X"/>
+              <input type="number" id="delta1X" v-model="grid.delta1X" />
             </div>
             <div class="control">
               <label for="delta1Y">y1</label>
-              <input type="number" id="delta1Y" v-model="grid.delta1Y"/>
+              <input type="number" id="delta1Y" v-model="grid.delta1Y" />
             </div>
             <hr />
             <div class="control">
               <label for="delta2">Offset 2</label>
-              <input type="number" id="delta2" v-model="grid.delta2"/>
+              <input type="number" id="delta2" v-model="grid.delta2" />
             </div>
             <div class="control">
               <label for="delta2X">x2</label>
-              <input type="number" id="delta2X" v-model="grid.delta2X"/>
+              <input type="number" id="delta2X" v-model="grid.delta2X" />
             </div>
             <div class="control">
               <label for="delta2Y">y2</label>
-              <input type="number" id="delta2Y" v-model="grid.delta2Y"/>
+              <input type="number" id="delta2Y" v-model="grid.delta2Y" />
             </div>
             <hr />
             <div class="control">
@@ -245,11 +267,11 @@ watch(etPreset, (newValue) => {
             </div>
             <div class="control">
               <label for="size">Text size</label>
-              <input id="size" type="number" min="0.05" step="0.05" v-model="grid.size"/>
+              <input id="size" type="number" min="0.05" step="0.05" v-model="grid.size" />
             </div>
             <div class="control">
               <label for="label-offset">Text offset</label>
-              <input id="label-offset" type="number" step="0.1" v-model="grid.labelOffset"/>
+              <input id="label-offset" type="number" step="0.1" v-model="grid.labelOffset" />
             </div>
             <div class="control checkbox-container">
               <input type="checkbox" id="show-labels" v-model="grid.showLabels" />
@@ -257,15 +279,15 @@ watch(etPreset, (newValue) => {
             </div>
             <div class="control">
               <label for="view-scale">View scale</label>
-              <input id="view-scale" type="number" min="0.1" step="0.1" v-model="grid.viewScale"/>
+              <input id="view-scale" type="number" min="0.1" step="0.1" v-model="grid.viewScale" />
             </div>
             <div class="control">
               <label for="view-x">View center x</label>
-              <input id="view-x" type="number" step="0.1" v-model="grid.viewCenterX"/>
+              <input id="view-x" type="number" step="0.1" v-model="grid.viewCenterX" />
             </div>
             <div class="control">
               <label for="view-y">View center y</label>
-              <input id="view-y" type="number" step="0.1" v-model="grid.viewCenterY"/>
+              <input id="view-y" type="number" step="0.1" v-model="grid.viewCenterY" />
             </div>
           </template>
         </div>
@@ -329,7 +351,7 @@ circle.node.held {
 }
 circle.node.auxiliary {
   stroke: none;
-  fill: var(--color-drop-shadow)
+  fill: var(--color-drop-shadow);
 }
 
 text.node-label {

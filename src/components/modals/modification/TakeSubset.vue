@@ -2,8 +2,8 @@
 import { computed } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import { useModalStore } from '@/stores/modal'
-import { useScaleStore } from '@/stores/scale';
-import { arrayToString } from '@/utils';
+import { useScaleStore } from '@/stores/scale'
+import { arrayToString } from '@/utils'
 
 const emit = defineEmits(['done', 'cancel'])
 
@@ -38,10 +38,10 @@ function modify(expand = true) {
   subset.sort((a, b) => a - b)
   scale.sourceText += `\nsubset(${arrayToString(subset)})`
   if (expand) {
-    const {visitor, defaults} = scale.getVisitors()
+    const { visitor, defaults } = scale.getVisitors()
     scale.sourceText = visitor.expand(defaults)
   }
-  scale.computeScale();
+  scale.computeScale()
   emit('done')
 }
 </script>
@@ -57,7 +57,7 @@ function modify(expand = true) {
         <label>Selected intervals</label>
         <div class="control">
           <button
-            v-for="_, i of scale.scale.size"
+            v-for="(_, i) of scale.scale.size"
             :key="i"
             class="degree"
             :class="{ selected: modal.selected.has(i) }"

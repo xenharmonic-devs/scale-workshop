@@ -31,37 +31,47 @@ watch(
 )
 
 function modify(expand = true) {
-  let mapping: number[] | undefined;
+  let mapping: number[] | undefined
   if (temper.method === 'vals') {
     if (temper.edoAvailable && temper.convertToEdoSteps) {
       scale.sourceText += `\n${temper.vals[0][0]}@${temper.subgroupString}`
     } else {
       if (temper.constraintsAvailable) {
-        const temperament = Temperament.fromVals(temper.vals, temper.subgroup);
-        mapping = temperament.getMapping(temper.options);
+        const temperament = Temperament.fromVals(temper.vals, temper.subgroup)
+        mapping = temperament.getMapping(temper.options)
       } else {
-        mapping = temper.subgroup.toPrimeMapping(tenneyVals(temper.vals, temper.subgroup, temper.weights, 'cents'))
+        mapping = temper.subgroup.toPrimeMapping(
+          tenneyVals(temper.vals, temper.subgroup, temper.weights, 'cents')
+        )
       }
     }
   } else if (temper.method === 'commas') {
     if (temper.constraintsAvailable) {
-      const temperament = Temperament.fromCommas(temper.commas, temper.subgroup, true);
-      mapping = temperament.getMapping(temper.options);
+      const temperament = Temperament.fromCommas(temper.commas, temper.subgroup, true)
+      mapping = temperament.getMapping(temper.options)
     } else {
       const temperEquaves = temper.options.temperEquaves && temper.tempering !== 'CTE'
-      mapping = temper.subgroup.toPrimeMapping(vanishCommas(temper.commas.map(c => temper.subgroup.primeMonzoToSubgroupMonzo(c)), temper.subgroup, temper.weights, temperEquaves, 'cents'));
+      mapping = temper.subgroup.toPrimeMapping(
+        vanishCommas(
+          temper.commas.map((c) => temper.subgroup.primeMonzoToSubgroupMonzo(c)),
+          temper.subgroup,
+          temper.weights,
+          temperEquaves,
+          'cents'
+        )
+      )
     }
   }
   if (temper.method === 'mapping') {
     scale.sourceText += `\nPrimeMapping(${temper.mappingString})`
   } else if (mapping) {
-    scale.sourceText += `\nPrimeMapping(${mapping.map(c => c.toFixed(state.centsFractionDigits)).join(', ')})`
+    scale.sourceText += `\nPrimeMapping(${mapping.map((c) => c.toFixed(state.centsFractionDigits)).join(', ')})`
   }
   if (expand) {
-    const {visitor, defaults} = scale.getVisitors()
+    const { visitor, defaults } = scale.getVisitors()
     scale.sourceText = visitor.expand(defaults)
   }
-  scale.computeScale();
+  scale.computeScale()
   emit('done')
 }
 </script>

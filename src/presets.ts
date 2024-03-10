@@ -25,7 +25,10 @@ export type PresetGroup = {
 }
 
 function normalized(id: string): Preset {
-  const result: any = Object.assign({}, (PRESETS as unknown as { [key: string]: PresetFragment })[id])
+  const result: any = Object.assign(
+    {},
+    (PRESETS as unknown as { [key: string]: PresetFragment })[id]
+  )
   result.id = id
   result.title = result.title || result.name
   result.baseFrequency = result.baseFrequency || 440

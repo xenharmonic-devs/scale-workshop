@@ -6,18 +6,46 @@ import { Fraction } from 'xen-dev-utils'
 export function getTestData(appTitle: string) {
   // TODO: Cover absolute intervals (in line data; these are all relative)
   const relativeIntervals = [
-    new Interval(TimeMonzo.fromEqualTemperament('100/1200', 2, 3), 'logarithmic', {type: 'CentsLiteral', whole: 100n, fractional: ''}),
+    new Interval(TimeMonzo.fromEqualTemperament('100/1200', 2, 3), 'logarithmic', {
+      type: 'CentsLiteral',
+      whole: 100n,
+      fractional: ''
+    }),
     new Interval(
       TimeMonzo.fromEqualTemperament(new Fraction(4, 5), new Fraction(2), 3),
       'logarithmic',
-      {type: 'NedjiLiteral', numerator: 4, denominator: 5, equaveNumerator: null, equaveDenominator: null}
+      {
+        type: 'NedjiLiteral',
+        numerator: 4,
+        denominator: 5,
+        equaveNumerator: null,
+        equaveDenominator: null
+      }
     ),
-    new Interval(TimeMonzo.fromFraction(new Fraction(5, 3), 3), 'linear', {type: 'FractionLiteral', numerator: 5n, denominator: 3n}),
-    new Interval(TimeMonzo.fromValue(Math.E / 2, 3), 'linear', {type: 'DecimalLiteral', whole: 1n, fractional: '3591409142295225', flavor: 'r', exponent: null}),
-    new Interval(TimeMonzo.fromFraction(new Fraction(81, 80), 3).pow(5), 'linear', {type: 'FractionLiteral', numerator: 3486784401n, denominator: 3276800000n}),
-    new Interval(TimeMonzo.fromFraction(2, 3), 'linear', {type: 'FractionLiteral', numerator: 2n, denominator: 1n})
+    new Interval(TimeMonzo.fromFraction(new Fraction(5, 3), 3), 'linear', {
+      type: 'FractionLiteral',
+      numerator: 5n,
+      denominator: 3n
+    }),
+    new Interval(TimeMonzo.fromValue(Math.E / 2, 3), 'linear', {
+      type: 'DecimalLiteral',
+      whole: 1n,
+      fractional: '3591409142295225',
+      flavor: 'r',
+      exponent: null
+    }),
+    new Interval(TimeMonzo.fromFraction(new Fraction(81, 80), 3).pow(5), 'linear', {
+      type: 'FractionLiteral',
+      numerator: 3486784401n,
+      denominator: 3276800000n
+    }),
+    new Interval(TimeMonzo.fromFraction(2, 3), 'linear', {
+      type: 'FractionLiteral',
+      numerator: 2n,
+      denominator: 1n
+    })
   ]
-  const ratios = relativeIntervals.map(i => i.value.valueOf())
+  const ratios = relativeIntervals.map((i) => i.value.valueOf())
   const scale = new Scale(ratios, 440, 69)
   const params: ExporterParams = {
     filename: 'test',

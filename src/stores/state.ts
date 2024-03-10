@@ -79,6 +79,6 @@ export const useStateStore = defineStore('state', () => {
     equaveUpCode,
     equaveDownCode,
     degreeUpCode,
-    degreeDownCode,
+    degreeDownCode
   }
 })

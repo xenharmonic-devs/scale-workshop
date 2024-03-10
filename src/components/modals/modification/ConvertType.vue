@@ -2,8 +2,8 @@
 import { onMounted, ref } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import { useModalStore } from '@/stores/modal'
-import { useStateStore } from '@/stores/state';
-import { useScaleStore } from '@/stores/scale';
+import { useStateStore } from '@/stores/state'
+import { useScaleStore } from '@/stores/scale'
 
 const emit = defineEmits(['done', 'cancel'])
 
@@ -33,10 +33,10 @@ function modify(expand = false) {
     scale.sourceText += modal.type
   }
   if (expand) {
-    const {visitor, defaults} = scale.getVisitors()
+    const { visitor, defaults } = scale.getVisitors()
     scale.sourceText = visitor.expand(defaults)
   }
-  scale.computeScale();
+  scale.computeScale()
   emit('done')
 }
 </script>
@@ -82,11 +82,11 @@ function modify(expand = false) {
         </div>
 
         <template v-if="modal.type === 'nedji'">
-          <div class="control" >
+          <div class="control">
             <label for="steps">Preferred number of steps *</label>
             <input id="steps" type="number" min="0" v-model="modal.preferredEtNumerator" />
           </div>
-          <div class="control" >
+          <div class="control">
             <label for="edo">Preferred divisions (EDO) *</label>
             <input id="edo" type="number" min="0" v-model="modal.preferredEtDenominator" />
           </div>

@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed } from 'vue'
 
 const TAGLINES = [
-  ["Because there are more than 12 notes.", "Sean Archibald"],
-  ["Electric Tunaloo", ""],
-  ["Powered by SonicWeave", ""],
-  ["We are friends now, right?", "dotuXil"],
-  ["Any JI scale is a NEJI if you're brave enough.", "fredg999"],
-  ["Ranting about ordinals is such a 0st world problem...", "Lumi Pakkanen"],
-  ["You should put spoob in the credits as well.", "Puhts"],
-  ["yknow, if you just changed how long a second is, everything can become 432hz", "Ropal"],
-  ["some eyes are exotemperaments", "akselai"],
+  ['Because there are more than 12 notes.', 'Sean Archibald'],
+  ['Electric Tunaloo', ''],
+  ['Powered by SonicWeave', ''],
+  ['We are friends now, right?', 'dotuXil'],
+  ["Any JI scale is a NEJI if you're brave enough.", 'fredg999'],
+  ['Ranting about ordinals is such a 0st world problem...', 'Lumi Pakkanen'],
+  ['You should put spoob in the credits as well.', 'Puhts'],
+  ['yknow, if you just changed how long a second is, everything can become 432hz', 'Ropal'],
+  ['some eyes are exotemperaments', 'akselai'],
 
-  ["Also Try Scala!", ""],
-  ["Also Try XenPaper!", ""],
-  ["Also Try Xen-calc!", ""],
-];
+  ['Also Try Scala!', ''],
+  ['Also Try XenPaper!', ''],
+  ['Also Try Xen-calc!', '']
+]
 
 const tagline = computed(() => TAGLINES[Math.floor(Math.random() * TAGLINES.length)])
 </script>
@@ -24,7 +24,7 @@ const tagline = computed(() => TAGLINES[Math.floor(Math.random() * TAGLINES.leng
   <div class="about">
     <img alt="Scale Workshop logo" class="logo" src="@/assets/logo.svg" width="100" height="100" />
     <h1>Scale Workshop 3</h1>
-    <blockquote :class="{cited: !!tagline[1]}">{{ tagline[0] }}</blockquote>
+    <blockquote :class="{ cited: !!tagline[1] }">{{ tagline[0] }}</blockquote>
     <cite v-if="tagline[1]">&mdash; {{ tagline[1] }}</cite>
     <div class="control-group">
       <div class="control centered">
@@ -57,7 +57,8 @@ const tagline = computed(() => TAGLINES[Math.floor(Math.random() * TAGLINES.leng
         Scott Dakota - <i>lattice advisor / generator sequence advisor</i> <br />
         Richie Greene - <i>quality assurance</i> <br />
         Akselai - <i>mathematics advisor</i> <br />
-        <span class="spoob">Spoob<img src="@/assets/img/spoob.png"/></span> - <i>emotional support</i>
+        <span class="spoob">Spoob<img src="@/assets/img/spoob.png" /></span> -
+        <i>emotional support</i>
       </p>
     </div>
   </div>

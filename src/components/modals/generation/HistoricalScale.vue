@@ -39,7 +39,7 @@ const KEY_COLORS_C = [
   'white',
   'black',
   'white',
-  'white', // Unison
+  'white' // Unison
 ]
 
 const MIDI_NOTE_C = 60
@@ -50,7 +50,7 @@ const MAX_LENGTH = 10
 
 const HARMONIC_SEVENTH = new Interval(
   TimeMonzo.fromFraction('7/4', DEFAULT_NUMBER_OF_COMPONENTS),
-  'linear',
+  'linear'
 )
 
 const SYNTONIC = new Interval(
@@ -94,7 +94,8 @@ const temperedGenerator = computed(() => {
   if (historical.method === 'simple') {
     return historical.generator
   }
-  const cents = historical.pureGenerator.totalCents() + historical.tempering * historical.temperingStrength
+  const cents =
+    historical.pureGenerator.totalCents() + historical.tempering * historical.temperingStrength
   return parseInterval(cents.toFixed(state.centsFractionDigits))
 })
 
@@ -114,7 +115,7 @@ function onWellCommaInput(event: Event, i: number) {
 }
 
 function generate(expand = true) {
-  let source: string;
+  let source: string
   if (historical.method === 'simple') {
     source = `rank2(${temperedGenerator.value.toString()}, ${historical.up}, ${historical.down})`
 
@@ -132,7 +133,10 @@ function generate(expand = true) {
     }
     emit('update:scaleName', `Rank 2 temperament (${genString}, ${historical.periodString})`)
   } else {
-    const commaFractions = historical.wellCommaFractions.slice(0, -1).map(f => f.toFraction()).join(', ')
+    const commaFractions = historical.wellCommaFractions
+      .slice(0, -1)
+      .map((f) => f.toFraction())
+      .join(', ')
     source = `wellTemperament([${commaFractions}], ${historical.wellComma.toString()}, ${historical.down})`
     if (historical.selectedWellPreset in historical.wellPresets) {
       emit('update:scaleName', historical.wellPresets[historical.selectedWellPreset].name)
@@ -141,8 +145,8 @@ function generate(expand = true) {
     }
   }
   if (historical.format === 'cents') {
-      source += `\ni => cents(i, ${state.centsFractionDigits})`
-    }
+    source += `\ni => cents(i, ${state.centsFractionDigits})`
+  }
   // Check if the scale can be centered around C
   if (
     historical.size === 12 &&
@@ -152,9 +156,11 @@ function generate(expand = true) {
     emit('update:baseFrequency', FREQUENCY_C)
     emit('update:baseMidiNote', MIDI_NOTE_C)
     source += `\nlabel([${KEY_COLORS_C.join(', ')}])`
-    const labels: string[] = [];
+    const labels: string[] = []
     for (let i = 0; i < historical.size; ++i) {
-      labels[mmod(7 * (i - historical.down) - 1, historical.size)] = JSON.stringify(spineLabel(i - historical.down))
+      labels[mmod(7 * (i - historical.down) - 1, historical.size)] = JSON.stringify(
+        spineLabel(i - historical.down)
+      )
     }
     source += `\nlabel([${labels.join(', ')}])`
   }
@@ -299,7 +305,8 @@ function generate(expand = true) {
                 :key="candidate.exponent"
                 :value="candidate.exponent"
               >
-                {{ candidate.exponent }} / {{ candidate.tempering.toFixed(state.centsFractionDigits) }} ¢
+                {{ candidate.exponent }} /
+                {{ candidate.tempering.toFixed(state.centsFractionDigits) }} ¢
               </option>
             </select>
           </div>

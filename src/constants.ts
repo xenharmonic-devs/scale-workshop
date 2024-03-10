@@ -27,24 +27,37 @@ export const MAX_INTERACTIVE_SUBGROUP_SIZE = 6
 // Anything larger than this uses O(n²) methods (if available) instead of O(exp(n))
 export const MAX_GEO_SUBGROUP_SIZE = 9
 
-export const SEMITONE_12TET = 2 ** (1/12)
+export const SEMITONE_12TET = 2 ** (1 / 12)
 
-export const TET12 = [...Array(12).keys()].map(i => SEMITONE_12TET ** (i + 1))
+export const TET12 = [...Array(12).keys()].map((i) => SEMITONE_12TET ** (i + 1))
 
 export const MIDI_NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 
-export const MIDI_NOTE_COLORS = ['white', 'black', 'white', 'black', 'white', 'white', 'black', 'white', 'black', 'white', 'black', 'white']
+export const MIDI_NOTE_COLORS = [
+  'white',
+  'black',
+  'white',
+  'black',
+  'white',
+  'white',
+  'black',
+  'white',
+  'black',
+  'white',
+  'black',
+  'white'
+]
 
 // Some often used intervals
 export const OCTAVE = new Interval(
   TimeMonzo.fromFraction(2, DEFAULT_NUMBER_OF_COMPONENTS),
   'linear',
-  {type: 'FractionLiteral', numerator: 2n, denominator: 1n}
+  { type: 'FractionLiteral', numerator: 2n, denominator: 1n }
 )
 export const FIFTH = new Interval(
   TimeMonzo.fromFraction('3/2', DEFAULT_NUMBER_OF_COMPONENTS),
   'linear',
-  {type: 'FractionLiteral', numerator: 3n, denominator: 2n}
+  { type: 'FractionLiteral', numerator: 3n, denominator: 2n }
 )
 export const THIRD = new Interval(
   TimeMonzo.fromFraction('5/4', DEFAULT_NUMBER_OF_COMPONENTS),
@@ -59,6 +72,6 @@ export const INTERVALS_12TET = [...Array(12).keys()].map(
   (i) =>
     new Interval(
       TimeMonzo.fromEqualTemperament(new Fraction(i + 1, 12), 2, DEFAULT_NUMBER_OF_COMPONENTS),
-      'logarithmic',
+      'logarithmic'
     )
 )

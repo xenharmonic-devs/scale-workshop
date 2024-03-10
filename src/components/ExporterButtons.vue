@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { APP_TITLE } from '@/constants';
-import { exportFile, type ExporterKey } from '@/exporters';
-import type { ExporterParams } from '@/exporters/base';
-import { useScaleStore } from '@/stores/scale';
-import { useStateStore } from '@/stores/state';
-import { sanitizeFilename } from '@/utils';
-import { defineAsyncComponent, ref } from 'vue';
+import { APP_TITLE } from '@/constants'
+import { exportFile, type ExporterKey } from '@/exporters'
+import type { ExporterParams } from '@/exporters/base'
+import { useScaleStore } from '@/stores/scale'
+import { useStateStore } from '@/stores/state'
+import { sanitizeFilename } from '@/utils'
+import { defineAsyncComponent, ref } from 'vue'
 
 const KorgExportModal = defineAsyncComponent(
   () => import('@/components/modals/export/KorgExport.vue')
@@ -20,7 +20,7 @@ const ReaperExportModal = defineAsyncComponent(
 const state = useStateStore()
 const scale = useScaleStore()
 
-const exportTextClipboard = ref("[URL sharing disabled]")
+const exportTextClipboard = ref('[URL sharing disabled]')
 const showKorgExportModal = ref(false)
 const showMtsSysexExportModal = ref(false)
 const showReaperExportModal = ref(false)
@@ -28,7 +28,7 @@ const showReaperExportModal = ref(false)
 function copyToClipboard() {
   exportTextClipboard.value = 'No!'
   window.setTimeout(() => {
-    exportTextClipboard.value = "[URL sharing disabled]"
+    exportTextClipboard.value = '[URL sharing disabled]'
   }, 5000)
   /*
   window.navigator.clipboard.writeText(window.location.href)
@@ -120,8 +120,8 @@ function doExport(exporter: ExporterKey) {
   <a href="#" class="btn" @click="doExport('scalascl')">
     <p><strong>Scala scale (.scl)</strong></p>
     <p>
-      Scale file for various synths.<br />If you use this file without an accompanying .kbm
-      file, most synths will assume your scale starts on C ~261Hz
+      Scale file for various synths.<br />If you use this file without an accompanying .kbm file,
+      most synths will assume your scale starts on C ~261Hz
     </p>
   </a>
   <a href="#" class="btn" @click="doExport('scalakbm')">
@@ -172,8 +172,21 @@ function doExport(exporter: ExporterKey) {
     <p>Binary data of a Bulk Tuning Dump SysEx message</p>
   </a>
   <h3>Documentation</h3>
-  <p>You can read about the new syntax <a href="https://github.com/xenharmonic-devs/sonic-weave?tab=readme-ov-file#sonic-weave" target="_blank">here</a>.</p>
-  <p>Remember to check out the <a href="https://github.com/xenharmonic-devs/sonic-weave/tree/main/examples" target="_blank">examples</a> too.</p>
+  <p>
+    You can read about the new syntax
+    <a
+      href="https://github.com/xenharmonic-devs/sonic-weave?tab=readme-ov-file#sonic-weave"
+      target="_blank"
+      >here</a
+    >.
+  </p>
+  <p>
+    Remember to check out the
+    <a href="https://github.com/xenharmonic-devs/sonic-weave/tree/main/examples" target="_blank"
+      >examples</a
+    >
+    too.
+  </p>
 </template>
 
 <style scoped>

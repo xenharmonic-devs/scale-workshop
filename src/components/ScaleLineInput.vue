@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computedAndError, parseInterval, setAndReportValidity } from '@/utils'
-import { type Interval } from 'sonic-weave';
+import { type Interval } from 'sonic-weave'
 import { ref, watch } from 'vue'
 
 const props = defineProps<{
@@ -12,10 +12,7 @@ const props = defineProps<{
 const emit = defineEmits(['update:value', 'update:modelValue'])
 
 const element = ref<HTMLInputElement | null>(null)
-const [value, error] = computedAndError(
-  () => parseInterval(props.modelValue),
-  props.defaultValue
-)
+const [value, error] = computedAndError(() => parseInterval(props.modelValue), props.defaultValue)
 watch(value, (newValue) => emit('update:value', newValue), { immediate: true })
 watch(element, (newElement) => setAndReportValidity(newElement, error.value), { immediate: true })
 watch(error, (newError) => setAndReportValidity(element.value, newError), { immediate: true })

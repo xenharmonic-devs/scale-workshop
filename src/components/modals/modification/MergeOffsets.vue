@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import Modal from '@/components/ModalDialog.vue'
 import { useModalStore } from '@/stores/modal'
-import { useScaleStore } from '@/stores/scale';
-import { arrayToString } from '@/utils';
-import { ref, watch } from 'vue';
+import { useScaleStore } from '@/stores/scale'
+import { arrayToString } from '@/utils'
+import { ref, watch } from 'vue'
 
 const emit = defineEmits(['done', 'cancel'])
 
@@ -19,10 +19,10 @@ watch(
 function modify(expand = true) {
   scale.sourceText += `\nmergeOffset(${arrayToString(modal.offsets)}, '${modal.overflowType}')`
   if (expand) {
-    const {visitor, defaults} = scale.getVisitors()
+    const { visitor, defaults } = scale.getVisitors()
     scale.sourceText = visitor.expand(defaults)
   }
-  scale.computeScale();
+  scale.computeScale()
   emit('done')
 }
 </script>
@@ -49,12 +49,7 @@ function modify(expand = true) {
         <div class="control radio-group">
           <label>Overflow</label>
           <span>
-            <input
-              type="radio"
-              id="overflow-keep"
-              value="keep"
-              v-model="modal.overflowType"
-            />
+            <input type="radio" id="overflow-keep" value="keep" v-model="modal.overflowType" />
             <label for="overflow-keep"> Keep </label>
           </span>
 

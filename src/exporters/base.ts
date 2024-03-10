@@ -1,5 +1,5 @@
-import type { Scale } from "@/scale"
-import type { Interval } from "sonic-weave"
+import type { Scale } from '@/scale'
+import type { Interval } from 'sonic-weave'
 
 export type LineFormat = 'label' | 'cents' | 'frequency' | 'decimal' | 'degree'
 
@@ -38,7 +38,7 @@ export class BaseExporter {
   validateParams() {
     for (const interval of this.params.relativeIntervals) {
       if (!interval.isRelative()) {
-        throw new Error('Intervals must be given relative to the base frequency.');
+        throw new Error('Intervals must be given relative to the base frequency.')
       }
     }
   }

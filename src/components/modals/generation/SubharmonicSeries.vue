@@ -2,7 +2,7 @@
 import Modal from '@/components/ModalDialog.vue'
 import { clamp } from 'xen-dev-utils'
 import { useModalStore } from '@/stores/modal'
-import { expandCode } from '@/utils';
+import { expandCode } from '@/utils'
 
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
@@ -10,11 +10,7 @@ const modal = useModalStore()
 
 function generate(expand = true) {
   const numerator = Math.max(1, Math.round(modal.lowInteger))
-  const greatestDenominator = clamp(
-    numerator + 1,
-    numerator + 1000,
-    Math.round(modal.highInteger)
-  )
+  const greatestDenominator = clamp(numerator + 1, numerator + 1000, Math.round(modal.highInteger))
   let source = `/${greatestDenominator}::${numerator}`
   if (expand) {
     source = expandCode(source)

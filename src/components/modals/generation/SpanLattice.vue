@@ -28,7 +28,7 @@ function calculateGenerators() {
   } else {
     temperament = Temperament.fromCommas(lattice.commas, lattice.subgroup)
   }
-  let periodGenerators: number[];
+  let periodGenerators: number[]
   try {
     periodGenerators = temperament.periodGenerators(lattice.options)
   } catch {
@@ -39,7 +39,10 @@ function calculateGenerators() {
   lattice.equaveString = periodGenerators[0].toFixed(state.centsFractionDigits)
   lattice.equave = parseInterval(lattice.equaveString)
 
-  lattice.basisString = periodGenerators.slice(1).map(g => g.toFixed(state.centsFractionDigits)).join(' ')
+  lattice.basisString = periodGenerators
+    .slice(1)
+    .map((g) => g.toFixed(state.centsFractionDigits))
+    .join(' ')
   lattice.method = 'generators'
 }
 
@@ -66,9 +69,7 @@ function flip(index: number) {
 function generate(expand = true) {
   try {
     const source = `spanLattice(${arrayToString(lattice.basis)}, ${arrayToString(lattice.ups)}, ${arrayToString(lattice.downs)}, ${lattice.equave.toString()})`
-    let name = `Lattice (${lattice.dimensions} of ${
-      lattice.basisString
-    }`
+    let name = `Lattice (${lattice.dimensions} of ${lattice.basisString}`
     if (lattice.basis.length === 0) {
       name = 'Lattice (unison'
     }
@@ -134,11 +135,7 @@ function generate(expand = true) {
             />
           </div>
           <label>Generators up/down from 1/1</label>
-          <div
-            class="control"
-            v-for="(_, i) of lattice.basis"
-            :key="i"
-          >
+          <div class="control" v-for="(_, i) of lattice.basis" :key="i">
             <label>Generator {{ lattice.basis[i].toString() }}</label>
             <button @click="flip(i)">Flip</button>
             <input

@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { constantStructureViolations, freeEquallyTemperedChord, intervalMatrix, rootedEquallyTemperedChord } from '@/analysis'
+import {
+  constantStructureViolations,
+  freeEquallyTemperedChord,
+  intervalMatrix,
+  rootedEquallyTemperedChord
+} from '@/analysis'
 import ChordWheel from '@/components/ChordWheel.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { computed, reactive, ref } from 'vue'
@@ -166,8 +171,17 @@ function highlight(y?: number, x?: number) {
           <th>({{ scale.scale.size + state.intervalMatrixIndexing }})</th>
         </tr>
         <tr v-for="(row, i) of matrixRows" :key="i">
-          <th :class="{held: heldScaleDegrees.has(i)}">{{ scale.labels[mmod(i - 1, scale.labels.length)] }}</th>
-          <td v-for="(name, j) of row" :key="j" :class="{violator: violations[i][j], highlight: (highlights[i] ?? [])[j]}" @mouseover="highlight(i, j)">{{ name }}</td>
+          <th :class="{ held: heldScaleDegrees.has(i) }">
+            {{ scale.labels[mmod(i - 1, scale.labels.length)] }}
+          </th>
+          <td
+            v-for="(name, j) of row"
+            :key="j"
+            :class="{ violator: violations[i][j], highlight: (highlights[i] ?? [])[j] }"
+            @mouseover="highlight(i, j)"
+          >
+            {{ name }}
+          </td>
         </tr>
       </table>
     </div>
@@ -270,11 +284,10 @@ function highlight(y?: number, x?: number) {
       <h2>Equally tempered chord</h2>
       <div class="column">
         <p class="chord-data">
-          <b>Chord:</b> [{{ equallyTemperedChordData.degrees.join(',') }}] \ {{ equallyTemperedChordData.divisions }}{{ nedjiProjector }}
+          <b>Chord:</b> [{{ equallyTemperedChordData.degrees.join(',') }}] \
+          {{ equallyTemperedChordData.divisions }}{{ nedjiProjector }}
         </p>
-        <p class="chord-data">
-          <b>Error:</b> {{ equallyTemperedChordData.error.toFixed(5) }} c
-        </p>
+        <p class="chord-data"><b>Error:</b> {{ equallyTemperedChordData.error.toFixed(5) }} c</p>
       </div>
       <div class="column">
         <div class="control-group">
@@ -294,11 +307,11 @@ function highlight(y?: number, x?: number) {
           <div class="control radio-group">
             <label>Error model</label>
             <span>
-              <input type="radio" id="error-rooted" value="rooted" v-model="errorModel"/>
+              <input type="radio" id="error-rooted" value="rooted" v-model="errorModel" />
               <label for="error-rooted"> Rooted </label>
             </span>
             <span>
-              <input type="radio" id="error-free" value="free" v-model="errorModel"/>
+              <input type="radio" id="error-free" value="free" v-model="errorModel" />
               <label for="error-free"> Free </label>
             </span>
           </div>
@@ -351,7 +364,8 @@ main {
 }
 
 /* Content layout (medium) */
-div.columns-container, div.bicolumns-container {
+div.columns-container,
+div.bicolumns-container {
   column-count: 2;
   column-gap: 1rem;
   overflow: hidden;

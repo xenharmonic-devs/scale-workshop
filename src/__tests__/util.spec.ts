@@ -1,11 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import {
-  autoKeyColors,
-  formatExponential,
-  formatHertz,
-  gapKeyColors
-} from '../utils'
+import { autoKeyColors, formatExponential, formatHertz, gapKeyColors } from '../utils'
 
 function naiveExponential(x: number, fractionDigits = 3) {
   if (Math.abs(x) < 10000) {

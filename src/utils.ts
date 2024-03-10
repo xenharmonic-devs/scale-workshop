@@ -8,7 +8,7 @@ import { evaluateExpression, getSourceVisitor, Interval, parseAST, repr } from '
  * @returns Smallest `2**n` such that `x <= 2**n`.
  */
 export function ceilPow2(x: number) {
-  return 1 << (32 - Math.clz32(x - 1));
+  return 1 << (32 - Math.clz32(x - 1))
 }
 
 export function parseInterval(input: string) {
@@ -25,20 +25,20 @@ export function parseInterval(input: string) {
 export function decimalString(amount: number) {
   const result = amount.toString()
   if (result.includes('e')) {
-    return result;
+    return result
   }
-  return result + 'e';
+  return result + 'e'
 }
 
 export function centString(cents: number, fractionDigits?: number) {
-  const result = (fractionDigits === undefined ? cents.toString() : cents.toFixed(fractionDigits))
+  const result = fractionDigits === undefined ? cents.toString() : cents.toFixed(fractionDigits)
   if (result.includes('e')) {
-    return result + ' c';
+    return result + ' c'
   }
   if (!result.includes('.')) {
     return result + '.'
   }
-  return result;
+  return result
 }
 
 export function parseCents(cents: number, fractionDigits?: number) {
@@ -58,24 +58,24 @@ export function expandCode(source: string) {
   for (const statement of ast.body) {
     const interupt = visitor.visit(statement)
     if (interupt) {
-      throw new Error('Illegal statement.');
+      throw new Error('Illegal statement.')
     }
   }
-  return visitor.expand(visitor);
+  return visitor.expand(visitor)
 }
 
 export function arrayToString(values: Interval[] | number[] | string[]) {
   if (!values.length) {
     return '[]'
   }
-  if (typeof(values[0]) === 'number') {
-    return `[${values.map(v => v.toString()).join(', ')}]`
+  if (typeof values[0] === 'number') {
+    return `[${values.map((v) => v.toString()).join(', ')}]`
   }
-  if (typeof(values[0]) === 'string') {
-    return `[${values.map(v => JSON.stringify(v)).join(', ')}]`
+  if (typeof values[0] === 'string') {
+    return `[${values.map((v) => JSON.stringify(v)).join(', ')}]`
   }
   const visitor = getSourceVisitor().createExpressionVisitor()
-  return repr.bind(visitor)(values as Interval[]);
+  return repr.bind(visitor)(values as Interval[])
 }
 
 export function debounce(func: (...args: any[]) => void, timeout = 300) {
@@ -101,7 +101,6 @@ export function midiNoteNumberToName(noteNumber: number, octaveOffset = -1) {
   const quotient = (noteNumber - remainder) / 12 + octaveOffset
   return MIDI_NOTE_NAMES[remainder] + quotient.toString()
 }
-
 
 export function sanitizeFilename(input: string) {
   input = input.trim()
@@ -395,7 +394,11 @@ const ENHARMONICS = [
 ]
 
 // Find a set of Pythagorean enharmonics corresponding to a MIDI note number
-export function midiNoteNumberToEnharmonics(noteNumber: number, style: AccidentalStyle = 'double', octaveOffset = -1) {
+export function midiNoteNumberToEnharmonics(
+  noteNumber: number,
+  style: AccidentalStyle = 'double',
+  octaveOffset = -1
+) {
   const remainder = mmod(noteNumber, 12)
   const quotient = (noteNumber - remainder) / 12 + octaveOffset
   const enharmonics = ENHARMONICS[remainder]

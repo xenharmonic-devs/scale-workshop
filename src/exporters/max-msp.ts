@@ -23,12 +23,7 @@ export default class MaxMSPExporter extends BaseExporter {
     file += '#' + this.params.newline
 
     for (let i = 0; i < MaxMSPExporter.tuningMaxSize; i++) {
-      file +=
-        i +
-        ', ' +
-        this.params.scale.getFrequency(i).toFixed(7) +
-        ';' +
-        this.params.newline
+      file += i + ', ' + this.params.scale.getFrequency(i).toFixed(7) + ';' + this.params.newline
     }
 
     return file

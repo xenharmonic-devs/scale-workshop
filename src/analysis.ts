@@ -1,5 +1,5 @@
-import { Interval } from "sonic-weave"
-import { circleDistance, mmod, valueToCents } from "xen-dev-utils"
+import { Interval } from 'sonic-weave'
+import { circleDistance, mmod, valueToCents } from 'xen-dev-utils'
 
 const EPSILON = 1e-6
 
@@ -108,14 +108,12 @@ export function utonalFundamental(frequencies: number[], maxDivisor = 23) {
  * @returns The maximum distance in cents from a grid "line" in the set.
  */
 export function misalignment(pitches: number[], gridCents: number) {
-  const gridPitches = pitches.map(
-    (pitch) => Math.round(pitch / gridCents) * gridCents
-  );
-  let error = 0;
+  const gridPitches = pitches.map((pitch) => Math.round(pitch / gridCents) * gridCents)
+  let error = 0
   for (let i = 0; i < pitches.length; ++i) {
-    error = Math.max(error, Math.abs(pitches[i] - gridPitches[i]));
+    error = Math.max(error, Math.abs(pitches[i] - gridPitches[i]))
   }
-  return error;
+  return error
 }
 
 /**
@@ -130,46 +128,46 @@ export function alignCents(pitches: number[], gridCents: number) {
   if (!pitches.length) {
     return {
       error: 0,
-      degrees: [],
+      degrees: []
     }
   }
 
   // Find the segment where the global optimum lies.
-  let optimalPitches: number[];
-  let minError = Infinity;
+  let optimalPitches: number[]
+  let minError = Infinity
   for (let i = 0; i < pitches.length; ++i) {
-    const aligned = pitches.map((pitch) => pitch - pitches[i]);
-    const error = misalignment(aligned, gridCents);
+    const aligned = pitches.map((pitch) => pitch - pitches[i])
+    const error = misalignment(aligned, gridCents)
     if (error < minError) {
-      optimalPitches = aligned;
-      minError = error;
+      optimalPitches = aligned
+      minError = error
     }
   }
 
   // Calculate the shape of the segment.
-  const degrees = optimalPitches!.map((pitch) => Math.round(pitch / gridCents));
-  let minOffset = Infinity;
-  let maxOffset = -Infinity;
-  let root = Infinity;
+  const degrees = optimalPitches!.map((pitch) => Math.round(pitch / gridCents))
+  let minOffset = Infinity
+  let maxOffset = -Infinity
+  let root = Infinity
   for (let i = 0; i < degrees.length; ++i) {
-    const offset = optimalPitches![i] - degrees[i] * gridCents;
-    minOffset = Math.min(minOffset, offset);
-    maxOffset = Math.max(maxOffset, offset);
+    const offset = optimalPitches![i] - degrees[i] * gridCents
+    minOffset = Math.min(minOffset, offset)
+    maxOffset = Math.max(maxOffset, offset)
     if (degrees[i] < root) {
-      root = degrees[i];
+      root = degrees[i]
     }
   }
 
   // Calculate minimum achievable absolute error.
-  const error = 0.5 * Math.abs(minOffset) + 0.5 * Math.abs(maxOffset);
+  const error = 0.5 * Math.abs(minOffset) + 0.5 * Math.abs(maxOffset)
   // Move root to grid origin.
   for (let i = 0; i < degrees.length; ++i) {
-    degrees[i] -= root;
+    degrees[i] -= root
   }
   return {
     error,
-    degrees,
-  };
+    degrees
+  }
 }
 
 /**
@@ -179,7 +177,7 @@ export function alignCents(pitches: number[], gridCents: number) {
  * @returns The minimum misalignment achievable measured in cents and the pitches snapped to the grid.
  */
 export function alignValues(ratios: number[], gridCents: number) {
-  return alignCents(ratios.map(valueToCents), gridCents);
+  return alignCents(ratios.map(valueToCents), gridCents)
 }
 
 /**
@@ -189,7 +187,11 @@ export function alignValues(ratios: number[], gridCents: number) {
  * @param equaveCents The size of the equave measured in cents.
  * @returns The minimum achievable error. The number of divisions of the given equave. The degrees of the chord.
  */
-export function rootedEquallyTemperedChord(frequencies: number[], maxDivisions: number, equaveCents = 1200) {
+export function rootedEquallyTemperedChord(
+  frequencies: number[],
+  maxDivisions: number,
+  equaveCents = 1200
+) {
   const root = valueToCents(Math.abs(frequencies[0]))
   const pitches = frequencies.map((f) => valueToCents(Math.abs(f)) - root)
   let bestError = Infinity
@@ -202,11 +204,11 @@ export function rootedEquallyTemperedChord(frequencies: number[], maxDivisions: 
     }
   }
   const gridCents = equaveCents / bestDivisions
-  const degrees = pitches.map(pitch => Math.round(pitch / gridCents))
+  const degrees = pitches.map((pitch) => Math.round(pitch / gridCents))
   return {
     error: bestError,
     divisions: bestDivisions,
-    degrees,
+    degrees
   }
 }
 
@@ -217,14 +219,18 @@ export function rootedEquallyTemperedChord(frequencies: number[], maxDivisions: 
  * @param equaveCents The size of the equave measured in cents.
  * @returns The minimum achievable error. The number of divisions of the given equave. The degrees of the chord.
  */
-export function freeEquallyTemperedChord(frequencies: number[], maxDivisions: number, equaveCents = 1200) {
+export function freeEquallyTemperedChord(
+  frequencies: number[],
+  maxDivisions: number,
+  equaveCents = 1200
+) {
   const root = valueToCents(Math.abs(frequencies[0]))
   const pitches = frequencies.map((f) => valueToCents(Math.abs(f)) - root)
   let bestError = Infinity
   let bestDivisions = maxDivisions
   let bestDegrees: number[] = []
   for (let divisions = 1; divisions <= maxDivisions; ++divisions) {
-    const {error, degrees} = alignCents(pitches, equaveCents / divisions)
+    const { error, degrees } = alignCents(pitches, equaveCents / divisions)
     if (error + EPSILON < bestError) {
       bestError = error
       bestDivisions = divisions
@@ -234,43 +240,49 @@ export function freeEquallyTemperedChord(frequencies: number[], maxDivisions: nu
   return {
     error: bestError,
     divisions: bestDivisions,
-    degrees: bestDegrees,
+    degrees: bestDegrees
   }
 }
 
 export type Shell = {
-  harmonics: number[];
-  degrees: number[];
+  harmonics: number[]
+  degrees: number[]
 }
 
 /**
  * Fast variant of sonic-weave's vertically aligned object returning an array of harmonics.
  */
-export function vao(denominator: number, maxNumerator: number, divisions: number, tolerance: number, equaveCents: number) {
-  const gridCents = equaveCents / divisions;
-  const witnesses: number[] = [];
-  const denominatorCents = valueToCents(denominator);
-  const harmonics = [];
-  const degrees = [];
+export function vao(
+  denominator: number,
+  maxNumerator: number,
+  divisions: number,
+  tolerance: number,
+  equaveCents: number
+) {
+  const gridCents = equaveCents / divisions
+  const witnesses: number[] = []
+  const denominatorCents = valueToCents(denominator)
+  const harmonics = []
+  const degrees = []
   search: for (let numerator = denominator; numerator < maxNumerator; ++numerator) {
-    const cents = valueToCents(numerator) - denominatorCents;
-    const degree = Math.round(cents / gridCents);
+    const cents = valueToCents(numerator) - denominatorCents
+    const degree = Math.round(cents / gridCents)
     if (Math.abs(cents - degree * gridCents) > tolerance) {
-      continue;
+      continue
     }
     for (const existing of witnesses) {
       if (circleDistance(cents, existing, equaveCents) < EPSILON) {
-        continue search;
+        continue search
       }
     }
-    witnesses.push(cents);
-    harmonics.push(numerator);
-    degrees.push(degree);
+    witnesses.push(cents)
+    harmonics.push(numerator)
+    degrees.push(degree)
   }
   return {
     harmonics,
-    degrees,
-  };
+    degrees
+  }
 }
 
 /*
@@ -289,41 +301,50 @@ function* subshells(shell: number[]) {
 function subsetOf(a: number[], b: number[]) {
   for (const value of a) {
     if (!b.includes(value)) {
-      return false;
+      return false
     }
   }
-  return true;
+  return true
 }
 
 // TODO: Optimize! This is still too slow to be user-friendly.
 /**
  * Vertically aligned objects that are free to offset the root to stay withing the given tolerance.
  */
-export function freeVAOs(denominator: number, maxNumerator: number, divisions: number, tolerance: number, equaveCents: number, minSize = 5, maxShells = 20, gas = 10000): Shell[] {
-  const gridCents = equaveCents / divisions;
+export function freeVAOs(
+  denominator: number,
+  maxNumerator: number,
+  divisions: number,
+  tolerance: number,
+  equaveCents: number,
+  minSize = 5,
+  maxShells = 20,
+  gas = 10000
+): Shell[] {
+  const gridCents = equaveCents / divisions
 
   // Generate the largest possible object.
-  const superShell = vao(denominator, maxNumerator, divisions, 2 * tolerance, equaveCents).harmonics;
+  const superShell = vao(denominator, maxNumerator, divisions, 2 * tolerance, equaveCents).harmonics
 
-  const root = superShell.shift()!;
-  const result: Shell[] = [];
+  const root = superShell.shift()!
+  const result: Shell[] = []
   function accumulate(harmonics: number[], remaining: number[], degrees: number[]) {
     if (harmonics.length + remaining.length < minSize) {
-      return;
+      return
     }
     if (result.length >= maxShells) {
-      return;
+      return
     }
-    let grew = false;
+    let grew = false
     while (remaining.length) {
       if (gas-- < 0) {
-        return;
+        return
       }
-      const candidate = [...harmonics];
+      const candidate = [...harmonics]
       candidate.push(remaining.pop()!)
-      const {error, degrees} = alignValues(candidate, gridCents);
+      const { error, degrees } = alignValues(candidate, gridCents)
       if (error <= tolerance) {
-        grew = true;
+        grew = true
         accumulate(candidate, [...remaining], degrees)
       }
     }
@@ -339,16 +360,16 @@ export function freeVAOs(denominator: number, maxNumerator: number, divisions: n
       })
     }
   }
-  superShell.reverse();
+  superShell.reverse()
   accumulate([root], superShell, [0])
-  result.sort((a, b) => b.harmonics.length - a.harmonics.length);
+  result.sort((a, b) => b.harmonics.length - a.harmonics.length)
 
   if (!result.length) {
     // Out of gas or something. Bail out.
-    return [vao(denominator, maxNumerator, divisions, tolerance, equaveCents)];
+    return [vao(denominator, maxNumerator, divisions, tolerance, equaveCents)]
   }
 
-  return result;
+  return result
 
   // Alternative implementation.
   /*
@@ -395,7 +416,7 @@ export function freeVAOs(denominator: number, maxNumerator: number, divisions: n
 
 // Interval matrix a.k.a the modes of a scale
 export function intervalMatrix(intervals: Interval[]) {
-  intervals = intervals.map(i => i.shallowClone())
+  intervals = intervals.map((i) => i.shallowClone())
   // Simplify by removing formatting.
   for (let i = 0; i < intervals.length; ++i) {
     intervals[i].node = undefined
@@ -432,7 +453,7 @@ export function constantStructureViolations(matrix: Interval[][]) {
         continue
       }
       const value = matrix[j][i].value
-      for (let k = i+1; k < matrix[0].length; ++k) {
+      for (let k = i + 1; k < matrix[0].length; ++k) {
         for (let l = 0; l < matrix.length; ++l) {
           if (matrix[l][k].value.strictEquals(value)) {
             result[j][i] = true

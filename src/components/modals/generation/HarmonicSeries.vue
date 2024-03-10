@@ -2,7 +2,7 @@
 import Modal from '@/components/ModalDialog.vue'
 import { clamp } from 'xen-dev-utils'
 import { useModalStore } from '@/stores/modal'
-import { expandCode } from '@/utils';
+import { expandCode } from '@/utils'
 
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 

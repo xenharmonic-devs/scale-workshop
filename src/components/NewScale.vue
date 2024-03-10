@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { defineAsyncComponent, ref } from 'vue';
-import { useScaleStore } from '@/stores/scale';
-import DropdownGroup from '@/components/DropdownGroup.vue';
-import { importFile, type ImporterKey } from '@/importers';
+import { defineAsyncComponent, ref } from 'vue'
+import { useScaleStore } from '@/stores/scale'
+import DropdownGroup from '@/components/DropdownGroup.vue'
+import { importFile, type ImporterKey } from '@/importers'
 
 const emit = defineEmits(['done', 'mouseenter'])
 
@@ -35,9 +35,7 @@ const HistoricalModal = defineAsyncComponent(
 const LatticeModal = defineAsyncComponent(
   () => import('@/components/modals/generation/SpanLattice.vue')
 )
-const MosModal = defineAsyncComponent(
-  () => import('@/components/modals/generation/MosScale.vue')
-)
+const MosModal = defineAsyncComponent(() => import('@/components/modals/generation/MosScale.vue'))
 const PresetModal = defineAsyncComponent(
   () => import('@/components/modals/generation/LoadPreset.vue')
 )
@@ -116,12 +114,17 @@ async function doImport(importerKey: ImporterKey, event: Event) {
 
 function blur() {
   if (!element.value) {
-    return;
+    return
   }
   element.value.blur()
 }
 
-defineExpose({blur})
+function updateBaseFrequency(value: number) {
+  scale.baseFrequency = value
+  scale.autoFrequency = false
+}
+
+defineExpose({ blur })
 </script>
 <template>
   <DropdownGroup ref="element" title="New scale" @mouseenter="$emit('mouseenter')">
@@ -211,8 +214,8 @@ defineExpose({blur})
       v-if="showHistoricalModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
-      @update:baseFrequency="scale.baseFrequency = $event; scale.autoFrequency = false"
-      @update:baseMidiNote="scale.baseMidiNote = $event;"
+      @update:baseFrequency="updateBaseFrequency"
+      @update:baseMidiNote="scale.baseMidiNote = $event"
       @cancel="showHistoricalModal = false"
     />
     <LatticeModal
@@ -230,8 +233,8 @@ defineExpose({blur})
     <PresetModal
       v-if="showPresetModal"
       @update:scaleName="scale.name = $event"
-      @update:baseFrequency="scale.baseFrequency = $event; scale.autoFrequency = false"
-      @update:baseMidiNote="scale.baseMidiNote = $event;"
+      @update:baseFrequency="updateBaseFrequency"
+      @update:baseMidiNote="scale.baseMidiNote = $event"
       @update:source="updateSourceAndHideModals"
       @cancel="showPresetModal = false"
     />

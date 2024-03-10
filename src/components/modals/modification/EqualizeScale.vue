@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { alignCents, misalignment } from '@/analysis';
+import { alignCents, misalignment } from '@/analysis'
 import Modal from '@/components/ModalDialog.vue'
-import { OCTAVE } from '@/constants';
+import { OCTAVE } from '@/constants'
 import { useModalStore } from '@/stores/modal'
-import { useScaleStore } from '@/stores/scale';
-import { computed } from 'vue';
-import { valueToCents } from 'xen-dev-utils';
-import { linear } from 'sonic-weave';
+import { useScaleStore } from '@/stores/scale'
+import { computed } from 'vue'
+import { valueToCents } from 'xen-dev-utils'
+import { linear } from 'sonic-weave'
 
 const emit = defineEmits(['done', 'cancel'])
 
@@ -14,20 +14,22 @@ const modal = useModalStore()
 const scale = useScaleStore()
 
 const equalizedScaleData = computed(() => {
-  const pitches = [...Array(scale.scale.size).keys()].map(i => valueToCents(Math.abs(scale.scale.getRatio(i + scale.baseMidiNote))))
+  const pitches = [...Array(scale.scale.size).keys()].map((i) =>
+    valueToCents(Math.abs(scale.scale.getRatio(i + scale.baseMidiNote)))
+  )
   const gridCents = valueToCents(scale.scale.equaveRatio) / modal.largeDivisions
   if (modal.errorModel === 'rooted') {
     const error = misalignment(pitches, gridCents)
-    return {error, degrees: []}
+    return { error, degrees: [] }
   }
   return alignCents(pitches, gridCents)
-});
+})
 
 function modify(expand = true) {
   if (modal.errorModel === 'rooted') {
     scale.sourceText += `\nequalize(${modal.largeDivisions})`
     if (expand) {
-      const {visitor, defaults} = scale.getVisitors()
+      const { visitor, defaults } = scale.getVisitors()
       scale.sourceText = visitor.expand(defaults)
     }
   } else {
@@ -39,9 +41,9 @@ function modify(expand = true) {
     if (equave.compare(OCTAVE)) {
       postfix += `<${linear(equave).toString()}>`
     }
-    scale.sourceText = degrees.map(d => `${d}${postfix}`).join('\n')
+    scale.sourceText = degrees.map((d) => `${d}${postfix}`).join('\n')
   }
-  scale.computeScale();
+  scale.computeScale()
   emit('done')
 }
 </script>
@@ -70,11 +72,11 @@ function modify(expand = true) {
         <div class="control radio-group">
           <label>Error model</label>
           <span>
-            <input type="radio" id="error-rooted" value="rooted" v-model="modal.errorModel"/>
+            <input type="radio" id="error-rooted" value="rooted" v-model="modal.errorModel" />
             <label for="error-rooted"> Rooted </label>
           </span>
           <span>
-            <input type="radio" id="error-free" value="free" v-model="modal.errorModel"/>
+            <input type="radio" id="error-free" value="free" v-model="modal.errorModel" />
             <label for="error-free"> Free </label>
           </span>
         </div>

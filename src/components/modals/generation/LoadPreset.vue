@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import Modal from '@/components/ModalDialog.vue'
-import { presets, presetsByGroup } from '@/presets';
-import { expandCode } from '@/utils';
-import { ref } from 'vue';
+import { presets, presetsByGroup } from '@/presets'
+import { expandCode } from '@/utils'
+import { ref } from 'vue'
 
-const emit = defineEmits(['update:source', 'update:scaleName', 'update:baseFrequency', 'update:baseMidiNote', 'cancel'])
+const emit = defineEmits([
+  'update:source',
+  'update:scaleName',
+  'update:baseFrequency',
+  'update:baseMidiNote',
+  'cancel'
+])
 
 const presetGroups = presetsByGroup()
 const presetSelect = ref<HTMLSelectElement | null>(null)
@@ -23,29 +29,29 @@ function confirm(expand = true) {
 </script>
 
 <template>
-    <Modal @confirm="confirm" @cancel="$emit('cancel')">
-      <template #header>
-        <h2>Load preset scale</h2>
-      </template>
-      <template #body>
-        <div class="control-group">
-          <div class="control">
-            <select ref="presetSelect" size="10" class="control">
-              <optgroup v-for="group of presetGroups" :key="group.name" :label="group.name">
-                <option v-for="preset of group.members" :key="preset.id" :value="preset.id">
-                  {{ preset.title }}
-                </option>
-              </optgroup>
-            </select>
-          </div>
+  <Modal @confirm="confirm" @cancel="$emit('cancel')">
+    <template #header>
+      <h2>Load preset scale</h2>
+    </template>
+    <template #body>
+      <div class="control-group">
+        <div class="control">
+          <select ref="presetSelect" size="10" class="control">
+            <optgroup v-for="group of presetGroups" :key="group.name" :label="group.name">
+              <option v-for="preset of group.members" :key="preset.id" :value="preset.id">
+                {{ preset.title }}
+              </option>
+            </optgroup>
+          </select>
         </div>
-      </template>
-      <template #footer>
+      </div>
+    </template>
+    <template #footer>
       <div class="btn-group">
         <button @click="confirm(true)">OK</button>
         <button @click="$emit('cancel')">Cancel</button>
         <button @click="confirm(false)">Raw</button>
       </div>
     </template>
-    </Modal>
+  </Modal>
 </template>

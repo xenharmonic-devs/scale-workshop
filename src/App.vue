@@ -43,15 +43,14 @@ function tuningTableKeyOff(index: number) {
 
 // === MIDI input / output ===
 
-
 const midiOut = computed(() => new MidiOut(midi.output as Output, midi.outputChannels))
 
 function sendNoteOn(frequency: number, rawAttack: number) {
-  frequency = clamp(-24000, 24000, frequency);
+  frequency = clamp(-24000, 24000, frequency)
   const midiOff = midiOut.value.sendNoteOn(frequency, rawAttack)
 
   if (audio.synth === null || audio.virtualSynth === null) {
-    return midiOff;
+    return midiOff
   }
 
   // Trigger web audio API synth.
@@ -338,12 +337,12 @@ onMounted(() => {
       scale.baseMidiNote = scaleWorkshopOneData.midi
       state.isomorphicHorizontal = scaleWorkshopOneData.horizontal
       state.isomorphicVertical = scaleWorkshopOneData.vertical
-      
+
       if (scaleWorkshopOneData.data !== undefined) {
         const colors = scaleWorkshopOneData.colors ?? ''
         const intervals = scaleWorkshopOneData.parseTuningData()
         // Convert to raw text
-        const sourceLines = intervals.map(i => i.toString())
+        const sourceLines = intervals.map((i) => i.toString())
         annotateColors(sourceLines, colors.split(' '))
         scale.sourceText = sourceLines.join('\n')
         scale.computeScale()
@@ -390,10 +389,12 @@ onMounted(() => {
       audio.pingPongGain = decodedState.pingPongGain
 
       // The decoder speaks Scale Workshop 2. Translate to SonicWeave.
-      const sourceLines = decodedState.scaleLines.map(l => parseScaleWorkshop2Line(l, DEFAULT_NUMBER_OF_COMPONENTS).toString())
+      const sourceLines = decodedState.scaleLines.map((l) =>
+        parseScaleWorkshop2Line(l, DEFAULT_NUMBER_OF_COMPONENTS).toString()
+      )
       annotateColors(sourceLines, decodedState.keyColors)
-      scale.sourceText = sourceLines.join('\n');
-      scale.computeScale();
+      scale.sourceText = sourceLines.join('\n')
+      scale.computeScale()
 
       // Replace query with version 3.
       router.push({ path: getPath(url), query: { version } })

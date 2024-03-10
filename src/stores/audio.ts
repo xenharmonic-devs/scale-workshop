@@ -1,37 +1,54 @@
 import { computed, ref, watch, type Ref } from 'vue'
 import { defineStore } from 'pinia'
-import { APERIODIC_WAVEFORMS, APERIODIC_WAVES, BASIC_WAVEFORMS, CUSTOM_WAVEFORMS, initializeCustomWaves, PERIODIC_WAVES, PingPongDelay } from '../synth'
+import {
+  APERIODIC_WAVEFORMS,
+  APERIODIC_WAVES,
+  BASIC_WAVEFORMS,
+  CUSTOM_WAVEFORMS,
+  initializeCustomWaves,
+  PERIODIC_WAVES,
+  PingPongDelay
+} from '../synth'
 import { VirtualSynth } from '../virtual-synth'
-import { AperiodicSynth, Synth, UnisonSynth, type OscillatorVoiceParams, type UnisonVoiceParams, type VoiceBaseParams, type AperiodicVoiceParams, AperiodicWave } from 'sw-synth'
+import {
+  AperiodicSynth,
+  Synth,
+  UnisonSynth,
+  type OscillatorVoiceParams,
+  type UnisonVoiceParams,
+  type VoiceBaseParams,
+  type AperiodicVoiceParams,
+  AperiodicWave
+} from 'sw-synth'
 
 // The compiler chokes on this store so we need an explicit type annotation
 type AudioStore = {
-  initialize: () => void;
-  unintialize: () => Promise<void>;
-  context: Ref<AudioContext>;
-  mainVolume: Ref<number>;
-  waveform: Ref<string>;
-  attackTime: Ref<number>;
-  decayTime: Ref<number>;
-  sustainLevel: Ref<number>;
-  releaseTime: Ref<number>;
-  stackSize: Ref<number>;
-  spread: Ref<number>;
-  aperiodicWaveform: Ref<string>;
-  audioDelay: Ref<number>;
-  maxPolyphony: Ref<number>;
-  synth: Ref<Synth | UnisonSynth | AperiodicSynth | null>;
-  synthType: Ref<'none' | 'oscillator' | 'unison' | 'aperiodic'>;
-  virtualSynth: Ref<VirtualSynth>;
-  pingPongDelay: Ref<PingPongDelay>;
-  pingPongDelayTime: Ref<number>;
-  pingPongFeedback: Ref<number>;
-  pingPongGain: Ref<number>;
-  pingPongSeparation: Ref<number>;
-  mainGain: Ref<GainNode>;
-  mainLowpass: Ref<BiquadFilterNode>;
-  mainHighpass: Ref<BiquadFilterNode>;
-};
+  initialize: () => void
+  unintialize: () => Promise<void>
+  context: Ref<AudioContext>
+  mainVolume: Ref<number>
+  waveform: Ref<string>
+  attackTime: Ref<number>
+  decayTime: Ref<number>
+  sustainLevel: Ref<number>
+  releaseTime: Ref<number>
+  stackSize: Ref<number>
+  spread: Ref<number>
+  aperiodicWaveform: Ref<string>
+  audioDelay: Ref<number>
+  maxPolyphony: Ref<number>
+  synth: Ref<Synth | UnisonSynth | AperiodicSynth | null>
+  synthType: Ref<'none' | 'oscillator' | 'unison' | 'aperiodic'>
+  virtualSynth: Ref<VirtualSynth>
+  pingPongDelay: Ref<PingPongDelay>
+  pingPongDelayTime: Ref<number>
+  pingPongFeedback: Ref<number>
+  pingPongGain: Ref<number>
+  pingPongSeparation: Ref<number>
+  mainGain: Ref<GainNode>
+  mainLowpass: Ref<BiquadFilterNode>
+  mainHighpass: Ref<BiquadFilterNode>
+}
 
 export const useAudioStore = defineStore<'audio', AudioStore>('audio', () => {
   const context = ref<AudioContext | null>(null)
@@ -91,24 +108,24 @@ export const useAudioStore = defineStore<'audio', AudioStore>('audio', () => {
     attackTime: attackTime.value,
     decayTime: decayTime.value,
     sustainLevel: sustainLevel.value,
-    releaseTime: releaseTime.value,
+    releaseTime: releaseTime.value
   }
 
   const oscillatorVoiceParams: OscillatorVoiceParams = {
     ..._voiceBase,
     type: 'triangle',
-    periodicWave: undefined,
+    periodicWave: undefined
   }
 
   const unisonVoiceParams: UnisonVoiceParams = {
     ...oscillatorVoiceParams,
     spread: spread.value,
-    stackSize: stackSize.value,
+    stackSize: stackSize.value
   }
 
   const aperiodicVoiceParams: AperiodicVoiceParams = {
     ..._voiceBase,
-    aperiodicWave: null as unknown as AperiodicWave  // Pacifies the type checker. Set properly during init.
+    aperiodicWave: null as unknown as AperiodicWave // Pacifies the type checker. Set properly during init.
   }
 
   const maxPolyphony = computed({
@@ -185,18 +202,9 @@ export const useAudioStore = defineStore<'audio', AudioStore>('audio', () => {
     aperiodicVoiceParams.aperiodicWave = APERIODIC_WAVES['steel']
 
     // These all should start with polyphony 0 to save resources
-    oscillatorSynth = new Synth(
-      context.value,
-      audioDestination,
-    )
-    unisonSynth = new UnisonSynth(
-      context.value,
-      audioDestination
-    )
-    aperiodicSynth = new AperiodicSynth(
-      context.value,
-      audioDestination
-    )
+    oscillatorSynth = new Synth(context.value, audioDestination)
+    unisonSynth = new UnisonSynth(context.value, audioDestination)
+    aperiodicSynth = new AperiodicSynth(context.value, audioDestination)
 
     // The content of these references will be manipulated in-place
     oscillatorSynth.voiceParams = oscillatorVoiceParams
@@ -293,19 +301,31 @@ export const useAudioStore = defineStore<'audio', AudioStore>('audio', () => {
   })
 
   watch(attackTime, (newValue) => {
-    oscillatorVoiceParams.attackTime = unisonVoiceParams.attackTime = aperiodicVoiceParams.attackTime = newValue
+    oscillatorVoiceParams.attackTime =
+      unisonVoiceParams.attackTime =
+      aperiodicVoiceParams.attackTime =
+        newValue
   })
 
   watch(decayTime, (newValue) => {
-    oscillatorVoiceParams.decayTime = unisonVoiceParams.decayTime = aperiodicVoiceParams.decayTime = newValue
+    oscillatorVoiceParams.decayTime =
+      unisonVoiceParams.decayTime =
+      aperiodicVoiceParams.decayTime =
+        newValue
   })
 
   watch(sustainLevel, (newValue) => {
-    oscillatorVoiceParams.sustainLevel = unisonVoiceParams.sustainLevel = aperiodicVoiceParams.sustainLevel = newValue
+    oscillatorVoiceParams.sustainLevel =
+      unisonVoiceParams.sustainLevel =
+      aperiodicVoiceParams.sustainLevel =
+        newValue
   })
 
   watch(releaseTime, (newValue) => {
-    oscillatorVoiceParams.releaseTime = unisonVoiceParams.releaseTime = aperiodicVoiceParams.releaseTime = newValue
+    oscillatorVoiceParams.releaseTime =
+      unisonVoiceParams.releaseTime =
+      aperiodicVoiceParams.releaseTime =
+        newValue
   })
 
   watch(stackSize, (newValue) => {

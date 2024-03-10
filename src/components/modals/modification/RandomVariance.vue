@@ -2,9 +2,9 @@
 import { computed } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import { useModalStore } from '@/stores/modal'
-import { useScaleStore } from '@/stores/scale';
-import { centString } from '@/utils';
-import { useStateStore } from '@/stores/state';
+import { useScaleStore } from '@/stores/scale'
+import { centString } from '@/utils'
+import { useStateStore } from '@/stores/state'
 
 const EPSILON = 1e-6
 
@@ -25,10 +25,10 @@ const equave = computed(() => {
 function modify(expand = true) {
   scale.sourceText += `\nrandomVariance(${centString(modal.varianceAmount)}, ${modal.varyEquave})\ninterval => cents(interval, ${state.centsFractionDigits})`
   if (expand) {
-    const {visitor, defaults} = scale.getVisitors()
+    const { visitor, defaults } = scale.getVisitors()
     scale.sourceText = visitor.expand(defaults)
   }
-  scale.computeScale();
+  scale.computeScale()
   emit('done')
 }
 </script>

@@ -2,8 +2,8 @@
 import VirtualTypingKeyboard from '@/components/VirtualTypingKeyboard.vue'
 import type { Keyboard } from 'isomorphic-qwerty'
 import { useStateStore } from '@/stores/state'
-import { useScaleStore } from '@/stores/scale';
-import { computed } from 'vue';
+import { useScaleStore } from '@/stores/scale'
+import { computed } from 'vue'
 
 const state = useStateStore()
 const scale = useScaleStore()

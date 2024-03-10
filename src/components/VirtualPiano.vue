@@ -52,7 +52,7 @@ const whiteKeys = computed(() => {
   const low = props.lowAccidentalColor.toLowerCase()
   const middle = props.middleAccidentalColor.toLowerCase()
   const high = props.highAccidentalColor.toLowerCase()
-  const black = props.accidentalColor.toLowerCase() 
+  const black = props.accidentalColor.toLowerCase()
 
   const result: VirtualKey[] = []
 
@@ -62,7 +62,7 @@ const whiteKeys = computed(() => {
     for (let i = 0; i < 3 * NUM_KEYS; ++i) {
       const index = props.baseIndex + i
       const color = props.colorMap(index)
-      if (color === low || color === middle || color === high ) {
+      if (color === low || color === middle || color === high) {
         if (mainSeen.has(color)) {
           x++
           mainSeen.clear()
@@ -159,7 +159,7 @@ const blackKeys = computed(() => {
       result.push({
         x,
         index,
-        color,
+        color
       })
     }
   }
@@ -223,18 +223,22 @@ const splitKeys = computed(() => {
         pushKeys()
       }
       lowKey = {
-        x, index, color, y: '', height: ''
+        x,
+        index,
+        color,
+        y: '',
+        height: ''
       }
     } else if (color === middle) {
       if (middleKey) {
         pushKeys()
       }
-      middleKey = {x, index, color, y: '', height: ''}
+      middleKey = { x, index, color, y: '', height: '' }
     } else if (color === high) {
       if (highKey) {
         pushKeys()
       }
-      highKey = {x, index, color, y: `${TOP_Y}%`, height: ''}
+      highKey = { x, index, color, y: `${TOP_Y}%`, height: '' }
     } else {
       x++
       pushKeys()

@@ -3,8 +3,8 @@ import { LEFT_MOUSE_BTN } from '@/constants'
 import { generatorRanges } from 'moment-of-symmetry'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { mmod } from 'xen-dev-utils'
-import type { Scale } from '@/scale';
-import { valueToCents } from 'xen-dev-utils';
+import type { Scale } from '@/scale'
+import { valueToCents } from 'xen-dev-utils'
 
 const TAU = 2 * Math.PI
 const CIRCLE_RADIUS = 40
@@ -81,7 +81,7 @@ const scaleTickDirections = computed(() => {
   if (props.scale === null) {
     return []
   }
-  const result = props.scale.intervalRatios.map(r => valueToCents(Math.abs(r)))
+  const result = props.scale.intervalRatios.map((r) => valueToCents(Math.abs(r)))
   const angleScale = (2 * Math.PI) / periodCents.value
   return result
     .map((cents) => cents * angleScale)

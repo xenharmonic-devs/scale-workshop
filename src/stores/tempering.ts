@@ -10,9 +10,7 @@ import { add } from 'xen-dev-utils'
 
 // Split text into (non-time) monzos
 function splitCommas(text: string) {
-  return parseChord(text).map((interval) =>
-    interval.value.toIntegerMonzo()
-  )
+  return parseChord(text).map((interval) => interval.value.toIntegerMonzo())
 }
 
 // The modals have subtly different semantics so we make copies of this state for each
@@ -31,7 +29,10 @@ function makeState(method: Ref, subgroupStringDefault = '') {
 
   // === Computed state ===
 
-  const [vals, valsError] = computedAndError(() => parseVals(valsString.value, subgroupString.value), [])
+  const [vals, valsError] = computedAndError(
+    () => parseVals(valsString.value, subgroupString.value),
+    []
+  )
 
   const [commas, commasError] = computedAndError(() => splitCommas(commasString.value), [])
 
@@ -64,8 +65,8 @@ function makeState(method: Ref, subgroupStringDefault = '') {
 
   const baseOptions: TuningOptions = {
     primeMapping: true,
-    units: 'cents',
-  };
+    units: 'cents'
+  }
 
   const options = computed<TuningOptions>(() => {
     if (tempering.value === 'CTE') {
@@ -381,11 +382,11 @@ export const useLatticeStore = defineStore('lattice', () => {
   })
 
   const dimensions = computed(() => {
-    const result: number[] = [];
+    const result: number[] = []
     for (let i = 0; i < basis.value.length; ++i) {
-      result.push(1 + ups[i] + downs[i]);
+      result.push(1 + ups[i] + downs[i])
     }
-    return result;
+    return result
   })
 
   return {
@@ -399,7 +400,7 @@ export const useLatticeStore = defineStore('lattice', () => {
     showAdvanced,
     basis,
     basisError,
-    dimensions,
+    dimensions
   }
 })
 
@@ -427,10 +428,7 @@ export const useTemperStore = defineStore('temper', () => {
   // Expand out the residual in the `ExtendedMonzo` and ignore cents offsets
   function toLongMonzo(monzo: TimeMonzo) {
     const base = resolveMonzo(monzo.residual)
-    return add(
-      base,
-      monzo.toIntegerMonzo()
-    )
+    return add(base, monzo.toIntegerMonzo())
   }
 
   return {

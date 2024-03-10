@@ -81,8 +81,7 @@ const rows = computed(() => {
       } else {
         index = mapping.get(code)
       }
-      let color =
-        index === undefined ? disabledFill.value : props.colorMap(index)
+      let color = index === undefined ? disabledFill.value : props.colorMap(index)
       const black = color.toLowerCase() === 'black'
       let stroke = 'dimgray'
       if (index === undefined) {

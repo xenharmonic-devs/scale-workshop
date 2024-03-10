@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { OCTAVE } from '@/constants'
-import { computedAndError, expandCode, setAndReportValidity} from '@/utils'
+import { computedAndError, expandCode, setAndReportValidity } from '@/utils'
 import { parseChord } from 'sonic-weave'
 
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
@@ -24,7 +24,7 @@ watch(basisError, (newError) => setAndReportValidity(basisElement.value, newErro
 
 function generate(expand = true) {
   try {
-    let source = `octaplex(${basis.value.map(b => b.toString()).join(', ')}, ${equave.value.toString()}, ${addUnity.value.toString()})`
+    let source = `octaplex(${basis.value.map((b) => b.toString()).join(', ')}, ${equave.value.toString()}, ${addUnity.value.toString()})`
     if (expand) {
       source = expandCode(source)
     }

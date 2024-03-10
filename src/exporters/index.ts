@@ -19,7 +19,7 @@ const EXPORTERS = {
   deflemask: DeflemaskExporter,
   puredata: PureDataExporter,
   soniccouture: SoniccoutureExporter,
-  maxmsp: MaxMSPExporter,
+  maxmsp: MaxMSPExporter
 }
 
 export type ExporterKey = keyof typeof EXPORTERS

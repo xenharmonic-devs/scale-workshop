@@ -3,32 +3,32 @@ import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { OCTAVE } from '@/constants'
 import { useModalStore } from '@/stores/modal'
-import { expandCode } from '@/utils';
-import { linear } from 'sonic-weave';
-import { mmod } from 'xen-dev-utils';
+import { expandCode } from '@/utils'
+import { linear } from 'sonic-weave'
+import { mmod } from 'xen-dev-utils'
 
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
 const modal = useModalStore()
 
 function generate(shell = true, expand = true) {
-  const selectedVao = modal.vaos[modal.vaoIndex];
-  let source = '';
+  const selectedVao = modal.vaos[modal.vaoIndex]
+  let source = ''
   if (shell) {
     const data: [number, string][] = []
     collecting: for (let i = 0; i < selectedVao.degrees.length; ++i) {
-      const harmonic = selectedVao.harmonics[i];
-      const degree = selectedVao.degrees[i];
-      const reducedDegree = mmod(degree, modal.largeDivisions) || modal.largeDivisions;
+      const harmonic = selectedVao.harmonics[i]
+      const degree = selectedVao.degrees[i]
+      const reducedDegree = mmod(degree, modal.largeDivisions) || modal.largeDivisions
       for (let j = 0; j < data.length; ++j) {
         if (data[j][0] === reducedDegree) {
-          data[j][1] += ' & ' + harmonic.toString();
-          continue collecting;
+          data[j][1] += ' & ' + harmonic.toString()
+          continue collecting
         }
       }
       data.push([reducedDegree, harmonic.toString()])
     }
-    data.sort((a, b) => a[0] - b[0]);
+    data.sort((a, b) => a[0] - b[0])
     if (!data.length || data[data.length - 1][0] !== modal.largeDivisions) {
       data.push([modal.largeDivisions, ''])
     }
@@ -110,18 +110,20 @@ function generate(shell = true, expand = true) {
         <div class="control radio-group">
           <label>Error model</label>
           <span>
-            <input type="radio" id="error-rooted" value="rooted" v-model="modal.errorModel"/>
+            <input type="radio" id="error-rooted" value="rooted" v-model="modal.errorModel" />
             <label for="error-rooted"> Rooted </label>
           </span>
           <span>
-            <input type="radio" id="error-free" value="free" v-model="modal.errorModel"/>
+            <input type="radio" id="error-free" value="free" v-model="modal.errorModel" />
             <label for="error-free"> Free </label>
           </span>
         </div>
         <div class="control">
           <label for="vao">Vertically aligned object</label>
           <select id="vao" v-model="modal.vaoIndex">
-            <option v-for="vao, i of modal.vaos" :key="i" :value="i">{{ vao.harmonics.join(':') }}</option>
+            <option v-for="(vao, i) of modal.vaos" :key="i" :value="i">
+              {{ vao.harmonics.join(':') }}
+            </option>
           </select>
         </div>
       </div>

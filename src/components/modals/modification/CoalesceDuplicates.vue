@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Modal from '@/components/ModalDialog.vue'
 import { useModalStore } from '@/stores/modal'
-import { useScaleStore } from '@/stores/scale';
-import { centString } from '@/utils';
+import { useScaleStore } from '@/stores/scale'
+import { centString } from '@/utils'
 
 const emit = defineEmits(['done', 'cancel'])
 
@@ -12,10 +12,10 @@ const scale = useScaleStore()
 function modify(expand = true) {
   scale.sourceText += `\ncoalesce(${centString(modal.tolerance)}, '${modal.coalescingAction}')`
   if (expand) {
-    const {visitor, defaults} = scale.getVisitors()
+    const { visitor, defaults } = scale.getVisitors()
     scale.sourceText = visitor.expand(defaults)
   }
-  scale.computeScale();
+  scale.computeScale()
   emit('done')
 }
 </script>
@@ -28,7 +28,8 @@ function modify(expand = true) {
     <template #body>
       <div class="control-group">
         <p>
-          Coalesce groups of intervals within the given tolerance to a single interval based on the given rule.
+          Coalesce groups of intervals within the given tolerance to a single interval based on the
+          given rule.
         </p>
         <div class="control">
           <label for="tolerance">Tolerance in cents</label>
@@ -55,12 +56,22 @@ function modify(expand = true) {
           </span>
 
           <span>
-            <input type="radio" id="action-lowest" value="lowest" v-model="modal.coalescingAction" />
+            <input
+              type="radio"
+              id="action-lowest"
+              value="lowest"
+              v-model="modal.coalescingAction"
+            />
             <label for="action-lowest"> Lowest </label>
           </span>
 
           <span>
-            <input type="radio" id="action-highest" value="highest" v-model="modal.coalescingAction" />
+            <input
+              type="radio"
+              id="action-highest"
+              value="highest"
+              v-model="modal.coalescingAction"
+            />
             <label for="action-highest"> Highest </label>
           </span>
           <label>Replace with (which) average</label>
@@ -73,7 +84,12 @@ function modify(expand = true) {
             <label for="action-havg"> Harmonic </label>
           </span>
           <span>
-            <input type="radio" id="action-geoavg" value="geoavg" v-model="modal.coalescingAction" />
+            <input
+              type="radio"
+              id="action-geoavg"
+              value="geoavg"
+              v-model="modal.coalescingAction"
+            />
             <label for="action-geoavg"> Geometric </label>
           </span>
         </div>

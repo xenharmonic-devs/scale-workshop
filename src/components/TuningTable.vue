@@ -6,20 +6,20 @@ import { mmod, valueToCents } from 'xen-dev-utils'
 // TODO: Also provide precomputed cents to save resources.
 
 const props = defineProps<{
-  baseFrequency: number;
+  baseFrequency: number
   frequencies: number[] // All 128 frequencies
-  heldNotes: Map<number, number>;
+  heldNotes: Map<number, number>
   baseMidiNote: number
   labels: string[] // Labels from #1 to the equave
   colors: string[] // Colors from #1 to the equave
 }>()
 
 const rows = computed(() => {
-  const inverseBaseFreq = 1 / props.baseFrequency;
+  const inverseBaseFreq = 1 / props.baseFrequency
   return props.frequencies.map((frequency, i) => {
     const active = (props.heldNotes.get(i) ?? 0) > 0
     const index = i - props.baseMidiNote
-    const ratio = frequency * inverseBaseFreq;
+    const ratio = frequency * inverseBaseFreq
     return {
       index: i,
       active,

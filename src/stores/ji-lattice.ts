@@ -7,7 +7,7 @@ import { parseChord } from 'sonic-weave'
 
 export const useJiLatticeStore = defineStore('ji-lattice', () => {
   // Kraig Grady's coordinates only go up to 23-limit, but it was the default in Scale Workshop 2.
-  const opts = kraigGrady9();
+  const opts = kraigGrady9()
   const horizontalCoordinates = reactive(opts.horizontalCoordinates)
   const verticalCoordinates = reactive(opts.verticalCoordinates)
   const maxDistance = ref(1)
@@ -25,30 +25,44 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
 
   // XXX: Janky
   const horizontals = computed({
-    get() {return horizontalCoordinates.join(' ')},
+    get() {
+      return horizontalCoordinates.join(' ')
+    },
     set(value: string) {
       horizontalCoordinates.length = 0
-      horizontalCoordinates.push(...value.split(' ').map(v => {const i = parseInt(v); return isNaN(i) ? 0 : i}))
+      horizontalCoordinates.push(
+        ...value.split(' ').map((v) => {
+          const i = parseInt(v)
+          return isNaN(i) ? 0 : i
+        })
+      )
     }
   })
   const verticals = computed({
-    get() {return verticalCoordinates.join(' ')},
+    get() {
+      return verticalCoordinates.join(' ')
+    },
     set(value: string) {
       verticalCoordinates.length = 0
-      verticalCoordinates.push(...value.split(' ').map(v => {const i = parseInt(v); return isNaN(i) ? 0 : i}))
+      verticalCoordinates.push(
+        ...value.split(' ').map((v) => {
+          const i = parseInt(v)
+          return isNaN(i) ? 0 : i
+        })
+      )
     }
   })
 
   const edgeMonzos = computed(() => {
-    const numComponents = horizontalCoordinates.length;
-    const result: number[][] = [];
+    const numComponents = horizontalCoordinates.length
+    const result: number[][] = []
     for (const interval of edges.value) {
       const value = interval.value.clone()
       value.numberOfComponents = numComponents
-      const monzo = interval.value.primeExponents.map(pe => pe.valueOf())
-      result.push(monzo);
+      const monzo = interval.value.primeExponents.map((pe) => pe.valueOf())
+      result.push(monzo)
     }
-    return result;
+    return result
   })
 
   const latticeOptions = computed<LatticeOptions>(() => {
@@ -57,23 +71,23 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
       verticalCoordinates,
       maxDistance: maxDistance.value,
       edgeMonzos: edgeMonzos.value,
-      mergeEdges: true,
-    };
-  });
+      mergeEdges: true
+    }
+  })
 
   watch(rotation, (newValue) => {
     if (newValue < 0 || newValue >= 360) {
-      rotation.value = mmod(newValue, 360);
+      rotation.value = mmod(newValue, 360)
     }
-  });
+  })
 
   function kraigGrady(equaveIndex = 0) {
     size.value = 2
-    const kg = kraigGrady9(equaveIndex);
-    horizontalCoordinates.length = 0;
-    horizontalCoordinates.push(...kg.horizontalCoordinates);
-    verticalCoordinates.length = 0;
-    verticalCoordinates.push(...kg.verticalCoordinates);
+    const kg = kraigGrady9(equaveIndex)
+    horizontalCoordinates.length = 0
+    horizontalCoordinates.push(...kg.horizontalCoordinates)
+    verticalCoordinates.length = 0
+    verticalCoordinates.push(...kg.verticalCoordinates)
     edgesString.value = ''
   }
 
@@ -81,13 +95,13 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
     size.value = 2
     const logs = LOG_PRIMES.slice(0, 24)
     if (equaveIndex !== 0) {
-      logs.unshift(logs.splice(equaveIndex, 1)[0]);
+      logs.unshift(logs.splice(equaveIndex, 1)[0])
     }
-    const sd = scottDakota24(logs);
-    horizontalCoordinates.length = 0;
-    horizontalCoordinates.push(...sd.horizontalCoordinates);
-    verticalCoordinates.length = 0;
-    verticalCoordinates.push(...sd.verticalCoordinates);
+    const sd = scottDakota24(logs)
+    horizontalCoordinates.length = 0
+    horizontalCoordinates.push(...sd.horizontalCoordinates)
+    verticalCoordinates.length = 0
+    verticalCoordinates.push(...sd.verticalCoordinates)
     edgesString.value = '6/5'
   }
 
@@ -95,13 +109,13 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
     size.value = 4
     const logs = LOG_PRIMES.slice(0, 72)
     if (equaveIndex !== 0) {
-      logs.unshift(logs.splice(equaveIndex, 1)[0]);
+      logs.unshift(logs.splice(equaveIndex, 1)[0])
     }
-    const pr = primeRing72(logs);
-    horizontalCoordinates.length = 0;
-    horizontalCoordinates.push(...pr.horizontalCoordinates);
-    verticalCoordinates.length = 0;
-    verticalCoordinates.push(...pr.verticalCoordinates);
+    const pr = primeRing72(logs)
+    horizontalCoordinates.length = 0
+    horizontalCoordinates.push(...pr.horizontalCoordinates)
+    verticalCoordinates.length = 0
+    verticalCoordinates.push(...pr.verticalCoordinates)
     edgesString.value = '6/5'
   }
 
@@ -109,14 +123,14 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
     size.value = 4
     const logs = LOG_PRIMES.slice(0, 72)
     if (equaveIndex !== 0) {
-      logs.unshift(logs.splice(equaveIndex, 1)[0]);
+      logs.unshift(logs.splice(equaveIndex, 1)[0])
     }
-    const pr = primeRing72(logs, false);
-    align(pr, 1, 2);
-    horizontalCoordinates.length = 0;
-    horizontalCoordinates.push(...pr.horizontalCoordinates.map(Math.round));
-    verticalCoordinates.length = 0;
-    verticalCoordinates.push(...pr.verticalCoordinates.map(Math.round));
+    const pr = primeRing72(logs, false)
+    align(pr, 1, 2)
+    horizontalCoordinates.length = 0
+    horizontalCoordinates.push(...pr.horizontalCoordinates.map(Math.round))
+    verticalCoordinates.length = 0
+    verticalCoordinates.push(...pr.verticalCoordinates.map(Math.round))
     edgesString.value = '6/5'
   }
 
@@ -142,6 +156,6 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
     kraigGrady,
     scott24,
     pr72,
-    pe72,
+    pe72
   }
 })

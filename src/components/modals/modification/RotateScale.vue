@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Modal from '@/components/ModalDialog.vue'
 import { useModalStore } from '@/stores/modal'
-import { useScaleStore } from '@/stores/scale';
+import { useScaleStore } from '@/stores/scale'
 
 const emit = defineEmits(['done', 'cancel'])
 
@@ -11,10 +11,10 @@ const scale = useScaleStore()
 function modify(expand = true) {
   scale.sourceText += `\nrotate(${modal.newUnison + 1})`
   if (expand) {
-    const {visitor, defaults} = scale.getVisitors()
+    const { visitor, defaults } = scale.getVisitors()
     scale.sourceText = visitor.expand(defaults)
   }
-  scale.computeScale();
+  scale.computeScale()
   emit('done')
 }
 </script>
@@ -30,7 +30,7 @@ function modify(expand = true) {
           <p>Rotate the mode of your scale.</p>
           <label for="new-unison">New 1/1</label>
           <select id="new-unison" class="control" v-model="modal.newUnison">
-            <option v-for="label, i of scale.labels" :key="i" :value="i">
+            <option v-for="(label, i) of scale.labels" :key="i" :value="i">
               {{ label }}
             </option>
           </select>

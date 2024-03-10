@@ -114,7 +114,7 @@ export class ScaleWorkshopOneData {
       }
       intervals.push(parseScaleWorkshop2Line(line, DEFAULT_NUMBER_OF_COMPONENTS))
     })
-    return intervals;
+    return intervals
   }
 
   get attackTime() {

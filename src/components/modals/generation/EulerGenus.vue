@@ -2,7 +2,7 @@
 import Modal from '@/components/ModalDialog.vue'
 import { clamp } from 'xen-dev-utils'
 import { useModalStore } from '@/stores/modal'
-import { expandCode } from '@/utils';
+import { expandCode } from '@/utils'
 
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
@@ -12,7 +12,7 @@ function generate(expand = true) {
   const clampedGuide = Math.round(clamp(1, 1000000000, modal.guideTone))
   const clampedRoot = Math.round(clamp(1, 1000000000, modal.rootTone))
   let name = `Euler-Fokker genus ${clampedGuide}`
-  let source = `eulerGenus(${clampedGuide}`;
+  let source = `eulerGenus(${clampedGuide}`
   if (clampedRoot !== 1) {
     name += ` on ${clampedRoot}`
     source += `, ${clampedRoot}`

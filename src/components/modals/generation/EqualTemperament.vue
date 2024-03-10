@@ -35,17 +35,17 @@ function generate(expand = true) {
     emit('update:scaleName', `${modal.divisions} equal divisions of ${modal.equaveString}`)
     let source: string
     if (modal.equave.equals(OCTAVE)) {
-      const edo = modal.divisions;
+      const edo = modal.divisions
       if (expand || !modal.simpleEd) {
-        source = modal.degrees.map(steps => `${steps}\\${edo}`).join('\n')
+        source = modal.degrees.map((steps) => `${steps}\\${edo}`).join('\n')
       } else {
         source = `ed(${edo})`
       }
     } else {
-      const ed = modal.divisions;
-      const ji = modal.equave.toString();
+      const ed = modal.divisions
+      const ji = modal.equave.toString()
       if (expand || !modal.simpleEd) {
-        source = modal.degrees.map(steps => `${steps}\\${ed}<${ji}>`).join('\n')
+        source = modal.degrees.map((steps) => `${steps}\\${ed}<${ji}>`).join('\n')
       } else {
         source = `ed(${ed}, ${ji})`
       }

@@ -1,10 +1,10 @@
-import {mmod} from 'xen-dev-utils';
+import { mmod } from 'xen-dev-utils'
 
 /** Musical scale designed to calculate frequencies repeated at octaves or generic equaves. */
 export class Scale {
-  intervalRatios: number[];
-  baseFrequency: number;
-  baseMidiNote: number;
+  intervalRatios: number[]
+  baseFrequency: number
+  baseMidiNote: number
 
   /**
    * Construct a new musical scale.
@@ -12,23 +12,19 @@ export class Scale {
    * @param baseFrequency Base frequency of 1/1.
    * @param baseMidiNote MIDI note corresponfing to base frequency
    */
-  constructor(
-    intervalRatios: number[],
-    baseFrequency: number,
-    baseMidiNote: number
-  ) {
-    this.intervalRatios = intervalRatios;
-    this.baseFrequency = baseFrequency;
-    this.baseMidiNote = baseMidiNote;
+  constructor(intervalRatios: number[], baseFrequency: number, baseMidiNote: number) {
+    this.intervalRatios = intervalRatios
+    this.baseFrequency = baseFrequency
+    this.baseMidiNote = baseMidiNote
   }
 
   /** Number of intervals in the scale. */
   get size() {
-    return this.intervalRatios.length;
+    return this.intervalRatios.length
   }
 
   get equaveRatio() {
-    return this.intervalRatios[this.intervalRatios.length - 1];
+    return this.intervalRatios[this.intervalRatios.length - 1]
   }
 
   /**
@@ -38,13 +34,13 @@ export class Scale {
    */
   getRatio(index: number) {
     // Deal with implicit 1/1
-    index -= 1;
+    index -= 1
     // Center on base MIDI note
-    index -= this.baseMidiNote;
+    index -= this.baseMidiNote
 
-    const baseIndex = mmod(index, this.size);
-    const numEquaves = (index - baseIndex) / this.size;
-    return this.intervalRatios[baseIndex] * this.equaveRatio ** numEquaves;
+    const baseIndex = mmod(index, this.size)
+    const numEquaves = (index - baseIndex) / this.size
+    return this.intervalRatios[baseIndex] * this.equaveRatio ** numEquaves
   }
 
   /**
@@ -53,7 +49,7 @@ export class Scale {
    * @returns The frequency of an interval in the scale with equaves factored in as necessary.
    */
   getFrequency(index: number) {
-    return this.baseFrequency * this.getRatio(index);
+    return this.baseFrequency * this.getRatio(index)
   }
 
   /**
@@ -65,24 +61,23 @@ export class Scale {
    */
   getFrequencyRange(start: number, end: number) {
     // Deal with implicit 1/1
-    start -= 1;
-    end -= 1;
+    start -= 1
+    end -= 1
     // Center on base MIDI note
-    start -= this.baseMidiNote;
-    end -= this.baseMidiNote;
-    const numEquaves = Math.floor(start / this.size);
-    let referenceFrequency =
-      this.baseFrequency * this.equaveRatio ** numEquaves;
-    let index = start - numEquaves * this.size;
-    const result = [];
+    start -= this.baseMidiNote
+    end -= this.baseMidiNote
+    const numEquaves = Math.floor(start / this.size)
+    let referenceFrequency = this.baseFrequency * this.equaveRatio ** numEquaves
+    let index = start - numEquaves * this.size
+    const result = []
     for (let i = start; i < end; ++i) {
-      result.push(referenceFrequency * this.intervalRatios[index]);
-      index++;
+      result.push(referenceFrequency * this.intervalRatios[index])
+      index++
       if (index >= this.size) {
-        index -= this.size;
-        referenceFrequency *= this.equaveRatio;
+        index -= this.size
+        referenceFrequency *= this.equaveRatio
       }
     }
-    return result;
+    return result
   }
 }

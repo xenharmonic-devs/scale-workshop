@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import NewScale from '@/components/NewScale.vue';
-import ModifyScale from '@/components/ModifyScale.vue';
-import ScaleControls from '@/components/ScaleControls.vue';
-import TuningTable from '@/components/TuningTable.vue';
-import ExporterButtons from '@/components/ExporterButtons.vue';
-import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants';
-import { useScaleStore } from '@/stores/scale';
-import { useStateStore } from '@/stores/state';
-import { debounce } from '@/utils';
-import { getSourceVisitor, setNumberOfComponents } from 'sonic-weave';
-import { onMounted, ref } from 'vue';
+import NewScale from '@/components/NewScale.vue'
+import ModifyScale from '@/components/ModifyScale.vue'
+import ScaleControls from '@/components/ScaleControls.vue'
+import TuningTable from '@/components/TuningTable.vue'
+import ExporterButtons from '@/components/ExporterButtons.vue'
+import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
+import { useScaleStore } from '@/stores/scale'
+import { useStateStore } from '@/stores/state'
+import { debounce } from '@/utils'
+import { getSourceVisitor, setNumberOfComponents } from 'sonic-weave'
+import { onMounted, ref } from 'vue'
 
 const scale = useScaleStore()
 const state = useStateStore()
@@ -40,13 +40,20 @@ onMounted(() => {
           @update="updateScale"
         ></textarea>
         <ul class="btn-group">
-          <NewScale ref="newScale" @done="controls!.focus()" @mouseenter="modifyScale!.blur()"/>
-          <ModifyScale ref="modifyScale" @done="controls!.focus()" @mouseenter="newScale!.blur()"/>
+          <NewScale ref="newScale" @done="controls!.focus()" @mouseenter="modifyScale!.blur()" />
+          <ModifyScale ref="modifyScale" @done="controls!.focus()" @mouseenter="newScale!.blur()" />
         </ul>
         <ScaleControls ref="controls" />
       </div>
       <div class="column tuning-table">
-        <TuningTable :heldNotes="state.heldNotes" :frequencies="scale.frequencies" :baseFrequency="scale.baseFrequency" :baseMidiNote="scale.baseMidiNote" :colors="scale.colors" :labels="scale.labels" />
+        <TuningTable
+          :heldNotes="state.heldNotes"
+          :frequencies="scale.frequencies"
+          :baseFrequency="scale.baseFrequency"
+          :baseMidiNote="scale.baseMidiNote"
+          :colors="scale.colors"
+          :labels="scale.labels"
+        />
       </div>
       <div class="column exporters">
         <ExporterButtons />
