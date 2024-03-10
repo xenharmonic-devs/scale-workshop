@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, reactive, watch } from 'vue'
-import { RouterLink, RouterView, useRouter, type LocationQuery } from 'vue-router'
-import { DEFAULT_NUMBER_OF_COMPONENTS, NEWLINE_TEST, WHITE_MODE_OFFSET } from '@/constants'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
+import { DEFAULT_NUMBER_OF_COMPONENTS, WHITE_MODE_OFFSET } from '@/constants'
 import { ScaleWorkshopOneData } from '@/scale-workshop-one'
 import type { Input, Output } from 'webmidi'
 import { MidiIn, midiKeyInfo, MidiOut } from 'xen-midi'
 import { Keyboard, type CoordinateKeyboardEvent } from 'isomorphic-qwerty'
-import { decodeQuery, encodeQuery, type DecodedState } from '@/url-encode'
-import { annotateColors, debounce } from '@/utils'
+import { decodeQuery } from '@/url-encode'
+import { annotateColors } from '@/utils'
 import { version } from '../package.json'
 import { useAudioStore } from '@/stores/audio'
 import { useStateStore } from './stores/state'
@@ -31,59 +31,6 @@ function getPath(url: URL) {
 }
 
 const router = useRouter()
-
-// == State decoding ==
-router.afterEach((to, from) => {
-  if (to.fullPath === from.fullPath) {
-    return
-  }
-
-  // XXX: There are some sporadic issues with useRoute().fullPath
-  // so we use native URL.searchParams.
-  const url = new URL(window.location.href)
-  const query = url.searchParams
-  if (query.has('version') && query.get('version')!.startsWith('2.')) {
-    try {
-      const decodedState = decodeQuery(query)
-
-      let pianoMode: 'Asdf' | 'QweZxc' = 'Asdf'
-      if (decodedState.pianoMode === 'QweZxc0' || decodedState.pianoMode === 'QweZxc1') {
-        pianoMode = 'QweZxc'
-      }
-
-      scale.name = decodedState.scaleName
-      scale.baseFrequency = decodedState.baseFrequency
-      scale.autoFrequency = false
-      scale.baseMidiNote = decodedState.baseMidiNote
-      state.isomorphicHorizontal = decodedState.isomorphicHorizontal
-      state.isomorphicVertical = decodedState.isomorphicVertical
-      scale.keyboardMode = decodedState.keyboardMode
-      scale.pianoMode = pianoMode
-      scale.equaveShift = decodedState.equaveShift
-      scale.degreeShift = decodedState.degreeShift
-      audio.waveform = decodedState.waveform
-      audio.attackTime = decodedState.attackTime
-      audio.decayTime = decodedState.decayTime
-      audio.sustainLevel = decodedState.sustainLevel
-      audio.releaseTime = decodedState.releaseTime
-      audio.pingPongDelayTime = decodedState.pingPongDelayTime
-      audio.pingPongFeedback = decodedState.pingPongFeedback
-      audio.pingPongSeparation = decodedState.pingPongSeparation
-      audio.pingPongGain = decodedState.pingPongGain
-
-      // The decoder speaks Scale Workshop 2. Translate to SonicWeave.
-      const sourceLines = decodedState.scaleLines.map(l => parseScaleWorkshop2Line(l, DEFAULT_NUMBER_OF_COMPONENTS).toString())
-      annotateColors(sourceLines, decodedState.keyColors)
-      scale.sourceText = sourceLines.join('\n');
-      scale.computeScale();
-
-      // Replace query with version 3.
-      router.push({ path: getPath(url), query: { version } })
-    } catch (error) {
-      console.error(`Error parsing version ${query.get('version')} URL`, error)
-    }
-  }
-})
 
 // === Tuning table highlighting ===
 function tuningTableKeyOn(index: number) {
@@ -113,7 +60,6 @@ function sendNoteOn(frequency: number, rawAttack: number) {
   // Trigger virtual synth for per-voice visualization.
   const virtualOff = audio.virtualSynth.voiceOn(frequency)
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const off = (rawRelease: number) => {
     midiOff(rawRelease)
     synthOff()
@@ -381,7 +327,7 @@ onMounted(() => {
   if (![...query.keys()].length) {
     router.push({ path: getPath(url), query: { version } })
   }
-  // TODO: Move SW2 here
+
   // Scale Workshop 1 compatibility
   else if (!query.has('version')) {
     try {
@@ -413,6 +359,46 @@ onMounted(() => {
       router.push({ path: getPath(url), query: { version } })
     } catch (error) {
       console.error('Error parsing version 1 URL', error)
+    }
+  } else if (query.get('version')!.startsWith('2.')) {
+    try {
+      const decodedState = decodeQuery(query)
+
+      let pianoMode: 'Asdf' | 'QweZxc' = 'Asdf'
+      if (decodedState.pianoMode === 'QweZxc0' || decodedState.pianoMode === 'QweZxc1') {
+        pianoMode = 'QweZxc'
+      }
+
+      scale.name = decodedState.scaleName
+      scale.baseFrequency = decodedState.baseFrequency
+      scale.autoFrequency = false
+      scale.baseMidiNote = decodedState.baseMidiNote
+      state.isomorphicHorizontal = decodedState.isomorphicHorizontal
+      state.isomorphicVertical = decodedState.isomorphicVertical
+      scale.keyboardMode = decodedState.keyboardMode
+      scale.pianoMode = pianoMode
+      scale.equaveShift = decodedState.equaveShift
+      scale.degreeShift = decodedState.degreeShift
+      audio.waveform = decodedState.waveform
+      audio.attackTime = decodedState.attackTime
+      audio.decayTime = decodedState.decayTime
+      audio.sustainLevel = decodedState.sustainLevel
+      audio.releaseTime = decodedState.releaseTime
+      audio.pingPongDelayTime = decodedState.pingPongDelayTime
+      audio.pingPongFeedback = decodedState.pingPongFeedback
+      audio.pingPongSeparation = decodedState.pingPongSeparation
+      audio.pingPongGain = decodedState.pingPongGain
+
+      // The decoder speaks Scale Workshop 2. Translate to SonicWeave.
+      const sourceLines = decodedState.scaleLines.map(l => parseScaleWorkshop2Line(l, DEFAULT_NUMBER_OF_COMPONENTS).toString())
+      annotateColors(sourceLines, decodedState.keyColors)
+      scale.sourceText = sourceLines.join('\n');
+      scale.computeScale();
+
+      // Replace query with version 3.
+      router.push({ path: getPath(url), query: { version } })
+    } catch (error) {
+      console.error(`Error parsing version ${query.get('version')} URL`, error)
     }
   }
 })
