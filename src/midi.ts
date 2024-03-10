@@ -15,7 +15,7 @@ export function computeWhiteIndices(baseMidiNote: number, colors: string[]) {
   let index = baseMidiNote
   let whiteIndex = info.whiteNumber === undefined ? info.sharpOf + 1 : info.whiteNumber
   let colorIndex = -1
-  const result = []
+  const result: number[] = []
   while (whiteIndex >= 0 && index > -1024) {
     if (colors[mmod(colorIndex--, colors.length)] !== 'black') {
       result[whiteIndex--] = index

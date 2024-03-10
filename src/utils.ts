@@ -52,12 +52,6 @@ export function splitText(text: string) {
   return text.split(SEPARATOR_RE).filter((token) => token.length)
 }
 
-/*
-export function parseChordInput(input: string) {
-  return splitText(input).map(part => parseInterval(part))
-}
-*/
-
 export function expandCode(source: string) {
   const visitor = getSourceVisitor()
   const ast = parseAST(source)

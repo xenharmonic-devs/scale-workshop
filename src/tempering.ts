@@ -4,9 +4,7 @@ import {
   type SubgroupValue,
   Temperament,
   type TuningOptions,
-  fromWarts,
   Subgroup,
-  type JipOrLimit
 } from 'temperaments'
 import { DEFAULT_NUMBER_OF_COMPONENTS } from './constants'
 import { PRIME_CENTS, type FractionValue, type Monzo } from 'xen-dev-utils'
@@ -21,87 +19,6 @@ export function toPrimeMapping(mapping: number[], subgroup: Subgroup) {
     result.push(PRIME_CENTS[result.length])
   }
   return result as number[]
-}
-
-export class Mapping {
-  vector: number[]
-
-  constructor(vector: number[]) {
-    this.vector = vector
-  }
-
-  static fromVals(
-    vals: (Val | number | string)[],
-    numberOfComponents: number,
-    subgroup: SubgroupValue,
-    options?: TuningOptions
-  ) {
-    const temperament = Temperament.fromVals(vals, subgroup)
-    return Mapping.fromTemperament(temperament, numberOfComponents, options)
-  }
-
-  static fromCommas(
-    commaList: (Monzo | FractionValue)[],
-    numberOfComponents: number,
-    subgroup?: SubgroupValue,
-    options?: TuningOptions
-  ) {
-    const temperament = Temperament.fromCommas(commaList, subgroup, true)
-    return Mapping.fromTemperament(temperament, numberOfComponents, options)
-  }
-
-  static fromTemperament(
-    temperament: Temperament,
-    numberOfComponents: number,
-    options?: TuningOptions
-  ) {
-    options = Object.assign({}, options || {})
-    options.primeMapping = true
-    options.units = 'cents'
-    const mapping = temperament.getMapping(options)
-    if (mapping.length > numberOfComponents) {
-      throw new Error('Not enough components to represent mapping')
-    }
-    while (mapping.length < numberOfComponents) {
-      mapping.push(PRIME_CENTS[mapping.length])
-    }
-
-    return new Mapping(mapping)
-  }
-
-  static fromWarts(wartToken: number | string, jipOrLimit: JipOrLimit, equaveCents?: number) {
-    // XXX: There's something weird going on with how fromWarts gets transpiled
-    let mapping: Val
-    if (typeof jipOrLimit === 'number') {
-      mapping = fromWarts(wartToken, jipOrLimit)
-    } else {
-      mapping = fromWarts(wartToken, jipOrLimit)
-    }
-    if (!mapping.length) {
-      throw new Error('Failed to produce mapping')
-    }
-    if (equaveCents === undefined) {
-      if (Array.isArray(jipOrLimit)) {
-        equaveCents = jipOrLimit[0]
-      } else {
-        equaveCents = 1200
-      }
-    }
-    const vector: number[] = []
-    mapping.forEach((steps) => {
-      vector.push((equaveCents! * steps) / mapping[0])
-    })
-    return new Mapping(vector)
-  }
-
-  get size() {
-    return this.vector.length
-  }
-
-  pureOctaves() {
-    const purifier = 1200 / this.vector[0]
-    return new Mapping(this.vector.map((component) => component * purifier))
-  }
 }
 
 function mosPatternsRank2(

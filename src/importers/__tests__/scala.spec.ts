@@ -29,30 +29,31 @@ describe('Scala importer', () => {
     ].join('\n')
 
     const importer = new ScalaImporter()
-    const { scale } = importer.parseText(text)
+    const { sourceText } = importer.parseText(text)
+    const lines = sourceText.split('\n')
 
-    expect(scale.getMonzo(0).totalCents()).toBe(0)
+    expect(lines[0]).toBe('91.44607 "C#"')
 
-    expect(scale.getMonzo(1).toCents()).toBeCloseTo(91.44607)
+    expect(lines[3]).toBe('5/4 "E"')
 
-    expect(scale.getMonzo(4).valueOf()).toBe(1.25)
-
-    expect(scale.getMonzo(12).valueOf()).toBe(2)
+    expect(lines[11]).toBe('2 "C"')
   })
 
   it('can handle the shang user test scale', () => {
     const importer = new ScalaImporter()
-    const { scale } = importer.parseText(SHANG_TEST_SCALE)
+    const { sourceText } = importer.parseText(SHANG_TEST_SCALE)
+    const lines = sourceText.split('\n')
 
-    expect(scale.getMonzo(1).valueOf()).toBeCloseTo(1.125)
-    expect(scale.size).toBe(5)
+    expect(lines[0]).toBe('9/8 "gong"')
+    expect(lines).toHaveLength(5)
   })
 
   it('can handle the zhi user test scale', () => {
     const importer = new ScalaImporter()
-    const { scale } = importer.parseText(ZHI_TEST_SCALE)
+    const { sourceText } = importer.parseText(ZHI_TEST_SCALE)
+    const lines = sourceText.split('\n')
 
-    expect(scale.getMonzo(3).valueOf()).toBeCloseTo(1.5)
-    expect(scale.size).toBe(5)
+    expect(lines[2]).toBe('3/2 "gong宮"')
+    expect(lines).toHaveLength(5)
   })
 })
