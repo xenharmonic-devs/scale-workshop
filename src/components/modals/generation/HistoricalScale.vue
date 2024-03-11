@@ -11,8 +11,6 @@ import { useStateStore } from '@/stores/state'
 import { Interval, TimeMonzo } from 'sonic-weave'
 import { useScaleStore } from '@/stores/scale'
 
-// TODO: Fix extra note in well temperaments
-
 const emit = defineEmits([
   'update:scaleName',
   'update:source',

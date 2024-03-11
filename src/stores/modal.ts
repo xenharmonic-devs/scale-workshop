@@ -19,30 +19,23 @@ export const useModalStore = defineStore('modal', () => {
   const equaveString = ref('2/1')
   const equave = ref(OCTAVE)
 
-  // CPS / Cross-polytype
+  // CPS
   const factorsString = ref('')
   const addUnity = ref(false)
   const [factors, factorsError] = computedAndError(() => {
     return parseChord(factorsString.value)
   }, [])
-
-  // Dwarf / Euler genus
-  const integerEquave = ref(2)
+  const numElements = ref(2)
+  const maxElements = computed(() => Math.max(1, factors.value.length))
 
   // Harmonics / Subharmonics
   const lowInteger = ref(8)
   const highInteger = ref(16)
 
-  // CPS
-  const numElements = ref(2)
-  const maxElements = computed(() => Math.max(1, factors.value.length))
-
-  // Dwarf
-  const val = ref(12)
-
   // Enumerate chord
   const chord = ref('')
   const retrovertChord = ref(false)
+  const chordIntervals = computed(() => parseChord(chord.value))
 
   // Equal temperament
   const divisions = ref(5)
@@ -100,6 +93,7 @@ export const useModalStore = defineStore('modal', () => {
   }
 
   // Euler genus
+  const integerEquave = ref(2)
   const guideTone = ref(45)
   const rootTone = ref(3)
 
@@ -420,34 +414,34 @@ export const useModalStore = defineStore('modal', () => {
     vaoIndex.value = 0
   })
 
+  // Expand
+  const simplify = ref(false)
+  const bleach = ref(false)
+
   return {
     // Generic
     equaveString,
     equave,
 
-    // CPS / Cross-polytype
+    // CPS
     factorsString,
     addUnity,
     factors,
     factorsError,
+    numElements,
+    maxElements,
 
-    // Dwarf / Euler genus
+    // Euler genus
     integerEquave,
 
     // Harmonics / Subharmonics
     lowInteger,
     highInteger,
 
-    // CPS
-    numElements,
-    maxElements,
-
-    // Dwarf
-    val,
-
     // Enumerate chord
     chord,
     retrovertChord,
+    chordIntervals,
 
     // Equal temperament
     divisions,
@@ -563,6 +557,10 @@ export const useModalStore = defineStore('modal', () => {
 
     // Coalesce
     tolerance,
-    coalescingAction
+    coalescingAction,
+
+    // Expand
+    simplify,
+    bleach
   }
 })

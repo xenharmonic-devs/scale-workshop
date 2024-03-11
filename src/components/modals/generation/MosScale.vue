@@ -13,7 +13,7 @@ import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { useModalStore } from '@/stores/modal'
 
-// TODO: Use configured accidental colors
+// Note: There are configured accidental colors, but the user might want to have a lower row be lower in pitch instead of simply "flat".
 const COLORS = {
   parent: 'white',
   sharp: 'navy',

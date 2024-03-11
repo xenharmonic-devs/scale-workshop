@@ -1,21 +1,18 @@
 <script setup lang="ts">
 import Modal from '@/components/ModalDialog.vue'
+import { useModalStore } from '@/stores/modal';
 import { useScaleStore } from '@/stores/scale'
-import { ref } from 'vue'
 
 const emit = defineEmits(['done', 'cancel'])
 
 const scale = useScaleStore()
-
-// TODO: Move to modal store
-const simplify = ref(false)
-const bleach = ref(false)
+const modal = useModalStore()
 
 function modify() {
-  if (simplify.value) {
+  if (modal.simplify) {
     scale.sourceText += ';simplify'
   }
-  if (bleach.value) {
+  if (modal.bleach) {
     scale.sourceText += ';bleach'
   }
   const { visitor, defaults } = scale.getVisitors()
@@ -34,11 +31,11 @@ function modify() {
       <div class="control-group">
         <p>Expand your scale to individual lines.</p>
         <div class="control checkbox-container">
-          <input type="checkbox" id="simplify" v-model="simplify" />
+          <input type="checkbox" id="simplify" v-model="modal.simplify" />
           <label for="simplify"> Remove formatting</label>
         </div>
         <div class="control checkbox-container">
-          <input type="checkbox" id="bleach" v-model="bleach" />
+          <input type="checkbox" id="bleach" v-model="modal.bleach" />
           <label for="bleach"> Remove colors and labels</label>
         </div>
       </div>
