@@ -49,6 +49,7 @@ onMounted(() => {
         <TuningTable
           :heldNotes="state.heldNotes"
           :frequencies="scale.frequencies"
+          :centss="scale.centss"
           :baseFrequency="scale.baseFrequency"
           :baseMidiNote="scale.baseMidiNote"
           :colors="scale.colors"

@@ -1,4 +1,4 @@
-import { mmod } from 'xen-dev-utils'
+import { mmod, valueToCents } from 'xen-dev-utils'
 
 /** Musical scale designed to calculate frequencies repeated at octaves or generic equaves. */
 export class Scale {
@@ -25,6 +25,10 @@ export class Scale {
 
   get equaveRatio() {
     return this.intervalRatios[this.intervalRatios.length - 1]
+  }
+
+  get equaveCents() {
+    return valueToCents(this.equaveRatio)
   }
 
   /**
@@ -76,6 +80,30 @@ export class Scale {
       if (index >= this.size) {
         index -= this.size
         referenceFrequency *= this.equaveRatio
+      }
+    }
+    return result
+  }
+
+  getCentsRange(start: number, end: number) {
+    // Deal with implicit 1/1
+    start -= 1
+    end -= 1
+    // Center on base MIDI note
+    start -= this.baseMidiNote
+    end -= this.baseMidiNote
+    const equaveCents = this.equaveCents
+    const intervalCents = this.intervalRatios.map(valueToCents)
+    const numEquaves = Math.floor(start / this.size)
+    let referenceCents = this.equaveCents * numEquaves
+    let index = start - numEquaves * this.size
+    const result = []
+    for (let i = start; i < end; ++i) {
+      result.push(referenceCents + intervalCents[index])
+      index++
+      if (index >= this.size) {
+        index -= this.size
+        referenceCents += equaveCents
       }
     }
     return result

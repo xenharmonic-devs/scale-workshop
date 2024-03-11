@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import TuningTableRow from '@/components/TuningTableRow.vue'
-import { mmod, valueToCents } from 'xen-dev-utils'
-
-// TODO: Also provide precomputed cents to save resources.
+import { mmod } from 'xen-dev-utils'
 
 const props = defineProps<{
   baseFrequency: number
   frequencies: number[] // All 128 frequencies
+  centss: number[] // All 128 cents values
   heldNotes: Map<number, number>
   baseMidiNote: number
   labels: string[] // Labels from #1 to the equave
@@ -20,11 +19,12 @@ const rows = computed(() => {
     const active = (props.heldNotes.get(i) ?? 0) > 0
     const index = i - props.baseMidiNote
     const ratio = frequency * inverseBaseFreq
+    const cents = props.centss[i]
     return {
       index: i,
       active,
-      frequency: frequency,
-      cents: valueToCents(ratio),
+      frequency,
+      cents,
       ratio: ratio,
       label: props.labels[mmod(index - 1, props.labels.length)],
       color: props.colors[mmod(index - 1, props.colors.length)],
