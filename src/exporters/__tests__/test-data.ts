@@ -1,16 +1,36 @@
-import { Interval, TimeMonzo } from 'sonic-weave'
+import { Interval, TimeMonzo, getSourceVisitor, parseAST, relative } from 'sonic-weave'
 import type { ExporterParams } from '../base'
 import { Scale } from '../../scale'
 import { Fraction } from 'xen-dev-utils'
 
 export function getTestData(appTitle: string) {
-  // TODO: Cover absolute intervals (in line data; these are all relative)
+  const absoluteC5 = new Interval(
+    TimeMonzo.fromFractionalFrequency(528, 3), 'logarithmic', {
+      type: 'AbsoluteFJS',
+      pitch: {
+        type: 'AbsolutePitch',
+        nominal: 'C',
+        accidentals: [],
+        octave: 5n,
+      },
+      ups: 0,
+      lifts: 0,
+      superscripts: [],
+      subscripts: [[5, '']],
+    }
+  )
+  const visitor = getSourceVisitor()
+  visitor.visit(parseAST('a4 = 440 Hz').body[0])
+  const ev = visitor.createExpressionVisitor()
+  const relativeC5 = relative.bind(ev)(absoluteC5)
+
   const relativeIntervals = [
     new Interval(TimeMonzo.fromEqualTemperament('100/1200', 2, 3), 'logarithmic', {
       type: 'CentsLiteral',
       whole: 100n,
       fractional: ''
     }),
+    relativeC5,
     new Interval(
       TimeMonzo.fromEqualTemperament(new Fraction(4, 5), new Fraction(2), 3),
       'logarithmic',
@@ -59,8 +79,8 @@ export function getTestData(appTitle: string) {
     baseMidiNote: 69,
     baseFrequency: 440,
     midiOctaveOffset: 0,
-    sourceText: '100.\n4\\5\n5/3\n1,3591409142295225r\n3486784401/3276800000\n2/1',
-    labels: ['100.', '4\\5', '5/3', '1,3591409142295225r', '3486784401/3276800000', '2/1'],
+    sourceText: '100.\nC5_5\n4\\5\n5/3\n1,3591409142295225r\n3486784401/3276800000\n2/1',
+    labels: ['100.', 'C5_5', '4\\5', '5/3', '1,3591409142295225r', '3486784401/3276800000', '2/1'],
     date: new Date('2022-02-22T20:22Z')
   }
   return params

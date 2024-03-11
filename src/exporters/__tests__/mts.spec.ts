@@ -13,7 +13,7 @@ describe('MTS exporter', () => {
 
     const scaleData = exporter.getBulkTuningData()
     expect(createHash('sha256').update(scaleData).digest('base64')).toBe(
-      'z7mQ6pS8tVYimN2B5V3WIgN7NR4lFMwrlIjxKJkWEss='
+      'NLwkn1HRQKdNAyYdxl6RQwfz0JvFyShWaB0DHHtPVZo='
     )
 
     // Name is padded with spaces
@@ -22,7 +22,7 @@ describe('MTS exporter', () => {
 
     const sysExMsg = exporter.buildSysExDump()
     expect(createHash('sha256').update(sysExMsg).digest('base64')).toBe(
-      'WYM++7Jej+d9FhBWw0hqKyj/YMhgtSbCfFA6QryKhdI='
+      'Ghut5DZnxeRXQE0TbOJl6Sh66xI2x1QouHhVhIdQXrQ='
     )
   })
 
@@ -35,7 +35,7 @@ describe('MTS exporter', () => {
 
     const scaleData = exporter.getBulkTuningData()
     expect(createHash('sha256').update(scaleData).digest('base64')).toBe(
-      'z7mQ6pS8tVYimN2B5V3WIgN7NR4lFMwrlIjxKJkWEss='
+      'NLwkn1HRQKdNAyYdxl6RQwfz0JvFyShWaB0DHHtPVZo='
     )
 
     // Name is truncated
@@ -46,7 +46,7 @@ describe('MTS exporter', () => {
 
     const sysExMsg = exporter.buildSysExDump()
     expect(createHash('sha256').update(sysExMsg).digest('base64')).toBe(
-      'vrtx5APwYW8zLF0CVgkcBE3z/kGSXYKfDHDrd0oh8xI='
+      'T1Zs8dZGlznhsgEqRxZJFvLT3yc3UAbtWSanZZ1pvHU='
     )
   })
 })

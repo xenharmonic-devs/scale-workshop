@@ -13,7 +13,7 @@ describe('Image-line exporters', () => {
 
     // Raw binary files are inconvenient so we're content with hashes.
     expect(createHash('sha256').update(content).digest('base64')).toBe(
-      'N8zUnnSynllC7frwlQzp5Tkvo/TgYBrPJkfZip1ljZs='
+      'Apibe/Ma4u4Sfd/ZIiTr+Tw4D7hesZD4pNUD9KewMys='
     )
     // Note that the contents are floating-point sensitive to minor changes in frequency calculation
   })
@@ -24,7 +24,7 @@ describe('Image-line exporters', () => {
     const content = exporter.getFileContents(4)
 
     expect(createHash('sha256').update(content).digest('base64')).toBe(
-      'GR/TxsBZm7Bihd1wlSE5HiNrDTDUTPFUP3vK5geAYII='
+      'kyrHUaGRCFUZUp1+1/gI3v4Fi6vqLMWlGjfZukLG58s='
     )
   })
 })

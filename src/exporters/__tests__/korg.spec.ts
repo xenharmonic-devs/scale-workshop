@@ -62,7 +62,7 @@ describe('Korg exporters', () => {
       if (path.endsWith('bin')) {
         const content = await file.async('uint8array')
         expect(createHash('sha256').update(content).digest('base64')).toBe(
-          'z7mQ6pS8tVYimN2B5V3WIgN7NR4lFMwrlIjxKJkWEss='
+          'NLwkn1HRQKdNAyYdxl6RQwfz0JvFyShWaB0DHHtPVZo='
         )
       } else {
         const content = await file.async('string')
@@ -182,7 +182,7 @@ describe('Korg exporters', () => {
       if (path.endsWith('bin')) {
         const content = await file.async('uint8array')
         expect(createHash('sha256').update(content).digest('base64')).toBe(
-          'XwQptSiZLUa8LL/41LEeN1fUNvFr8GUptkga2k+tYJE='
+          'Ev0ERTzsaj9wOZa46chFBQ/HMGmZ9oKsdA+bVQgzAPU='
         )
       } else {
         const content = await file.async('string')
