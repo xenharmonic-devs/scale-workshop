@@ -285,19 +285,6 @@ export function vao(
   }
 }
 
-/*
-function* subshells(shell: number[]) {
-  if (shell.length <= 1) {
-    return;
-  }
-  for (let i = 1; i < shell.length; ++i) {
-    const subshell = [...shell];
-    subshell.splice(i, 1);
-    yield subshell;
-  }
-}
-*/
-
 function subsetOf(a: number[], b: number[]) {
   for (const value of a) {
     if (!b.includes(value)) {
@@ -307,7 +294,6 @@ function subsetOf(a: number[], b: number[]) {
   return true
 }
 
-// TODO: Optimize! This is still too slow to be user-friendly.
 /**
  * Vertically aligned objects that are free to offset the root to stay withing the given tolerance.
  */
@@ -370,48 +356,6 @@ export function freeVAOs(
   }
 
   return result
-
-  // Alternative implementation.
-  /*
-  const {error, degrees} = alignValues(superShell, gridCents);
-
-  // Very unlikely but worth the shot.
-  if (error <= tolerance) {
-    return [{harmonics: superShell, degrees}];
-  }
-
-  // Start breaking the super-shell into smaller sub-shells.
-  const result: Shell[] = [];
-  const badShells = [superShell];
-  while (badShells.length) {
-    const shell = badShells.shift()!;
-    if (!shell.length) {
-      continue;
-    }
-    search: for (const subshell of subshells(shell)) {
-      for (const existing of result) {
-        if (subsetOf(subshell, existing.harmonics)) {
-          continue search;
-        }
-      }
-      for (const existing of badShells) {
-        if (arraysEqual(subshell, existing)) {
-          continue search;
-        }
-      }
-      const {error, degrees} = alignValues(subshell, gridCents);
-      if (error <= tolerance) {
-        result.push({harmonics: subshell, degrees});
-        if (result.length >= maxShells) {
-          return result;
-        }
-      } else if (subshell.length >= superShell.length - maxDepth) {
-        badShells.push(subshell);
-      }
-    }
-  }
-  return result;
-  */
 }
 
 // Interval matrix a.k.a the modes of a scale

@@ -14,7 +14,6 @@ const props = defineProps<{
   heldNotes: Set<number>
 }>()
 
-// TODO: Utilize <use/> elements to lighten node load.
 const svgElement = ref<SVGSVGElement | null>(null)
 
 const steps = computed(() => {
@@ -25,28 +24,27 @@ const steps = computed(() => {
   return result
 })
 
-// TODO: Memoize
 // Multi-label offsets
-function lx(index: number, indices: number[]) {
-  if (indices.length < 3) {
+function lx(n: number, num: number) {
+  if (num < 3) {
     return 0
   }
-  if (indices.length & 1) {
+  if (num & 1) {
     // Odd counts exploit a different starting angle.
-    return store.labelOffset * store.size * Math.cos((2 * Math.PI * index) / indices.length)
+    return store.labelOffset * store.size * Math.cos((2 * Math.PI * n) / num)
   }
   // Text tends to extend horizontally so we draw an ellipse.
-  return 1.5 * store.labelOffset * store.size * Math.sin((2 * Math.PI * index) / indices.length)
+  return 1.5 * store.labelOffset * store.size * Math.sin((2 * Math.PI * n) / num)
 }
-function ly(index: number, indices: number[]) {
-  if (indices.length === 1) {
+function ly(n: number, num: number) {
+  if (num === 1) {
     return -store.labelOffset * store.size
   }
-  if (indices.length & 1) {
+  if (num & 1) {
     // Odd counts exploit a different starting angle.
-    return store.labelOffset * store.size * Math.sin((2 * Math.PI * index) / indices.length)
+    return store.labelOffset * store.size * Math.sin((2 * Math.PI * n) / num)
   }
-  return -store.labelOffset * store.size * Math.cos((2 * Math.PI * index) / indices.length)
+  return -store.labelOffset * store.size * Math.cos((2 * Math.PI * n) / num)
 }
 
 const grid = computed(() => {
@@ -133,11 +131,11 @@ watch(() => store.modulus, computeExtent)
     <template v-if="store.showLabels">
       <template v-for="(v, i) of grid.vertices" :key="i">
         <text
-          v-for="idx of v.indices"
+          v-for="idx, j of v.indices"
           :key="idx"
           class="node-label"
-          :x="v.x + lx(idx, v.indices)"
-          :y="v.y + ly(idx, v.indices)"
+          :x="v.x + lx(j, v.indices.length)"
+          :y="v.y + ly(j, v.indices.length)"
           :font-size="`${2.5 * store.size}px`"
           :stroke-width="store.size * 0.05"
           dominant-baseline="middle"
