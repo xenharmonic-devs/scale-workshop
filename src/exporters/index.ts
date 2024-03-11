@@ -7,6 +7,7 @@ import MaxMSPExporter from '@/exporters/max-msp'
 import PureDataExporter from '@/exporters/pure-data'
 import { ScalaSclExporter, ScalaKbmExporter } from '@/exporters/scala'
 import SoniccoutureExporter from '@/exporters/soniccouture'
+import AbletonAsclExporter from '@/exporters/ableton'
 
 const EXPORTERS = {
   anamarkv1: AnaMarkV1Exporter,
@@ -19,7 +20,8 @@ const EXPORTERS = {
   soniccouture: SoniccoutureExporter,
   harmor: HarmorExporter,
   sytrus: SytrusExporter,
-  deflemask: DeflemaskExporter
+  deflemask: DeflemaskExporter,
+  ableton: AbletonAsclExporter
 }
 
 export type ExporterKey = keyof typeof EXPORTERS
