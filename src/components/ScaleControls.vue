@@ -124,6 +124,7 @@ defineExpose({ focus, clearPaletteInfo })
     <h2>Scale data</h2>
     <div class="control">
       <textarea
+        id="scale-data"
         ref="sourceEditor"
         rows="20"
         v-model="scale.sourceText"
