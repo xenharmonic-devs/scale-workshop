@@ -3,14 +3,18 @@ import { KorgModels, KorgExporter, getKorgModelInfo } from '@/exporters/korg'
 import { sanitizeFilename } from '@/utils'
 import { computed, ref } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
-import type { Scale } from 'scale-workshop-core'
 import type { ExporterParams } from '@/exporters/base'
+import type { Interval } from 'sonic-weave'
+import type { Scale } from '@/scale'
 
 const props = defineProps<{
   newline: string
   scaleName: string
   baseMidiNote: number
+  baseFrequency: number
   midiOctaveOffset: number
+  relativeIntervals: Interval[]
+  labels: string[]
   scale: Scale
 }>()
 
@@ -28,7 +32,7 @@ const useOctaveFormat = ref(false)
 
 const dialogErrorMessage = computed(() => {
   if (useOctaveFormat.value) {
-    const message = KorgExporter.getOctaveFormatErrorMessage(props.scale)
+    const message = KorgExporter.getOctaveFormatErrorMessage(props.relativeIntervals)
     if (message.length > 0) return message
   }
   // Can check for other errors here...
@@ -44,6 +48,9 @@ async function doExport() {
   const params: ExporterParams = {
     newline: props.newline,
     scale: props.scale,
+    relativeIntervals: props.relativeIntervals,
+    labels: props.labels,
+    baseFrequency: props.baseFrequency,
     filename: sanitizeFilename(props.scaleName),
     baseMidiNote: props.baseMidiNote,
     midiOctaveOffset: props.midiOctaveOffset

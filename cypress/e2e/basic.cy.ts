@@ -15,7 +15,8 @@ describe("Basic test", () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(400); // Wait for debounce to expire.
     cy.get("a").contains("Synth").click();
-    cy.url().should("contain", "f=");
+    cy.get("a").contains("Build Scale").click();
+    cy.get(".real-valued").should("have.value", "432");
   });
 });
 

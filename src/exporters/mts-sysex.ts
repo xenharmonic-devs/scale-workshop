@@ -1,5 +1,5 @@
 import { clamp, frequencyToMtsBytes } from 'xen-dev-utils'
-import { BaseExporter, type ExporterParams } from './base'
+import { BaseExporter } from './base'
 
 export function frequencyTableToBinaryData(frequencyTableIn: number[]): Uint8Array {
   const dataSize = frequencyTableIn.length * 3
@@ -24,18 +24,10 @@ export function getSysexChecksum(data: number[]): number {
 }
 
 export default class MtsSysexExporter extends BaseExporter {
-  params: ExporterParams
-
-  constructor(params: ExporterParams) {
-    super()
-    this.params = params
-  }
-
   getBulkTuningData() {
     const scale = this.params.scale
-    const baseMidiNote = this.params.baseMidiNote
 
-    const frequencies = scale.getFrequencyRange(-baseMidiNote, 128 - baseMidiNote)
+    const frequencies = scale.getFrequencyRange(0, 128)
 
     const scaleData = frequencyTableToBinaryData(frequencies)
     return scaleData

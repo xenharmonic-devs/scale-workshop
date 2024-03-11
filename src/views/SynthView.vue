@@ -2,13 +2,15 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import TimeDomainVisualizer from '@/components/TimeDomainVisualizer.vue'
 import Modal from '@/components/ModalDialog.vue'
-import { WAVEFORMS } from '@/synth'
+import { APERIODIC_WAVEFORMS, WAVEFORMS } from '@/synth'
 import { useAudioStore } from '@/stores/audio'
 import { useStateStore } from '@/stores/state'
+import { useScaleStore } from '@/stores/scale'
 
 const emit = defineEmits(['panic'])
 
 const state = useStateStore()
+const scale = useScaleStore()
 
 const audio = useAudioStore()
 
@@ -88,6 +90,18 @@ const releaseTime = computed({
     }
     if (!isNaN(newValue)) {
       audio.releaseTime = newValue
+    }
+  }
+})
+
+const unisonSpread = computed({
+  get: () => audio.spread,
+  set(newValue: number) {
+    if (typeof newValue !== 'number') {
+      newValue = parseFloat(newValue)
+    }
+    if (!isNaN(newValue)) {
+      audio.spread = newValue
     }
   }
 })
@@ -237,9 +251,56 @@ onUnmounted(() => {
           <button @click="emit('panic')" style="max-width: 12rem" title="Stop all sound at once">
             Panic
           </button>
+          <div class="control radio-group">
+            <label>Synth type</label>
+            <span>
+              <input
+                type="radio"
+                id="type-oscillator"
+                value="oscillator"
+                v-model="audio.synthType"
+              />
+              <label for="type-oscillator"> Oscillator </label>
+            </span>
+
+            <span>
+              <input type="radio" id="type-unison" value="unison" v-model="audio.synthType" />
+              <label for="type-unison"> Unison </label>
+            </span>
+
+            <span>
+              <input type="radio" id="type-aperiodic" value="aperiodic" v-model="audio.synthType" />
+              <label for="type-aperiodic"> Aperiodic </label>
+            </span>
+          </div>
+          <template v-if="audio.synthType === 'unison'">
+            <div class="control">
+              <label for="stack-size">Unison stack size</label>
+              <input id="stack-size" min="2" max="9" type="number" v-model="audio.stackSize" />
+            </div>
+            <label for="unison-spread">Unison spread</label>
+            <input
+              id="unison-spread"
+              class="control"
+              type="range"
+              min="0.01"
+              max="100"
+              step="any"
+              v-model="unisonSpread"
+            />
+          </template>
           <div class="control">
             <label for="waveform">Waveform</label>
-            <select id="waveform" class="control" v-model="audio.waveform">
+            <select
+              v-if="audio.synthType === 'aperiodic'"
+              class="control"
+              v-model="audio.aperiodicWaveform"
+            >
+              <option v-for="waveform of APERIODIC_WAVEFORMS" :value="waveform" :key="waveform">
+                {{ waveform }}
+              </option>
+            </select>
+            <select v-else id="waveform" class="control" v-model="audio.waveform">
               <option v-for="waveform of WAVEFORMS" :value="waveform" :key="waveform">
                 {{ waveform }}
               </option>
@@ -364,53 +425,35 @@ onUnmounted(() => {
                 type="radio"
                 id="mode-isomorphic"
                 value="isomorphic"
-                v-model="state.keyboardMode"
+                v-model="scale.keyboardMode"
               />
               <label for="mode-isomorphic"> Isomorphic </label>
             </span>
             <span>
-              <input type="radio" id="mode-piano" value="piano" v-model="state.keyboardMode" />
+              <input type="radio" id="mode-piano" value="piano" v-model="scale.keyboardMode" />
               <label for="mode-piano"> Piano-style layers </label>
             </span>
           </div>
-          <template v-if="state.keyboardMode === 'piano'">
+          <template v-if="scale.keyboardMode === 'piano'">
             <div class="control radio-group">
               <span>
-                <input type="radio" id="mode-asdf" value="Asdf" v-model="state.pianoMode" />
-                <label for="mode-asdf"> ASDF & QWERTY </label>
+                <input type="radio" id="mode-asdf" value="Asdf" v-model="scale.pianoMode" />
+                <label for="mode-asdf"> White on ASDF & black on QWERTY </label>
               </span>
               <span>
-                <input type="radio" id="mode-qwezxc1" value="QweZxc1" v-model="state.pianoMode" />
-                <label for="mode-qwezxc1"> ZXCV & ASDF + QWERTY & 1234 </label>
+                <input type="radio" id="mode-qwe-zxc" value="QweZxc" v-model="scale.pianoMode" />
+                <label for="mode-qwe-zxc">
+                  QWERTY & digits + ZXCV & ASDF separated by an equave</label
+                >
               </span>
               <span>
-                <input type="radio" id="mode-qwezxc0" value="QweZxc0" v-model="state.pianoMode" />
-                <label for="mode-qwezxc0"> ZXCV etc. (shifted left) </label>
+                <input type="radio" id="mode-zxc" value="Zxc" v-model="scale.pianoMode" />
+                <label for="mode-zxc"> ZXCV with split accidentals above</label>
               </span>
             </div>
           </template>
         </div>
-        <h2>Keyboard equave shift</h2>
-        <div class="control-group">
-          <p>
-            Trigger lower or higher notes. (Default shortcut keys: numpad
-            <code>/</code> and <code>*</code>)
-          </p>
-          <div class="control">
-            <input type="number" v-model="state.equaveShift" />
-          </div>
-        </div>
-        <h2>Keyboard degree shift</h2>
-        <div class="control-group">
-          <p>
-            Shift down/up by one scale degree. (Default shortcut keys: numpad
-            <code>-</code> and <code>+</code>).
-          </p>
-          <div class="control">
-            <input type="number" v-model="state.degreeShift" />
-          </div>
-        </div>
-        <template v-if="state.keyboardMode === 'isomorphic'">
+        <template v-if="scale.keyboardMode === 'isomorphic'">
           <h2>Isomorphic key mapping</h2>
           <p>
             Distance between adjacent keys on the horizontal/vertical axes, in scale degrees.
@@ -430,6 +473,53 @@ onUnmounted(() => {
             </div>
           </div>
         </template>
+        <template v-else>
+          <h2>Accidental colors</h2>
+          <p>These color(s) in your scale will be used to assemble the piano layout.</p>
+          <div v-if="scale.pianoMode === 'Zxc'" class="control-group">
+            <div class="control">
+              <label for="high-accidental-color">high</label>
+              <input type="text" id="high-accidental-color" v-model="scale.highAccidentalColor" />
+            </div>
+            <div class="control">
+              <label for="middle-accidental-color">Middle</label>
+              <input
+                type="text"
+                id="middle-accidental-color"
+                v-model="scale.middleAccidentalColor"
+              />
+            </div>
+            <div class="control">
+              <label for="low-accidental-color">Low</label>
+              <input type="text" id="low-accidental-color" v-model="scale.lowAccidentalColor" />
+            </div>
+          </div>
+          <div v-else class="control-group">
+            <div class="control">
+              <input type="text" id="accidental-color" v-model="scale.accidentalColor" />
+            </div>
+          </div>
+        </template>
+        <h2>Keyboard equave shift</h2>
+        <div class="control-group">
+          <p>
+            Trigger lower or higher notes. (Default shortcut keys: numpad
+            <code>/</code> and <code>*</code>)
+          </p>
+          <div class="control">
+            <input type="number" v-model="scale.equaveShift" />
+          </div>
+        </div>
+        <h2>Keyboard degree shift</h2>
+        <div class="control-group">
+          <p>
+            Shift down/up by one scale degree. (Default shortcut keys: numpad
+            <code>-</code> and <code>+</code>).
+          </p>
+          <div class="control">
+            <input type="number" v-model="scale.degreeShift" />
+          </div>
+        </div>
         <h2>Keyboard shortcuts</h2>
         <div class="control-group">
           <p><code>Shift</code> sustain currently held keys after release</p>

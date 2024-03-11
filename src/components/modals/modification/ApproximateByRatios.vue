@@ -9,20 +9,16 @@ import {
   PRIMES,
   valueToCents
 } from 'xen-dev-utils'
-import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
-import { fractionToString, ExtendedMonzo, Interval, type Scale } from 'scale-workshop-core'
 import { useApproximateByRatiosStore } from '@/stores/approximate-by-ratios'
 import { setAndReportValidity } from '@/utils'
+import { useScaleStore } from '@/stores/scale'
 
 const MAX_LENGTH = 128
 
-const props = defineProps<{
-  scale: Scale
-}>()
-
-const emit = defineEmits(['update:scale', 'cancel'])
+const emit = defineEmits(['done', 'cancel'])
 
 const approx = useApproximateByRatiosStore()
+const scale = useScaleStore()
 
 const approximationSelect = ref<HTMLSelectElement | null>(null)
 
@@ -33,11 +29,11 @@ type Approximation = {
 }
 
 const approximationsWithErrorsAndLimits = computed<Approximation[]>(() => {
-  const selected = props.scale.getMonzo(approx.degree)
-  const selectedCents = selected.totalCents()
+  const selected = Math.abs(scale.scale.getRatio(scale.baseMidiNote + approx.degree))
+  const selectedCents = valueToCents(selected)
   if (approx.method === 'convergents') {
     const approximations = getConvergents(
-      selected.valueOf(),
+      selected,
       undefined,
       2 * MAX_LENGTH, // Extra length buffer
       approx.includeSemiconvergents,
@@ -108,22 +104,27 @@ watch(approximationsWithErrorsAndLimits, (newValue) => {
 function modifyAndAdvance() {
   if (!approximationsWithErrorsAndLimits.value.length) {
     alert('No approximation satisfying criteria found!')
+  } else {
+    const fraction = approximationsWithErrorsAndLimits.value[approx.approximationIndex].fraction
+    const i = approx.degree - 1
+    scale.sourceText += `\n$[${i}] = ${fraction.toFraction()} colorOf($[${i}]) labelOf($[${i}])`
   }
-  const replacement = new Interval(
-    ExtendedMonzo.fromFraction(
-      approximationsWithErrorsAndLimits.value[approx.approximationIndex].fraction,
-      DEFAULT_NUMBER_OF_COMPONENTS
-    ),
-    'ratio'
-  )
-  emit('update:scale', props.scale.replaceDegree(approx.degree, replacement))
-  approx.degree = Math.min(props.scale.size, approx.degree + 1)
+  approx.degree = Math.min(scale.scale.size, approx.degree + 1)
   approx.approximationIndex = 0
+}
+
+function modify(expand = true) {
+  if (expand) {
+    const { visitor, defaults } = scale.getVisitors()
+    scale.sourceText = visitor.expand(defaults)
+  }
+  scale.computeScale()
+  emit('done')
 }
 </script>
 
 <template>
-  <Modal @confirm="modifyAndAdvance" @cancel="$emit('cancel')">
+  <Modal @confirm="modify(true)" @cancel="modify(false)">
     <template #header>
       <h2>Approximate by ratios</h2>
     </template>
@@ -132,11 +133,17 @@ function modifyAndAdvance() {
         <p>Select scale degrees and apply rational replacements one by one.</p>
         <div class="control">
           <label for="degree">Scale Degree</label>
-          <input type="number" id="degree" min="1" :max="scale.size" v-model="approx.degree" />
+          <input
+            type="number"
+            id="degree"
+            min="1"
+            :max="scale.scale.size"
+            v-model="approx.degree"
+          />
         </div>
         <div class="control">
           <label for="interval">Interval</label>
-          <input type="text" id="interval" disabled :value="scale.getName(approx.degree)" />
+          <input type="text" id="interval" disabled :value="scale.labels[approx.degree - 1]" />
         </div>
         <div class="control">
           <label for="approximation">Approximation</label>
@@ -151,8 +158,7 @@ function modifyAndAdvance() {
               :key="i"
               :value="i"
             >
-              {{ fractionToString(approximation.fraction) }} |
-              {{ approximation.error.toFixed(5) }} |
+              {{ approximation.fraction.toFraction() }} | {{ approximation.error.toFixed(5) }} |
               {{ approximation.limit }}
             </option>
           </select>
@@ -227,7 +233,8 @@ function modifyAndAdvance() {
     <template #footer>
       <div class="btn-group">
         <button @click="modifyAndAdvance">Apply</button>
-        <button @click="$emit('cancel')">Close</button>
+        <button @click="modify(true)">Close</button>
+        <button @click="modify(false)">Raw</button>
       </div>
     </template>
   </Modal>

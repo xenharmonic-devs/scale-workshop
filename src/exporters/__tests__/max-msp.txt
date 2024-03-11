@@ -1,7 +1,7 @@
 # Tuning file for Max/MSP coll objects. - Created using Max/MSP exporter unit test v0.0.0
 # Test Scale
 #
-# https://sevish.com/scaleworkshop/
+# https://scaleworkshop.plainsound.org/
 #
 0, 0.1790365;
 1, 0.1460015;

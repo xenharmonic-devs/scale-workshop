@@ -11,7 +11,7 @@ describe('Scala exporters', () => {
       '! test.scl',
       '! Created using Scala exporter unit test v0.0.0',
       '!',
-      '! https://sevish.com/scaleworkshop/',
+      '! https://scaleworkshop.plainsound.org/',
       '!',
       'Test Scale',
       ' 6',

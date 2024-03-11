@@ -3,7 +3,7 @@ Test Scale
 MIDI note 69 (A5) = 440 Hz
 Created using Kontakt tuning script exporter unit test v0.0.0
 
-https://sevish.com/scaleworkshop/
+https://scaleworkshop.plainsound.org/
 ****************************************}
 
 on init
