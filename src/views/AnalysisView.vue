@@ -15,7 +15,6 @@ import { useScaleStore } from '@/stores/scale'
 import { mmod } from 'xen-dev-utils'
 import { OCTAVE } from '@/constants'
 
-// TODO: Make customizable
 const MAX_SCALE_SIZE = 100
 
 const audio = useAudioStore()
