@@ -131,7 +131,7 @@ watch(() => store.modulus, computeExtent)
     <template v-if="store.showLabels">
       <template v-for="(v, i) of grid.vertices" :key="i">
         <text
-          v-for="idx, j of v.indices"
+          v-for="(idx, j) of v.indices"
           :key="idx"
           class="node-label"
           :x="v.x + lx(j, v.indices.length)"

@@ -4,21 +4,19 @@ import { Scale } from '../../scale'
 import { Fraction } from 'xen-dev-utils'
 
 export function getTestData(appTitle: string) {
-  const absoluteC5 = new Interval(
-    TimeMonzo.fromFractionalFrequency(528, 3), 'logarithmic', {
-      type: 'AbsoluteFJS',
-      pitch: {
-        type: 'AbsolutePitch',
-        nominal: 'C',
-        accidentals: [],
-        octave: 5n,
-      },
-      ups: 0,
-      lifts: 0,
-      superscripts: [],
-      subscripts: [[5, '']],
-    }
-  )
+  const absoluteC5 = new Interval(TimeMonzo.fromFractionalFrequency(528, 3), 'logarithmic', {
+    type: 'AbsoluteFJS',
+    pitch: {
+      type: 'AbsolutePitch',
+      nominal: 'C',
+      accidentals: [],
+      octave: 5n
+    },
+    ups: 0,
+    lifts: 0,
+    superscripts: [],
+    subscripts: [[5, '']]
+  })
   const visitor = getSourceVisitor()
   visitor.visit(parseAST('a4 = 440 Hz').body[0])
   const ev = visitor.createExpressionVisitor()

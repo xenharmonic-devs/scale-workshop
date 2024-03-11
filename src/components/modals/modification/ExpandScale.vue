@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Modal from '@/components/ModalDialog.vue'
-import { useModalStore } from '@/stores/modal';
+import { useModalStore } from '@/stores/modal'
 import { useScaleStore } from '@/stores/scale'
 
 const emit = defineEmits(['done', 'cancel'])
