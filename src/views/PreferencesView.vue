@@ -40,6 +40,10 @@ const scale = useScaleStore()
             <input id="virtual-qwerty" type="checkbox" v-model="state.showVirtualQwerty" />
             <label for="virtual-qwerty"> Virtual QWERTY in top menu</label>
           </div>
+          <div class="control">
+            <input id="gas" type="number" min="1" v-model="scale.gas" />
+            <label for="gas">Computational budget (gas)</label>
+          </div>
         </div>
       </div>
       <div class="column">

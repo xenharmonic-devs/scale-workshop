@@ -52,6 +52,9 @@ export const useScaleStore = defineStore('scale', () => {
   // Some keyboards like FI have a handy key left of 'Z'
   const hasLeftOfZ = ref(localStorage.getItem('hasLeftOfZ') === 'true')
 
+  // Computational budget to prevent tab hanging.
+  const gas = ref(parseInt(localStorage.getItem('gas') ?? '10000', 10))
+
   const name = ref('')
   const baseMidiNote = ref(60)
   const enharmonics = computed(() =>
@@ -271,6 +274,7 @@ export const useScaleStore = defineStore('scale', () => {
   // Local storage watchers
   watch(accidentalPreference, (newValue) => localStorage.setItem('accidentalPreference', newValue))
   watch(hasLeftOfZ, (newValue) => window.localStorage.setItem('hasLeftOfZ', newValue.toString()))
+  watch(gas, (newValue) => window.localStorage.setItem('gas', newValue.toString()))
 
   function latticeView(this: ExpressionVisitor) {
     const scale = this.getCurrentScale()
@@ -298,8 +302,7 @@ export const useScaleStore = defineStore('scale', () => {
       latticeView
     }
     const visitor = getSourceVisitor(true, extraBuiltins)
-    // TODO: Make this a user preference.
-    visitor.rootContext.gas = 10000
+    visitor.rootContext.gas = gas.value
 
     // Declare base nominal and unison frequency
     const prefixAst = parseAST(sourcePrefix.value)
@@ -316,6 +319,7 @@ export const useScaleStore = defineStore('scale', () => {
     const visitor = new StatementVisitor(globalVisitor.rootContext, globalVisitor)
     const defaults = visitor.clone()
     defaults.rootContext = defaults.rootContext.clone()
+    defaults.rootContext.gas = gas.value
 
     const ast = parseAST(sourceText.value)
     for (const statement of ast.body) {
@@ -431,6 +435,7 @@ export const useScaleStore = defineStore('scale', () => {
     // Presistent state
     accidentalPreference,
     hasLeftOfZ,
+    gas,
     // Computed state
     frequencies,
     centss,
