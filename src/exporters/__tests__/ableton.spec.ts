@@ -21,14 +21,14 @@ describe('Scala exporters', () => {
       100.00000000 ! 100.
       960.00000000 ! 4\\5
       5/3 ! 5/3
-      531.23404907 ! 1,3591409142295225
+      531.23404907 ! 1,3591409142295225r
       107.53144798 ! 3486784401/3276800000
       2/1 ! 2/1
       !
-      ! @ABL NOTE_NAMES "2/1" "100." "4\\5" "5/3" "1,3591409142295225" "3486784401/3276800000"
+      ! @ABL NOTE_NAMES "2/1" "100." "4\\5" "5/3" "1,3591409142295225r" "3486784401/3276800000"
       ! @ABL REFERENCE_PITCH 4 0 440.00000000
       ! @ABL SOURCE Scale Workshop / Xenharmonic developers
-      ! @ABL LINK https://sevish.com/scaleworkshop/
+      ! @ABL LINK https://scaleworkshop.plainsound.org/
     `
         .split('\n')
         .map((l) => l.trim())
