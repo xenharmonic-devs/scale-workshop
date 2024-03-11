@@ -3,28 +3,31 @@ import ReaperExporter from '@/exporters/reaper'
 import { sanitizeFilename } from '@/utils'
 import { ref } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
-import type { Scale } from 'scale-workshop-core'
-import type { ExporterParams } from '@/exporters/base'
+import type { ExporterParams, LineFormat } from '@/exporters/base'
+import type { Scale } from '@/scale'
+import type { Interval } from 'sonic-weave'
 
 const props = defineProps<{
   newline: string
   scaleName: string
   baseMidiNote: number
+  baseFrequency: number
   midiOctaveOffset: number
+  relativeIntervals: Interval[]
   scale: Scale
+  labels: string[]
 }>()
 
 const emit = defineEmits(['confirm', 'cancel'])
 
-type Format = 'name' | 'cents' | 'frequency' | 'decimal' | 'degree'
-const formats = [
-  ['name', 'Scale data'],
+const formats: [LineFormat, string][] = [
+  ['label', 'Scale data'],
   ['cents', 'Cents'],
   ['frequency', 'Frequencies'],
   ['decimal', 'Decimal ratios'],
   ['degree', 'Scale degrees']
 ]
-const format = ref<Format>('name')
+const format = ref<LineFormat>('label')
 const basePeriod = ref(0)
 const baseDegree = ref(0)
 const centsRoot = ref(0)
@@ -37,7 +40,10 @@ function doExport() {
     scale: props.scale,
     filename: sanitizeFilename(props.scaleName),
     baseMidiNote: props.baseMidiNote,
+    baseFrequency: props.baseFrequency,
     midiOctaveOffset: props.midiOctaveOffset,
+    relativeIntervals: props.relativeIntervals,
+    labels: props.labels,
     format: format.value,
     basePeriod: basePeriod.value,
     baseDegree: baseDegree.value,

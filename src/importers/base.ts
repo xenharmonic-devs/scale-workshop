@@ -1,9 +1,8 @@
-import type { Scale } from 'scale-workshop-core'
-
 export type ImportResult = {
-  scale: Scale
+  sourceText: string
   name?: string
   baseMidiNote?: number
+  baseFrequency?: number
 }
 
 export abstract class TextImporter {
@@ -30,8 +29,10 @@ export abstract class TextImporter {
     const reader = new FileReader()
 
     return new Promise<ImportResult>((resolve, reject) => {
-      reader.onload = () => resolve(this.parseText(reader.result as string, files[0].name))
-      reader.onerror = reject
+      reader.addEventListener('load', () =>
+        resolve(this.parseText(reader.result as string, files[0].name))
+      )
+      reader.addEventListener('error', reject)
       reader.readAsText(files[0])
     })
   }

@@ -1,4 +1,4 @@
-import { APP_TITLE } from '@/constants'
+import { APP_TITLE, NEWLINE_TEST } from '@/constants'
 import { BaseExporter, type ExporterParams } from '@/exporters/base'
 import { mtof, valueToCents } from 'xen-dev-utils'
 
@@ -6,22 +6,20 @@ class AnaMarkExporter extends BaseExporter {
   static tuningMaxSize = 128
   static baseFrequency = mtof(0)
 
-  params: ExporterParams
   version: number
   appTitle: string
   date: Date
-  lines: string[]
+  sourceText: string
 
   constructor(params: ExporterParams, version: number) {
-    if (params.lines === undefined) {
+    super(params)
+    if (params.sourceText === undefined) {
       throw new Error('Missing text lines')
     }
-    super()
-    this.params = params
     this.version = version
     this.appTitle = params.appTitle || APP_TITLE
     this.date = params.date || new Date()
-    this.lines = params.lines
+    this.sourceText = params.sourceText
   }
 
   getFileContents() {
@@ -30,6 +28,7 @@ class AnaMarkExporter extends BaseExporter {
 
     // Assemble the .tun file contents:
     const newline = this.params.newline
+    const intervals = this.params.relativeIntervals
     const scale = this.params.scale
     const filename = this.params.filename
 
@@ -46,9 +45,9 @@ class AnaMarkExporter extends BaseExporter {
     }
     // If version before 200 and URL is too long, fall back to an alternative way of displaying the original scale data.
     else {
-      this.lines.forEach((line) => {
+      for (const line of this.sourceText.split(NEWLINE_TEST)) {
         file += '; ' + line + newline
-      })
+      }
     }
 
     file += ';' + newline
@@ -56,7 +55,7 @@ class AnaMarkExporter extends BaseExporter {
     file += '[Tuning]' + newline
 
     for (let i = 0; i < AnaMarkExporter.tuningMaxSize; i++) {
-      const freq = scale.getFrequency(i - this.params.baseMidiNote)
+      const freq = scale.getFrequency(i)
       const cents = valueToCents(freq / AnaMarkExporter.baseFrequency)
       file += 'note ' + i.toString() + '=' + Math.round(cents).toString() + newline
     }
@@ -77,7 +76,7 @@ class AnaMarkExporter extends BaseExporter {
     file += '[Exact Tuning]' + newline
 
     for (let i = 0; i < AnaMarkExporter.tuningMaxSize; i++) {
-      const freq = scale.getFrequency(i - this.params.baseMidiNote)
+      const freq = scale.getFrequency(i)
       const cents = valueToCents(freq / AnaMarkExporter.baseFrequency)
       file += 'note ' + i + '= ' + cents.toFixed(6) + newline
     }
@@ -86,19 +85,20 @@ class AnaMarkExporter extends BaseExporter {
     if (this.version >= 200) {
       file += newline + '[Functional Tuning]' + newline
 
-      for (let i = 1; i <= scale.size; i++) {
-        if (i == scale.size) {
+      for (let i = 1; i <= intervals.length; i++) {
+        if (i === intervals.length) {
           file +=
             'note ' +
             i +
             '="#>-' +
             i +
             ' % ' +
-            scale.getMonzo(i).toCents().toFixed(6) +
+            intervals[i - 1].totalCents().toFixed(6) +
             ' ~999"' +
             newline
         } else {
-          file += 'note ' + i + '="#=0 % ' + scale.getMonzo(i).toCents().toFixed(6) + '"' + newline
+          file +=
+            'note ' + i + '="#=0 % ' + intervals[i - 1].totalCents().toFixed(6) + '"' + newline
         }
       }
 

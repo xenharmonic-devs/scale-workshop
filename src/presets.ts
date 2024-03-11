@@ -1,9 +1,8 @@
-import { autoKeyColors } from '@/utils'
 import PRESETS from '@/presets.json'
 
 type PresetFragment = {
   name: string
-  lines: string[]
+  source: string
   categories: string[]
   title?: string
   baseFrequency?: number
@@ -14,11 +13,10 @@ export type Preset = {
   name: string
   title: string
   id: string
-  lines: string[]
+  source: string
   categories: string[]
   baseFrequency: number
   baseMidiNote: number
-  keyColors: string[]
 }
 
 export type PresetGroup = {
@@ -27,13 +25,14 @@ export type PresetGroup = {
 }
 
 function normalized(id: string): Preset {
-  const result: any = Object.assign({}, (PRESETS as { [key: string]: PresetFragment })[id])
+  const result: any = Object.assign(
+    {},
+    (PRESETS as unknown as { [key: string]: PresetFragment })[id]
+  )
   result.id = id
   result.title = result.title || result.name
   result.baseFrequency = result.baseFrequency || 440
   result.baseMidiNote = result.baseMidiNote === undefined ? 69 : result.baseMidiNote
-  result.keyColors =
-    result.keyColors === undefined ? autoKeyColors(result.lines.length) : result.keyColors
   return result
 }
 

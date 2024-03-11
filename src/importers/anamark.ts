@@ -1,5 +1,4 @@
-import { DEFAULT_NUMBER_OF_COMPONENTS, NEWLINE_TEST } from '@/constants'
-import { getLineType, LINE_TYPE, parseLine, Interval, Scale } from 'scale-workshop-core'
+import { NEWLINE_TEST } from '@/constants'
 import { TextImporter, type ImportResult } from '@/importers/base'
 
 export class AnaMarkImporter extends TextImporter {
@@ -48,25 +47,20 @@ export class AnaMarkImporter extends TextImporter {
       }
     }
 
-    const intervals: Interval[] = []
+    const sourceLines: string[] = []
     functionalLines.forEach((line) => {
       if (!line.length) {
         return
       }
-      const lineType = getLineType(line)
-      if (lineType === LINE_TYPE.INVALID) {
-        throw new Error(`Failed to parse line ${line}`)
-      }
-      intervals.push(parseLine(line, DEFAULT_NUMBER_OF_COMPONENTS))
+      sourceLines.push(line)
     })
-    const scale = Scale.fromIntervalArray(intervals)
 
-    const result: ImportResult = { scale, name }
+    const result: ImportResult = { sourceText: sourceLines.join('\n'), name }
 
     // get base frequency and MIDI note
     for (let i = firstLineIndex + 1; i < lines.length; i++) {
       if (lines[i].includes('!')) {
-        scale.baseFrequency = parseFloat(
+        result.baseFrequency = parseFloat(
           lines[i].substring(lines[i].indexOf('!') + 2, lines[i].length - 2)
         )
         result.baseMidiNote = parseInt(

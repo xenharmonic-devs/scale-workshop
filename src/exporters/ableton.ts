@@ -1,27 +1,25 @@
 import { APP_TITLE } from '@/constants'
 import { BaseExporter, type ExporterParams } from '@/exporters/base'
-import { fractionToString } from 'scale-workshop-core'
 import { ftom } from 'xen-dev-utils'
 
 export default class AbletonAsclExporter extends BaseExporter {
   // Make sure .ascl is valid .scl
   static maxInteger = 2147483647
 
-  params: ExporterParams
   name: string
   appTitle: string
 
   constructor(params: ExporterParams) {
-    super()
-    this.params = params
+    super(params)
     this.name = params.name || 'Untitled tuning'
     this.appTitle = params.appTitle || APP_TITLE
   }
 
   getFileContents() {
     const newline = this.params.newline
-    const scale = this.params.scale
-    const referenceFrequency = this.params.scale.baseFrequency.toFixed(8)
+    const intervals = this.params.relativeIntervals
+    const labels = this.params.labels
+    const referenceFrequency = this.params.baseFrequency.toFixed(8)
     // assemble the .ascl file contents
     let file = '! ' + this.params.filename + '.ascl' + newline
     file += '! Created using ' + this.appTitle + newline
@@ -30,21 +28,20 @@ export default class AbletonAsclExporter extends BaseExporter {
     file += '!' + newline
     file += `! default tuning: degree 0 = ${referenceFrequency} Hz` + newline
     file += '!' + newline
-    file += scale.size.toString() + newline
+    file += intervals.length.toString() + newline
     file += '!' + newline
 
     const names: string[] = []
 
-    for (let i = 1; i <= scale.size; i++) {
-      const interval = scale.getInterval(i)
-      const monzo = interval.monzo
+    for (let i = 0; i < intervals.length; i++) {
+      const monzo = intervals[i].value.abs()
       if (monzo.isFractional()) {
-        const ratio = monzo.toFraction()
+        const { numerator, denominator } = monzo.toBigNumeratorDenominator()
         if (
-          ratio.n <= AbletonAsclExporter.maxInteger &&
-          ratio.d <= AbletonAsclExporter.maxInteger
+          numerator <= AbletonAsclExporter.maxInteger &&
+          denominator <= AbletonAsclExporter.maxInteger
         ) {
-          file += fractionToString(ratio)
+          file += `${numerator}/${denominator}`
         } else {
           // The intended accuracy is undocumented, but a sample file had 8 decimals
           file += monzo.toCents().toFixed(8)
@@ -53,8 +50,8 @@ export default class AbletonAsclExporter extends BaseExporter {
         // Incidentally cent accuracy is undocumented in Scala as well, so I guess this is fine
         file += monzo.toCents().toFixed(8)
       }
-      file += ' ! ' + interval.name + newline
-      names.push('"' + interval.name + '"')
+      file += ' ! ' + labels[i] + newline
+      names.push('"' + labels[i].replace('"', '“') + '"') // XXX: Hax
     }
     if (names.length) {
       // Put unison's name first
@@ -62,7 +59,7 @@ export default class AbletonAsclExporter extends BaseExporter {
     }
 
     // It's unclear what "octave number" means in the spec
-    const octave = Math.floor(ftom(scale.baseFrequency)[0] / 12) - 1
+    const octave = Math.floor(ftom(this.params.baseFrequency)[0] / 12) - 1
 
     file += '!' + newline
     file += '! @ABL NOTE_NAMES ' + names.join(' ') + newline

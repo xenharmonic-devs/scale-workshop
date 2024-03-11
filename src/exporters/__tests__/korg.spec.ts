@@ -1,18 +1,22 @@
 import { createHash } from 'crypto'
 import type { JSZipObject } from 'jszip'
-import { DEFAULT_NUMBER_OF_COMPONENTS } from '../../constants'
-import { ExtendedMonzo, Interval, Scale } from 'scale-workshop-core'
 import { describe, it, expect } from 'vitest'
 
 import { KorgExporter, KorgModels, KorgExporterError } from '../korg'
 
 import { getTestData } from './test-data'
+import { Scale } from '../../scale'
+import { Interval, TimeMonzo } from 'sonic-weave'
 
 describe('Korg exporters', () => {
   it('can export a scale encountered while debugging issue #393', async () => {
     const params = getTestData("Korg 'logue exporter unit test")
     params.baseMidiNote = 60
-    params.scale = Scale.fromSubharmonicSeries(24, 12, DEFAULT_NUMBER_OF_COMPONENTS, 256)
+    params.scale = new Scale(
+      [...Array(12).keys()].map((i) => 24 / (23 - i)),
+      256,
+      60
+    )
 
     const exporter = new KorgExporter(params, KorgModels.MINILOGUE, false)
     const [zip, fileType] = exporter.getFileContents()
@@ -58,7 +62,7 @@ describe('Korg exporters', () => {
       if (path.endsWith('bin')) {
         const content = await file.async('uint8array')
         expect(createHash('sha256').update(content).digest('base64')).toBe(
-          'z7mQ6pS8tVYimN2B5V3WIgN7NR4lFMwrlIjxKJkWEss='
+          'NLwkn1HRQKdNAyYdxl6RQwfz0JvFyShWaB0DHHtPVZo='
         )
       } else {
         const content = await file.async('string')
@@ -79,7 +83,10 @@ describe('Korg exporters', () => {
 
   it('throws error if 12-note octave tuning is selected, but equave is not 2/1', () => {
     const params = getTestData("Korg 'logue exporter unit test v0.0.0")
-    params.scale.equave = new Interval(ExtendedMonzo.fromCents(100.0, 3), 'cents')
+    params.relativeIntervals.push(new Interval(TimeMonzo.fromCents(100.0, 3), 'logarithmic'))
+    params.sourceText += '\n100.'
+    const ratios = params.relativeIntervals.map((i) => i.value.valueOf())
+    params.scale = new Scale(ratios, 440, 69)
     expect(() => new KorgExporter(params, KorgModels.MINILOGUE, true)).toThrowError(
       KorgExporterError.OCTAVE_INVALID_EQUAVE
     )
@@ -94,11 +101,24 @@ describe('Korg exporters', () => {
 
   it('throws error if 12-note octave tuning is selected, but scale contains an interval that is below unison', () => {
     const params = getTestData("Korg 'logue exporter unit test v0.0.0")
-    params.scale.intervals.splice(1, 0, new Interval(ExtendedMonzo.fromCents(-500.0, 3), 'cents'))
+    params.relativeIntervals.splice(
+      0,
+      0,
+      new Interval(TimeMonzo.fromCents(-500.0, 3), 'logarithmic')
+    )
+    params.sourceText = '-500.\n' + params.sourceText
 
     // Make sure there's 12 notes in the test scale
-    while (params.scale.intervals.length < 12)
-      params.scale.intervals.splice(1, 0, new Interval(ExtendedMonzo.fromCents(100.0, 3), 'cents'))
+    while (params.relativeIntervals.length < 12) {
+      params.relativeIntervals.splice(
+        0,
+        0,
+        new Interval(TimeMonzo.fromCents(100.0, 3), 'logarithmic')
+      )
+      params.sourceText += '100.\n' + params.sourceText
+    }
+    const ratios = params.relativeIntervals.map((i) => i.value.valueOf())
+    params.scale = new Scale(ratios, 440, 69)
 
     expect(() => new KorgExporter(params, KorgModels.MINILOGUE, true)).toThrowError(
       KorgExporterError.OCTAVE_INVALID_INTERVAL
@@ -107,11 +127,23 @@ describe('Korg exporters', () => {
 
   it('throws error if 12-note octave tuning is selected, but scale contains an interval that is greater than an octave', () => {
     const params = getTestData("Korg 'logue exporter unit test v0.0.0")
-    params.scale.intervals.splice(1, 0, new Interval(ExtendedMonzo.fromCents(1300.0, 3), 'cents'))
+    params.relativeIntervals.splice(
+      0,
+      0,
+      new Interval(TimeMonzo.fromCents(1300.0, 3), 'logarithmic')
+    )
 
     // Make sure there's 12 notes in the test scale
-    while (params.scale.intervals.length < 12)
-      params.scale.intervals.splice(1, 0, new Interval(ExtendedMonzo.fromCents(100.0, 3), 'cents'))
+    while (params.relativeIntervals.length < 12) {
+      params.relativeIntervals.splice(
+        0,
+        0,
+        new Interval(TimeMonzo.fromCents(100.0, 3), 'logarithmic')
+      )
+      params.sourceText += '100.\n' + params.sourceText
+    }
+    const ratios = params.relativeIntervals.map((i) => i.value.valueOf())
+    params.scale = new Scale(ratios, 440, 69)
 
     expect(() => new KorgExporter(params, KorgModels.MINILOGUE, true)).toThrowError(
       KorgExporterError.OCTAVE_INVALID_INTERVAL
@@ -122,8 +154,16 @@ describe('Korg exporters', () => {
     const params = getTestData("Korg 'logue exporter unit test v0.0.0")
 
     // Make sure there's 12 notes in the test scale
-    while (params.scale.intervals.length < 12)
-      params.scale.intervals.splice(1, 0, new Interval(ExtendedMonzo.fromCents(100.0, 3), 'cents'))
+    while (params.relativeIntervals.length < 12) {
+      params.relativeIntervals.splice(
+        0,
+        0,
+        new Interval(TimeMonzo.fromCents(100.0, 3), 'logarithmic')
+      )
+      params.sourceText += '100.\n' + params.sourceText
+    }
+    const ratios = params.relativeIntervals.map((i) => i.value.valueOf())
+    params.scale = new Scale(ratios, 440, 69)
 
     const exporter = new KorgExporter(params, KorgModels.MINILOGUE, true)
     const [zip, fileType] = exporter.getFileContents()
@@ -142,7 +182,7 @@ describe('Korg exporters', () => {
       if (path.endsWith('bin')) {
         const content = await file.async('uint8array')
         expect(createHash('sha256').update(content).digest('base64')).toBe(
-          'XwQptSiZLUa8LL/41LEeN1fUNvFr8GUptkga2k+tYJE='
+          'Ev0ERTzsaj9wOZa46chFBQ/HMGmZ9oKsdA+bVQgzAPU='
         )
       } else {
         const content = await file.async('string')

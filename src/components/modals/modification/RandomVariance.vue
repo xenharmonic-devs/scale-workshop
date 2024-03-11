@@ -1,36 +1,35 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
-import type { Scale } from 'scale-workshop-core'
 import { useModalStore } from '@/stores/modal'
+import { useScaleStore } from '@/stores/scale'
+import { centString } from '@/utils'
+import { useStateStore } from '@/stores/state'
 
 const EPSILON = 1e-6
 
-const props = defineProps<{
-  scale: Scale
-  centsFractionDigits: number
-  decimalFractionDigits: number
-}>()
-
-const emit = defineEmits(['update:scale', 'cancel'])
+const emit = defineEmits(['done', 'cancel'])
 
 const modal = useModalStore()
+const scale = useScaleStore()
+const state = useStateStore()
 
 const equave = computed(() => {
-  if (Math.abs(props.scale.equave.totalCents() - 1200) < EPSILON) {
+  // Biased compared to cents, but who cares.
+  if (Math.abs(scale.scale.equaveRatio - 2) < EPSILON) {
     return 'octave'
   }
   return 'equave'
 })
 
-function modify() {
-  emit(
-    'update:scale',
-    props.scale.vary(modal.varianceAmount, modal.varyEquave).mergeOptions({
-      centsFractionDigits: props.centsFractionDigits,
-      decimalFractionDigits: props.decimalFractionDigits
-    })
-  )
+function modify(expand = true) {
+  scale.sourceText += `\nrandomVariance(${centString(modal.varianceAmount)}, ${modal.varyEquave})\ninterval => cents(interval, ${state.centsFractionDigits})`
+  if (expand) {
+    const { visitor, defaults } = scale.getVisitors()
+    scale.sourceText = visitor.expand(defaults)
+  }
+  scale.computeScale()
+  emit('done')
 }
 </script>
 
@@ -50,6 +49,13 @@ function modify() {
           <input id="vary-equave" type="checkbox" v-model="modal.varyEquave" />
           <label for="vary-equave"> Vary the {{ equave }}</label>
         </div>
+      </div>
+    </template>
+    <template #footer>
+      <div class="btn-group">
+        <button @click="modify(true)">OK</button>
+        <button @click="$emit('cancel')">Cancel</button>
+        <button @click="modify(false)">Raw</button>
       </div>
     </template>
   </Modal>
