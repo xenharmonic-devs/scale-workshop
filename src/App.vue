@@ -389,9 +389,16 @@ onMounted(() => {
       audio.pingPongGain = decodedState.pingPongGain
 
       // The decoder speaks Scale Workshop 2. Translate to SonicWeave.
-      const sourceLines = decodedState.scaleLines.map((l) =>
-        parseScaleWorkshop2Line(l, DEFAULT_NUMBER_OF_COMPONENTS).toString()
-      )
+      const sourceLines: string[] = []
+      for (const line of decodedState.scaleLines) {
+        try {
+          const sourceLine = parseScaleWorkshop2Line(line, DEFAULT_NUMBER_OF_COMPONENTS).toString()
+          sourceLines.push(sourceLine)
+        } catch {
+          /* empty */
+        }
+      }
+
       annotateColors(sourceLines, decodedState.keyColors)
       scale.sourceText = sourceLines.join('\n')
       scale.computeScale()
