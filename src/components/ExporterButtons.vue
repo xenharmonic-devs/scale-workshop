@@ -128,6 +128,10 @@ function doExport(exporter: ExporterKey) {
     <p><strong>Scala keyboard mapping (.kbm)</strong></p>
     <p>Maps an accompanying .scl file to start on a specific MIDI note and frequency</p>
   </a>
+  <a href="#" class="btn" @click="doExport('ableton')">
+    <p><strong>Ableton scale (.ascl)</strong></p>
+    <p>Scale file for Ableton Live 12</p>
+  </a>
   <a href="#" class="btn" @click="doExport('maxmsp')">
     <p><strong>Max/MSP coll tuning (.txt)</strong></p>
     <p>List of frequencies (Hz) in a text file to load into a Max/MSP coll object</p>
