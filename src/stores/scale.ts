@@ -84,17 +84,13 @@ export const useScaleStore = defineStore('scale', () => {
   const degreeShift = ref(0)
   // QWERTY physical layout mimics a piano layout
   // Asdf: Non-black keys on ASDF-row black keys on QWERTY row
-  // QweZxc0: Two octaves similar to 'Asdf' (assumes that there's a key left of 'Z')
-  // QweZxc1: Two octaves similar to 'Asdf' (assumes that there's no key left of 'Z')
-  // Zxc0: Generic keys on ZXCV-row, maroon keys on ASDF, navy keys on QWERTY, indigo keys on digits row (left of Z)
-  // Zxc1: Same as above (no left of Z)
+  // QweZxc: Two octaves similar to 'Asdf'
+  // Zxc: Generic keys on ZXCV-row, maroon keys on ASDF, navy keys on QWERTY, indigo keys on digits row
   const pianoMode = ref<'Asdf' | 'QweZxc' | 'Zxc'>('Asdf')
   const accidentalColor = ref('black')
   const lowAccidentalColor = ref('maroon')
   const middleAccidentalColor = ref('navy')
   const highAccidentalColor = ref('indigo')
-
-  // TODO: Configure all piano modes
 
   // === Computed state ===
   const sourcePrefix = computed(() => {
@@ -207,7 +203,7 @@ export const useScaleStore = defineStore('scale', () => {
       }
 
       return indexByCode
-    } else {
+    } else if (pianoMode.value === 'Zxc') {
       const low = lowAccidentalColor.value.toLowerCase()
       const middle = middleAccidentalColor.value.toLowerCase()
       const high = highAccidentalColor.value.toLowerCase()
@@ -238,6 +234,9 @@ export const useScaleStore = defineStore('scale', () => {
         indexByCode.set(code, index + firstIndex)
       }
       return indexByCode
+    } else {
+      pianoMode.value satisfies never
+      throw new Error(`Unknown piano mode ${pianoMode.value}`)
     }
   })
 
