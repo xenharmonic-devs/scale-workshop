@@ -4,7 +4,7 @@ describe("Scale Workshop 2 compatibility", () => {
   it("ignores invalid scale lines", () => {
     cy.visit("/?l=1_7nF74_5F4_gtFe8_bF8_2c1F1kw_pFg_1jFw_3dF1s_2F1&version=2.4.0");
     cy.contains("h2", "Scale data");
-    cy.get("#scale-data").should('have.value', '275/256 black\n5/4 white\n605/512 white\n11/8 black\n3025/2048 white\n25/16 black\n55/32 white\n121/64 white\n2/1 black');
+    cy.get("#scale-data").should('have.value', '// 1\n275/256 black\n5/4 white\n605/512 white\n11/8 black\n3025/2048 white\n25/16 black\n55/32 white\n121/64 white\n2/1 black');
   });
 });
 

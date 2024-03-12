@@ -390,16 +390,21 @@ onMounted(() => {
 
       // The decoder speaks Scale Workshop 2. Translate to SonicWeave.
       const sourceLines: string[] = []
-      for (const line of decodedState.scaleLines) {
+      const invalidLines: [string, number][] = []
+      for (let i = 0; i < decodedState.scaleLines.length; ++i) {
+        const line = decodedState.scaleLines[i]
         try {
           const sourceLine = parseScaleWorkshop2Line(line, DEFAULT_NUMBER_OF_COMPONENTS).toString()
           sourceLines.push(sourceLine)
         } catch {
-          /* empty */
+          invalidLines.push([line, i])
         }
       }
 
       annotateColors(sourceLines, decodedState.keyColors)
+      for (const [line, index] of invalidLines) {
+        sourceLines.splice(index, 0, '// ' + line)
+      }
       scale.sourceText = sourceLines.join('\n')
       scale.computeScale()
 
