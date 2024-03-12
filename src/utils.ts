@@ -61,7 +61,7 @@ export function expandCode(source: string) {
       throw new Error('Illegal statement.')
     }
   }
-  return visitor.expand(visitor)
+  return visitor.expand(visitor.rootContext)
 }
 
 export function arrayToString(values: Interval[] | number[] | string[]) {

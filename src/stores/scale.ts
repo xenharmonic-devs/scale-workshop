@@ -317,9 +317,8 @@ export const useScaleStore = defineStore('scale', () => {
   function getVisitors() {
     const globalVisitor = getGlobalVisitor()
     const visitor = new StatementVisitor(globalVisitor.rootContext, globalVisitor)
-    const defaults = visitor.clone()
-    defaults.rootContext = defaults.rootContext.clone()
-    defaults.rootContext.gas = gas.value
+    const defaults = visitor.rootContext.clone()
+    defaults.gas = gas.value
 
     const ast = parseAST(sourceText.value)
     for (const statement of ast.body) {
