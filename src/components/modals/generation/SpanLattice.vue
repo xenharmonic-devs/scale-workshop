@@ -68,10 +68,10 @@ function flip(index: number) {
 
 function generate(expand = true) {
   try {
-    const source = `spanLattice(${arrayToString(lattice.basis)}, ${arrayToString(lattice.ups)}, ${arrayToString(lattice.downs)}, ${lattice.equave.toString()})`
-    let name = `Lattice (${lattice.dimensions} of ${lattice.basisString}`
+    const source = `parallelotope(${arrayToString(lattice.basis)}, ${arrayToString(lattice.ups)}, ${arrayToString(lattice.downs)}, ${lattice.equave.toString()})`
+    let name = `Parallelotope (${lattice.dimensions} of ${lattice.basisString}`
     if (lattice.basis.length === 0) {
-      name = 'Lattice (unison'
+      name = 'Parallelotope (unison'
     }
     if (!lattice.equave.equals(OCTAVE)) {
       name += ` over ${lattice.equave.toString()}`
@@ -96,7 +96,7 @@ function generate(expand = true) {
 <template>
   <Modal @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
-      <h2>Generate lattice</h2>
+      <h2>Generate parallelotope</h2>
     </template>
     <template #body>
       <div class="control-group">
