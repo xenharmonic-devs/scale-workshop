@@ -196,10 +196,10 @@ export const useAudioStore = defineStore<'audio', AudioStore>('audio', () => {
     initializeCustomWaves(context.value)
 
     oscillatorVoiceParams.type = 'custom'
-    oscillatorVoiceParams.periodicWave = PERIODIC_WAVES['semisine']
+    oscillatorVoiceParams.periodicWave = PERIODIC_WAVES['semisine'].value
     unisonVoiceParams.type = 'custom'
-    unisonVoiceParams.periodicWave = PERIODIC_WAVES['semisine']
-    aperiodicVoiceParams.aperiodicWave = APERIODIC_WAVES['steel']
+    unisonVoiceParams.periodicWave = PERIODIC_WAVES['semisine'].value
+    aperiodicVoiceParams.aperiodicWave = APERIODIC_WAVES['steel'].value
 
     // These all should start with polyphony 0 to save resources
     oscillatorSynth = new Synth(context.value, audioDestination)
@@ -290,13 +290,14 @@ export const useAudioStore = defineStore<'audio', AudioStore>('audio', () => {
       oscillatorVoiceParams.periodicWave = unisonVoiceParams.periodicWave = undefined
     } else if (CUSTOM_WAVEFORMS.includes(newValue)) {
       oscillatorVoiceParams.type = unisonVoiceParams.type = 'custom'
-      oscillatorVoiceParams.periodicWave = unisonVoiceParams.periodicWave = PERIODIC_WAVES[newValue]
+      oscillatorVoiceParams.periodicWave = unisonVoiceParams.periodicWave =
+        PERIODIC_WAVES[newValue].value
     }
   })
 
   watch(aperiodicWaveform, (newValue) => {
     if (APERIODIC_WAVEFORMS.includes(newValue)) {
-      aperiodicVoiceParams.aperiodicWave = APERIODIC_WAVES[newValue]
+      aperiodicVoiceParams.aperiodicWave = APERIODIC_WAVES[newValue].value
     }
   })
 
