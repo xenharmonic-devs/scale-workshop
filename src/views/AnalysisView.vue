@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import {
+  brightnessSignature,
   constantStructureViolations,
   freeEquallyTemperedChord,
   intervalMatrix,
-  rootedEquallyTemperedChord
+  rootedEquallyTemperedChord,
+  varietySignature
 } from '@/analysis'
 import ChordWheel from '@/components/ChordWheel.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
@@ -83,6 +85,10 @@ const matrix = computed(() => intervalMatrix(scale.relativeIntervals))
 const matrixRows = computed(() => matrix.value.map((row) => row.map(formatMatrixCell)))
 
 const violations = computed(() => constantStructureViolations(matrix.value))
+
+const variety = computed(() => varietySignature(matrix.value))
+
+const brightness = computed(() => brightnessSignature(matrix.value).map((b) => Math.round(100 * b)))
 
 const heldScaleDegrees = computed(() => {
   const result: Set<number> = new Set()
@@ -168,6 +174,7 @@ function highlight(y?: number, x?: number) {
             {{ i - 1 + state.intervalMatrixIndexing }}
           </th>
           <th>({{ scale.scale.size + state.intervalMatrixIndexing }})</th>
+          <th class="brightness">Bright %</th>
         </tr>
         <tr v-for="(row, i) of matrixRows" :key="i">
           <th :class="{ held: heldScaleDegrees.has(i) }">
@@ -181,6 +188,12 @@ function highlight(y?: number, x?: number) {
           >
             {{ name }}
           </td>
+          <td class="brightness">{{ brightness[i] }}</td>
+        </tr>
+        <tr class="variety">
+          <th>Var</th>
+          <td v-for="(v, i) of variety" :key="i">{{ v }}</td>
+          <td class="brightness"></td>
         </tr>
       </table>
     </div>
@@ -347,6 +360,12 @@ main {
 .interval-matrix table {
   border-collapse: collapse;
   text-align: center;
+}
+.variety {
+  border-top: 2px solid;
+}
+.brightness {
+  border-left: 2px solid !important;
 }
 .violator {
   color: red;

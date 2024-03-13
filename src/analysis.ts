@@ -1,4 +1,4 @@
-import { Interval } from 'sonic-weave'
+import { Interval, TimeMonzo } from 'sonic-weave'
 import { circleDistance, mmod, valueToCents } from 'xen-dev-utils'
 
 const EPSILON = 1e-6
@@ -408,4 +408,36 @@ export function constantStructureViolations(matrix: Interval[][]) {
     }
   }
   return result
+}
+
+export function varietySignature(matrix: Interval[][]) {
+  const result: number[] = []
+  if (!matrix.length) {
+    return result
+  }
+  for (let i = 0; i < matrix[0].length; ++i) {
+    const variants: TimeMonzo[] = [matrix[0][i].value]
+    search: for (let j = 1; j < matrix.length; ++j) {
+      const monzo = matrix[j][i].value
+      for (const variant of variants) {
+        if (variant.strictEquals(monzo)) {
+          continue search
+        }
+      }
+      variants.push(monzo)
+    }
+    result.push(variants.length)
+  }
+  return result
+}
+
+export function brightnessSignature(matrix: Interval[][]) {
+  const totals = matrix.map((row) => row.reduce((prev, cur) => prev + cur.totalCents(), 0))
+  const minimum = Math.min(...totals)
+  const maximum = Math.max(...totals)
+  if (minimum === maximum) {
+    return Array(matrix.length).fill(1)
+  }
+  const normalizer = 1 / (maximum - minimum)
+  return totals.map((t) => (t - minimum) * normalizer)
 }
