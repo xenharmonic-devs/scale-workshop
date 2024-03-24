@@ -319,6 +319,7 @@ export const useModalStore = defineStore('modal', () => {
   const type = ref<
     'decimal' | 'fraction' | 'radical' | 'cents' | 'FJS' | 'absoluteFJS' | 'nedji' | 'monzo'
   >('cents')
+  const fractionTolerance = ref<number>(0)
   const preferredNumerator = ref<number>(0)
   const preferredDenominator = ref<number>(0)
   const preferredEtNumerator = ref<number>(0)
@@ -519,6 +520,7 @@ export const useModalStore = defineStore('modal', () => {
 
     // Convert type
     type,
+    fractionTolerance,
     preferredNumerator,
     preferredDenominator,
     preferredEtNumerator,

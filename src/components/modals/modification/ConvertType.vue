@@ -4,6 +4,7 @@ import Modal from '@/components/ModalDialog.vue'
 import { useModalStore } from '@/stores/modal'
 import { useStateStore } from '@/stores/state'
 import { useScaleStore } from '@/stores/scale'
+import { centString } from '@/utils'
 
 const emit = defineEmits(['done', 'cancel'])
 
@@ -24,13 +25,17 @@ function modify(expand = false) {
   if (modal.type === 'decimal') {
     scale.sourceText += `interval => decimal(interval, ${myDecimalFractionDigits.value})`
   } else if (modal.type === 'fraction') {
-    scale.sourceText += `interval => fraction(interval, ${modal.preferredNumerator}, ${modal.preferredDenominator})`
+    if (modal.fractionTolerance || modal.preferredNumerator || modal.preferredEtEquaveDenominator) {
+      scale.sourceText += `interval => interval lest fraction(interval, ${modal.fractionTolerance ? centString(modal.fractionTolerance) : 'niente'}, ${modal.preferredNumerator}, ${modal.preferredDenominator})`
+    } else {
+      scale.sourceText += 'interval => interval lest fraction(interval)'
+    }
   } else if (modal.type === 'nedji') {
-    scale.sourceText += `interval => nedji(interval, ${modal.preferredEtNumerator}, ${modal.preferredEtDenominator}, ${modal.preferredEtEquaveNumerator}, ${modal.preferredEtEquaveDenominator})`
+    scale.sourceText += `interval => interval lest nedji(interval, ${modal.preferredEtNumerator}, ${modal.preferredEtDenominator}, ${modal.preferredEtEquaveNumerator}, ${modal.preferredEtEquaveDenominator})`
   } else if (modal.type === 'cents') {
     scale.sourceText += `interval => cents(interval, ${myCentsFractionDigits.value})`
   } else {
-    scale.sourceText += modal.type
+    scale.sourceText += `interval => interval lest ${modal.type}(interval)`
   }
   if (expand) {
     const { visitor, defaults } = scale.getVisitors()
@@ -72,14 +77,27 @@ function modify(expand = false) {
           <input id="decimal-digits" type="number" min="0" v-model="myDecimalFractionDigits" />
         </div>
 
-        <div class="control" v-if="modal.type === 'fraction'">
-          <label for="numerator">Preferred numerator *</label>
-          <input id="numerator" type="number" min="0" v-model="modal.preferredNumerator" />
-        </div>
-        <div class="control" v-if="modal.type === 'fraction'">
-          <label for="denominator">Preferred denominator *</label>
-          <input id="denominator" type="number" min="0" v-model="modal.preferredDenominator" />
-        </div>
+        <template v-if="modal.type === 'fraction'">
+          <div class="control">
+            <label for="tolerance">Tolerance in cents</label>
+            <input
+              id="tolerance"
+              type="number"
+              min="0"
+              step="0.5"
+              class="control"
+              v-model="modal.fractionTolerance"
+            />
+          </div>
+          <div class="control" >
+            <label for="numerator">Preferred numerator *</label>
+            <input id="numerator" type="number" min="0" v-model="modal.preferredNumerator" />
+          </div>
+          <div class="control">
+            <label for="denominator">Preferred denominator *</label>
+            <input id="denominator" type="number" min="0" v-model="modal.preferredDenominator" />
+          </div>
+        </template>
 
         <template v-if="modal.type === 'nedji'">
           <div class="control">
