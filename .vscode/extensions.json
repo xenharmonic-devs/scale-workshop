@@ -1,9 +1,10 @@
 {
   "recommendations": [
     "Vue.volar",
-    "Vue.vscode-typescript-vue-plugin",
+    "Vue.vscode-typescript-vue-plugin", // deprecated
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
-    "ZixuanChen.vitest-explorer"
+    //"ZixuanChen.vitest-explorer", // deprecated
+    "vitest.explorer",
   ]
 }
