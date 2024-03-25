@@ -1,4 +1,5 @@
 import type { ExporterParams } from '../base'
+import { UNIX_NEWLINE, WINDOWS_NEWLINE } from '../../constants'
 import { ExtendedMonzo, Interval, Scale } from 'scale-workshop-core'
 import { Fraction } from 'xen-dev-utils'
 
@@ -17,7 +18,7 @@ export function getTestData(appTitle: string) {
   const scale = Scale.fromIntervalArray(intervals)
   const params: ExporterParams = {
     filename: 'test',
-    newline: '\n',
+    newline: process.platform === 'linux' ? UNIX_NEWLINE : WINDOWS_NEWLINE,
     scaleUrl: 'https://sevish.com/scaleworkshop/',
     name: 'Test Scale',
     scale: scale,

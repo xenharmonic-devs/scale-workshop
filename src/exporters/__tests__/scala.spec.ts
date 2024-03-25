@@ -2,6 +2,9 @@ import { describe, it, expect } from 'vitest'
 
 import { ScalaSclExporter, ScalaKbmExporter } from '../scala'
 import { getTestData } from './test-data'
+import { UNIX_NEWLINE, WINDOWS_NEWLINE } from '../../constants';
+
+const NEWLINE = process.platform === 'linux' ? UNIX_NEWLINE : WINDOWS_NEWLINE;
 
 describe('Scala exporters', () => {
   it('can handle all line types', () => {
@@ -23,7 +26,7 @@ describe('Scala exporters', () => {
       ' 107.531448',
       ' 2/1',
       ''
-    ].join('\n')
+    ].join(NEWLINE)
     expect(sclExporter.getFileContents()).toBe(expectedSclContents)
 
     const kbmExporter = new ScalaKbmExporter(params)
@@ -56,7 +59,7 @@ describe('Scala exporters', () => {
       '4',
       '5',
       ''
-    ].join('\n')
+    ].join(NEWLINE)
 
     expect(kbmExporter.getFileContents()).toBe(expectedKbmContents)
   })
