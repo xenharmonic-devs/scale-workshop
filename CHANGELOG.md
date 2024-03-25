@@ -1,5 +1,20 @@
 # Change log
 
+## 3.0.0-beta
+ * Feature: Core language switched to from [scale-workshop-core](https://github.com/xenharmonic-devs/scale-workshop-core) to [sonic-weave](https://github.com/xenharmonic-devs/sonic-weave)
+ * Feature: Character palette with tooltips for syntax beyond ASCII [#533](https://github.com/xenharmonic-devs/scale-workshop/issues/533)
+ * Feature: Interval matrix simplified by default [#536](https://github.com/xenharmonic-devs/scale-workshop/issues/536)
+ * Feature: Convert scale to enumeration [#538](https://github.com/xenharmonic-devs/scale-workshop/issues/538)
+ * Feature: More MOS coloring options [#554](https://github.com/xenharmonic-devs/scale-workshop/issues/554)
+ * Feature: Variety and brightness signatures show in the interval matrix [#568](https://github.com/xenharmonic-devs/scale-workshop/issues/568)
+ * Feature: Periodic equally tempered grids supported on the lattice tab
+ * Feature: Lattice label sizes customizable [#581](https://github.com/xenharmonic-devs/scale-workshop/issues/581)
+ * Feature: Lattice colors inverted and scale colors incorporated [#586](https://github.com/xenharmonic-devs/scale-workshop/issues/586)
+ * Feature: Scott Dakota's prime rings on the lattice tab [#551](https://github.com/xenharmonic-devs/scale-workshop/issues/551)
+ * Feature: Tonnetz prime ellipse coordinates on the lattice tab [#588](https://github.com/xenharmonic-devs/scale-workshop/issues/588)
+ * Feature: New `latticeView()` command for displaying the order of intervals (prior to sorting) [#597](https://github.com/xenharmonic-devs/scale-workshop/issues/597)
+ * Alpha cycle issues: [#574](https://github.com/xenharmonic-devs/scale-workshop/issues/574), [#579](https://github.com/xenharmonic-devs/scale-workshop/issues/579)
+
 ## 2.4.0
  * Feature: Export scales for Ableton Live 12 [#601](https://github.com/xenharmonic-devs/scale-workshop/issues/601)
  * Feature: MOS patterns supported by EDO can be sorted by size or hardness [#599](https://github.com/xenharmonic-devs/scale-workshop/issues/599)

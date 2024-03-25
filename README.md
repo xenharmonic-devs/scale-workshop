@@ -2,6 +2,11 @@
 
 ![Scale Workshop screenshot](https://raw.githubusercontent.com/xenharmonic-devs/scale-workshop/main/src/assets/img/opengraph-image.png)
 
+## Beta Warning!
+This release is in beta. Not everything has been implemented and documentation has not been synchronized with the new features.
+
+Some of the new features are documented over at [sonic-weave](https://github.com/xenharmonic-devs/sonic-weave).
+
 ## Description
 
 [Scale Workshop](https://scaleworkshop.plainsound.org/) allows you to design microtonal scales and play them in your web browser. Export your scales for use with VST instruments. Convert Scala files to various tuning formats.
