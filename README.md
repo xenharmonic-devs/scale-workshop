@@ -17,6 +17,7 @@ Scale Workshop can play any kind of microtonal scale, such as equal temperaments
 Yes, the built-in synth allows you to play your scales within the web browser. If your browser supports web MIDI then you can use a connected MIDI device to play notes. Otherwise you can use your computer keyboard (e.g. a QWERTY keyboard) as an isomorphic keyboard controller to hear your scales. You can also play on a touch device using the 'Touch Keyboard' feature.
 
 ### Can I use my computer keyboard as a piano
+
 Yes, go to the Synth tab and select *Piano-style layers* as the *Keyboard mode*. There are two options: ASDF for white keys and QWERTY for black keys **or** QWERTY for white keys and digits for black keys with another set of keys an octave lower starting from ZXCV with ASDF as the black keys. There's also a third option for keyboards that have an extra key between the left shift and Z. When using *Piano-style layers* make sure that the number of key colors matches the size of your scale. Some scale generators such as *Moment of Symmetry* allow you to auto-generate the key colors.
 
 ### Can I use Scale Workshop to tune up other synths?
@@ -122,7 +123,7 @@ The app is built using [Vue](https://vuejs.org/). This information should help g
 
 ## Recommended IDE Setup
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) + [vitest-explorer](https://marketplace.visualstudio.com/items?itemName=ZixuanChen.vitest-explorer).
+[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) + [Vitest](https://marketplace.visualstudio.com/items?itemName=vitest.explorer).
 
 ## Type Support for `.vue` Imports in TS
 
