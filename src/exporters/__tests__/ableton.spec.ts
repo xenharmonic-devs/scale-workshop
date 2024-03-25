@@ -2,6 +2,9 @@ import { describe, it, expect } from 'vitest'
 
 import AbletonAsclExporter from '../ableton'
 import { getTestData } from './test-data'
+import { NEWLINE_TEST, UNIX_NEWLINE, WINDOWS_NEWLINE } from '../../constants';
+
+const NEWLINE = process.platform === 'linux' ? UNIX_NEWLINE : WINDOWS_NEWLINE;
 
 describe('Scala exporters', () => {
   it('can handle all line types', () => {
@@ -30,10 +33,10 @@ describe('Scala exporters', () => {
       ! @ABL SOURCE Scale Workshop / Xenharmonic developers
       ! @ABL LINK https://sevish.com/scaleworkshop/
     `
-        .split('\n')
+        .split(NEWLINE_TEST)
         .map((l) => l.trim())
         .filter(Boolean)
-        .join('\n') + '\n'
+        .join(NEWLINE) + NEWLINE
     expect(sclExporter.getFileContents()).toBe(expectedAsclContents)
   })
 })
