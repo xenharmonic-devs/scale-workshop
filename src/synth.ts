@@ -19,7 +19,8 @@ export const WAVEFORMS = BASIC_WAVEFORMS.concat([
   'didacus',
   'bohlen',
   'glass',
-  'boethius'
+  'boethius',
+  'pythagorean'
 ])
 const CUSTOM_WAVEFORMS: Record<string, PeriodicWave> = {}
 
@@ -63,6 +64,24 @@ export function initializeCustomWaveforms(audioContext: AudioContext) {
   CUSTOM_WAVEFORMS.semisine = audioContext.createPeriodicWave(
     semisineCosineComponents,
     semisineSineComponents
+  )
+
+  const pythagoreanCosineComponents = new Float32Array(101);
+  const pythagoreanSineComponents = new Float32Array(101);
+  for (let n = 1; n < 101 ; n++) {
+    
+    pythagoreanCosineComponents[n] = -( (Math.cos(Math.PI * n) + 1) * Math.log(2)) /
+    (2*(Math.PI ** 2 * n ** 2 + Math.log(2) ** 2));
+    pythagoreanSineComponents[n] = -(-1 * (Math.PI * n  * (Math.cos(Math.PI * n) + 1))) /
+    (2*(Math.PI ** 2 * n ** 2 + Math.log(2) ** 2));
+  }
+CUSTOM_WAVEFORMS.pythagorean = audioContext.createPeriodicWave(
+  pythagoreanCosineComponents,
+  pythagoreanSineComponents,
+  
+ 
+   
+  
   )
 
   // Subgroup optimized waveforms
