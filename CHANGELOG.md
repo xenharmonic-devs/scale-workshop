@@ -1,5 +1,8 @@
 # Change log
 
+## 2.4.1
+ * Bug fix: Unison is no longer affected by random variance [#613](https://github.com/xenharmonic-devs/scale-workshop/issues/613)
+
 ## 2.4.0
  * Feature: Export scales for Ableton Live 12 [#601](https://github.com/xenharmonic-devs/scale-workshop/issues/601)
  * Feature: MOS patterns supported by EDO can be sorted by size or hardness [#599](https://github.com/xenharmonic-devs/scale-workshop/issues/599)
