@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest'
 
 import { ScalaSclExporter, ScalaKbmExporter } from '../scala'
 import { getTestData } from './test-data'
-import { UNIX_NEWLINE, WINDOWS_NEWLINE } from '../../constants';
+import { UNIX_NEWLINE, WINDOWS_NEWLINE } from '../../constants'
 
-const NEWLINE = process.platform === 'linux' ? UNIX_NEWLINE : WINDOWS_NEWLINE;
+const NEWLINE = process.platform === 'linux' ? UNIX_NEWLINE : WINDOWS_NEWLINE
 
 describe('Scala exporters', () => {
   it('can handle all line types', () => {
@@ -14,12 +14,13 @@ describe('Scala exporters', () => {
       '! test.scl',
       '! Created using Scala exporter unit test v0.0.0',
       '!',
-      '! https://sevish.com/scaleworkshop/',
+      '! https://scaleworkshop.plainsound.org/',
       '!',
       'Test Scale',
-      ' 6',
+      ' 7',
       '!',
       ' 100.000000',
+      ' 6/5',
       ' 960.000000',
       ' 5/3',
       ' 531.234049',
@@ -34,7 +35,7 @@ describe('Scala exporters', () => {
       '! Template for a keyboard mapping',
       '!',
       '! Size of map. The pattern repeats every so many keys:',
-      '6',
+      '7',
       '! First MIDI note number to retune:',
       '0',
       '! Last MIDI note number to retune:',
@@ -47,7 +48,7 @@ describe('Scala exporters', () => {
       '440',
       '! Scale degree to consider as formal octave (determines difference in pitch',
       '! between adjacent mapping patterns):',
-      '6',
+      '7',
       '! Mapping.',
       '! The numbers represent scale degrees mapped to keys. The first entry is for',
       '! the given middle note, the next for subsequent higher keys.',
@@ -58,6 +59,7 @@ describe('Scala exporters', () => {
       '3',
       '4',
       '5',
+      '6',
       ''
     ].join(NEWLINE)
 

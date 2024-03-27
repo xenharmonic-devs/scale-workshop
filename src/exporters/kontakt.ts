@@ -7,15 +7,13 @@ export default class KontaktExporter extends BaseExporter {
   static tuningMaxSize = 128
   static baseFrequency = mtof(0)
 
-  params: ExporterParams
   appTitle: string
 
   constructor(params: ExporterParams) {
-    if (params.lines === undefined) {
+    super(params)
+    if (params.sourceText === undefined) {
       throw new Error('Missing text lines')
     }
-    super()
-    this.params = params
     this.appTitle = params.appTitle || APP_TITLE
   }
 
@@ -32,7 +30,7 @@ export default class KontaktExporter extends BaseExporter {
       ' (' +
       midiNoteNumberToName(baseMidiNote, this.params.midiOctaveOffset) +
       ') = ' +
-      this.params.scale.baseFrequency.toString() +
+      this.params.baseFrequency.toString() +
       ' Hz' +
       newline
     file += 'Created using ' + this.appTitle + newline + newline
@@ -46,7 +44,7 @@ export default class KontaktExporter extends BaseExporter {
     file += 'declare $key' + newline + newline
 
     for (let i = 0; i < KontaktExporter.tuningMaxSize; i++) {
-      const [noteNumber, cents] = ftom(this.params.scale.getFrequency(i - baseMidiNote))
+      const [noteNumber, cents] = ftom(this.params.scale.getFrequency(i))
 
       // if we're out of range of the default Kontakt tuning, leave note as default tuning
       if (noteNumber < 0 || noteNumber >= KontaktExporter.tuningMaxSize) {

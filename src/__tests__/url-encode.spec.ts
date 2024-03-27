@@ -18,7 +18,7 @@ import {
   DecodedState
 } from '../url-encode'
 import { DEFAULT_NUMBER_OF_COMPONENTS } from '../constants'
-import { IntervalOptions, parseLine } from 'scale-workshop-core'
+import { parseScaleWorkshop2Line } from 'sonic-weave'
 
 describe('URL encoder', () => {
   it('can encode all line types', () => {
@@ -401,14 +401,10 @@ describe('Decoding of scales found in the wild', () => {
   it.each(COMMUNITY_SCALES)('Decodes %s', (name, checksum, encoded) => {
     const url = new URL('https://scaleworkshop.plainsound.org/' + encoded)
     const decoded = decodeQuery(url.searchParams)
-    const options: IntervalOptions = {
-      centsFractionDigits: 3,
-      decimalFractionDigits: 5
-    }
     const intervals = decoded.scaleLines.map((line) =>
-      parseLine(line, DEFAULT_NUMBER_OF_COMPONENTS, options)
+      parseScaleWorkshop2Line(line, DEFAULT_NUMBER_OF_COMPONENTS)
     )
-    const centsSum = intervals.reduce((total, interval) => total + interval.totalCents(), 0)
+    const centsSum = intervals.reduce((total, interval) => total + interval.value.totalCents(), 0)
     expect(decoded.scaleName).toBe(name)
     expect(checksum).toBeCloseTo(centsSum)
   })

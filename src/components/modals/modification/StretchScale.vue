@@ -1,28 +1,26 @@
 <script setup lang="ts">
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
-import { type Scale } from 'scale-workshop-core'
 import { FIFTH, FIFTH_12TET } from '@/constants'
 import { useModalStore } from '@/stores/modal'
+import { useScaleStore } from '@/stores/scale'
+import { useStateStore } from '@/stores/state'
+import { decimalString } from '@/utils'
 
-const props = defineProps<{
-  scale: Scale
-  centsFractionDigits: number
-  decimalFractionDigits: number
-}>()
-
-const emit = defineEmits(['update:scale', 'cancel'])
+const emit = defineEmits(['done', 'cancel'])
 
 const modal = useModalStore()
+const scale = useScaleStore()
+const state = useStateStore()
 
-function modify() {
-  emit(
-    'update:scale',
-    props.scale.stretch(modal.stretchAmount).mergeOptions({
-      centsFractionDigits: props.centsFractionDigits,
-      decimalFractionDigits: props.decimalFractionDigits
-    })
-  )
+function modify(expand = true) {
+  scale.sourceText += `\nstretch(${decimalString(modal.stretchAmount)})\ninterval => cents(interval, ${state.centsFractionDigits})`
+  if (expand) {
+    const { visitor, defaults } = scale.getVisitors()
+    scale.sourceText = visitor.expand(defaults)
+  }
+  scale.computeScale()
+  emit('done')
 }
 </script>
 
@@ -72,6 +70,13 @@ function modify() {
           <label for="stretch-into">Stretch reference into target</label>
           <button @click="modal.calculateStretchAmount">Calculate</button>
         </div>
+      </div>
+    </template>
+    <template #footer>
+      <div class="btn-group">
+        <button @click="modify(true)">OK</button>
+        <button @click="$emit('cancel')">Cancel</button>
+        <button @click="modify(false)">Raw</button>
       </div>
     </template>
   </Modal>

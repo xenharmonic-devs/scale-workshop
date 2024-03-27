@@ -8,14 +8,16 @@ describe("Basic test", () => {
 
   it("preserves the base frequency when changing tabs", () => {
     cy.visit("/");
-    cy.get(".real-valued").clear()
-    cy.get(".real-valued").type("432")
-    cy.get(".real-valued").trigger("change")
-    cy.get(".real-valued").should("have.value", "432");
+    cy.get("#auto-frequency").click()
+    cy.get("#base-frequency").clear()
+    cy.get("#base-frequency").type("432")
+    cy.get("#base-frequency").trigger("change")
+    cy.get("#base-frequency").should("have.value", "432");
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(400); // Wait for debounce to expire.
     cy.get("a").contains("Synth").click();
-    cy.url().should("contain", "f=");
+    cy.get("a").contains("Build Scale").click();
+    cy.get("#base-frequency").should("have.value", "432");
   });
 });
 

@@ -1,22 +1,23 @@
 <script setup lang="ts">
 import Modal from '@/components/ModalDialog.vue'
-import { parseChordInput } from '@/utils'
-import { Scale } from 'scale-workshop-core'
+import { expandCode } from '@/utils'
 import { useModalStore } from '@/stores/modal'
 
-const emit = defineEmits(['update:scale', 'update:scaleName', 'cancel'])
+const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
 const modal = useModalStore()
 
-function generate() {
+function generate(expand = true) {
   try {
-    const intervals = parseChordInput(modal.chord)
-    const scale = Scale.fromChord(intervals)
+    let source = modal.chordIntervals.map((i) => i.toString()).join(':')
     emit('update:scaleName', `Chord ${modal.chord}`)
-    if (modal.invertChord) {
-      emit('update:scale', scale.invert())
+    if (modal.retrovertChord) {
+      source = `retroverted(${source})`
+    }
+    if (expand) {
+      emit('update:source', expandCode(source))
     } else {
-      emit('update:scale', scale)
+      emit('update:source', source)
     }
   } catch (error) {
     if (error instanceof Error) {
@@ -46,9 +47,16 @@ function generate() {
           />
         </div>
         <div class="control checkbox-container">
-          <input type="checkbox" id="integrate-period" v-model="modal.invertChord" />
-          <label for="integrate-period">Invert chord</label>
+          <input type="checkbox" id="integrate-period" v-model="modal.retrovertChord" />
+          <label for="integrate-period">Retrovert chord (negative harmony)</label>
         </div>
+      </div>
+    </template>
+    <template #footer>
+      <div class="btn-group">
+        <button @click="() => generate(true)">OK</button>
+        <button @click="$emit('cancel')">Cancel</button>
+        <button @click="() => generate(false)">Raw</button>
       </div>
     </template>
   </Modal>

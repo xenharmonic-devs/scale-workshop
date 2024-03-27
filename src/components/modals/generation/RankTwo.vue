@@ -1,22 +1,21 @@
 <script setup lang="ts">
-import { DEFAULT_NUMBER_OF_COMPONENTS, FIFTH, OCTAVE } from '@/constants'
+import { FIFTH, OCTAVE } from '@/constants'
 import { makeRank2FromVals, makeRank2FromCommas, type Rank2Params } from '@/tempering'
 import { ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import PeriodCircle from '@/components/PeriodCircle.vue'
-import { gapKeyColors, setAndReportValidity } from '@/utils'
+import { expandCode, gapKeyColors, parseCents, setAndReportValidity } from '@/utils'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
-import { ExtendedMonzo, Interval, Scale } from 'scale-workshop-core'
 import { useRank2Store } from '@/stores/tempering'
+import { useStateStore } from '@/stores/state'
+import { Interval, timeMonzoAs } from 'sonic-weave'
+import { useScaleStore } from '@/stores/scale'
 
-const props = defineProps<{
-  centsFractionDigits: number
-  scale: Scale
-}>()
-
+const state = useStateStore()
+const scale = useScaleStore()
 const rank2 = useRank2Store()
 
-const emit = defineEmits(['update:scaleName', 'update:scale', 'update:keyColors', 'cancel'])
+const emit = defineEmits(['update:scaleName', 'update:source', 'cancel'])
 
 const commasInput = ref<HTMLInputElement | null>(null)
 const valsInput = ref<HTMLInputElement | null>(null)
@@ -26,17 +25,12 @@ const subgroupInput = ref<HTMLInputElement | null>(null)
 
 // Consolidate circle method's fine tuning to hard values when changing "tabs"
 function consolidateCircle() {
-  const options = { centsFractionDigits: props.centsFractionDigits }
-  rank2.period = new Interval(
-    ExtendedMonzo.fromCents(rank2.circlePeriodCents, DEFAULT_NUMBER_OF_COMPONENTS),
-    'cents'
-  ).mergeOptions(options)
+  rank2.period = parseCents(rank2.circlePeriodCents, state.centsFractionDigits)
   rank2.periodString = rank2.period.toString()
-  rank2.generator = new Interval(
-    ExtendedMonzo.fromCents(rank2.circleGeneratorCents, DEFAULT_NUMBER_OF_COMPONENTS),
-    'cents'
-  ).mergeOptions(options)
+
+  rank2.generator = parseCents(rank2.circleGeneratorCents, state.centsFractionDigits)
   rank2.generatorString = rank2.generator.toString()
+
   rank2.periodStretch = '0'
   rank2.generatorFineCents = '0'
 }
@@ -53,6 +47,15 @@ watch(
 watch(
   () => rank2.subgroupError,
   (newValue) => setAndReportValidity(subgroupInput.value, newValue)
+)
+
+watch(
+  () => rank2.commasError,
+  (newValue) => setAndReportValidity(commasInput.value, newValue)
+)
+watch(
+  () => rank2.valsError,
+  (newValue) => setAndReportValidity(valsInput.value, newValue)
 )
 
 watch(
@@ -79,11 +82,9 @@ watch(
 // === Methods ===
 
 function flipGenerator() {
-  rank2.generator = rank2.generator.neg().mmod(
-    rank2.period.mergeOptions({
-      centsFractionDigits: props.centsFractionDigits
-    })
-  )
+  const g = rank2.generator
+  const value = g.value.inverse().reduce(rank2.period.value)
+  rank2.generator = new Interval(value, g.domain, timeMonzoAs(value, g.node), g)
   rank2.generatorString = rank2.generator.toString()
 }
 
@@ -96,74 +97,66 @@ function selectMosSize(mosSize: number) {
     } else {
       params = makeRank2FromCommas(rank2.commas, mosSize, rank2.subgroup, rank2.options)
     }
-    const lineOptions = { centsFractionDigits: props.centsFractionDigits }
-    rank2.generator = new Interval(
-      ExtendedMonzo.fromCents(params.generator, DEFAULT_NUMBER_OF_COMPONENTS),
-      'cents',
-      undefined,
-      lineOptions
-    )
-    rank2.generatorString = rank2.generator.toString()
-    rank2.period = new Interval(
-      ExtendedMonzo.fromCents(params.period, DEFAULT_NUMBER_OF_COMPONENTS),
-      'cents',
-      undefined,
-      lineOptions
-    )
-    rank2.periodString = rank2.period.toString()
+
     rank2.numPeriods = params.numPeriods
     rank2.method = 'generator'
+
+    rank2.period = parseCents(params.period, state.centsFractionDigits)
+    rank2.periodString = rank2.period.toString()
+
+    rank2.generator = parseCents(params.generator, state.centsFractionDigits)
+    rank2.generatorString = rank2.generator.toString()
   }
 }
 
 function updateCircleGenerator(value: number) {
-  rank2.generator = new Interval(
-    ExtendedMonzo.fromCents(value, DEFAULT_NUMBER_OF_COMPONENTS),
-    'cents'
-  ).mergeOptions({ centsFractionDigits: props.centsFractionDigits })
+  rank2.generator = parseCents(value, state.centsFractionDigits)
   rank2.generatorString = rank2.generator.toString()
   rank2.generatorFineCents = '0'
   rank2.expensiveMosPatterns = []
 }
 
-function generate() {
+function generate(expand = true) {
   // Clear error for the next time the modal is opened
   rank2.error = ''
   try {
     if (rank2.method === 'circle') {
       consolidateCircle()
     }
-    const lineOptions = { centsFractionDigits: props.centsFractionDigits }
-    let size_ = rank2.safeSize
-    let down_ = rank2.down
+    let size = rank2.safeSize
+    let up = rank2.safeUp
+    let down = rank2.down
     const n = rank2.safeNumPeriods
+
+    let labelString = ''
+
     // The option to fill in colors is not shown in circle UI so it's ignored here.
     if (rank2.colorMethod === 'gaps' && rank2.method !== 'circle') {
       const colors = Array(n)
         .fill(
           gapKeyColors(
             rank2.generator.totalCents() / rank2.period.totalCents(),
-            size_ / n,
-            down_ / n,
+            size / n,
+            down / n,
             rank2.colorAccidentals === 'flat'
           )
         )
-        .flat()
-      size_ = colors.length
+        .flat() as ('black' | 'white')[]
+      size = colors.length
       if (rank2.colorAccidentals === 'flat') {
-        down_ = size_ - n - rank2.up
+        down = size - n - rank2.up
+      } else {
+        up = size - n - rank2.down
       }
-      emit('update:keyColors', colors)
+      labelString = `\nlabel([${colors.join(', ')}])`
     }
-    const scale = Scale.fromRank2(
-      rank2.generator.mergeOptions(lineOptions),
-      rank2.period.mergeOptions(lineOptions),
-      size_,
-      down_,
-      n
-    )
+    const source = `rank2(${rank2.generator.toString()}, ${up}, ${down}, ${rank2.period.toString()}, ${n})${labelString}`
     emit('update:scaleName', `Rank 2 temperament (${rank2.generatorString}, ${rank2.periodString})`)
-    emit('update:scale', scale)
+    if (expand) {
+      emit('update:source', expandCode(source))
+    } else {
+      emit('update:source', source)
+    }
   } catch (error_) {
     console.error(error_)
     if (error_ instanceof Error) {
@@ -176,7 +169,11 @@ function generate() {
 </script>
 
 <template>
-  <Modal extraStyle="width: 30rem" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal
+    extraStyle="min-width: 30rem;max-width: 31rem"
+    @confirm="generate"
+    @cancel="$emit('cancel')"
+  >
     <template #header>
       <h2>Generate rank 2 temperament</h2>
     </template>
@@ -315,7 +312,8 @@ function generate() {
         <div class="control-group" v-show="rank2.method === 'circle'">
           <div class="square">
             <PeriodCircle
-              :scale="scale"
+              :scale="scale.scale"
+              :labels="scale.labels"
               :generatorCents="rank2.circleGeneratorCents"
               :periodCents="rank2.circlePeriodCents"
               :size="rank2.generatorsPerPeriod"
@@ -447,10 +445,19 @@ function generate() {
     </template>
     <template #footer>
       <div class="btn-group">
-        <button @click="generate" :disabled="rank2.method === 'vals' || rank2.method === 'commas'">
+        <button
+          @click="generate(true)"
+          :disabled="rank2.method === 'vals' || rank2.method === 'commas'"
+        >
           OK
         </button>
         <button @click="$emit('cancel')">Cancel</button>
+        <button
+          @click="generate(false)"
+          :disabled="rank2.method === 'vals' || rank2.method === 'commas'"
+        >
+          Raw
+        </button>
         <span class="error" v-show="rank2.error.length">⚠</span>
         <i>{{ rank2.previewMosPattern }}</i>
       </div>
