@@ -57,6 +57,7 @@ const isMousePressed = ref(false)
           'hidden-sm': key.x > 8,
           held: (heldNotes.get(key.index) || 0) > 0
         }"
+        :index="key.index"
         :color="key.color"
         :isMousePressed="isMousePressed"
         :noteOn="() => noteOn(key.index)"

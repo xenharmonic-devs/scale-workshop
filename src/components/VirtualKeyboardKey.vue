@@ -6,6 +6,7 @@ type NoteOff = () => void
 type NoteOnCallback = () => NoteOff
 
 const props = defineProps<{
+  index: number
   color: string
   isMousePressed: boolean
   noteOn: NoteOnCallback
@@ -97,6 +98,7 @@ onUnmounted(() => {
 
 <template>
   <td
+    :data-key-number="index"
     :style="'background-color:' + color"
     :class="{ active }"
     @touchstart="onTouchStart"
