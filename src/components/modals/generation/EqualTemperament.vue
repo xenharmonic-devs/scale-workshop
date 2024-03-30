@@ -39,7 +39,7 @@ function generate(expand = true) {
       if (expand || !modal.simpleEd) {
         source = modal.degrees.map((steps) => `${steps}\\${edo}`).join('\n')
       } else {
-        source = `ed(${edo})`
+        source = `tet(${edo})`
       }
     } else {
       const ed = modal.divisions
@@ -47,7 +47,7 @@ function generate(expand = true) {
       if (expand || !modal.simpleEd) {
         source = modal.degrees.map((steps) => `${steps}\\${ed}<${ji}>`).join('\n')
       } else {
-        source = `ed(${ed}, ${ji})`
+        source = `tet(${ed}, ${ji})`
       }
     }
     emit('update:source', source)

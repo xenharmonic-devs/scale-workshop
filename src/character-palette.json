@@ -1,9 +1,10 @@
 {
-  "♮": "Natural sign. Signifies no change in pitch. Differentiates between augmented fourth <code>A4</code> and A natural four <code>A♮4</code>.",
+  "♮": "Natural sign. Signifies no change in pitch.",
   "♯": "Sharp sign. Raises pitch by <code>2187/2048</code>. E.g. F sharp four is spelled <code>F♯4</code>.",
   "♭": "Flat sign. Lowers pitch by <code>2187/2048</code>. E.g. B flat four is spelled <code>B♭4</code>.",
   "𝄪": "Double sharp sign. Raises pitch by <code>4782969/4194304</code>.",
   "𝄫": "Double flat sign. Lowers pitch by <code>4782969/4194304</code>.",
+  "Â": "Augmented interval quality. Capital A is reserved for absolute pitch so circumflexed <code>Â4</code> offers and alternative to <code>a4</code>.",
   "𝄲": "Quarter sharp sign. Raises pitch by <code>sqrt(2187/2048)</code>.",
   "‡": "Quarter sharp sign. Raises pitch by <code>sqrt(2187/2048)</code>.",
   "𝄳": "Quarter flat sign. Lowers pitch by <code>sqrt(2187/2048)</code>.",
