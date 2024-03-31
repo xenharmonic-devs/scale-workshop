@@ -64,17 +64,21 @@ export class Scale {
    * @returns An array of frequencies corresponding to the specified range.
    */
   getFrequencyRange(start: number, end: number) {
-    // Deal with implicit 1/1
-    start -= 1
-    end -= 1
-    // Center on base MIDI note
-    start -= this.baseMidiNote
-    end -= this.baseMidiNote
-    const numEquaves = Math.floor(start / this.size)
+    // Deal with implicit 1/1 and center on base MIDI note
+    const low = start - 1 - this.baseMidiNote
+    const high = end - 1 - this.baseMidiNote
+    const numEquaves = Math.floor(low / this.size)
     let referenceFrequency = this.baseFrequency * this.equaveRatio ** numEquaves
-    let index = start - numEquaves * this.size
     const result = []
-    for (let i = start; i < end; ++i) {
+    if (!isFinite(referenceFrequency)) {
+      // The scale is too extreme for optimized calculation. Spend compute.
+      for (let i = start; i < end; ++i) {
+        result.push(this.getFrequency(i))
+      }
+      return result
+    }
+    let index = low - numEquaves * this.size
+    for (let i = low; i < high; ++i) {
       result.push(referenceFrequency * this.intervalRatios[index])
       index++
       if (index >= this.size) {

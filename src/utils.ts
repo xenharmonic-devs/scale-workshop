@@ -123,6 +123,9 @@ export function sanitizeFilename(input: string) {
 }
 
 export function formatExponential(x: number, fractionDigits = 3) {
+  if (isNaN(x) || !isFinite(x)) {
+    return x.toString()
+  }
   if (Math.abs(x) < 10000) {
     return x.toFixed(fractionDigits)
   }
