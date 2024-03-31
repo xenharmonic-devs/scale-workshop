@@ -19,13 +19,14 @@ export function getTestData(appTitle: string) {
     subscripts: [[5, '']]
   })
   const visitor = getSourceVisitor()
-  visitor.visit(parseAST('a4 = 440 Hz').body[0])
+  visitor.visit(parseAST('A4 = 440 Hz').body[0])
   const ev = visitor.createExpressionVisitor()
   const relativeC5 = relative.bind(ev)(absoluteC5)
 
   const relativeIntervals = [
     new Interval(TimeMonzo.fromEqualTemperament('100/1200', 2, 3), 'logarithmic', {
       type: 'CentsLiteral',
+      sign: '',
       whole: 100n,
       fractional: ''
     }),
@@ -48,6 +49,7 @@ export function getTestData(appTitle: string) {
     }),
     new Interval(TimeMonzo.fromValue(Math.E / 2, 3), 'linear', {
       type: 'DecimalLiteral',
+      sign: '',
       whole: 1n,
       fractional: '3591409142295225',
       flavor: 'r',

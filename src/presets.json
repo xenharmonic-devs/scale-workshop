@@ -98,13 +98,13 @@
   "5edo": {
     "title": "Equal pentatonic",
     "name": "Equal pentatonic (5edo)",
-    "source": "ed(5)\nlabel([white, white, white, white, gray])\n",
+    "source": "tet(5)\nlabel([white, white, white, white, gray])\n",
     "categories": ["traditional", "equal temperament"]
   },
   "7edo": {
     "title": "Equal heptatonic",
     "name": "Equal heptatonic (7edo)",
-    "source": "ed(7)\ni => i white\npop() gray\n",
+    "source": "tet(7)\ni => i white\npop() gray\n",
     "categories": ["traditional", "equal temperament"]
   },
   "archytasdiatonic": {
