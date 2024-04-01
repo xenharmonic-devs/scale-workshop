@@ -70,7 +70,7 @@ export class Scale {
     const numEquaves = Math.floor(low / this.size)
     let referenceFrequency = this.baseFrequency * this.equaveRatio ** numEquaves
     const result = []
-    if (!isFinite(referenceFrequency)) {
+    if (!referenceFrequency || !isFinite(referenceFrequency)) {
       // The scale is too extreme for optimized calculation. Spend compute.
       for (let i = start; i < end; ++i) {
         result.push(this.getFrequency(i))
