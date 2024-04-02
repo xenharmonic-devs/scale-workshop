@@ -176,7 +176,7 @@ export function formatHertz(frequency: number, fractionDigits = 3) {
   }
 
   // Too large. Use scientific notation.
-  if (magnitude > 1e34) {
+  if (magnitude > 1e34 || isNaN(magnitude)) {
     return formatExponential(frequency) + 'Hz'
   }
 

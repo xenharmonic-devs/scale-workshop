@@ -47,6 +47,9 @@ const midiOut = computed(() => new MidiOut(midi.output as Output, midi.outputCha
 
 function sendNoteOn(frequency: number, rawAttack: number) {
   frequency = clamp(-24000, 24000, frequency)
+  if (isNaN(frequency)) {
+    frequency = 0
+  }
   const midiOff = midiOut.value.sendNoteOn(frequency, rawAttack)
 
   if (audio.synth === null || audio.virtualSynth === null) {
