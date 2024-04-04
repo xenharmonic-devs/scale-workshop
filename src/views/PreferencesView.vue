@@ -41,8 +41,8 @@ const scale = useScaleStore()
             <label for="virtual-qwerty"> Virtual QWERTY in top menu</label>
           </div>
           <div class="control">
-            <input id="gas" type="number" min="1" v-model="scale.gas" />
             <label for="gas">Computational budget (gas)</label>
+            <input id="gas" type="number" min="1" v-model="scale.gas" />
           </div>
         </div>
       </div>
