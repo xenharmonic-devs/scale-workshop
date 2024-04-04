@@ -1,4 +1,4 @@
-import { computed, type ComputedRef } from 'vue'
+import { computed, watch, type ComputedRef, type Ref } from 'vue'
 import { gcd, mmod } from 'xen-dev-utils'
 import {
   evaluateExpression,
@@ -443,5 +443,15 @@ export function annotateColors(sourceLines: string[], keyColors: string[]) {
   }
   for (let i = 0; i < sourceLines.length; ++i) {
     sourceLines[i] += ' ' + keyColors[mmod(i + 1, keyColors.length)].replace(/%/g, '')
+  }
+}
+
+/**
+ * Synchronize local storage with the values of Vue refs.
+ * @param values Vue refs to watch in a `{ref1, ref2}` record.
+ */
+export function syncValues(values: Record<string, Ref>) {
+  for (const [key, value] of Object.entries(values)) {
+    watch(value, (newValue) => window.localStorage.setItem(key, String(newValue)))
   }
 }

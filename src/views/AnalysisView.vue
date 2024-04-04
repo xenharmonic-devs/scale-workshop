@@ -17,13 +17,12 @@ import { useScaleStore } from '@/stores/scale'
 import { mmod } from 'xen-dev-utils'
 import { OCTAVE } from '@/constants'
 
-const MAX_SCALE_SIZE = 100
-
 const audio = useAudioStore()
 const state = useStateStore()
 const scale = useScaleStore()
 
 const cellFormat = ref<'best' | 'cents' | 'decimal'>('best')
+const showOptions = ref(false)
 const trailLongevity = ref(70)
 const maxOtonalRoot = ref(16)
 const maxUtonalRoot = ref(23)
@@ -80,7 +79,9 @@ function formatMatrixCell(interval: Interval) {
 
 const highlights = reactive<boolean[][]>([])
 
-const matrix = computed(() => intervalMatrix(scale.relativeIntervals))
+const matrix = computed(() =>
+  intervalMatrix(scale.relativeIntervals.slice(0, state.maxMatrixWidth))
+)
 
 const matrixRows = computed(() => matrix.value.map((row) => row.map(formatMatrixCell)))
 
@@ -124,6 +125,9 @@ const nedjiProjector = computed(() => {
 })
 
 function highlight(y?: number, x?: number) {
+  if (!state.calculateConstantStructureViolations) {
+    return
+  }
   if (highlights.length !== matrix.value.length) {
     highlights.length = 0
     for (let i = 0; i < matrix.value.length; ++i) {
@@ -170,11 +174,11 @@ function highlight(y?: number, x?: number) {
       <table @mouseleave="highlight()">
         <tr>
           <th></th>
-          <th v-for="i of Math.min(scale.scale.size, MAX_SCALE_SIZE)" :key="i">
+          <th v-for="i of Math.min(scale.scale.size, state.maxMatrixWidth)" :key="i">
             {{ i - 1 + state.intervalMatrixIndexing }}
           </th>
           <th>({{ scale.scale.size + state.intervalMatrixIndexing }})</th>
-          <th class="brightness">Bright %</th>
+          <th class="brightness" v-if="state.calculateBrightness">Bright %</th>
         </tr>
         <tr v-for="(row, i) of matrixRows" :key="i">
           <th :class="{ held: heldScaleDegrees.has(i) }">
@@ -183,17 +187,20 @@ function highlight(y?: number, x?: number) {
           <td
             v-for="(name, j) of row"
             :key="j"
-            :class="{ violator: violations[i][j], highlight: (highlights[i] ?? [])[j] }"
+            :class="{
+              violator: state.calculateConstantStructureViolations && violations[i][j],
+              highlight: (highlights[i] ?? [])[j]
+            }"
             @mouseover="highlight(i, j)"
           >
             {{ name }}
           </td>
-          <td class="brightness">{{ brightness[i] }}</td>
+          <td class="brightness" v-if="state.calculateBrightness">{{ brightness[i] }}</td>
         </tr>
-        <tr class="variety">
+        <tr class="variety" v-if="state.calculateVariety">
           <th>Var</th>
           <td v-for="(v, i) of variety" :key="i">{{ v }}</td>
-          <td class="brightness"></td>
+          <td class="brightness" v-if="state.calculateBrightness"></td>
         </tr>
       </table>
     </div>
@@ -215,6 +222,11 @@ function highlight(y?: number, x?: number) {
           <label for="format-decimal"> Decimal ratio </label>
         </span>
       </div>
+    </div>
+    <p class="section" :class="{ open: showOptions }" @click="showOptions = !showOptions">
+      More options
+    </p>
+    <div class="control-group" v-show="showOptions">
       <div class="control radio-group">
         <label>Interval indexing</label>
         <span>
@@ -226,6 +238,32 @@ function highlight(y?: number, x?: number) {
           <input type="radio" id="indexing-one" value="1" v-model="intervalMatrixIndexingRadio" />
           <label for="indexing-one"> 1-indexing </label>
         </span>
+      </div>
+      <div class="control">
+        <label for="max-matrix-width">Maximum matrix width</label>
+        <input
+          id="max-matrix-width"
+          type="number"
+          min="1"
+          step="1"
+          v-model="state.maxMatrixWidth"
+        />
+      </div>
+      <div class="control checkbox-container">
+        <input
+          id="calculate-violators"
+          type="checkbox"
+          v-model="state.calculateConstantStructureViolations"
+        />
+        <label for="calculate-violators"> Show constant structure violations</label>
+      </div>
+      <div class="control checkbox-container">
+        <input id="calculate-variety" type="checkbox" v-model="state.calculateVariety" />
+        <label for="calculate-variety"> Show variety signature</label>
+      </div>
+      <div class="control checkbox-container">
+        <input id="calculate-brightness" type="checkbox" v-model="state.calculateBrightness" />
+        <label for="calculate-brightness"> Show mode brightness</label>
       </div>
     </div>
     <div class="columns-container">

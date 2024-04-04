@@ -1,6 +1,7 @@
 import { reactive, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { UNIX_NEWLINE } from '@/constants'
+import { syncValues } from '@/utils'
 
 export const useStateStore = defineStore('state', () => {
   const isomorphicVertical = ref(5)
@@ -23,7 +24,15 @@ export const useStateStore = defineStore('state', () => {
   const centsFractionDigits = ref(parseInt(storage.getItem('centsFractionDigits') ?? '3', 10))
   const decimalFractionDigits = ref(parseInt(storage.getItem('decimalFractionDigits') ?? '5', 10))
   const showVirtualQwerty = ref(storage.getItem('showVirtualQwerty') === 'true')
+
+  // Analysis preferences
   const intervalMatrixIndexing = ref(parseInt(storage.getItem('intervalMatrixIndexing') ?? '0', 10))
+  const maxMatrixWidth = ref(parseInt(storage.getItem('maxMatrixWidth') ?? '100', 10))
+  const calculateConstantStructureViolations = ref(
+    storage.getItem('calculateConstantStructureViolations') === 'true'
+  )
+  const calculateVariety = ref(storage.getItem('calculateVariety') === 'true')
+  const calculateBrightness = ref(storage.getItem('calculateBrightness') === 'true')
 
   // Special keyboard codes also from local storage.
   const deactivationCode = ref(storage.getItem('deactivationCode') ?? 'Backquote')
@@ -33,33 +42,30 @@ export const useStateStore = defineStore('state', () => {
   const degreeDownCode = ref(storage.getItem('degreeDownCode') ?? 'NumpadSubtract')
 
   // Local storage watchers
-  watch(newline, (newValue) => window.localStorage.setItem('newline', newValue))
+  syncValues({
+    newline,
+    centsFractionDigits,
+    decimalFractionDigits,
+    showVirtualQwerty,
+    intervalMatrixIndexing,
+    maxMatrixWidth,
+    calculateConstantStructureViolations,
+    calculateVariety,
+    calculateBrightness,
+    deactivationCode,
+    equaveUpCode,
+    equaveDownCode,
+    degreeUpCode,
+    degreeDownCode
+  })
   watch(
     colorScheme,
     (newValue) => {
-      window.localStorage.setItem('colorScheme', newValue)
+      storage.setItem('colorScheme', newValue)
       document.documentElement.setAttribute('data-theme', newValue)
     },
     { immediate: true }
   )
-  watch(centsFractionDigits, (newValue) =>
-    window.localStorage.setItem('centsFractionDigits', newValue.toString())
-  )
-  watch(decimalFractionDigits, (newValue) =>
-    window.localStorage.setItem('decimalFractionDigits', newValue.toString())
-  )
-  watch(showVirtualQwerty, (newValue) =>
-    window.localStorage.setItem('showVirtualQwerty', newValue.toString())
-  )
-  watch(intervalMatrixIndexing, (newValue) =>
-    window.localStorage.setItem('intervalMatrixIndexing', newValue.toString())
-  )
-  // Store keymaps
-  watch(deactivationCode, (newValue) => window.localStorage.setItem('deactivationCode', newValue))
-  watch(equaveUpCode, (newValue) => window.localStorage.setItem('equaveUpCode', newValue))
-  watch(equaveDownCode, (newValue) => window.localStorage.setItem('equaveDownCode', newValue))
-  watch(degreeUpCode, (newValue) => window.localStorage.setItem('degreeUpCode', newValue))
-  watch(degreeDownCode, (newValue) => window.localStorage.setItem('degreeDownCode', newValue))
 
   return {
     // Live state
@@ -75,6 +81,10 @@ export const useStateStore = defineStore('state', () => {
     decimalFractionDigits,
     showVirtualQwerty,
     intervalMatrixIndexing,
+    maxMatrixWidth,
+    calculateConstantStructureViolations,
+    calculateVariety,
+    calculateBrightness,
     deactivationCode,
     equaveUpCode,
     equaveDownCode,

@@ -1,5 +1,5 @@
 import { Scale } from '@/scale'
-import { midiNoteNumberToEnharmonics, type AccidentalStyle } from '@/utils'
+import { midiNoteNumberToEnharmonics, type AccidentalStyle, syncValues } from '@/utils'
 import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
 import { mmod, mtof } from 'xen-dev-utils'
@@ -272,9 +272,7 @@ export const useScaleStore = defineStore('scale', () => {
   })
 
   // Local storage watchers
-  watch(accidentalPreference, (newValue) => localStorage.setItem('accidentalPreference', newValue))
-  watch(hasLeftOfZ, (newValue) => window.localStorage.setItem('hasLeftOfZ', newValue.toString()))
-  watch(gas, (newValue) => window.localStorage.setItem('gas', newValue.toString()))
+  syncValues({ accidentalPreference, hasLeftOfZ, gas })
 
   function latticeView(this: ExpressionVisitor) {
     const scale = this.getCurrentScale()
