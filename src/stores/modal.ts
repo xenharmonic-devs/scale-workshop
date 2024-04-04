@@ -346,6 +346,9 @@ export const useModalStore = defineStore('modal', () => {
   const varianceAmount = ref(10)
   const varyEquave = ref(false)
 
+  // Repeat scale
+  const numRepeats = ref(2)
+
   // Rotate scale
   const newUnison = ref(0)
 
@@ -545,6 +548,9 @@ export const useModalStore = defineStore('modal', () => {
     // Random variance
     varianceAmount,
     varyEquave,
+
+    // Repeat
+    numRepeats,
 
     // Rotate
     newUnison,

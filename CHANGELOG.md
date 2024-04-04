@@ -14,6 +14,8 @@
  * Feature: Scott Dakota's prime rings on the lattice tab [#551](https://github.com/xenharmonic-devs/scale-workshop/issues/551)
  * Feature: Tonnetz prime ellipse coordinates on the lattice tab [#588](https://github.com/xenharmonic-devs/scale-workshop/issues/588)
  * Feature: New `latticeView()` command for displaying the order of intervals (prior to sorting) [#597](https://github.com/xenharmonic-devs/scale-workshop/issues/597)
+ * Feature: New "repeat" modifier [#406](https://github.com/xenharmonic-devs/scale-workshop/issues/406)
+ * Bug fix: Extreme ratios now only break parts of the tuning table that do not have IEEE floating point representation and format better when non-finite [#631](https://github.com/xenharmonic-devs/scale-workshop/issues/631), [#632](https://github.com/xenharmonic-devs/scale-workshop/issues/632)
  * Alpha cycle issues: [#574](https://github.com/xenharmonic-devs/scale-workshop/issues/574), [#579](https://github.com/xenharmonic-devs/scale-workshop/issues/579)
 
 ## 2.4.1

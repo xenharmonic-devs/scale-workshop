@@ -51,6 +51,10 @@ const RandomModal = defineAsyncComponent(
   () => import('@/components/modals/modification/RandomVariance.vue')
 )
 
+const RepeatModal = defineAsyncComponent(
+  () => import('@/components/modals/modification/RepeatScale.vue')
+)
+
 const RotateModal = defineAsyncComponent(
   () => import('@/components/modals/modification/RotateScale.vue')
 )
@@ -79,6 +83,7 @@ const showEqualizeModal = ref(false)
 const showExpandModal = ref(false)
 const showMergeOffsetsModal = ref(false)
 const showRandomModal = ref(false)
+const showRepeatModal = ref(false)
 const showRotateModal = ref(false)
 const showStretchModal = ref(false)
 const showSubsetModal = ref(false)
@@ -95,6 +100,7 @@ function closeModals() {
   showExpandModal.value = false
   showMergeOffsetsModal.value = false
   showRandomModal.value = false
+  showRepeatModal.value = false
   showRotateModal.value = false
   showStretchModal.value = false
   showSubsetModal.value = false
@@ -156,6 +162,7 @@ defineExpose({ blur })
       <a href="#" @click="reduce"><li>Reduce</li></a>
       <a href="#" @click="retrovert"><li>Retrovert</li></a>
       <a href="#" @click="clickRotate"><li>Rotate</li></a>
+      <a href="#" @click="showRepeatModal = true"><li>Repeat</li></a>
       <a href="#" @click="clickSubset"><li>Subset</li></a>
       <a href="#" @click="showStretchModal = true"><li>Stretch/compress</li></a>
       <a href="#" @click="showRandomModal = true"><li>Random variance</li></a>
@@ -214,6 +221,7 @@ defineExpose({ blur })
       @cancel="showMergeOffsetsModal = false"
     />
     <RandomModal v-if="showRandomModal" @done="closeModals" @cancel="showRandomModal = false" />
+    <RepeatModal v-if="showRepeatModal" @done="closeModals" @cancel="showRepeatModal = false" />
     <RotateModal v-if="showRotateModal" @done="closeModals" @cancel="showRotateModal = false" />
     <StretchModal v-if="showStretchModal" @done="closeModals" @cancel="showStretchModal = false" />
     <SubsetModal v-if="showSubsetModal" @done="closeModals" @cancel="showSubsetModal = false" />
