@@ -11,7 +11,7 @@ import {
   getHardness,
   allForEdo
 } from 'moment-of-symmetry'
-import { TimeMonzo, hasConstantStructure, parseChord } from 'sonic-weave'
+import { TimeMonzo, evaluateExpression, hasConstantStructure, parseChord } from 'sonic-weave'
 import { freeVAOs, vao } from '@/analysis'
 
 export const useModalStore = defineStore('modal', () => {
@@ -334,7 +334,12 @@ export const useModalStore = defineStore('modal', () => {
   const overflowType = ref<'keep' | 'drop' | 'wrap'>('drop')
   const offsetsString = ref('')
   const [offsets, offsetsError] = computedAndError(() => {
-    return parseChord(offsetsString.value)
+    const source = offsetsString.value
+    // Enumerated chords are literal in the context of polyoffsets
+    if (source.includes(':')) {
+      return evaluateExpression(source)
+    }
+    return parseChord(source)
   }, [])
 
   // Random variance
