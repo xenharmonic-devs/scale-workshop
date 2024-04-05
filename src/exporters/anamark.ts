@@ -93,12 +93,12 @@ class AnaMarkExporter extends BaseExporter {
             '="#>-' +
             i +
             ' % ' +
-            intervals[i - 1].totalCents().toFixed(6) +
+            intervals[i - 1].totalCents(true).toFixed(6) +
             ' ~999"' +
             newline
         } else {
           file +=
-            'note ' + i + '="#=0 % ' + intervals[i - 1].totalCents().toFixed(6) + '"' + newline
+            'note ' + i + '="#=0 % ' + intervals[i - 1].totalCents(true).toFixed(6) + '"' + newline
         }
       }
 
