@@ -410,6 +410,36 @@ export function constantStructureViolations(matrix: Interval[][]) {
   return result
 }
 
+/**
+ * Compute a matrix of constant structure violations up to a margin.
+ * @param centsMatrix Interval matrix converted to cents.
+ * @param margin Margin of violation in cents.
+ * @returns Boolean array of CS violations within the given margin.
+ */
+export function marginViolations(centsMatrix: number[][], margin: number) {
+  const result: boolean[][] = []
+  for (let i = 0; i < centsMatrix.length; ++i) {
+    result.push(Array(centsMatrix[i].length).fill(false))
+  }
+  for (let i = 0; i < centsMatrix[0].length; ++i) {
+    for (let j = 0; j < centsMatrix.length; ++j) {
+      if (result[j][i]) {
+        continue
+      }
+      const cents = centsMatrix[j][i]
+      for (let k = i + 1; k < centsMatrix[0].length; ++k) {
+        for (let l = 0; l < centsMatrix.length; ++l) {
+          if (Math.abs(centsMatrix[l][k] - cents) < margin) {
+            result[j][i] = true
+            result[l][k] = true
+          }
+        }
+      }
+    }
+  }
+  return result
+}
+
 export function varietySignature(matrix: Interval[][]) {
   const result: number[] = []
   if (!matrix.length) {
@@ -431,12 +461,12 @@ export function varietySignature(matrix: Interval[][]) {
   return result
 }
 
-export function brightnessSignature(matrix: Interval[][]) {
-  const totals = matrix.map((row) => row.reduce((prev, cur) => prev + cur.totalCents(), 0))
+export function brightnessSignature(centsMatrix: number[][]) {
+  const totals = centsMatrix.map((row) => row.reduce((prev, cur) => prev + cur, 0))
   const minimum = Math.min(...totals)
   const maximum = Math.max(...totals)
   if (minimum === maximum) {
-    return Array(matrix.length).fill(1)
+    return Array(centsMatrix.length).fill(1)
   }
   const normalizer = 1 / (maximum - minimum)
   return totals.map((t) => (t - minimum) * normalizer)
