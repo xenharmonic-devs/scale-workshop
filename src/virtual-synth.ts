@@ -54,7 +54,7 @@ export class VirtualSynth {
       frequency,
       waveform
     })
-    this.voices.sort((a, b) => a.frequency - b.frequency)
+    this.voices.sort((a, b) => Math.abs(a.frequency) - Math.abs(b.frequency))
 
     const voiceOff = () => {
       for (let i = 0; i < this.voices.length; ++i) {
