@@ -4,6 +4,7 @@ import {
   constantStructureViolations,
   freeEquallyTemperedChord,
   intervalMatrix,
+  marginViolations,
   rootedEquallyTemperedChord,
   varietySignature
 } from '@/analysis'
@@ -67,7 +68,7 @@ const strokeStyle = computed(() => {
 // we want more accurate results here.
 function formatMatrixCell(interval: Interval) {
   if (cellFormat.value === 'cents') {
-    return interval.totalCents().toFixed(1)
+    return interval.totalCents(true).toFixed(1)
   }
   if (cellFormat.value === 'decimal') {
     // Consistent with tuning table localization.
@@ -83,13 +84,24 @@ const matrix = computed(() =>
   intervalMatrix(scale.relativeIntervals.slice(0, state.maxMatrixWidth))
 )
 
+const centsMatrix = computed(() => matrix.value.map((row) => row.map((i) => i.totalCents(true))))
+
 const matrixRows = computed(() => matrix.value.map((row) => row.map(formatMatrixCell)))
 
-const violations = computed(() => constantStructureViolations(matrix.value))
+const violations = computed(() => {
+  const margin = state.constantStructureMargin
+  if (margin) {
+    return marginViolations(centsMatrix.value, margin)
+  } else {
+    return constantStructureViolations(matrix.value)
+  }
+})
 
 const variety = computed(() => varietySignature(matrix.value))
 
-const brightness = computed(() => brightnessSignature(matrix.value).map((b) => Math.round(100 * b)))
+const brightness = computed(() =>
+  brightnessSignature(centsMatrix.value).map((b) => Math.round(100 * b))
+)
 
 const heldScaleDegrees = computed(() => {
   const result: Set<number> = new Set()
@@ -109,8 +121,8 @@ const equallyTemperedChordData = computed(() => {
       divisions: 1
     }
   }
-  const frequencies = audio.virtualSynth.voices.map((voice) => voice.frequency)
-  const equaveCents = equave.value.totalCents()
+  const frequencies = audio.virtualSynth.voices.map((voice) => Math.abs(voice.frequency))
+  const equaveCents = equave.value.totalCents(true)
   if (errorModel.value === 'rooted') {
     return rootedEquallyTemperedChord(frequencies, maxDivisions.value, equaveCents)
   }
@@ -128,6 +140,7 @@ function highlight(y?: number, x?: number) {
   if (!state.calculateConstantStructureViolations) {
     return
   }
+  const margin = state.constantStructureMargin
   if (highlights.length !== matrix.value.length) {
     highlights.length = 0
     for (let i = 0; i < matrix.value.length; ++i) {
@@ -136,11 +149,15 @@ function highlight(y?: number, x?: number) {
   }
   // Look at other violators
   if (y !== undefined && x !== undefined && violations.value[y][x]) {
-    const value = matrix.value[y][x].value
+    const value: any = margin ? centsMatrix.value[y][x] : matrix.value[y][x].value
     for (let i = 0; i < matrix.value.length; ++i) {
       for (let j = 0; j < matrix.value[i].length; ++j) {
         if (violations.value[i][j]) {
-          highlights[i][j] = matrix.value[i][j].value.strictEquals(value)
+          if (margin) {
+            highlights[i][j] = Math.abs(centsMatrix.value[i][j] - value) < margin
+          } else {
+            highlights[i][j] = matrix.value[i][j].value.strictEquals(value)
+          }
         } else {
           highlights[i][j] = false
         }
@@ -160,9 +177,13 @@ function highlight(y?: number, x?: number) {
   }
 
   // Look at own column
-  const value = matrix.value[y][x].value
+  const value: any = margin ? centsMatrix.value[y][x] : matrix.value[y][x].value
   for (let i = 0; i < matrix.value.length; ++i) {
-    highlights[i][x] = matrix.value[i][x].value.strictEquals(value)
+    if (margin) {
+      highlights[i][x] = Math.abs(centsMatrix.value[i][x] - value) < margin
+    } else {
+      highlights[i][x] = matrix.value[i][x].value.strictEquals(value)
+    }
   }
 }
 </script>
@@ -256,6 +277,10 @@ function highlight(y?: number, x?: number) {
           v-model="state.calculateConstantStructureViolations"
         />
         <label for="calculate-violators"> Show constant structure violations</label>
+      </div>
+      <div class="control">
+        <label for="cs-margin">Constant structure margin in cents</label>
+        <input id="cs-margin" type="number" min="0" v-model="state.constantStructureMargin" />
       </div>
       <div class="control checkbox-container">
         <input id="calculate-variety" type="checkbox" v-model="state.calculateVariety" />

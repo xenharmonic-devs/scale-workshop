@@ -33,6 +33,9 @@ export const useStateStore = defineStore('state', () => {
   )
   const calculateVariety = ref(storage.getItem('calculateVariety') === 'true')
   const calculateBrightness = ref(storage.getItem('calculateBrightness') === 'true')
+  const constantStructureMargin = ref(
+    parseInt(storage.getItem('constantStructureMargin') ?? '0', 10)
+  )
 
   // Special keyboard codes also from local storage.
   const deactivationCode = ref(storage.getItem('deactivationCode') ?? 'Backquote')
@@ -52,6 +55,7 @@ export const useStateStore = defineStore('state', () => {
     calculateConstantStructureViolations,
     calculateVariety,
     calculateBrightness,
+    constantStructureMargin,
     deactivationCode,
     equaveUpCode,
     equaveDownCode,
@@ -85,6 +89,7 @@ export const useStateStore = defineStore('state', () => {
     calculateConstantStructureViolations,
     calculateVariety,
     calculateBrightness,
+    constantStructureMargin,
     deactivationCode,
     equaveUpCode,
     equaveDownCode,
