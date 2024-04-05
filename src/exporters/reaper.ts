@@ -62,7 +62,7 @@ export default class ReaperExporter extends BaseExporter {
             if (interval.domain === 'linear') {
               file += value.valueOf().toFixed(digits).replace('.', ',')
             } else {
-              file += value.totalCents().toFixed(digits)
+              file += value.totalCents(true).toFixed(digits)
             }
           } else {
             file += new Interval(
