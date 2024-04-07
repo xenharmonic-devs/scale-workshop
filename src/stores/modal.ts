@@ -1,8 +1,8 @@
 import { computed, reactive, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
-import { FIFTH, FIFTH_12TET, OCTAVE } from '@/constants'
+import { CS_EDO, CS_VAL, FIFTH, FIFTH_12TET, OCTAVE } from '@/constants'
 import { computedAndError, splitText } from '@/utils'
-import { Fraction, clamp, gcd, mmod } from 'xen-dev-utils'
+import { Fraction, clamp, falsifyConstantStructure, gcd, mmod } from 'xen-dev-utils'
 import {
   anyForEdo,
   makeEdoMap,
@@ -13,6 +13,12 @@ import {
 } from 'moment-of-symmetry'
 import { TimeMonzo, evaluateExpression, hasConstantStructure, parseChord } from 'sonic-weave'
 import { freeVAOs, vao } from '@/analysis'
+
+function scaleGet(monzos: TimeMonzo[], index: number) {
+  const equave = monzos[monzos.length - 1]
+  const numEquaves = Math.floor(index / monzos.length)
+  return monzos[mmod(index, monzos.length)].mul(equave.pow(numEquaves))
+}
 
 export const useModalStore = defineStore('modal', () => {
   // Generic
@@ -148,9 +154,13 @@ export const useModalStore = defineStore('modal', () => {
     if (!monzos.length) {
       return
     }
+    let usePrecheck = p.equals(OCTAVE.value)
     for (const monzo of monzos) {
       if (monzo.timeExponent.n) {
         return
+      }
+      if (!monzo.isFractional()) {
+        usePrecheck = false
       }
     }
     const scale: TimeMonzo[] = [p]
@@ -159,13 +169,47 @@ export const useModalStore = defineStore('modal', () => {
       accumulator = accumulator.mul(monzos[mmod(j, monzos.length)])
       scale.push(accumulator.reduce(p, true))
     }
-    for (let i = maxSizeComputed.value; i < maxSize; ++i) {
-      accumulator = accumulator.mul(monzos[mmod(i, monzos.length)])
-      scale.push(accumulator.reduce(p, true))
-      scale.sort((a, b) => a.compare(b))
-      if (hasConstantStructure(scale)) {
-        // These sizes are for the full scale.
-        constantStructureSizes.push(scale.length * numPeriods.value)
+    // A JI scale has CS if a tempered version has it. (but not vice versa)
+    if (usePrecheck) {
+      const gens = monzos.map((m) => m.dot(CS_VAL).valueOf())
+      const steps: number[] = [CS_EDO]
+      let stepAccumulator = 0
+      for (let j = 0; j < maxSizeComputed.value; ++j) {
+        stepAccumulator += gens[mmod(j, gens.length)]
+        steps.push(mmod(stepAccumulator, CS_EDO) || CS_EDO)
+      }
+      for (let i = maxSizeComputed.value; i < maxSize; ++i) {
+        accumulator = accumulator.mul(monzos[mmod(i, monzos.length)])
+        scale.push(accumulator.reduce(p, true))
+        stepAccumulator += gens[mmod(i, gens.length)]
+        steps.push(mmod(stepAccumulator, CS_EDO) || CS_EDO)
+        steps.sort((a, b) => a - b)
+        const indices = falsifyConstantStructure(steps)
+        if (indices) {
+          scale.sort((a, b) => a.compare(b))
+          const [[i1, i2], [j1, j2]] = indices
+          // Check the given counter-example. Do the full check if it wasn't valid in JI.
+          if (
+            !scaleGet(scale, i2)
+              .div(scaleGet(scale, i1))
+              .equals(scaleGet(scale, j2).div(scaleGet(scale, j1))) &&
+            hasConstantStructure(scale)
+          ) {
+            constantStructureSizes.push(scale.length * numPeriods.value)
+          }
+        } else {
+          constantStructureSizes.push(scale.length * numPeriods.value)
+        }
+      }
+    } else {
+      for (let i = maxSizeComputed.value; i < maxSize; ++i) {
+        accumulator = accumulator.mul(monzos[mmod(i, monzos.length)])
+        scale.push(accumulator.reduce(p, true))
+        scale.sort((a, b) => a.compare(b))
+        if (hasConstantStructure(scale)) {
+          // These sizes are for the full scale.
+          constantStructureSizes.push(scale.length * numPeriods.value)
+        }
       }
     }
     maxSizeComputed.value = maxSize
