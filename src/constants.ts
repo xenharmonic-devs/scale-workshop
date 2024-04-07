@@ -1,6 +1,6 @@
 import { Interval, TimeMonzo } from 'sonic-weave'
 import { version } from '../package.json'
-import { Fraction } from 'xen-dev-utils'
+import { Fraction, PRIME_CENTS } from 'xen-dev-utils'
 
 // GLOBALS
 export const APP_TITLE = `Scale Workshop ${version}`
@@ -71,3 +71,9 @@ export const INTERVALS_12TET = [...Array(12).keys()].map(
       'logarithmic'
     )
 )
+
+export const CS_EDO = 5407372813
+export const CS_VAL = new TimeMonzo(new Fraction(0), [])
+for (let i = 0; i < DEFAULT_NUMBER_OF_COMPONENTS; ++i) {
+  CS_VAL.primeExponents.push(new Fraction(Math.round((PRIME_CENTS[i] / 1200.0) * CS_EDO)))
+}
