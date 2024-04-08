@@ -1,5 +1,11 @@
 import { Scale } from '@/scale'
-import { midiNoteNumberToEnharmonics, type AccidentalStyle, syncValues } from '@/utils'
+import {
+  midiNoteNumberToEnharmonics,
+  type AccidentalStyle,
+  syncValues,
+  isBlackMidiNote,
+  midiNoteNumberToName
+} from '@/utils'
 import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
 import { mmod, mtof } from 'xen-dev-utils'
@@ -15,7 +21,8 @@ import {
   type SonicWeaveValue,
   StatementVisitor,
   ExpressionVisitor,
-  builtinNode
+  builtinNode,
+  repr
 } from 'sonic-weave'
 import {
   DEFAULT_NUMBER_OF_COMPONENTS,
@@ -57,10 +64,6 @@ export const useScaleStore = defineStore('scale', () => {
 
   const name = ref('')
   const baseMidiNote = ref(60)
-  const enharmonics = computed(() =>
-    midiNoteNumberToEnharmonics(baseMidiNote.value, accidentalPreference.value)
-  )
-  const enharmonic = ref(enharmonics.value[0])
   const userBaseFrequency = ref(261.63)
   const autoFrequency = ref(true)
   const baseFrequency = computed({
@@ -79,6 +82,7 @@ export const useScaleStore = defineStore('scale', () => {
   const colors = ref(defaultColors(baseMidiNote.value))
   const labels = ref(defaultLabels(baseMidiNote.value, accidentalPreference.value))
   const error = ref('')
+  const warning = ref('')
 
   // Keyboard mode affects both physical qwerty and virtual keyboards
   const keyboardMode = ref<'isomorphic' | 'piano'>('isomorphic')
@@ -98,10 +102,11 @@ export const useScaleStore = defineStore('scale', () => {
   // === Computed state ===
   const sourcePrefix = computed(() => {
     const base = `numComponents(${DEFAULT_NUMBER_OF_COMPONENTS})\n`
+    const rootPitch = midiNoteNumberToName(baseMidiNote.value)
     if (autoFrequency.value) {
-      return `${base}${enharmonic.value} = mtof(_) = 1/1`
+      return `${base}${rootPitch} = mtof(_) = 1/1`
     }
-    return `${base}${enharmonic.value} = baseFrequency = 1/1`
+    return `${base}${rootPitch} = baseFrequency = 1/1`
   })
 
   const frequencies = computed(() => scale.value.getFrequencyRange(0, NUMBER_OF_NOTES))
@@ -257,11 +262,6 @@ export const useScaleStore = defineStore('scale', () => {
     return baseMidiNote.value - baseInfo.whiteNumber
   })
 
-  // State synchronization
-  watch([baseMidiNote, accidentalPreference], () => {
-    enharmonic.value = enharmonics.value[0]
-  })
-
   // Sanity watchers
   watch(baseMidiNote, (newValue) => {
     if (isNaN(newValue)) {
@@ -274,6 +274,7 @@ export const useScaleStore = defineStore('scale', () => {
   // Local storage watchers
   syncValues({ accidentalPreference, hasLeftOfZ, gas })
 
+  // Extra builtins
   function latticeView(this: ExpressionVisitor) {
     const scale = this.getCurrentScale()
     for (let i = 0; i < scale.length; ++i) {
@@ -287,6 +288,14 @@ export const useScaleStore = defineStore('scale', () => {
   latticeView.__doc__ = 'Store the current scale to be displayed in the lattice tab.'
   latticeView.__node__ = builtinNode(latticeView)
 
+  function warn(this: ExpressionVisitor, ...args: any[]) {
+    const s = repr.bind(this);
+    const message = args.map(a => (typeof a === 'string' ? a : s(a))).join(', ');
+    warning.value = message
+  }
+  warn.__doc__ = 'Issue a warning to the user and continue execution.'
+  warn.__node__ = builtinNode(warn)
+
   // Local helpers
   function getGlobalVisitor() {
     // Inject global variables
@@ -297,7 +306,8 @@ export const useScaleStore = defineStore('scale', () => {
       _,
       baseMidiNote: _,
       baseFrequency: baseFreq,
-      latticeView
+      latticeView,
+      warn
     }
     const visitor = getSourceVisitor(true, extraBuiltins)
     visitor.rootContext.gas = gas.value
@@ -333,11 +343,17 @@ export const useScaleStore = defineStore('scale', () => {
 
   function computeScale() {
     try {
+      error.value = ''
+      warning.value = ''
       latticeIntervals.value = []
       const globalVisitor = getGlobalVisitor()
       const visitor = new StatementVisitor(globalVisitor.rootContext, globalVisitor)
       const ast = parseAST(sourceText.value)
+      let userDeclaredPitch = false
       for (const statement of ast.body) {
+        if (statement.type === 'PitchDeclaration') {
+          userDeclaredPitch = true
+        }
         const interupt = visitor.visit(statement)
         if (interupt) {
           throw new Error('Illegal statement.')
@@ -374,12 +390,18 @@ export const useScaleStore = defineStore('scale', () => {
           )
         }
         labels.value = intervals.map((interval) => interval.label || name(interval))
-        error.value = ''
       } else {
         scale.value = new Scale(TET12, visitorBaseFrequency, baseMidiNote.value)
         colors.value = defaultColors(baseMidiNote.value)
         labels.value = defaultLabels(baseMidiNote.value, accidentalPreference.value)
-        error.value = 'Empty scale defaults to 12-tone equal temperament.'
+        warning.value = 'Empty scale defaults to 12-tone equal temperament.'
+      }
+      const noteNumber = baseMidiNote.value
+      if (!warning.value && isBlackMidiNote(noteNumber) && !userDeclaredPitch) {
+        const midiName = midiNoteNumberToName(noteNumber)
+        const enharmonics = midiNoteNumberToEnharmonics(noteNumber)
+        const rootFrequency = autoFrequency.value ? 'mtof(_)' : 'baseFrequency'
+        warning.value = `Base MIDI note ${noteNumber} defaults to ${midiName}. Use an explicit ${enharmonics[0]} = ${rootFrequency} or ${enharmonics[1]} = ${rootFrequency} to get rid of this warning.`
       }
     } catch (e) {
       if (e instanceof Error) {
@@ -403,8 +425,6 @@ export const useScaleStore = defineStore('scale', () => {
     // Live state
     name,
     baseMidiNote,
-    enharmonics,
-    enharmonic,
     userBaseFrequency,
     autoFrequency,
     autoColors,
@@ -421,6 +441,7 @@ export const useScaleStore = defineStore('scale', () => {
     latticeColors,
     latticeLabels,
     error,
+    warning,
     keyboardMode,
     equaveShift,
     degreeShift,

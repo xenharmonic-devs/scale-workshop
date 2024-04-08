@@ -437,6 +437,25 @@ export function midiNoteNumberToEnharmonics(
   return result
 }
 
+const IS_BLACK_MIDI_NOTE = [
+  false, // C
+  true, // C# / Db
+  false, // D
+  true, // D# / Eb
+  false, // E
+  false, // F
+  true, // F# / Gb
+  false, // G
+  true, // G# / Ab
+  false, // A
+  true, // A# / Bb
+  false // B
+]
+
+export function isBlackMidiNote(noteNumber: number) {
+  return IS_BLACK_MIDI_NOTE[mmod(noteNumber, 12)]
+}
+
 export function annotateColors(sourceLines: string[], keyColors: string[]) {
   if (!keyColors.length) {
     return
