@@ -25,6 +25,9 @@ button {
 .error {
   color: var(--color-error);
 }
+.warning {
+  color: var(--color-warning);
+}
 code {
   display: inline-block;
   background-color: var(--color-background-soft);

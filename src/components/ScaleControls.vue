@@ -57,12 +57,6 @@ defineExpose({ focus, clearPaletteInfo })
         @input="updateScale"
       />
     </div>
-    <div class="control">
-      <label for="enharmonic">Pythagorean enharmonic</label>
-      <select id="enharmonic" v-model="scale.enharmonic" @input="updateScale">
-        <option v-for="e of scale.enharmonics" :key="e" :value="e">{{ e }}</option>
-      </select>
-    </div>
 
     <div class="control">
       <label for="base-frequency">Base frequency</label>
@@ -133,7 +127,8 @@ defineExpose({ focus, clearPaletteInfo })
       ></textarea>
     </div>
     <ScaleRule :scale="scale.scale" />
-    <p class="error">{{ scale.error }}</p>
+    <p v-if="scale.error" class="error">{{ scale.error }}</p>
+    <p v-else-if="scale.warning" class="warning">{{ scale.warning }}</p>
     <h3>Character palette</h3>
     <div class="control">
       <button
