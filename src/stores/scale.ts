@@ -25,6 +25,7 @@ import {
   repr
 } from 'sonic-weave'
 import {
+  APP_TITLE,
   DEFAULT_NUMBER_OF_COMPONENTS,
   INTERVALS_12TET,
   MIDI_NOTE_COLORS,
@@ -302,6 +303,7 @@ export const useScaleStore = defineStore('scale', () => {
     const _ = Interval.fromInteger(baseMidiNote.value)
     const baseFreq = new Interval(TimeMonzo.fromArbitraryFrequency(baseFrequency.value), 'linear')
     const extraBuiltins: Record<string, SonicWeaveValue> = {
+      APP_TITLE,
       scaleName: name.value,
       _,
       baseMidiNote: _,
