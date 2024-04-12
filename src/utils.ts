@@ -474,3 +474,10 @@ export function syncValues(values: Record<string, Ref>) {
     watch(value, (newValue) => window.localStorage.setItem(key, String(newValue)))
   }
 }
+
+export function padEndOrTruncate<T>(array: T[], targetLength: number, padValue: T) {
+  while (array.length < targetLength) {
+    array.push(padValue)
+  }
+  array.length = targetLength
+}

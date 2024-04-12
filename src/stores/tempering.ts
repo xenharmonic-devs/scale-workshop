@@ -1,6 +1,6 @@
 import { FIFTH, MAX_GEO_SUBGROUP_SIZE, MAX_INTERACTIVE_SUBGROUP_SIZE, OCTAVE } from '@/constants'
 import { mosPatternsRank2FromCommas, mosPatternsRank2FromVals } from '@/tempering'
-import { computedAndError, splitText } from '@/utils'
+import { computedAndError, padEndOrTruncate, splitText } from '@/utils'
 import { isBright, mosPatterns as getMosPatterns, type MosInfo } from 'moment-of-symmetry'
 import { defineStore } from 'pinia'
 import { parseChord, parseVals, type TimeMonzo } from 'sonic-weave'
@@ -372,13 +372,9 @@ export const useLatticeStore = defineStore('lattice', () => {
     return parseChord(basisString.value)
   }, [])
 
-  watch(basis, () => {
-    while (ups.length < basis.value.length) {
-      ups.push(1)
-    }
-    while (downs.length < basis.value.length) {
-      downs.push(0)
-    }
+  watch(basis, (newValue) => {
+    padEndOrTruncate(ups, newValue.length, 1)
+    padEndOrTruncate(downs, newValue.length, 0)
   })
 
   const dimensions = computed(() => {
