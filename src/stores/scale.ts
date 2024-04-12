@@ -289,8 +289,8 @@ export const useScaleStore = defineStore('scale', () => {
   latticeView.__node__ = builtinNode(latticeView)
 
   function warn(this: ExpressionVisitor, ...args: any[]) {
-    const s = repr.bind(this);
-    const message = args.map(a => (typeof a === 'string' ? a : s(a))).join(', ');
+    const s = repr.bind(this)
+    const message = args.map((a) => (typeof a === 'string' ? a : s(a))).join(', ')
     warning.value = message
   }
   warn.__doc__ = 'Issue a warning to the user and continue execution.'
