@@ -1,6 +1,6 @@
 {
   "name": "scale-workshop",
-  "version": "3.0.0-beta.11",
+  "version": "3.0.0-beta.12",
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
@@ -21,7 +21,7 @@
     "moment-of-symmetry": "^0.4.2",
     "pinia": "^2.1.7",
     "qs": "^6.12.0",
-    "sonic-weave": "github:xenharmonic-devs/sonic-weave#v0.0.12",
+    "sonic-weave": "github:xenharmonic-devs/sonic-weave#v0.0.14",
     "sw-synth": "^0.1.0",
     "temperaments": "^0.5.3",
     "vue": "^3.3.4",
