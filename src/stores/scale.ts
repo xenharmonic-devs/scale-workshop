@@ -277,7 +277,7 @@ export const useScaleStore = defineStore('scale', () => {
 
   // Extra builtins
   function latticeView(this: ExpressionVisitor) {
-    const scale = this.getCurrentScale()
+    const scale = this.currentScale
     for (let i = 0; i < scale.length; ++i) {
       scale[i] = scale[i].shallowClone()
       // XXX: Abuses the fact that SonicWeave tracking ids are positive.
@@ -362,7 +362,7 @@ export const useScaleStore = defineStore('scale', () => {
         }
       }
 
-      const intervals = visitor.getCurrentScale()
+      const intervals = visitor.currentScale
       const ev = visitor.createExpressionVisitor()
       const rel = relative.bind(ev)
       relativeIntervals.value = intervals.map((i) => rel(i))
