@@ -4,6 +4,7 @@ import { Input, Output, WebMidi, type NoteMessageEvent, type MessageEvent } from
 import MidiPiano from '@/components/MidiPiano.vue'
 import { useMidiStore } from '@/stores/midi'
 import { useScaleStore } from '@/stores/scale'
+import { divNodes } from 'sonic-weave'
 
 const props = defineProps<{
   midiInputChannels: Set<number>
@@ -177,18 +178,18 @@ onUnmounted(() => {
             </span>
           </div>
           <div class="control checkbox-group">
-            <span>
+            <div>
               <input type="checkbox" id="midi-velocity" v-model="midi.velocityOn" />
               <label for="midi-velocity"> Use velocity </label>
-            </span>
-            <span>
+            </div>
+            <div>
               <input type="checkbox" id="multichannel" v-model="midi.multichannelToEquave" />
               <label for="multichannel"> Multichannel-to-equave </label>
-            </span>
+            </div>
           </div>
           <label>Settings for multichannel-to-equave mode</label>
-          <div class="control multichannel-input">
-            <span>
+          <div class="control multichannel-input-container">
+            <div>
               Center channel
               <input
                 id="multichannel-center"
@@ -196,11 +197,10 @@ onUnmounted(() => {
                 type="number"
                 min="1"
                 max="16"
-                value="3"
                 v-model="midi.multichannelCenter"
               />
-            </span>
-            <span>
+            </div>
+            <div>
               Total equaves
               <input
                 id="multichannel-num-equaves"
@@ -208,11 +208,10 @@ onUnmounted(() => {
                 type="number"
                 min="1"
                 max="16"
-                value="8"
                 v-model="midi.multichannelNumEquaves"
               />
-            </span>
-            <span>
+            </div>
+            <div>
               Equaves down
               <input
                 id="multichannel-equaves-down"
@@ -220,10 +219,9 @@ onUnmounted(() => {
                 type="number"
                 min="0"
                 max="15"
-                value="4"
                 v-model="midi.multichannelEquavesDown"
               />
-            </span>
+            </div>
           </div>
           <div class="control radio-group">
             <label>Color mapping</label>
@@ -336,7 +334,7 @@ div.checkbox-group {
   gap: 0.15rem 1rem;
 }
 
-div.multichannel-input {
+div.multichannel-input-container {
   gap: 0.15rem 1rem;
 }
 
