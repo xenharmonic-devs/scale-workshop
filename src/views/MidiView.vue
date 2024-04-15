@@ -178,7 +178,7 @@ onUnmounted(() => {
               />
             </span>
           </div>
-          <div class="control checkbox-group-scoped">
+          <div class="control checkbox-group">
             <span>
               <input type="checkbox" id="midi-velocity" v-model="midi.velocityOn" />
               <label for="midi-velocity"> Use velocity </label>
@@ -189,12 +189,42 @@ onUnmounted(() => {
             </span>
           </div>
           <label>Settings for multichannel-to-equave mode</label>
-          <div class="control multichannel-input-scoped">                    
-            <span> Center channel <input id="multichannel-center" class="control" type="number" min="1" max="16" value="3" v-model="midi.multichannelCenter" />
+          <div class="control multichannel-input">
+            <span>
+              Center channel
+              <input
+                id="multichannel-center"
+                class="control"
+                type="number"
+                min="1"
+                max="16"
+                value="3"
+                v-model="midi.multichannelCenter"
+              />
             </span>
-            <span> Total equaves <input id="multichannel-num-equaves" class="control" type="number" min="1" max="16" value="8" v-model="midi.multichannelNumEquaves" />
+            <span>
+              Total equaves
+              <input
+                id="multichannel-num-equaves"
+                class="control"
+                type="number"
+                min="1"
+                max="16"
+                value="8"
+                v-model="midi.multichannelNumEquaves"
+              />
             </span>
-            <span> Equaves down <input id="multichannel-equaves-down" class="control" type="number" min="0" max="15" value="4" v-model="midi.multichannelEquavesDown" />
+            <span>
+              Equaves down
+              <input
+                id="multichannel-equaves-down"
+                class="control"
+                type="number"
+                min="0"
+                max="15"
+                value="4"
+                v-model="midi.multichannelEquavesDown"
+              />
             </span>
           </div>
           <div class="control radio-group">
@@ -303,12 +333,12 @@ div.channels-wrapper span {
   text-align: center;
 }
 
-div.checkbox-group-scoped {
+div.checkbox-group {
   flex-flow: unset;
   gap: 0.15rem 1rem;
 }
 
-div.multichannel-input-scoped {
+div.multichannel-input {
   gap: 0.15rem 1rem;
 }
 

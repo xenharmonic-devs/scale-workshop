@@ -20,7 +20,7 @@ export const useMidiStore = defineStore('midi', () => {
     // State
     input,
     output,
-    outputChannels,    
+    outputChannels,
     multichannelToEquave,
     multichannelCenter,
     multichannelNumEquaves,

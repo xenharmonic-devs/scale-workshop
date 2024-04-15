@@ -72,10 +72,13 @@ function sendNoteOn(frequency: number, rawAttack: number) {
 }
 
 function midiNoteOn(index: number, rawAttack?: number, channel?: number) {
-
   // in multichannel-to-equave mode calculate an offset based on the incoming channel
   if (midi.multichannelToEquave && channel !== undefined) {
-    let offset =  mmod(channel - midi.multichannelCenter + midi.multichannelEquavesDown, midi.multichannelNumEquaves) - midi.multichannelEquavesDown
+    let offset =
+      mmod(
+        channel - midi.multichannelCenter + midi.multichannelEquavesDown,
+        midi.multichannelNumEquaves
+      ) - midi.multichannelEquavesDown
     offset = offset * scale.scale.size
     index = index + offset
   }
