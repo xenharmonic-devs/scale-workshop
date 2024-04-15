@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { LEFT_MOUSE_BTN } from '@/constants'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import Values from 'values.js'
 
 type NoteOff = () => void
 type NoteOnCallback = () => NoteOff
@@ -12,6 +13,8 @@ const props = defineProps<{
 }>()
 
 const active = ref(false)
+
+const light = computed(() => new Values(props.color).getBrightness() > 50)
 
 const emit = defineEmits(['press', 'unpress'])
 
@@ -98,7 +101,7 @@ onUnmounted(() => {
 <template>
   <td
     :style="'background-color:' + color"
-    :class="{ active }"
+    :class="{ active, light, dark: !light }"
     @touchstart="onTouchStart"
     @touchend="onTouchEnd"
     @touchcancel="onTouchEnd"
@@ -106,7 +109,9 @@ onUnmounted(() => {
     @mouseup="onMouseUp"
     @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave"
-  ></td>
+  >
+    <slot></slot>
+  </td>
 </template>
 
 <style scoped>

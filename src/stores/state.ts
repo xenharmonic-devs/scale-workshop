@@ -11,7 +11,7 @@ import { DEFAULT_NUMBER_OF_COMPONENTS, NUMBER_OF_NOTES, UNIX_NEWLINE } from '@/c
 import { computeWhiteIndices } from '@/midi'
 import { mapWhiteAsdfBlackQwerty, mapWhiteQweZxcBlack123Asd } from '@/keyboard-mapping'
 import { arraysEqual } from 'xen-dev-utils'
-import type { AccidentalStyle } from '@/utils'
+import { type AccidentalStyle, syncValues } from '@/utils'
 import { midiKeyInfo } from 'xen-midi'
 
 export const useStateStore = defineStore('state', () => {
@@ -58,6 +58,12 @@ export const useStateStore = defineStore('state', () => {
   const decimalFractionDigits = ref(parseInt(storage.getItem('decimalFractionDigits') ?? '5', 10))
   const showVirtualQwerty = ref(storage.getItem('showVirtualQwerty') === 'true')
   const midiOctaveOffset = ref(parseInt(storage.getItem('midiOctaveOffset') ?? '-1', 10))
+  const showKeyboardLabel = ref(storage.getItem('showKeyboardLabel') !== 'false')
+  const showKeyboardCents = ref(storage.getItem('showKeyboardCents') !== 'false')
+  const showKeyboardRatio = ref(storage.getItem('showKeyboardRatio') !== 'false')
+  const showKeyboardFrequency = ref(storage.getItem('showKeyboardFrequency') !== 'false')
+
+  // Analysis preferences
   const intervalMatrixIndexing = ref(parseInt(storage.getItem('intervalMatrixIndexing') ?? '0', 10))
   const accidentalPreference = ref<AccidentalStyle>(
     (localStorage.getItem('accidentalPreference') as AccidentalStyle) ?? 'double'
@@ -69,6 +75,24 @@ export const useStateStore = defineStore('state', () => {
   const equaveDownCode = ref(storage.getItem('equaveDownCode') ?? 'NumpadDivide')
   const degreeUpCode = ref(storage.getItem('degreeUpCode') ?? 'NumpadAdd')
   const degreeDownCode = ref(storage.getItem('degreeDownCode') ?? 'NumpadSubtract')
+
+  // Local storage watchers
+  syncValues({
+    newline,
+    centsFractionDigits,
+    decimalFractionDigits,
+    showVirtualQwerty,
+    showKeyboardLabel,
+    showKeyboardCents,
+    showKeyboardRatio,
+    showKeyboardFrequency,
+    intervalMatrixIndexing,
+    deactivationCode,
+    equaveUpCode,
+    equaveDownCode,
+    degreeUpCode,
+    degreeDownCode
+  })
 
   // === Computed state ===
   const frequencies = computed(() =>
@@ -228,6 +252,10 @@ export const useStateStore = defineStore('state', () => {
     decimalFractionDigits,
     showVirtualQwerty,
     midiOctaveOffset,
+    showKeyboardLabel,
+    showKeyboardCents,
+    showKeyboardRatio,
+    showKeyboardFrequency,
     intervalMatrixIndexing,
     deactivationCode,
     equaveUpCode,
