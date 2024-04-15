@@ -4,7 +4,6 @@ import { Input, Output, WebMidi, type NoteMessageEvent, type MessageEvent } from
 import MidiPiano from '@/components/MidiPiano.vue'
 import { useMidiStore } from '@/stores/midi'
 import { useScaleStore } from '@/stores/scale'
-import { divNodes } from 'sonic-weave'
 
 const props = defineProps<{
   midiInputChannels: Set<number>
@@ -168,7 +167,7 @@ onUnmounted(() => {
           <div class="control channels-wrapper">
             <label>Input channels</label>
             <span v-for="channel in 16" :key="channel">
-              <label :class="{ active: inputHighlights.has(channel) }">{{channel}}</label>
+              <label :class="{ active: inputHighlights.has(channel) }">{{ channel }}</label>
               <input
                 type="checkbox"
                 :value="channel"
@@ -275,7 +274,7 @@ onUnmounted(() => {
           <div class="control channels-wrapper">
             <label>Output channels</label>
             <span v-for="channel in 16" :key="channel">
-              <label>{{channel}}</label>
+              <label>{{ channel }}</label>
               <input
                 type="checkbox"
                 :value="channel"
