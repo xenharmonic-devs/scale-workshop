@@ -8,6 +8,11 @@ export const useMidiStore = defineStore('midi', () => {
   // Channel 10 is reserved for percussion
   const outputChannels = ref(new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16]))
   const velocityOn = ref(true)
+  // Lumatone multichannel-to-equave mode
+  const multichannelToEquave = ref(false)
+  const multichannelCenter = ref(3)
+  const multichannelNumEquaves = ref(8)
+  const multichannelEquavesDown = ref(4)
 
   const whiteMode = ref<'off' | 'simple' | 'blackAverage' | 'keyColors'>('off')
 
@@ -15,7 +20,11 @@ export const useMidiStore = defineStore('midi', () => {
     // State
     input,
     output,
-    outputChannels,
+    outputChannels,    
+    multichannelToEquave,
+    multichannelCenter,
+    multichannelNumEquaves,
+    multichannelEquavesDown,
     velocityOn,
     whiteMode
   }
