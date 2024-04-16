@@ -167,7 +167,7 @@ onUnmounted(() => {
           <div class="control channels-wrapper">
             <label>Input channels</label>
             <span v-for="channel in 16" :key="channel">
-              <label :class="{ active: inputHighlights.has(channel) }">{{channel}}</label>
+              <label :class="{ active: inputHighlights.has(channel) }">{{ channel }}</label>
               <input
                 type="checkbox"
                 :value="channel"
@@ -232,7 +232,7 @@ onUnmounted(() => {
           <div class="control channels-wrapper">
             <label>Output channels</label>
             <span v-for="channel in 16" :key="channel">
-              <label>{{ ' ' + channel + ' ' }}</label>
+              <label>{{ channel }}</label>
               <input
                 type="checkbox"
                 :value="channel"
