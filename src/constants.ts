@@ -47,13 +47,11 @@ export const MIDI_NOTE_COLORS = [
 // Some often used intervals
 export const OCTAVE = new Interval(
   TimeMonzo.fromFraction(2, DEFAULT_NUMBER_OF_COMPONENTS),
-  'linear',
-  { type: 'FractionLiteral', numerator: 2n, denominator: 1n }
+  'linear'
 )
 export const FIFTH = new Interval(
   TimeMonzo.fromFraction('3/2', DEFAULT_NUMBER_OF_COMPONENTS),
-  'linear',
-  { type: 'FractionLiteral', numerator: 3n, denominator: 2n }
+  'linear'
 )
 export const THIRD = new Interval(
   TimeMonzo.fromFraction('5/4', DEFAULT_NUMBER_OF_COMPONENTS),

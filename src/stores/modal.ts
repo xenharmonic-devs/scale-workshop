@@ -11,7 +11,13 @@ import {
   getHardness,
   allForEdo
 } from 'moment-of-symmetry'
-import { TimeMonzo, evaluateExpression, hasConstantStructure, parseChord } from 'sonic-weave'
+import {
+  TimeMonzo,
+  TimeReal,
+  evaluateExpression,
+  hasConstantStructure,
+  parseChord
+} from 'sonic-weave'
 import { freeVAOs, vao } from '@/analysis'
 
 function scaleGet(monzos: TimeMonzo[], index: number) {
@@ -147,6 +153,9 @@ export const useModalStore = defineStore('modal', () => {
       return
     }
     const p = period.value.value
+    if (!(p instanceof TimeMonzo)) {
+      return
+    }
     if (p.timeExponent.n) {
       return
     }
@@ -156,6 +165,9 @@ export const useModalStore = defineStore('modal', () => {
     }
     let usePrecheck = p.equals(OCTAVE.value)
     for (const monzo of monzos) {
+      if (monzo instanceof TimeReal) {
+        return
+      }
       if (monzo.timeExponent.n) {
         return
       }
@@ -166,8 +178,8 @@ export const useModalStore = defineStore('modal', () => {
     const scale: TimeMonzo[] = [p]
     let accumulator = new TimeMonzo(new Fraction(0), [])
     for (let j = 0; j < maxSizeComputed.value; ++j) {
-      accumulator = accumulator.mul(monzos[mmod(j, monzos.length)])
-      scale.push(accumulator.reduce(p, true))
+      accumulator = accumulator.mul(monzos[mmod(j, monzos.length)]) as TimeMonzo
+      scale.push(accumulator.reduce(p, true) as TimeMonzo)
     }
     // A JI scale has CS if a tempered version has it. (but not vice versa)
     if (usePrecheck) {
@@ -179,8 +191,8 @@ export const useModalStore = defineStore('modal', () => {
         steps.push(mmod(stepAccumulator, CS_EDO) || CS_EDO)
       }
       for (let i = maxSizeComputed.value; i < maxSize; ++i) {
-        accumulator = accumulator.mul(monzos[mmod(i, monzos.length)])
-        scale.push(accumulator.reduce(p, true))
+        accumulator = accumulator.mul(monzos[mmod(i, monzos.length)]) as TimeMonzo
+        scale.push(accumulator.reduce(p, true) as TimeMonzo)
         stepAccumulator += gens[mmod(i, gens.length)]
         steps.push(mmod(stepAccumulator, CS_EDO) || CS_EDO)
         steps.sort((a, b) => a - b)
@@ -203,8 +215,8 @@ export const useModalStore = defineStore('modal', () => {
       }
     } else {
       for (let i = maxSizeComputed.value; i < maxSize; ++i) {
-        accumulator = accumulator.mul(monzos[mmod(i, monzos.length)])
-        scale.push(accumulator.reduce(p, true))
+        accumulator = accumulator.mul(monzos[mmod(i, monzos.length)]) as TimeMonzo
+        scale.push(accumulator.reduce(p, true) as TimeMonzo)
         scale.sort((a, b) => a.compare(b))
         if (hasConstantStructure(scale)) {
           // These sizes are for the full scale.

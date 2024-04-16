@@ -1,5 +1,5 @@
 import { BaseExporter } from '@/exporters/base'
-import { Interval, timeMonzoAs } from 'sonic-weave'
+import { Interval, TimeReal, intervalValueAs } from 'sonic-weave'
 import { mmod, valueToCents } from 'xen-dev-utils'
 
 export default class ReaperExporter extends BaseExporter {
@@ -58,7 +58,7 @@ export default class ReaperExporter extends BaseExporter {
           const interval = intervals[mmod(index - 1, intervals.length)]
           const numEquaves = Math.floor((index - 1) / intervals.length)
           const value = interval.value.mul(equave.pow(numEquaves))
-          if (interval.value.cents) {
+          if (value instanceof TimeReal) {
             if (interval.domain === 'linear') {
               file += value.valueOf().toFixed(digits).replace('.', ',')
             } else {
@@ -68,7 +68,8 @@ export default class ReaperExporter extends BaseExporter {
             file += new Interval(
               value,
               interval.domain,
-              timeMonzoAs(value, interval.node),
+              0,
+              intervalValueAs(value, interval.node),
               interval
             ).toString()
           }

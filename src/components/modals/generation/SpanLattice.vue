@@ -8,7 +8,7 @@ import { useLatticeStore } from '@/stores/tempering'
 import { setAndReportValidity } from '@/utils'
 import { useStateStore } from '@/stores/state'
 import { arrayToString, expandCode, parseInterval } from '@/utils'
-import { Interval, timeMonzoAs } from 'sonic-weave'
+import { Interval, intervalValueAs } from 'sonic-weave'
 
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
@@ -60,9 +60,9 @@ function flip(index: number) {
   const b = lattice.basis[index]
   const domain = b.domain
   const generator = b.value.inverse().reduce(lattice.equave.value)
-  const node = timeMonzoAs(generator, b.node)
+  const node = intervalValueAs(generator, b.node)
   const newBasis = [...lattice.basis]
-  newBasis.splice(index, 1, new Interval(generator, domain, node, b))
+  newBasis.splice(index, 1, new Interval(generator, domain, 0, node, b))
   lattice.basisString = newBasis.map((gen) => gen.toString()).join(' ')
 }
 
