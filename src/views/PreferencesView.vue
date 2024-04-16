@@ -53,11 +53,11 @@ const scale = useScaleStore()
           <div class="control radio-group">
             <span>
               <input type="radio" id="scheme-light" value="light" v-model="state.colorScheme" />
-              <label for="scheme-light" class="right-of-radio">Light </label>
+              <label for="scheme-light">Light</label>
             </span>
             <span>
               <input type="radio" id="scheme-dark" value="dark" v-model="state.colorScheme" />
-              <label for="scheme-dark" class="right-of-radio">Dark </label>
+              <label for="scheme-dark">Dark</label>
             </span>
           </div>
           <h3>Accidentals</h3>
@@ -69,7 +69,7 @@ const scale = useScaleStore()
                 value="double"
                 v-model="scale.accidentalPreference"
               />
-              <label for="accidentals-double" class="right-of-radio">Double 𝄫/𝄪</label>
+              <label for="accidentals-double">Double 𝄫/𝄪</label>
             </span>
             <span>
               <input
@@ -78,7 +78,7 @@ const scale = useScaleStore()
                 value="single"
                 v-model="scale.accidentalPreference"
               />
-              <label for="accidentals-single" class="right-of-radio">Single ♭♭/♯♯</label>
+              <label for="accidentals-single">Single ♭♭/♯♯</label>
             </span>
             <span>
               <input
@@ -87,7 +87,7 @@ const scale = useScaleStore()
                 value="ASCII"
                 v-model="scale.accidentalPreference"
               />
-              <label for="accidentals-single" class="right-of-radio">ASCII bb/##</label>
+              <label for="accidentals-single">ASCII bb/##</label>
             </span>
           </div>
         </div>

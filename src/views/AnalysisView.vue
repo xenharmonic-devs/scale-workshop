@@ -230,17 +230,17 @@ function highlight(y?: number, x?: number) {
         <label>Display intervals in matrix as</label>
         <span>
           <input type="radio" id="format-best" value="best" v-model="cellFormat" />
-          <label for="format-best" class="right-of-radio">Default</label>
+          <label for="format-best">Default</label>
         </span>
 
         <span>
           <input type="radio" id="format-cents" value="cents" v-model="cellFormat" />
-          <label for="format-cents" class="right-of-radio">Cents</label>
+          <label for="format-cents">Cents</label>
         </span>
 
         <span>
           <input type="radio" id="format-decimal" value="decimal" v-model="cellFormat" />
-          <label for="format-decimal" class="right-of-radio">Decimal ratio</label>
+          <label for="format-decimal">Decimal ratio</label>
         </span>
       </div>
     </div>
@@ -252,12 +252,12 @@ function highlight(y?: number, x?: number) {
         <label>Interval indexing</label>
         <span>
           <input type="radio" id="indexing-zero" value="0" v-model="intervalMatrixIndexingRadio" />
-          <label for="indexing-zero"> 0-indexing (default) </label>
+          <label for="indexing-zero">0-indexing (default)</label>
         </span>
 
         <span>
           <input type="radio" id="indexing-one" value="1" v-model="intervalMatrixIndexingRadio" />
-          <label for="indexing-one"> 1-indexing </label>
+          <label for="indexing-one">1-indexing</label>
         </span>
       </div>
       <div class="control">
@@ -276,7 +276,7 @@ function highlight(y?: number, x?: number) {
           type="checkbox"
           v-model="state.calculateConstantStructureViolations"
         />
-        <label for="calculate-violators"> Show constant structure violations</label>
+        <label for="calculate-violators">Show constant structure violations</label>
       </div>
       <div class="control">
         <label for="cs-margin">Constant structure margin in cents</label>
@@ -284,11 +284,11 @@ function highlight(y?: number, x?: number) {
       </div>
       <div class="control checkbox-container">
         <input id="calculate-variety" type="checkbox" v-model="state.calculateVariety" />
-        <label for="calculate-variety"> Show variety signature</label>
+        <label for="calculate-variety">Show variety signature</label>
       </div>
       <div class="control checkbox-container">
         <input id="calculate-brightness" type="checkbox" v-model="state.calculateBrightness" />
-        <label for="calculate-brightness"> Show mode brightness</label>
+        <label for="calculate-brightness">Show mode brightness</label>
       </div>
     </div>
     <div class="columns-container">
@@ -383,11 +383,11 @@ function highlight(y?: number, x?: number) {
             <label>Error model</label>
             <span>
               <input type="radio" id="error-rooted" value="rooted" v-model="errorModel" />
-              <label for="error-rooted" class="right-of-radio">Rooted</label>
+              <label for="error-rooted">Rooted</label>
             </span>
             <span>
               <input type="radio" id="error-free" value="free" v-model="errorModel" />
-              <label for="error-free" class="right-of-radio">Free</label>
+              <label for="error-free">Free</label>
             </span>
           </div>
         </div>

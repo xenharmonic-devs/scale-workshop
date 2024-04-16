@@ -87,7 +87,7 @@ defineExpose({ focus, clearPaletteInfo })
           v-model="scale.autoColors"
           @input="updateScale"
         />
-        <label for="colors-silver" class="right-of-radio">Silver</label>
+        <label for="colors-silver">Silver</label>
       </span>
 
       <span>
@@ -98,7 +98,7 @@ defineExpose({ focus, clearPaletteInfo })
           v-model="scale.autoColors"
           @input="updateScale"
         />
-        <label for="colors-cents" class="right-of-radio">Cents</label>
+        <label for="colors-cents">Cents</label>
       </span>
 
       <span>
@@ -109,7 +109,7 @@ defineExpose({ focus, clearPaletteInfo })
           v-model="scale.autoColors"
           @input="updateScale"
         />
-        <label for="colors-factors" class="right-of-radio">Factors</label>
+        <label for="colors-factors">Factors</label>
       </span>
     </div>
   </div>

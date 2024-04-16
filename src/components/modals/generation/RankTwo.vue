@@ -184,22 +184,22 @@ function generate(expand = true) {
             <label>Method</label>
             <span>
               <input type="radio" id="method-generator" value="generator" v-model="rank2.method" />
-              <label for="method-generator"> Generator </label>
+              <label for="method-generator">Generator</label>
             </span>
 
             <span>
               <input type="radio" id="method-vals" value="vals" v-model="rank2.method" />
-              <label for="method-vals"> Vals </label>
+              <label for="method-vals">Vals</label>
             </span>
 
             <span>
               <input type="radio" id="method-commas" value="commas" v-model="rank2.method" />
-              <label for="method-commas"> Comma list </label>
+              <label for="method-commas">Comma list</label>
             </span>
 
             <span>
               <input type="radio" id="method-circle" value="circle" v-model="rank2.method" />
-              <label for="method-circle"> Circle</label>
+              <label for="method-circle">Circle</label>
             </span>
           </div>
         </div>
@@ -385,22 +385,22 @@ function generate(expand = true) {
             <label>Generate key colors</label>
             <span>
               <input type="radio" id="color-none" value="none" v-model="rank2.colorMethod" />
-              <label for="color-none"> Off </label>
+              <label for="color-none">Off</label>
             </span>
             <span>
               <input type="radio" id="color-gaps" value="gaps" v-model="rank2.colorMethod" />
-              <label for="color-gaps"> Fill gaps (expand scale) </label>
+              <label for="color-gaps">Fill gaps (expand scale)</label>
             </span>
           </div>
           <div class="control radio-group" v-show="rank2.colorMethod !== 'none'">
             <label>Black keys are</label>
             <span>
               <input type="radio" id="sharp" value="sharp" v-model="rank2.colorAccidentals" />
-              <label for="sharp"> Sharp </label>
+              <label for="sharp">Sharp</label>
             </span>
             <span>
               <input type="radio" id="flat" value="flat" v-model="rank2.colorAccidentals" />
-              <label for="flat"> Flat </label>
+              <label for="flat">Flat</label>
             </span>
           </div>
         </div>
@@ -417,17 +417,17 @@ function generate(expand = true) {
           <div class="control radio-group">
             <span>
               <input type="radio" id="tempering-TE" value="TE" v-model="rank2.tempering" />
-              <label for="tempering-TE"> TE </label>
+              <label for="tempering-TE">TE</label>
             </span>
 
             <span>
               <input type="radio" id="tempering-POTE" value="POTE" v-model="rank2.tempering" />
-              <label for="tempering-POTE"> POTE </label>
+              <label for="tempering-POTE">POTE</label>
             </span>
 
             <span>
               <input type="radio" id="tempering-CTE" value="CTE" v-model="rank2.tempering" />
-              <label for="tempering-CTE"> CTE </label>
+              <label for="tempering-CTE">CTE</label>
             </span>
           </div>
 

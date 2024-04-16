@@ -50,17 +50,17 @@ function modify(expand = true) {
           <label>Overflow</label>
           <span>
             <input type="radio" id="overflow-keep" value="keep" v-model="modal.overflowType" />
-            <label for="overflow-keep"> Keep </label>
+            <label for="overflow-keep">Keep</label>
           </span>
 
           <span>
             <input type="radio" id="overflow-drop" value="drop" v-model="modal.overflowType" />
-            <label for="overflow-drop"> Drop </label>
+            <label for="overflow-drop">Drop</label>
           </span>
 
           <span>
             <input type="radio" id="overflow-wrap" value="wrap" v-model="modal.overflowType" />
-            <label for="overflow-wrap"> Wrap </label>
+            <label for="overflow-wrap">Wrap</label>
           </span>
         </div>
       </div>

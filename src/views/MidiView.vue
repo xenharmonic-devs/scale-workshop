@@ -184,19 +184,19 @@ onUnmounted(() => {
             <label>Color mapping</label>
             <span>
               <input type="radio" id="white-off" value="off" v-model="midi.whiteMode" />
-              <label for="white-off" class="right-of-radio">Chromatic</label>
+              <label for="white-off">Chromatic</label>
             </span>
             <span>
               <input type="radio" id="white-simple" value="simple" v-model="midi.whiteMode" />
-              <label for="white-simple" class="right-of-radio">White only</label>
+              <label for="white-simple">White only</label>
             </span>
             <span>
               <input type="radio" id="white-black" value="blackAverage" v-model="midi.whiteMode" />
-              <label for="white-black" class="right-of-radio">White w/ interpolation</label>
+              <label for="white-black">White w/ interpolation</label>
             </span>
             <span>
               <input type="radio" id="white-color" value="keyColors" v-model="midi.whiteMode" />
-              <label for="white-color" class="right-of-radio">White key to white color</label>
+              <label for="white-color">White key to white color</label>
             </span>
           </div>
         </div>

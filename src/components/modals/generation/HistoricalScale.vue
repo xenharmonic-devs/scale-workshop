@@ -186,7 +186,7 @@ function generate(expand = true) {
                 v-model="historical.method"
                 @input="historical.selectPreset(historical.selectedPreset)"
               />
-              <label for="method-simple"> Simple </label>
+              <label for="method-simple">Simple</label>
             </span>
 
             <span>
@@ -197,7 +197,7 @@ function generate(expand = true) {
                 v-model="historical.method"
                 @input="historical.down = 1"
               />
-              <label for="method-target"> Target </label>
+              <label for="method-target">Target</label>
             </span>
 
             <span>
@@ -208,7 +208,7 @@ function generate(expand = true) {
                 v-model="historical.method"
                 @input="historical.selectWellPreset(historical.selectedWellPreset)"
               />
-              <label for="method-well"> Well Temperament </label>
+              <label for="method-well">Well Temperament</label>
             </span>
           </div>
         </div>
@@ -243,11 +243,11 @@ function generate(expand = true) {
             <label>Format</label>
             <span>
               <input id="format-cents" type="radio" value="cents" v-model="historical.format" />
-              <label for="format-cents"> cents</label>
+              <label for="format-cents">cents</label>
             </span>
             <span>
               <input id="format-default" type="radio" value="default" v-model="historical.format" />
-              <label for="format-default"> default</label>
+              <label for="format-default">default</label>
             </span>
           </div>
           <div class="control">
@@ -337,11 +337,11 @@ function generate(expand = true) {
             <label>Format</label>
             <span>
               <input id="format-cents" type="radio" value="cents" v-model="historical.format" />
-              <label for="format-cents"> cents</label>
+              <label for="format-cents">cents</label>
             </span>
             <span>
               <input id="format-default" type="radio" value="default" v-model="historical.format" />
-              <label for="format-default"> default</label>
+              <label for="format-default">default</label>
             </span>
           </div>
         </div>
@@ -384,11 +384,11 @@ function generate(expand = true) {
             <label>Format</label>
             <span>
               <input id="format-cents" type="radio" value="cents" v-model="historical.format" />
-              <label for="format-cents"> cents</label>
+              <label for="format-cents">cents</label>
             </span>
             <span>
               <input id="format-default" type="radio" value="default" v-model="historical.format" />
-              <label for="format-default"> default</label>
+              <label for="format-default">default</label>
             </span>
           </div>
           <div class="control">

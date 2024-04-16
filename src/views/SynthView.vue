@@ -260,17 +260,17 @@ onUnmounted(() => {
                 value="oscillator"
                 v-model="audio.synthType"
               />
-              <label for="type-oscillator" class="right-of-radio">Oscillator</label>
+              <label for="type-oscillator">Oscillator</label>
             </span>
 
             <span>
               <input type="radio" id="type-unison" value="unison" v-model="audio.synthType" />
-              <label for="type-unison" class="right-of-radio">Unison</label>
+              <label for="type-unison">Unison</label>
             </span>
 
             <span>
               <input type="radio" id="type-aperiodic" value="aperiodic" v-model="audio.synthType" />
-              <label for="type-aperiodic" class="right-of-radio">Aperiodic</label>
+              <label for="type-aperiodic">Aperiodic</label>
             </span>
           </div>
           <template v-if="audio.synthType === 'unison'">
@@ -427,27 +427,27 @@ onUnmounted(() => {
                 value="isomorphic"
                 v-model="scale.keyboardMode"
               />
-              <label for="mode-isomorphic" class="right-of-radio">Isomorphic</label>
+              <label for="mode-isomorphic">Isomorphic</label>
             </span>
             <span>
               <input type="radio" id="mode-piano" value="piano" v-model="scale.keyboardMode" />
-              <label for="mode-piano" class="right-of-radio">Piano-style layers</label>
+              <label for="mode-piano">Piano-style layers</label>
             </span>
           </div>
           <template v-if="scale.keyboardMode === 'piano'">
             <div class="control radio-group">
               <span>
                 <input type="radio" id="mode-asdf" value="Asdf" v-model="scale.pianoMode" />
-                <label for="mode-asdf" class="right-of-radio">White on ASDF & black on QWERTY</label>
+                <label for="mode-asdf">White on ASDF & black on QWERTY</label>
               </span>
               <span>
                 <input type="radio" id="mode-qwe-zxc" value="QweZxc" v-model="scale.pianoMode" />
-                <label for="mode-qwe-zxc" class="right-of-radio">QWERTY & digits + ZXCV & ASDF separated by an equave</label
+                <label for="mode-qwe-zxc">QWERTY & digits + ZXCV & ASDF separated by an equave</label
                 >
               </span>
               <span>
                 <input type="radio" id="mode-zxc" value="Zxc" v-model="scale.pianoMode" />
-                <label for="mode-zxc" class="right-of-radio">ZXCV with split accidentals above</label>
+                <label for="mode-zxc">ZXCV with split accidentals above</label>
               </span>
             </div>
           </template>

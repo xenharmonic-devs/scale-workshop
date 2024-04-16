@@ -147,17 +147,17 @@ function edoClick(info: MosScaleInfo) {
         <div class="control radio-group">
           <span>
             <input type="radio" id="method-direct" value="direct" v-model="modal.method" />
-            <label for="method-direct"> Direct </label>
+            <label for="method-direct">Direct</label>
           </span>
 
           <span>
             <input type="radio" id="method-pyramid" value="pyramid" v-model="modal.method" />
-            <label for="method-pyramid"> Pyramid </label>
+            <label for="method-pyramid">Pyramid</label>
           </span>
 
           <span>
             <input type="radio" id="method-edo" value="edo" v-model="modal.method" />
-            <label for="method-edo"> EDO </label>
+            <label for="method-edo">EDO</label>
           </span>
         </div>
       </div>
@@ -215,45 +215,45 @@ function edoClick(info: MosScaleInfo) {
           <label>Generate key colors</label>
           <span>
             <input type="radio" id="color-none" value="none" v-model="modal.colorMethod" />
-            <label for="color-none"> Off </label>
+            <label for="color-none">Off</label>
           </span>
           <span>
             <input type="radio" id="color-parent" value="parent" v-model="modal.colorMethod" />
-            <label for="color-parent"> Parent MOS </label>
+            <label for="color-parent">Parent MOS</label>
           </span>
           <span>
             <input type="radio" id="color-daughter" value="daughter" v-model="modal.colorMethod" />
-            <label for="color-daughter"> Daughter MOS (expand scale) </label>
+            <label for="color-daughter">Daughter MOS (expand scale)</label>
           </span>
         </div>
         <div class="control radio-group" v-show="modal.colorMethod === 'parent'">
           <label>Black keys are</label>
           <span>
             <input type="radio" id="sharp" value="sharp" v-model="modal.parentColorAccidentals" />
-            <label for="sharp"> Sharp </label>
+            <label for="sharp">Sharp</label>
           </span>
           <span>
             <input type="radio" id="flat" value="flat" v-model="modal.parentColorAccidentals" />
-            <label for="flat"> Flat </label>
+            <label for="flat">Flat</label>
           </span>
         </div>
         <div class="control radio-group" v-show="modal.colorMethod === 'daughter'">
           <label>Accidentals to include</label>
           <span>
             <input type="radio" id="sharp" value="sharp" v-model="modal.daughterColorAccidentals" />
-            <label for="sharp"> Sharp </label>
+            <label for="sharp">Sharp</label>
           </span>
           <span>
             <input type="radio" id="flat" value="flat" v-model="modal.daughterColorAccidentals" />
-            <label for="flat"> Flat </label>
+            <label for="flat">Flat</label>
           </span>
           <span>
             <input type="radio" id="both" value="both" v-model="modal.daughterColorAccidentals" />
-            <label for="both"> Both </label>
+            <label for="both">Both</label>
           </span>
           <span>
             <input type="radio" id="all" value="all" v-model="modal.daughterColorAccidentals" />
-            <label for="all"> Full ET </label>
+            <label for="all">Full ET</label>
           </span>
         </div>
       </div>
