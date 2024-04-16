@@ -36,6 +36,16 @@ code {
   border-right: 1px solid var(--color-border);
   border-bottom: 1px solid var(--color-border);
 }
+label.right-of-checkbox{
+  margin-left: 0.1rem;
+  text-align: left;
+  vertical-align: baseline;
+}
+label.right-of-radio{
+  margin-left: 0.25rem;
+  text-align: left;
+  vertical-align: baseline;
+}
 
 /* UI elements */
 input[type='text'],
@@ -49,6 +59,10 @@ select {
   border-radius: 3px;
   width: 6rem;
   line-height: var(--base-line-height);
+}
+input[type='radio']
+ {
+  vertical-align: -0.05rem
 }
 optgroup {
   font-weight: bold;
@@ -138,13 +152,13 @@ ul.btn-group {
   flex-grow: 0.25 !important;
 }
 .control.checkbox-container {
-  flex-flow: unset;
+  flex-flow: unset;;
 }
 .control.checkbox-container label {
   font-weight: normal;
 }
 .control.radio-group {
-  gap: 0.15rem 1rem;
+  gap: 0rem 1rem;
 }
 .control.radio-group span label {
   font-weight: unset;

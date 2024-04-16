@@ -230,17 +230,17 @@ function highlight(y?: number, x?: number) {
         <label>Display intervals in matrix as</label>
         <span>
           <input type="radio" id="format-best" value="best" v-model="cellFormat" />
-          <label for="format-best"> Default </label>
+          <label for="format-best" class="right-of-radio">Default</label>
         </span>
 
         <span>
           <input type="radio" id="format-cents" value="cents" v-model="cellFormat" />
-          <label for="format-cents"> Cents </label>
+          <label for="format-cents" class="right-of-radio">Cents</label>
         </span>
 
         <span>
           <input type="radio" id="format-decimal" value="decimal" v-model="cellFormat" />
-          <label for="format-decimal"> Decimal ratio </label>
+          <label for="format-decimal" class="right-of-radio">Decimal ratio</label>
         </span>
       </div>
     </div>
@@ -383,11 +383,11 @@ function highlight(y?: number, x?: number) {
             <label>Error model</label>
             <span>
               <input type="radio" id="error-rooted" value="rooted" v-model="errorModel" />
-              <label for="error-rooted"> Rooted </label>
+              <label for="error-rooted" class="right-of-radio">Rooted</label>
             </span>
             <span>
               <input type="radio" id="error-free" value="free" v-model="errorModel" />
-              <label for="error-free"> Free </label>
+              <label for="error-free" class="right-of-radio">Free</label>
             </span>
           </div>
         </div>

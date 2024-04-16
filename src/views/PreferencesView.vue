@@ -31,14 +31,14 @@ const scale = useScaleStore()
         <div class="control-group">
           <div class="control checkbox-container">
             <input id="has-left-of-z" type="checkbox" v-model="scale.hasLeftOfZ" />
-            <label for="has-left-of-z"> There's a key between left Shift and 'Z'</label>
+            <label for="has-left-of-z" class="right-of-checkbox">There's a key between left Shift and 'Z'</label>
           </div>
         </div>
         <h2>Advanced</h2>
         <div class="control-group">
           <div class="control checkbox-container">
             <input id="virtual-qwerty" type="checkbox" v-model="state.showVirtualQwerty" />
-            <label for="virtual-qwerty"> Virtual QWERTY in top menu</label>
+            <label for="virtual-qwerty" class="right-of-checkbox">Virtual QWERTY in top menu</label>
           </div>
           <div class="control">
             <label for="gas">Computational budget (gas)</label>
@@ -53,11 +53,11 @@ const scale = useScaleStore()
           <div class="control radio-group">
             <span>
               <input type="radio" id="scheme-light" value="light" v-model="state.colorScheme" />
-              <label for="scheme-light"> Light </label>
+              <label for="scheme-light" class="right-of-radio">Light </label>
             </span>
             <span>
               <input type="radio" id="scheme-dark" value="dark" v-model="state.colorScheme" />
-              <label for="scheme-dark"> Dark </label>
+              <label for="scheme-dark" class="right-of-radio">Dark </label>
             </span>
           </div>
           <h3>Accidentals</h3>
@@ -69,7 +69,7 @@ const scale = useScaleStore()
                 value="double"
                 v-model="scale.accidentalPreference"
               />
-              <label for="accidentals-double"> Double 𝄫/𝄪</label>
+              <label for="accidentals-double" class="right-of-radio">Double 𝄫/𝄪</label>
             </span>
             <span>
               <input
@@ -78,7 +78,7 @@ const scale = useScaleStore()
                 value="single"
                 v-model="scale.accidentalPreference"
               />
-              <label for="accidentals-single"> Single ♭♭/♯♯</label>
+              <label for="accidentals-single" class="right-of-radio">Single ♭♭/♯♯</label>
             </span>
             <span>
               <input
@@ -87,7 +87,7 @@ const scale = useScaleStore()
                 value="ASCII"
                 v-model="scale.accidentalPreference"
               />
-              <label for="accidentals-single"> ASCII bb/##</label>
+              <label for="accidentals-single" class="right-of-radio">ASCII bb/##</label>
             </span>
           </div>
         </div>
