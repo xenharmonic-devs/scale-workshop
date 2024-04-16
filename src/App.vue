@@ -13,7 +13,7 @@ import { useAudioStore } from '@/stores/audio'
 import { useStateStore } from './stores/state'
 import { useMidiStore } from './stores/midi'
 import { useScaleStore } from './stores/scale'
-import { clamp } from 'xen-dev-utils'
+import { clamp, mmod } from 'xen-dev-utils'
 import { parseScaleWorkshop2Line, setNumberOfComponents } from 'sonic-weave'
 
 // === Pinia-managed state ===
@@ -71,14 +71,28 @@ function sendNoteOn(frequency: number, rawAttack: number) {
   return off
 }
 
-function midiNoteOn(index: number, rawAttack?: number) {
+function midiNoteOn(index: number, rawAttack?: number, channel?: number) {
+  // in multichannel-to-equave mode calculate an offset based on the incoming channel
+  if (midi.multichannelToEquave && channel !== undefined) {
+    let offset =
+      mmod(
+        channel - midi.multichannelCenter + midi.multichannelEquavesDown,
+        midi.multichannelNumEquaves
+      ) - midi.multichannelEquavesDown
+    offset = offset * scale.scale.size
+    index = index + offset
+  }
+
   if (rawAttack === undefined) {
     rawAttack = 80
   }
-  let frequency = scale.frequencies[index]
+
   if (!midi.velocityOn) {
     rawAttack = 80
   }
+
+  // since index can go out of range in multichannel-to-equave mode, use getFrequency()
+  let frequency = scale.getFrequency(index)
 
   // Store state to ensure consistent note off.
   const info = midiKeyInfo(index)
