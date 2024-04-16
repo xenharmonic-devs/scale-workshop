@@ -179,11 +179,11 @@ onUnmounted(() => {
           <div class="control checkbox-group">
             <div>
               <input type="checkbox" id="midi-velocity" v-model="midi.velocityOn" />
-              <label for="midi-velocity"> Use velocity </label>
+              <label for="midi-velocity">Use velocity</label>
             </div>
             <div>
               <input type="checkbox" id="multichannel" v-model="midi.multichannelToEquave" />
-              <label for="multichannel"> Multichannel-to-equave </label>
+              <label for="multichannel">Multichannel-to-equave</label>
             </div>
           </div>
           <label>Settings for multichannel-to-equave mode</label>
