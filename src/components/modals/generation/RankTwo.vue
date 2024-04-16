@@ -8,7 +8,7 @@ import { expandCode, gapKeyColors, parseCents, setAndReportValidity } from '@/ut
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { useRank2Store } from '@/stores/tempering'
 import { useStateStore } from '@/stores/state'
-import { Interval, timeMonzoAs } from 'sonic-weave'
+import { Interval, intervalValueAs } from 'sonic-weave'
 import { useScaleStore } from '@/stores/scale'
 
 const state = useStateStore()
@@ -84,7 +84,7 @@ watch(
 function flipGenerator() {
   const g = rank2.generator
   const value = g.value.inverse().reduce(rank2.period.value)
-  rank2.generator = new Interval(value, g.domain, timeMonzoAs(value, g.node), g)
+  rank2.generator = new Interval(value, g.domain, 0, intervalValueAs(value, g.node), g)
   rank2.generatorString = rank2.generator.toString()
 }
 

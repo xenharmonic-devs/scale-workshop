@@ -39,7 +39,7 @@ function modify(expand = true) {
     let postfix = `\\${modal.largeDivisions}`
     const equave = scale.relativeIntervals[scale.relativeIntervals.length - 1]
     if (equave.compare(OCTAVE)) {
-      postfix += `<${linear(equave).toString()}>`
+      postfix += `ed ${linear(equave).toString()}`
     }
     scale.sourceText = degrees.map((d) => `${d}${postfix}`).join('\n')
   }

@@ -34,7 +34,7 @@ function generate(shell = true, expand = true) {
     }
     let postfix = `\\${modal.largeDivisions}`
     if (modal.equave.compare(OCTAVE)) {
-      postfix += `<${linear(modal.equave).toString()}>`
+      postfix += `ed ${linear(modal.equave).toString()}`
     }
     for (const [degree, label] of data) {
       source += `${degree}${postfix} "${label}"\n`

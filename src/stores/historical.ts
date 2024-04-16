@@ -149,7 +149,7 @@ export const useHistoricalStore = defineStore('historical', () => {
     const monzo = generator.value.value
     const g = monzo.valueOf()
     let multiGenExponent = 1
-    if (!monzo.cents) {
+    if (monzo instanceof TimeMonzo) {
       multiGenExponent = monzo.primeExponents.reduce(
         (denom, component) => lcm(component.d, denom),
         1

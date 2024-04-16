@@ -1,4 +1,4 @@
-import { Interval, TimeMonzo } from 'sonic-weave'
+import { Interval, TimeMonzo, TimeReal } from 'sonic-weave'
 import { circleDistance, mmod, valueToCents } from 'xen-dev-utils'
 
 const EPSILON = 1e-6
@@ -446,7 +446,7 @@ export function varietySignature(matrix: Interval[][]) {
     return result
   }
   for (let i = 0; i < matrix[0].length; ++i) {
-    const variants: TimeMonzo[] = [matrix[0][i].value]
+    const variants: (TimeMonzo | TimeReal)[] = [matrix[0][i].value]
     search: for (let j = 1; j < matrix.length; ++j) {
       const monzo = matrix[j][i].value
       for (const variant of variants) {

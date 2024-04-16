@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useJiLatticeStore } from '@/stores/ji-lattice'
 import { spanLattice } from 'ji-lattice'
-import { type Interval } from 'sonic-weave'
+import { TimeMonzo, type Interval } from 'sonic-weave'
 import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { dot } from 'xen-dev-utils'
 
@@ -23,9 +23,13 @@ const monzos = computed(() => {
   const result: number[][] = []
   for (const interval of props.relativeIntervals) {
     const value = interval.value.clone()
-    value.numberOfComponents = numComponents
-    const monzo = interval.value.primeExponents.map((pe) => pe.valueOf())
-    result.push(monzo)
+    if (value instanceof TimeMonzo) {
+      value.numberOfComponents = numComponents
+      const monzo = value.primeExponents.map((pe) => pe.valueOf())
+      result.push(monzo)
+    } else {
+      result.push(Array(numComponents).fill(0))
+    }
   }
   return result
 })

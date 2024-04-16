@@ -8,7 +8,7 @@ import {
 } from '@/utils'
 import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
-import { mmod, mtof } from 'xen-dev-utils'
+import { Fraction, mmod, mtof } from 'xen-dev-utils'
 import {
   getSourceVisitor,
   parseAST,
@@ -301,7 +301,10 @@ export const useScaleStore = defineStore('scale', () => {
   function getGlobalVisitor() {
     // Inject global variables
     const _ = Interval.fromInteger(baseMidiNote.value)
-    const baseFreq = new Interval(TimeMonzo.fromArbitraryFrequency(baseFrequency.value), 'linear')
+    const baseFreq = new Interval(
+      TimeMonzo.fromFractionalFrequency(new Fraction(baseFrequency.value).simplify(1e-8)),
+      'linear'
+    )
     const extraBuiltins: Record<string, SonicWeaveValue> = {
       APP_TITLE,
       scaleName: name.value,
