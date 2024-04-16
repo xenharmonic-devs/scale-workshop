@@ -50,9 +50,8 @@ select {
   width: 6rem;
   line-height: var(--base-line-height);
 }
-input[type='radio']
- {
-  vertical-align: -0.05rem
+input[type='radio'] {
+  vertical-align: -0.05rem;
 }
 optgroup {
   font-weight: bold;
@@ -142,7 +141,7 @@ ul.btn-group {
   flex-grow: 0.25 !important;
 }
 .control.checkbox-container {
-  flex-flow: unset;;
+  flex-flow: unset;
 }
 .control.checkbox-container label {
   font-weight: normal;

@@ -31,7 +31,9 @@ const scale = useScaleStore()
         <div class="control-group">
           <div class="control checkbox-container">
             <input id="has-left-of-z" type="checkbox" v-model="scale.hasLeftOfZ" />
-            <label for="has-left-of-z" class="right-of-checkbox">There's a key between left Shift and 'Z'</label>
+            <label for="has-left-of-z" class="right-of-checkbox"
+              >There's a key between left Shift and 'Z'</label
+            >
           </div>
         </div>
         <h2>Advanced</h2>
