@@ -141,7 +141,7 @@
   },
   "werckmeisteriii": {
     "name": "Werckmeister III (1691)",
-    "source": "701.955 white 'C'\n701.955 white 'G'\n701.955 - 5.865 white 'D'\n701.955 white 'A'\n701.955 white 'E'\n701.955 white 'B'\n701.955 black 'F♯'\n701.955 black 'C♯'\n701.955 black 'G♯'\n701.955 - 5.865 black 'D♯'\n701.955 - 5.865 black 'A♯'\nstack()\n\n1200. white 'F'\nreduce()\nsort()\n",
+    "source": "{\n  const pythComma = aa1 - M2\n  const flatFif = P5 - pythComma / 4\n  P5 white 'C'\n  P5 white 'G'\n  flatFif white 'D'\n  P5 white 'A'\n  P5 white 'E'\n  P5 white 'B'\n  P5 black 'F♯'\n  P5 black 'C♯'\n  P5 black 'G♯'\n  flatFif black 'D♯'\n  flatFif black 'A♯'\n  stack()\n  P8 white 'F'\n  reduce()\n  sort()\n  i => cents(i, 3)\n}\n",
     "categories": ["traditional"],
     "baseMidiNote": 65,
     "baseFrequency": 349
@@ -196,7 +196,7 @@
   },
   "11machine6": {
     "name": "11edo machine[6]",
-    "source": "rank2(9/8 white, 5, 0, 2/1 gray)\n11@2.9.7.11\n",
+    "source": "cps([1, 9, 7, 11] white, 2, 2/1 gray)\n11@2.9.7.11\n",
     "categories": ["MOS", "equal temperament"]
   },
   "13glacial7": {
