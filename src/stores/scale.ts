@@ -315,7 +315,7 @@ export const useScaleStore = defineStore('scale', () => {
       warn
     }
     const visitor = getSourceVisitor(true, extraBuiltins)
-    visitor.rootContext.gas = gas.value
+    visitor.rootContext!.gas = gas.value
 
     // Declare base nominal and unison frequency
     const prefixAst = parseAST(sourcePrefix.value)
@@ -329,8 +329,8 @@ export const useScaleStore = defineStore('scale', () => {
   // Methods
   function getVisitors() {
     const globalVisitor = getGlobalVisitor()
-    const visitor = new StatementVisitor(globalVisitor.rootContext, globalVisitor)
-    const defaults = visitor.rootContext.clone()
+    const visitor = new StatementVisitor(globalVisitor)
+    const defaults = visitor.rootContext!.clone()
     defaults.gas = gas.value
 
     const ast = parseAST(sourceText.value)
@@ -352,7 +352,7 @@ export const useScaleStore = defineStore('scale', () => {
       warning.value = ''
       latticeIntervals.value = []
       const globalVisitor = getGlobalVisitor()
-      const visitor = new StatementVisitor(globalVisitor.rootContext, globalVisitor)
+      const visitor = new StatementVisitor(globalVisitor)
       const ast = parseAST(sourceText.value)
       let userDeclaredPitch = false
       for (const statement of ast.body) {
@@ -374,8 +374,8 @@ export const useScaleStore = defineStore('scale', () => {
       }
       const ratios = relativeIntervals.value.map((i) => i.value.valueOf())
       let visitorBaseFrequency = mtof(baseMidiNote.value)
-      if (visitor.rootContext.unisonFrequency) {
-        visitorBaseFrequency = visitor.rootContext.unisonFrequency.valueOf()
+      if (visitor.rootContext!.unisonFrequency) {
+        visitorBaseFrequency = visitor.rootContext!.unisonFrequency.valueOf()
       }
       if (ratios.length) {
         const name = str.bind(ev)
