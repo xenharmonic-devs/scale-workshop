@@ -123,11 +123,11 @@ watch(etPreset, (newValue) => {
             <label>Lattice type</label>
             <span>
               <input type="radio" id="ji" value="ji" v-model="state.latticeType" />
-              <label for="ji"> Just intonation </label>
+              <label for="ji">Just intonation</label>
             </span>
             <span>
               <input type="radio" id="et" value="et" v-model="state.latticeType" />
-              <label for="et"> Equal temperament </label>
+              <label for="et">Equal temperament</label>
             </span>
           </div>
           <template v-if="state.latticeType === 'ji'">
@@ -162,15 +162,15 @@ watch(etPreset, (newValue) => {
             </div>
             <div class="control checkbox-container">
               <input type="checkbox" id="show-labels" v-model="jiLattice.showLabels" />
-              <label for="show-labels"> Show labels</label>
+              <label for="show-labels">Show labels</label>
             </div>
             <div class="control checkbox-container">
               <input type="checkbox" id="draw-arrows" v-model="jiLattice.drawArrows" />
-              <label for="draw-arrows"> Indicate order w/ arrows</label>
+              <label for="draw-arrows">Indicate order w/ arrows</label>
             </div>
             <div class="control checkbox-container">
               <input type="checkbox" id="gray-extras" v-model="jiLattice.grayExtras" />
-              <label for="gray-extras"> Gray extra edges</label>
+              <label for="gray-extras">Gray extra edges</label>
             </div>
             <div class="control">
               <label for="extra-edges">Extra edges</label>
@@ -251,19 +251,19 @@ watch(etPreset, (newValue) => {
             </div>
             <div class="control checkbox-container">
               <input type="checkbox" id="gridlines-1" v-model="grid.gridlines1" />
-              <label for="gridlines-1"> Gridlines 1</label>
+              <label for="gridlines-1">Gridlines 1</label>
             </div>
             <div class="control checkbox-container">
               <input type="checkbox" id="gridlines-2" v-model="grid.gridlines2" />
-              <label for="gridlines-2"> Gridlines 2</label>
+              <label for="gridlines-2">Gridlines 2</label>
             </div>
             <div class="control checkbox-container">
               <input type="checkbox" id="diagonals-1" v-model="grid.diagonals1" />
-              <label for="diagonals-1"> Diagonals 1</label>
+              <label for="diagonals-1">Diagonals 1</label>
             </div>
             <div class="control checkbox-container">
               <input type="checkbox" id="diagonals-2" v-model="grid.diagonals2" />
-              <label for="diagonals-2"> Diagonals 2</label>
+              <label for="diagonals-2">Diagonals 2</label>
             </div>
             <div class="control">
               <label for="size">Text size</label>
@@ -275,7 +275,7 @@ watch(etPreset, (newValue) => {
             </div>
             <div class="control checkbox-container">
               <input type="checkbox" id="show-labels" v-model="grid.showLabels" />
-              <label for="show-labels"> Show labels</label>
+              <label for="show-labels">Show labels</label>
             </div>
             <div class="control">
               <label for="view-scale">View scale</label>

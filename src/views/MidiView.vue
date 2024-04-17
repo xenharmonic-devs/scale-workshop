@@ -179,11 +179,11 @@ onUnmounted(() => {
           <div class="control checkbox-group">
             <div>
               <input type="checkbox" id="midi-velocity" v-model="midi.velocityOn" />
-              <label for="midi-velocity"> Use velocity </label>
+              <label for="midi-velocity">Use velocity</label>
             </div>
             <div>
               <input type="checkbox" id="multichannel" v-model="midi.multichannelToEquave" />
-              <label for="multichannel"> Multichannel-to-equave </label>
+              <label for="multichannel">Multichannel-to-equave</label>
             </div>
           </div>
           <label>Settings for multichannel-to-equave mode</label>
@@ -226,19 +226,19 @@ onUnmounted(() => {
             <label>Color mapping</label>
             <span>
               <input type="radio" id="white-off" value="off" v-model="midi.whiteMode" />
-              <label for="white-off"> Chromatic </label>
+              <label for="white-off">Chromatic</label>
             </span>
             <span>
               <input type="radio" id="white-simple" value="simple" v-model="midi.whiteMode" />
-              <label for="white-simple"> White only </label>
+              <label for="white-simple">White only</label>
             </span>
             <span>
               <input type="radio" id="white-black" value="blackAverage" v-model="midi.whiteMode" />
-              <label for="white-black"> White w/ interpolation </label>
+              <label for="white-black">White w/ interpolation</label>
             </span>
             <span>
               <input type="radio" id="white-color" value="keyColors" v-model="midi.whiteMode" />
-              <label for="white-color"> White key to white color </label>
+              <label for="white-color">White key to white color</label>
             </span>
           </div>
         </div>
@@ -331,6 +331,13 @@ div.channels-wrapper span {
 div.checkbox-group {
   flex-flow: unset;
   gap: 0.15rem 1rem;
+}
+
+div.checkbox-group label{
+  font-weight: normal;
+  margin-left: 0.35rem;
+  text-align: left;
+  vertical-align: baseline;
 }
 
 div.multichannel-input-container {

@@ -50,6 +50,9 @@ select {
   width: 6rem;
   line-height: var(--base-line-height);
 }
+input[type='radio'] {
+  vertical-align: -0.05rem;
+}
 optgroup {
   font-weight: bold;
 }
@@ -142,12 +145,18 @@ ul.btn-group {
 }
 .control.checkbox-container label {
   font-weight: normal;
+  margin-left: 0.2rem;
+  text-align: left;
+  vertical-align: baseline;
 }
 .control.radio-group {
-  gap: 0.15rem 1rem;
+  gap: 0rem 1rem;
 }
 .control.radio-group span label {
   font-weight: unset;
+  margin-left: 0.35rem;
+  text-align: left;
+  vertical-align: baseline;
 }
 
 /* Responding to screen size */

@@ -109,17 +109,17 @@ function generate(expand = true) {
               value="generators"
               v-model="lattice.method"
             />
-            <label for="method-generators"> Generators </label>
+            <label for="method-generators">Generators</label>
           </span>
 
           <span>
             <input type="radio" id="method-vals" value="vals" v-model="lattice.method" />
-            <label for="method-vals"> Vals </label>
+            <label for="method-vals">Vals</label>
           </span>
 
           <span>
             <input type="radio" id="method-commas" value="commas" v-model="lattice.method" />
-            <label for="method-commas"> Comma list </label>
+            <label for="method-commas">Comma list</label>
           </span>
         </div>
         <div class="control-group" v-show="lattice.method === 'generators'">
@@ -201,17 +201,17 @@ function generate(expand = true) {
             <div class="control radio-group">
               <span>
                 <input type="radio" id="tempering-TE" value="TE" v-model="lattice.tempering" />
-                <label for="tempering-TE"> TE </label>
+                <label for="tempering-TE">TE</label>
               </span>
 
               <span>
                 <input type="radio" id="tempering-POTE" value="POTE" v-model="lattice.tempering" />
-                <label for="tempering-POTE"> POTE </label>
+                <label for="tempering-POTE">POTE</label>
               </span>
 
               <span>
                 <input type="radio" id="tempering-CTE" value="CTE" v-model="lattice.tempering" />
-                <label for="tempering-CTE"> CTE </label>
+                <label for="tempering-CTE">CTE</label>
               </span>
             </div>
 

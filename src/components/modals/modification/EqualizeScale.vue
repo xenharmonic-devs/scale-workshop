@@ -73,11 +73,11 @@ function modify(expand = true) {
           <label>Error model</label>
           <span>
             <input type="radio" id="error-rooted" value="rooted" v-model="modal.errorModel" />
-            <label for="error-rooted"> Rooted </label>
+            <label for="error-rooted">Rooted</label>
           </span>
           <span>
             <input type="radio" id="error-free" value="free" v-model="modal.errorModel" />
-            <label for="error-free"> Free </label>
+            <label for="error-free">Free</label>
           </span>
         </div>
         <p>Error: {{ equalizedScaleData.error.toFixed(5) }} c</p>
