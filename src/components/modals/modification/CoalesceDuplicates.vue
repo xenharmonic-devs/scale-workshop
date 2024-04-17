@@ -10,7 +10,7 @@ const modal = useModalStore()
 const scale = useScaleStore()
 
 function modify(expand = true) {
-  scale.sourceText += `\ncoalesce(${centString(modal.tolerance)}, '${modal.coalescingAction}')`
+  scale.sourceText += `\ncoalesce(${centString(modal.tolerance)}, '${modal.coalescingAction}', ${modal.preserveBoundary})`
   if (expand) {
     const { visitor, defaults } = scale.getVisitors()
     scale.sourceText = visitor.expand(defaults)
@@ -92,6 +92,10 @@ function modify(expand = true) {
             />
             <label for="action-geoavg">Geometric</label>
           </span>
+        </div>
+        <div class="control checkbox-container">
+          <input type="checkbox" id="preserve-boundary" v-model="modal.preserveBoundary" />
+          <label for="preserve-boundary">Preserve small intervals near unison</label>
         </div>
       </div>
     </template>

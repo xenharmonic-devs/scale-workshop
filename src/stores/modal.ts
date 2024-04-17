@@ -449,6 +449,7 @@ export const useModalStore = defineStore('modal', () => {
   const coalescingAction = ref<'avg' | 'havg' | 'geoavg' | 'lowest' | 'highest' | 'simplest'>(
     'simplest'
   )
+  const preserveBoundary = ref(false)
 
   // Concordance shell
   const mediumInteger = ref(32)
@@ -627,6 +628,7 @@ export const useModalStore = defineStore('modal', () => {
     // Coalesce
     tolerance,
     coalescingAction,
+    preserveBoundary,
 
     // Expand
     simplify,

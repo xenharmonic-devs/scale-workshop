@@ -61,8 +61,8 @@ export function splitText(text: string) {
 
 export function expandCode(source: string) {
   const globalVisitor = getSourceVisitor()
-  const defaults = globalVisitor.rootContext.clone()
-  const visitor = new StatementVisitor(globalVisitor.rootContext, globalVisitor)
+  const defaults = globalVisitor.rootContext!.clone()
+  const visitor = new StatementVisitor(globalVisitor)
   const ast = parseAST(source)
   for (const statement of ast.body) {
     const interupt = visitor.visit(statement)
