@@ -333,7 +333,7 @@ div.checkbox-group {
   gap: 0.15rem 1rem;
 }
 
-div.checkbox-group label{
+div.checkbox-group label {
   font-weight: normal;
   margin-left: 0.35rem;
   text-align: left;
