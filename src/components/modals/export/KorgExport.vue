@@ -10,8 +10,6 @@ import type { Scale } from '@/scale'
 const props = defineProps<{
   newline: string
   scaleName: string
-  baseMidiNote: number
-  baseFrequency: number
   midiOctaveOffset: number
   relativeIntervals: Interval[]
   labels: string[]
@@ -50,9 +48,7 @@ async function doExport() {
     scale: props.scale,
     relativeIntervals: props.relativeIntervals,
     labels: props.labels,
-    baseFrequency: props.baseFrequency,
     filename: sanitizeFilename(props.scaleName),
-    baseMidiNote: props.baseMidiNote,
     midiOctaveOffset: props.midiOctaveOffset
   }
 

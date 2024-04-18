@@ -19,7 +19,7 @@ export default class AbletonAsclExporter extends BaseExporter {
     const newline = this.params.newline
     const intervals = this.params.relativeIntervals
     const labels = this.params.labels
-    const referenceFrequency = this.params.baseFrequency.toFixed(8)
+    const referenceFrequency = this.params.scale.baseFrequency.toFixed(8)
     // assemble the .ascl file contents
     let file = '! ' + this.params.filename + '.ascl' + newline
     file += '! Created using ' + this.appTitle + newline
@@ -59,7 +59,7 @@ export default class AbletonAsclExporter extends BaseExporter {
     }
 
     // It's unclear what "octave number" means in the spec
-    const octave = Math.floor(ftom(this.params.baseFrequency)[0] / 12) - 1
+    const octave = Math.floor(ftom(this.params.scale.baseFrequency)[0] / 12) - 1
 
     file += '!' + newline
     file += '! @ABL NOTE_NAMES ' + names.join(' ') + newline

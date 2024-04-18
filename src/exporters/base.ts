@@ -7,8 +7,6 @@ export type ExporterParams = {
   newline: string
   filename: string
   relativeIntervals: Interval[]
-  baseFrequency: number
-  baseMidiNote: number
   midiOctaveOffset: number
   scale: Scale
   labels: string[]
