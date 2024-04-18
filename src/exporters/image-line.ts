@@ -20,7 +20,7 @@ class ImageLineExporter extends BaseExporter {
   getFileContents(range: number) {
     const scale = this.params.scale
 
-    const baseFreqOffset = Math.log2(this.params.baseFrequency / 440) // in number of octaves
+    const baseFreqOffset = Math.log2(this.params.scale.baseFrequency / 440) // in number of octaves
 
     // construct point data
     const points = new ArrayBuffer(121 * 24)

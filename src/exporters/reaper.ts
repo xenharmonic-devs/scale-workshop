@@ -10,7 +10,7 @@ export default class ReaperExporter extends BaseExporter {
     const digits = ReaperExporter.fractionDigits
     const scale = this.params.scale
     const labels = this.params.labels
-    const baseFrequency = this.params.baseFrequency
+    const baseFrequency = scale.baseFrequency
     const format = this.params.format
     const basePeriod = this.params.basePeriod || 0
     const baseDegree = this.params.baseDegree || 0
@@ -27,7 +27,7 @@ export default class ReaperExporter extends BaseExporter {
     for (let i = ReaperExporter.tuningMaxSize - 1; i >= 0; i--) {
       file += i.toString() + ' '
 
-      let index = i - this.params.baseMidiNote
+      let index = i - scale.baseMidiNote
       const period = basePeriod + Math.floor(index / scale.size)
       if (modBySize) {
         index = mmod(index, scale.size)

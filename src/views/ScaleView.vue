@@ -50,8 +50,8 @@ onMounted(() => {
           :heldNotes="state.heldNotes"
           :frequencies="scale.frequencies"
           :centss="scale.centss"
-          :baseFrequency="scale.baseFrequency"
-          :baseMidiNote="scale.baseMidiNote"
+          :baseFrequency="scale.scale.baseFrequency"
+          :baseMidiNote="scale.scale.baseMidiNote"
           :colors="scale.colors"
           :labels="scale.labels"
         />

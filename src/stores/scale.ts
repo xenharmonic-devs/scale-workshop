@@ -64,10 +64,17 @@ export const useScaleStore = defineStore('scale', () => {
   const gas = ref(parseInt(localStorage.getItem('gas') ?? '10000', 10))
 
   const name = ref('')
+  // For the v-model. Consider stores.scale.scale.baseMidiNote the source of truth.
   const baseMidiNote = ref(60)
+
+  // The concept of base frequency is a little confusing so here's an explanation:
+  // The user can either set the base frequency or have it be automatically calculated.
+  // baseFrequencyDisplay reflects the initial value passed to the SonicWeave runtime.
+  // However the runtime may assign a different unison frequency and that's what ends up in scale.value.baseFrequency.
+  // Threrefore stores.scale.scale.baseFrequency is the source of truth, while stores.scale.baseFrequencyDisplay is the v-model.
   const userBaseFrequency = ref(261.63)
   const autoFrequency = ref(true)
-  const baseFrequency = computed({
+  const baseFrequencyDisplay = computed({
     get() {
       return autoFrequency.value ? mtof(baseMidiNote.value) : userBaseFrequency.value
     },
@@ -75,11 +82,12 @@ export const useScaleStore = defineStore('scale', () => {
       userBaseFrequency.value = value
     }
   })
+  // XXX: baseFrequencyDisplay is merely used for convenience here. This is the last time there's a direct connection.
+  const scale = ref(new Scale(TET12, baseFrequencyDisplay.value, baseMidiNote.value))
   const autoColors = ref<'silver' | 'cents' | 'factors'>('silver')
   const sourceText = ref('')
   const relativeIntervals = ref(INTERVALS_12TET)
   const latticeIntervals = ref(INTERVALS_12TET)
-  const scale = ref(new Scale(TET12, baseFrequency.value, baseMidiNote.value))
   const colors = ref(defaultColors(baseMidiNote.value))
   const labels = ref(defaultLabels(baseMidiNote.value, accidentalPreference.value))
   const error = ref('')
@@ -302,7 +310,7 @@ export const useScaleStore = defineStore('scale', () => {
     // Inject global variables
     const _ = Interval.fromInteger(baseMidiNote.value)
     const baseFreq = new Interval(
-      TimeMonzo.fromFractionalFrequency(new Fraction(baseFrequency.value).simplify(1e-8)),
+      TimeMonzo.fromFractionalFrequency(new Fraction(baseFrequencyDisplay.value).simplify(1e-8)),
       'linear'
     )
     const extraBuiltins: Record<string, SonicWeaveValue> = {
@@ -433,7 +441,7 @@ export const useScaleStore = defineStore('scale', () => {
     userBaseFrequency,
     autoFrequency,
     autoColors,
-    baseFrequency,
+    baseFrequencyDisplay,
     sourcePrefix,
     sourceText,
     scale,

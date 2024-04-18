@@ -78,8 +78,6 @@ export function getTestData(appTitle: string) {
     scale,
     appTitle,
     description: 'A scale for testing if the exporter works',
-    baseMidiNote: 69,
-    baseFrequency: 440,
     midiOctaveOffset: 0,
     sourceText: '100.\nC5_5\n4\\5\n5/3\n1,3591409142295225r\n3486784401/3276800000\n2/1',
     labels: ['100.', 'C5_5', '4\\5', '5/3', '1,3591409142295225r', '3486784401/3276800000', '2/1'],

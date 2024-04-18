@@ -64,7 +64,7 @@ defineExpose({ focus, clearPaletteInfo })
         id="base-frequency"
         type="number"
         step="any"
-        v-model="scale.baseFrequency"
+        v-model="scale.baseFrequencyDisplay"
         :disabled="scale.autoFrequency"
         @input="updateScale"
       />

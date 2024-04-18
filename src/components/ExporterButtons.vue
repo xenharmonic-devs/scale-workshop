@@ -46,8 +46,6 @@ function doExport(exporter: ExporterKey) {
     scaleUrl: window.location.href,
     filename: sanitizeFilename(scale.name),
     relativeIntervals: scale.relativeIntervals,
-    baseFrequency: scale.baseFrequency,
-    baseMidiNote: scale.baseMidiNote,
     scale: scale.scale,
     labels: scale.labels,
     midiOctaveOffset: -1,
@@ -68,8 +66,6 @@ function doExport(exporter: ExporterKey) {
       @cancel="showKorgExportModal = false"
       :newline="state.newline"
       :scaleName="scale.name"
-      :baseMidiNote="scale.baseMidiNote"
-      :baseFrequency="scale.baseFrequency"
       :relativeIntervals="scale.relativeIntervals"
       :midiOctaveOffset="-1"
       :scale="scale.scale"
@@ -82,8 +78,6 @@ function doExport(exporter: ExporterKey) {
       @cancel="showMtsSysexExportModal = false"
       :newline="state.newline"
       :scaleName="scale.name"
-      :baseMidiNote="scale.baseMidiNote"
-      :baseFrequency="scale.baseFrequency"
       :relativeIntervals="scale.relativeIntervals"
       :midiOctaveOffset="-1"
       :scale="scale.scale"
@@ -96,8 +90,6 @@ function doExport(exporter: ExporterKey) {
       @cancel="showReaperExportModal = false"
       :newline="state.newline"
       :scaleName="scale.name"
-      :baseMidiNote="scale.baseMidiNote"
-      :baseFrequency="scale.baseFrequency"
       :relativeIntervals="scale.relativeIntervals"
       :midiOctaveOffset="-1"
       :scale="scale.scale"

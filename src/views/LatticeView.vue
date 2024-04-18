@@ -46,7 +46,7 @@ const heldNotes = computed(() => {
   for (const midiIndex of state.heldNotes.keys()) {
     if (state.heldNotes.get(midiIndex)! > 0) {
       // Offset by 1 to match relativeIntervals
-      result.add(perm[mmod(midiIndex - scale.baseMidiNote - 1, scale.scale.size)])
+      result.add(perm[mmod(midiIndex - scale.scale.baseMidiNote - 1, scale.scale.size)])
     }
   }
   return result

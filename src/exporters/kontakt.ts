@@ -19,7 +19,7 @@ export default class KontaktExporter extends BaseExporter {
 
   getFileContents() {
     const newline = this.params.newline
-    const baseMidiNote = this.params.baseMidiNote
+    const baseMidiNote = this.params.scale.baseMidiNote
 
     // assemble the kontakt script contents
     let file = '{**************************************' + newline
@@ -30,7 +30,7 @@ export default class KontaktExporter extends BaseExporter {
       ' (' +
       midiNoteNumberToName(baseMidiNote, this.params.midiOctaveOffset) +
       ') = ' +
-      this.params.baseFrequency.toString() +
+      this.params.scale.baseFrequency.toString() +
       ' Hz' +
       newline
     file += 'Created using ' + this.appTitle + newline + newline

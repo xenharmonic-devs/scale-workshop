@@ -310,7 +310,7 @@ function typingKeydown(event: CoordinateKeyboardEvent) {
     return emptyKeyup
   }
 
-  let index = scale.baseMidiNote + scale.scale.size * scale.equaveShift + scale.degreeShift
+  let index = scale.scale.baseMidiNote + scale.scale.size * scale.equaveShift + scale.degreeShift
 
   if (scale.keyboardMode === 'isomorphic') {
     index += x * state.isomorphicHorizontal + (2 - y) * state.isomorphicVertical
@@ -353,7 +353,7 @@ onMounted(() => {
       const scaleWorkshopOneData = new ScaleWorkshopOneData()
 
       scale.name = scaleWorkshopOneData.name
-      scale.baseFrequency = scaleWorkshopOneData.freq
+      scale.userBaseFrequency = scaleWorkshopOneData.freq
       scale.autoFrequency = false
       scale.baseMidiNote = scaleWorkshopOneData.midi
       state.isomorphicHorizontal = scaleWorkshopOneData.horizontal
@@ -391,7 +391,7 @@ onMounted(() => {
       }
 
       scale.name = decodedState.scaleName
-      scale.baseFrequency = decodedState.baseFrequency
+      scale.userBaseFrequency = decodedState.baseFrequency
       scale.autoFrequency = false
       scale.baseMidiNote = decodedState.baseMidiNote
       state.isomorphicHorizontal = decodedState.isomorphicHorizontal

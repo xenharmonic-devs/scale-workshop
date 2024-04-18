@@ -120,7 +120,7 @@ function blur() {
 }
 
 function updateBaseFrequency(value: number) {
-  scale.baseFrequency = value
+  scale.userBaseFrequency = value
   scale.autoFrequency = false
 }
 

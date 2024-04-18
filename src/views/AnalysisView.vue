@@ -107,7 +107,7 @@ const heldScaleDegrees = computed(() => {
   const result: Set<number> = new Set()
   for (const midiIndex of state.heldNotes.keys()) {
     if (state.heldNotes.get(midiIndex)! > 0) {
-      result.add(mmod(midiIndex - scale.baseMidiNote, scale.scale.size))
+      result.add(mmod(midiIndex - scale.scale.baseMidiNote, scale.scale.size))
     }
   }
   return result
