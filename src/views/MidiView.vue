@@ -236,7 +236,12 @@ onUnmounted(() => {
                 <label for="white-simple">White only</label>
               </span>
               <span>
-                <input type="radio" id="white-black" value="blackAverage" v-model="midi.whiteMode" />
+                <input
+                  type="radio"
+                  id="white-black"
+                  value="blackAverage"
+                  v-model="midi.whiteMode"
+                />
                 <label for="white-black">White w/ interpolation</label>
               </span>
               <span>
@@ -251,6 +256,7 @@ onUnmounted(() => {
             :whiteModeOffset="scale.whiteModeOffset"
             :baseMidiNote="scale.baseMidiNote"
             :midiWhiteMode="midi.whiteMode"
+            :multichannel="midi.multichannelToEquave"
             :keyColors="scale.colors"
             :activeKeys="activeKeys"
           />

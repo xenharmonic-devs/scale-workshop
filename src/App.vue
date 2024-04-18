@@ -72,8 +72,10 @@ function sendNoteOn(frequency: number, rawAttack: number) {
 }
 
 function midiNoteOn(index: number, rawAttack?: number, channel?: number) {
+  const multichannel = midi.multichannelToEquave
+
   // in multichannel-to-equave mode calculate an offset based on the incoming channel
-  if (midi.multichannelToEquave && channel !== undefined) {
+  if (multichannel && channel !== undefined) {
     let offset =
       mmod(
         channel - midi.multichannelCenter + midi.multichannelEquavesDown,
@@ -99,7 +101,7 @@ function midiNoteOn(index: number, rawAttack?: number, channel?: number) {
   const whiteMode = midi.whiteMode
   const indices = scale.whiteIndices
 
-  if (whiteMode === 'off') {
+  if (whiteMode === 'off' || multichannel) {
     tuningTableKeyOn(index)
   } else if (whiteMode === 'simple') {
     if (info.whiteNumber === undefined) {
