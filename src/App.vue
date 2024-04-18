@@ -158,7 +158,9 @@ function midiNoteOn(index: number, rawAttack?: number, channel?: number) {
     if (!midi.velocityOn) {
       rawRelease = 80
     }
-    if (whiteMode === 'simple' || multichannel) {
+    if (whiteMode === 'off' || whiteMode === 'keyColors' || multichannel) {
+      tuningTableKeyOff(index)
+    } else if (whiteMode === 'simple') {
       if (info.whiteNumber !== undefined) {
         tuningTableKeyOff(info.whiteNumber)
       }
@@ -169,8 +171,6 @@ function midiNoteOn(index: number, rawAttack?: number, channel?: number) {
       } else {
         tuningTableKeyOff(info.whiteNumber)
       }
-    } else {
-      tuningTableKeyOff(index)
     }
     noteOff(rawRelease)
   }
