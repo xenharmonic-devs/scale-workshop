@@ -15,7 +15,7 @@ const scale = useScaleStore()
 
 const equalizedScaleData = computed(() => {
   const pitches = [...Array(scale.scale.size).keys()].map((i) =>
-    valueToCents(Math.abs(scale.scale.getRatio(i + scale.baseMidiNote)))
+    valueToCents(Math.abs(scale.scale.getRatio(i + scale.scale.baseMidiNote)))
   )
   const gridCents = valueToCents(scale.scale.equaveRatio) / modal.largeDivisions
   if (modal.errorModel === 'rooted') {

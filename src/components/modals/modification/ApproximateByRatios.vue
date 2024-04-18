@@ -29,7 +29,7 @@ type Approximation = {
 }
 
 const approximationsWithErrorsAndLimits = computed<Approximation[]>(() => {
-  const selected = Math.abs(scale.scale.getRatio(scale.baseMidiNote + approx.degree))
+  const selected = Math.abs(scale.scale.getRatio(scale.scale.baseMidiNote + approx.degree))
   const selectedCents = valueToCents(selected)
   if (approx.method === 'convergents') {
     const approximations = getConvergents(
