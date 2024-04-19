@@ -182,17 +182,17 @@ function modify(expand = true) {
               value="convergents"
               v-model="approx.method"
             />
-            <label for="method-convergents"> Convergents </label>
+            <label for="method-convergents">Convergents</label>
           </span>
 
           <span>
             <input type="radio" id="method-odd" value="odd" v-model="approx.method" />
-            <label for="method-odd"> Odd limit </label>
+            <label for="method-odd">Odd limit</label>
           </span>
 
           <span>
             <input type="radio" id="method-prime" value="prime" v-model="approx.method" />
-            <label for="method-prime"> Prime limit </label>
+            <label for="method-prime">Prime limit</label>
           </span>
         </div>
 

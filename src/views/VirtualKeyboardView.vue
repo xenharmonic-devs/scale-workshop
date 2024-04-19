@@ -13,7 +13,7 @@ const state = useStateStore()
 const scale = useScaleStore()
 
 const baseIndex = computed(
-  () => scale.baseMidiNote + scale.equaveShift * scale.scale.size + scale.degreeShift
+  () => scale.scale.baseMidiNote + scale.equaveShift * scale.scale.size + scale.degreeShift
 )
 
 type NoteOff = () => void
@@ -25,7 +25,7 @@ type NoteOnCallback = (index: number) => NoteOff
     <VirtualPiano
       v-if="scale.keyboardMode === 'piano'"
       :baseIndex="baseIndex"
-      :baseMidiNote="scale.baseMidiNote"
+      :baseMidiNote="scale.scale.baseMidiNote"
       :colorMap="scale.colorForIndex"
       :splitAccidentals="scale.splitAccidentals"
       :accidentalColor="scale.accidentalColor"
@@ -38,7 +38,7 @@ type NoteOnCallback = (index: number) => NoteOff
     <VirtualKeyboard
       v-else
       :baseIndex="baseIndex"
-      :baseMidiNote="scale.baseMidiNote"
+      :baseMidiNote="scale.scale.baseMidiNote"
       :isomorphicHorizontal="state.isomorphicHorizontal"
       :isomorphicVertical="state.isomorphicVertical"
       :colorMap="scale.colorForIndex"

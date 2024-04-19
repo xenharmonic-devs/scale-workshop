@@ -32,11 +32,11 @@ function modify() {
         <p>Expand your scale to individual lines.</p>
         <div class="control checkbox-container">
           <input type="checkbox" id="simplify" v-model="modal.simplify" />
-          <label for="simplify"> Remove formatting</label>
+          <label for="simplify">Remove formatting</label>
         </div>
         <div class="control checkbox-container">
           <input type="checkbox" id="bleach" v-model="modal.bleach" />
-          <label for="bleach"> Remove colors and labels</label>
+          <label for="bleach">Remove colors and labels</label>
         </div>
       </div>
     </template>

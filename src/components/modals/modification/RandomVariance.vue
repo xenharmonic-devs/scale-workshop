@@ -47,7 +47,7 @@ function modify(expand = true) {
         </div>
         <div class="control checkbox-container">
           <input id="vary-equave" type="checkbox" v-model="modal.varyEquave" />
-          <label for="vary-equave"> Vary the {{ equave }}</label>
+          <label for="vary-equave">Vary the {{ equave }}</label>
         </div>
       </div>
     </template>

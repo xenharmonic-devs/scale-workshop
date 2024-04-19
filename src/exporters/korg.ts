@@ -158,12 +158,12 @@ export class KorgExporter extends BaseExporter {
 
   getFileContents(): [JSZip, string] {
     const scale = this.params.scale
-    const baseMidiNote = this.params.baseMidiNote
+    const baseMidiNote = scale.baseMidiNote
 
     let frequencies: number[]
     if (this.useOctaveFormat) {
       const rootFreq = mtof(0)
-      const transposeRatio = rootFreq / this.params.baseFrequency
+      const transposeRatio = rootFreq / scale.baseFrequency
       frequencies = scale
         .getFrequencyRange(baseMidiNote, baseMidiNote + OCTAVE_FORMAT_SIZE)
         .map((f: number) => f * transposeRatio)

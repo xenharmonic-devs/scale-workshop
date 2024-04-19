@@ -8,7 +8,7 @@ import {
 } from '@/utils'
 import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
-import { mmod, mtof } from 'xen-dev-utils'
+import { Fraction, mmod, mtof } from 'xen-dev-utils'
 import {
   getSourceVisitor,
   parseAST,
@@ -64,10 +64,17 @@ export const useScaleStore = defineStore('scale', () => {
   const gas = ref(parseInt(localStorage.getItem('gas') ?? '10000', 10))
 
   const name = ref('')
+  // For the v-model. Consider stores.scale.scale.baseMidiNote the source of truth.
   const baseMidiNote = ref(60)
+
+  // The concept of base frequency is a little confusing so here's an explanation:
+  // The user can either set the base frequency or have it be automatically calculated.
+  // baseFrequencyDisplay reflects the initial value passed to the SonicWeave runtime.
+  // However the runtime may assign a different unison frequency and that's what ends up in scale.value.baseFrequency.
+  // Threrefore stores.scale.scale.baseFrequency is the source of truth, while stores.scale.baseFrequencyDisplay is the v-model.
   const userBaseFrequency = ref(261.63)
   const autoFrequency = ref(true)
-  const baseFrequency = computed({
+  const baseFrequencyDisplay = computed({
     get() {
       return autoFrequency.value ? mtof(baseMidiNote.value) : userBaseFrequency.value
     },
@@ -75,11 +82,12 @@ export const useScaleStore = defineStore('scale', () => {
       userBaseFrequency.value = value
     }
   })
+  // XXX: baseFrequencyDisplay is merely used for convenience here. This is the last time there's a direct connection.
+  const scale = ref(new Scale(TET12, baseFrequencyDisplay.value, baseMidiNote.value))
   const autoColors = ref<'silver' | 'cents' | 'factors'>('silver')
   const sourceText = ref('')
   const relativeIntervals = ref(INTERVALS_12TET)
   const latticeIntervals = ref(INTERVALS_12TET)
-  const scale = ref(new Scale(TET12, baseFrequency.value, baseMidiNote.value))
   const colors = ref(defaultColors(baseMidiNote.value))
   const labels = ref(defaultLabels(baseMidiNote.value, accidentalPreference.value))
   const error = ref('')
@@ -277,7 +285,7 @@ export const useScaleStore = defineStore('scale', () => {
 
   // Extra builtins
   function latticeView(this: ExpressionVisitor) {
-    const scale = this.getCurrentScale()
+    const scale = this.currentScale
     for (let i = 0; i < scale.length; ++i) {
       scale[i] = scale[i].shallowClone()
       // XXX: Abuses the fact that SonicWeave tracking ids are positive.
@@ -301,7 +309,10 @@ export const useScaleStore = defineStore('scale', () => {
   function getGlobalVisitor() {
     // Inject global variables
     const _ = Interval.fromInteger(baseMidiNote.value)
-    const baseFreq = new Interval(TimeMonzo.fromArbitraryFrequency(baseFrequency.value), 'linear')
+    const baseFreq = new Interval(
+      TimeMonzo.fromFractionalFrequency(new Fraction(baseFrequencyDisplay.value).simplify(1e-8)),
+      'linear'
+    )
     const extraBuiltins: Record<string, SonicWeaveValue> = {
       APP_TITLE,
       scaleName: name.value,
@@ -312,7 +323,7 @@ export const useScaleStore = defineStore('scale', () => {
       warn
     }
     const visitor = getSourceVisitor(true, extraBuiltins)
-    visitor.rootContext.gas = gas.value
+    visitor.rootContext!.gas = gas.value
 
     // Declare base nominal and unison frequency
     const prefixAst = parseAST(sourcePrefix.value)
@@ -326,8 +337,8 @@ export const useScaleStore = defineStore('scale', () => {
   // Methods
   function getVisitors() {
     const globalVisitor = getGlobalVisitor()
-    const visitor = new StatementVisitor(globalVisitor.rootContext, globalVisitor)
-    const defaults = visitor.rootContext.clone()
+    const visitor = new StatementVisitor(globalVisitor)
+    const defaults = visitor.rootContext!.clone()
     defaults.gas = gas.value
 
     const ast = parseAST(sourceText.value)
@@ -349,7 +360,7 @@ export const useScaleStore = defineStore('scale', () => {
       warning.value = ''
       latticeIntervals.value = []
       const globalVisitor = getGlobalVisitor()
-      const visitor = new StatementVisitor(globalVisitor.rootContext, globalVisitor)
+      const visitor = new StatementVisitor(globalVisitor)
       const ast = parseAST(sourceText.value)
       let userDeclaredPitch = false
       for (const statement of ast.body) {
@@ -362,7 +373,7 @@ export const useScaleStore = defineStore('scale', () => {
         }
       }
 
-      const intervals = visitor.getCurrentScale()
+      const intervals = visitor.currentScale
       const ev = visitor.createExpressionVisitor()
       const rel = relative.bind(ev)
       relativeIntervals.value = intervals.map((i) => rel(i))
@@ -371,8 +382,8 @@ export const useScaleStore = defineStore('scale', () => {
       }
       const ratios = relativeIntervals.value.map((i) => i.value.valueOf())
       let visitorBaseFrequency = mtof(baseMidiNote.value)
-      if (visitor.rootContext.unisonFrequency) {
-        visitorBaseFrequency = visitor.rootContext.unisonFrequency.valueOf()
+      if (visitor.rootContext!.unisonFrequency) {
+        visitorBaseFrequency = visitor.rootContext!.unisonFrequency.valueOf()
       }
       if (ratios.length) {
         const name = str.bind(ev)
@@ -430,7 +441,7 @@ export const useScaleStore = defineStore('scale', () => {
     userBaseFrequency,
     autoFrequency,
     autoColors,
-    baseFrequency,
+    baseFrequencyDisplay,
     sourcePrefix,
     sourceText,
     scale,

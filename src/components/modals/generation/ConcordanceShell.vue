@@ -34,7 +34,7 @@ function generate(shell = true, expand = true) {
     }
     let postfix = `\\${modal.largeDivisions}`
     if (modal.equave.compare(OCTAVE)) {
-      postfix += `<${linear(modal.equave).toString()}>`
+      postfix += `ed ${linear(modal.equave).toString()}`
     }
     for (const [degree, label] of data) {
       source += `${degree}${postfix} "${label}"\n`
@@ -111,11 +111,11 @@ function generate(shell = true, expand = true) {
           <label>Error model</label>
           <span>
             <input type="radio" id="error-rooted" value="rooted" v-model="modal.errorModel" />
-            <label for="error-rooted"> Rooted </label>
+            <label for="error-rooted">Rooted</label>
           </span>
           <span>
             <input type="radio" id="error-free" value="free" v-model="modal.errorModel" />
-            <label for="error-free"> Free </label>
+            <label for="error-free">Free</label>
           </span>
         </div>
         <div class="control">

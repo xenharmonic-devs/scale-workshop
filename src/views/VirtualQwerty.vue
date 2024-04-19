@@ -17,7 +17,7 @@ defineProps<{
 }>()
 
 const baseIndex = computed(
-  () => scale.baseMidiNote + scale.equaveShift * scale.scale.size + scale.degreeShift
+  () => scale.scale.baseMidiNote + scale.equaveShift * scale.scale.size + scale.degreeShift
 )
 </script>
 

@@ -167,9 +167,7 @@ onUnmounted(() => {
           <div class="control channels-wrapper">
             <label>Input channels</label>
             <span v-for="channel in 16" :key="channel">
-              <label :class="{ active: inputHighlights.has(channel) }">{{
-                ' ' + channel + ' '
-              }}</label>
+              <label :class="{ active: inputHighlights.has(channel) }">{{ channel }}</label>
               <input
                 type="checkbox"
                 :value="channel"
@@ -178,35 +176,87 @@ onUnmounted(() => {
               />
             </span>
           </div>
-          <div class="control checkbox-container">
-            <input type="checkbox" id="midi-velocity" v-model="midi.velocityOn" />
-            <label for="midi-velocity">Use velocity</label>
+          <div class="control checkbox-group">
+            <div>
+              <input type="checkbox" id="midi-velocity" v-model="midi.velocityOn" />
+              <label for="midi-velocity">Use velocity</label>
+            </div>
+            <div>
+              <input type="checkbox" id="multichannel" v-model="midi.multichannelToEquave" />
+              <label for="multichannel">Multichannel-to-equave</label>
+            </div>
           </div>
-          <div class="control radio-group">
-            <label>Color mapping</label>
-            <span>
-              <input type="radio" id="white-off" value="off" v-model="midi.whiteMode" />
-              <label for="white-off"> Chromatic </label>
-            </span>
-            <span>
-              <input type="radio" id="white-simple" value="simple" v-model="midi.whiteMode" />
-              <label for="white-simple"> White only </label>
-            </span>
-            <span>
-              <input type="radio" id="white-black" value="blackAverage" v-model="midi.whiteMode" />
-              <label for="white-black"> White w/ interpolation </label>
-            </span>
-            <span>
-              <input type="radio" id="white-color" value="keyColors" v-model="midi.whiteMode" />
-              <label for="white-color"> White key to white color </label>
-            </span>
-          </div>
+          <template v-if="midi.multichannelToEquave">
+            <label>Settings for multichannel-to-equave mode</label>
+            <div class="control multichannel-input-container">
+              <div>
+                Center channel
+                <input
+                  id="multichannel-center"
+                  class="control"
+                  type="number"
+                  min="1"
+                  max="16"
+                  v-model="midi.multichannelCenter"
+                />
+              </div>
+              <div>
+                Total equaves
+                <input
+                  id="multichannel-num-equaves"
+                  class="control"
+                  type="number"
+                  min="1"
+                  max="16"
+                  v-model="midi.multichannelNumEquaves"
+                />
+              </div>
+              <div>
+                Equaves down
+                <input
+                  id="multichannel-equaves-down"
+                  class="control"
+                  type="number"
+                  min="0"
+                  max="15"
+                  v-model="midi.multichannelEquavesDown"
+                />
+              </div>
+            </div>
+          </template>
+          <template v-if="!midi.multichannelToEquave">
+            <div class="control radio-group">
+              <label>Color mapping</label>
+              <span>
+                <input type="radio" id="white-off" value="off" v-model="midi.whiteMode" />
+                <label for="white-off">Chromatic</label>
+              </span>
+              <span>
+                <input type="radio" id="white-simple" value="simple" v-model="midi.whiteMode" />
+                <label for="white-simple">White only</label>
+              </span>
+              <span>
+                <input
+                  type="radio"
+                  id="white-black"
+                  value="blackAverage"
+                  v-model="midi.whiteMode"
+                />
+                <label for="white-black">White w/ interpolation</label>
+              </span>
+              <span>
+                <input type="radio" id="white-color" value="keyColors" v-model="midi.whiteMode" />
+                <label for="white-color">White key to white color</label>
+              </span>
+            </div>
+          </template>
         </div>
         <div class="piano-container">
           <MidiPiano
             :whiteModeOffset="scale.whiteModeOffset"
             :baseMidiNote="scale.baseMidiNote"
             :midiWhiteMode="midi.whiteMode"
+            :multichannel="midi.multichannelToEquave"
             :keyColors="scale.colors"
             :activeKeys="activeKeys"
           />
@@ -234,7 +284,7 @@ onUnmounted(() => {
           <div class="control channels-wrapper">
             <label>Output channels</label>
             <span v-for="channel in 16" :key="channel">
-              <label>{{ ' ' + channel + ' ' }}</label>
+              <label>{{ channel }}</label>
               <input
                 type="checkbox"
                 :value="channel"
@@ -286,6 +336,22 @@ div.channels-wrapper span {
   display: flex;
   flex-flow: column;
   text-align: center;
+}
+
+div.checkbox-group {
+  flex-flow: unset;
+  gap: 0.15rem 1rem;
+}
+
+div.checkbox-group label {
+  font-weight: normal;
+  margin-left: 0.35rem;
+  text-align: left;
+  vertical-align: baseline;
+}
+
+div.multichannel-input-container {
+  gap: 0.15rem 1rem;
 }
 
 .active {

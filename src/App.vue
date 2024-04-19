@@ -13,7 +13,7 @@ import { useAudioStore } from '@/stores/audio'
 import { useStateStore } from './stores/state'
 import { useMidiStore } from './stores/midi'
 import { useScaleStore } from './stores/scale'
-import { clamp } from 'xen-dev-utils'
+import { clamp, mmod } from 'xen-dev-utils'
 import { parseScaleWorkshop2Line, setNumberOfComponents } from 'sonic-weave'
 
 // === Pinia-managed state ===
@@ -71,21 +71,37 @@ function sendNoteOn(frequency: number, rawAttack: number) {
   return off
 }
 
-function midiNoteOn(index: number, rawAttack?: number) {
+function midiNoteOn(index: number, rawAttack?: number, channel?: number) {
+  const multichannel = midi.multichannelToEquave
+
+  // in multichannel-to-equave mode calculate an offset based on the incoming channel
+  if (multichannel && channel !== undefined) {
+    let offset =
+      mmod(
+        channel - midi.multichannelCenter + midi.multichannelEquavesDown,
+        midi.multichannelNumEquaves
+      ) - midi.multichannelEquavesDown
+    offset = offset * scale.scale.size
+    index = index + offset
+  }
+
   if (rawAttack === undefined) {
     rawAttack = 80
   }
-  let frequency = scale.frequencies[index]
+
   if (!midi.velocityOn) {
     rawAttack = 80
   }
+
+  // since index can go out of range in multichannel-to-equave mode, use getFrequency()
+  let frequency = scale.getFrequency(index)
 
   // Store state to ensure consistent note off.
   const info = midiKeyInfo(index)
   const whiteMode = midi.whiteMode
   const indices = scale.whiteIndices
 
-  if (whiteMode === 'off') {
+  if (whiteMode === 'off' || multichannel) {
     tuningTableKeyOn(index)
   } else if (whiteMode === 'simple') {
     if (info.whiteNumber === undefined) {
@@ -142,7 +158,9 @@ function midiNoteOn(index: number, rawAttack?: number) {
     if (!midi.velocityOn) {
       rawRelease = 80
     }
-    if (whiteMode === 'simple') {
+    if (whiteMode === 'off' || whiteMode === 'keyColors' || multichannel) {
+      tuningTableKeyOff(index)
+    } else if (whiteMode === 'simple') {
       if (info.whiteNumber !== undefined) {
         tuningTableKeyOff(info.whiteNumber)
       }
@@ -153,8 +171,6 @@ function midiNoteOn(index: number, rawAttack?: number) {
       } else {
         tuningTableKeyOff(info.whiteNumber)
       }
-    } else {
-      tuningTableKeyOff(index)
     }
     noteOff(rawRelease)
   }
@@ -294,7 +310,7 @@ function typingKeydown(event: CoordinateKeyboardEvent) {
     return emptyKeyup
   }
 
-  let index = scale.baseMidiNote + scale.scale.size * scale.equaveShift + scale.degreeShift
+  let index = scale.scale.baseMidiNote + scale.scale.size * scale.equaveShift + scale.degreeShift
 
   if (scale.keyboardMode === 'isomorphic') {
     index += x * state.isomorphicHorizontal + (2 - y) * state.isomorphicVertical
@@ -337,7 +353,7 @@ onMounted(() => {
       const scaleWorkshopOneData = new ScaleWorkshopOneData()
 
       scale.name = scaleWorkshopOneData.name
-      scale.baseFrequency = scaleWorkshopOneData.freq
+      scale.userBaseFrequency = scaleWorkshopOneData.freq
       scale.autoFrequency = false
       scale.baseMidiNote = scaleWorkshopOneData.midi
       state.isomorphicHorizontal = scaleWorkshopOneData.horizontal
@@ -375,7 +391,7 @@ onMounted(() => {
       }
 
       scale.name = decodedState.scaleName
-      scale.baseFrequency = decodedState.baseFrequency
+      scale.userBaseFrequency = decodedState.baseFrequency
       scale.autoFrequency = false
       scale.baseMidiNote = decodedState.baseMidiNote
       state.isomorphicHorizontal = decodedState.isomorphicHorizontal

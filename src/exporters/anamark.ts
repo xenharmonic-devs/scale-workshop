@@ -106,8 +106,7 @@ class AnaMarkExporter extends BaseExporter {
         newline +
         '; Set reference key to absolute frequency (not scale note but midi key)' +
         newline
-      file +=
-        'note ' + this.params.baseMidiNote + '="! ' + scale.baseFrequency.toFixed(6) + '"' + newline
+      file += 'note ' + scale.baseMidiNote + '="! ' + scale.baseFrequency.toFixed(6) + '"' + newline
     }
 
     file += newline + '[Scale End]' + newline

@@ -94,7 +94,7 @@ function modify(expand = true) {
                 @focus="temper.error = ''"
                 v-model="temper.method"
               />
-              <label for="method-mapping"> Mapping </label>
+              <label for="method-mapping">Mapping</label>
             </span>
             <span>
               <input
@@ -104,7 +104,7 @@ function modify(expand = true) {
                 @focus="temper.error = ''"
                 v-model="temper.method"
               />
-              <label for="method-vals"> Vals </label>
+              <label for="method-vals">Vals</label>
             </span>
 
             <span>
@@ -115,7 +115,7 @@ function modify(expand = true) {
                 @focus="temper.error = ''"
                 v-model="temper.method"
               />
-              <label for="method-commas"> Comma list </label>
+              <label for="method-commas">Comma list</label>
             </span>
           </div>
 
@@ -196,7 +196,7 @@ function modify(expand = true) {
                 @focus="temper.error = ''"
                 v-model="temper.tempering"
               />
-              <label for="tempering-TE"> TE </label>
+              <label for="tempering-TE">TE</label>
             </span>
 
             <span>
@@ -207,7 +207,7 @@ function modify(expand = true) {
                 @focus="temper.error = ''"
                 v-model="temper.tempering"
               />
-              <label for="tempering-POTE"> POTE </label>
+              <label for="tempering-POTE">POTE</label>
             </span>
 
             <span>
@@ -219,7 +219,7 @@ function modify(expand = true) {
                 :disabled="!temper.constraintsAvailable"
                 v-model="temper.tempering"
               />
-              <label for="tempering-CTE"> CTE </label>
+              <label for="tempering-CTE">CTE</label>
             </span>
           </div>
 

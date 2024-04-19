@@ -1,17 +1,17 @@
-import { Interval, TimeMonzo, getSourceVisitor, parseAST, relative } from 'sonic-weave'
+import { Interval, TimeMonzo, TimeReal, getSourceVisitor, parseAST, relative } from 'sonic-weave'
 import type { ExporterParams } from '../base'
 import { UNIX_NEWLINE, WINDOWS_NEWLINE } from '../../constants'
 import { Scale } from '../../scale'
 import { Fraction } from 'xen-dev-utils'
 
 export function getTestData(appTitle: string) {
-  const absoluteC5 = new Interval(TimeMonzo.fromFractionalFrequency(528, 3), 'logarithmic', {
+  const absoluteC5 = new Interval(TimeMonzo.fromFractionalFrequency(528, 3), 'logarithmic', 0, {
     type: 'AbsoluteFJS',
     pitch: {
       type: 'AbsolutePitch',
       nominal: 'C',
       accidentals: [],
-      octave: 5n
+      octave: 5
     },
     ups: 0,
     lifts: 0,
@@ -24,7 +24,7 @@ export function getTestData(appTitle: string) {
   const relativeC5 = relative.bind(ev)(absoluteC5)
 
   const relativeIntervals = [
-    new Interval(TimeMonzo.fromEqualTemperament('100/1200', 2, 3), 'logarithmic', {
+    new Interval(TimeMonzo.fromEqualTemperament('100/1200', 2, 3), 'logarithmic', 0, {
       type: 'CentsLiteral',
       sign: '',
       whole: 100n,
@@ -34,6 +34,7 @@ export function getTestData(appTitle: string) {
     new Interval(
       TimeMonzo.fromEqualTemperament(new Fraction(4, 5), new Fraction(2), 3),
       'logarithmic',
+      0,
       {
         type: 'NedjiLiteral',
         numerator: 4,
@@ -42,12 +43,12 @@ export function getTestData(appTitle: string) {
         equaveDenominator: null
       }
     ),
-    new Interval(TimeMonzo.fromFraction(new Fraction(5, 3), 3), 'linear', {
+    new Interval(TimeMonzo.fromFraction(new Fraction(5, 3), 3), 'linear', 0, {
       type: 'FractionLiteral',
       numerator: 5n,
       denominator: 3n
     }),
-    new Interval(TimeMonzo.fromValue(Math.E / 2, 3), 'linear', {
+    new Interval(TimeReal.fromValue(Math.E / 2), 'linear', 0, {
       type: 'DecimalLiteral',
       sign: '',
       whole: 1n,
@@ -55,12 +56,12 @@ export function getTestData(appTitle: string) {
       flavor: 'r',
       exponent: null
     }),
-    new Interval(TimeMonzo.fromFraction(new Fraction(81, 80), 3).pow(5), 'linear', {
+    new Interval(TimeMonzo.fromFraction(new Fraction(81, 80), 3).pow(5), 'linear', 0, {
       type: 'FractionLiteral',
       numerator: 3486784401n,
       denominator: 3276800000n
     }),
-    new Interval(TimeMonzo.fromFraction(2, 3), 'linear', {
+    new Interval(TimeMonzo.fromFraction(2, 3), 'linear', 0, {
       type: 'FractionLiteral',
       numerator: 2n,
       denominator: 1n
@@ -77,8 +78,6 @@ export function getTestData(appTitle: string) {
     scale,
     appTitle,
     description: 'A scale for testing if the exporter works',
-    baseMidiNote: 69,
-    baseFrequency: 440,
     midiOctaveOffset: 0,
     sourceText: '100.\nC5_5\n4\\5\n5/3\n1,3591409142295225r\n3486784401/3276800000\n2/1',
     labels: ['100.', 'C5_5', '4\\5', '5/3', '1,3591409142295225r', '3486784401/3276800000', '2/1'],

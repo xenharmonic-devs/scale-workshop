@@ -63,7 +63,8 @@ export class ScalaKbmExporter extends BaseExporter {
   getFileContents() {
     const newline = this.params.newline
     const intervals = this.params.relativeIntervals
-    const baseFrequency = this.params.baseFrequency
+    const baseFrequency = this.params.scale.baseFrequency
+    const baseMidiNote = this.params.scale.baseMidiNote
     // assemble the .kbm file contents
     let file = '! Template for a keyboard mapping' + newline
     file += '!' + newline
@@ -74,9 +75,9 @@ export class ScalaKbmExporter extends BaseExporter {
     file += '! Last MIDI note number to retune:' + newline
     file += '127' + newline
     file += '! Middle note where the first entry of the mapping is mapped to:' + newline
-    file += this.params.baseMidiNote.toString() + newline
+    file += baseMidiNote.toString() + newline
     file += '! Reference note for which frequency is given:' + newline
-    file += this.params.baseMidiNote.toString() + newline
+    file += baseMidiNote.toString() + newline
     file += '! Frequency to tune the above note to' + newline
     file += baseFrequency.toString() + newline
     file += '! Scale degree to consider as formal octave (determines difference in pitch' + newline

@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { kraigGrady9, type LatticeOptions, scottDakota24, primeRing72, align } from 'ji-lattice'
 import { LOG_PRIMES, mmod } from 'xen-dev-utils'
 import { computedAndError } from '@/utils'
-import { parseChord } from 'sonic-weave'
+import { TimeMonzo, parseChord } from 'sonic-weave'
 
 export const useJiLatticeStore = defineStore('ji-lattice', () => {
   // Kraig Grady's coordinates only go up to 23-limit, but it was the default in Scale Workshop 2.
@@ -58,9 +58,13 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
     const result: number[][] = []
     for (const interval of edges.value) {
       const value = interval.value.clone()
-      value.numberOfComponents = numComponents
-      const monzo = interval.value.primeExponents.map((pe) => pe.valueOf())
-      result.push(monzo)
+      if (value instanceof TimeMonzo) {
+        value.numberOfComponents = numComponents
+        const monzo = value.primeExponents.map((pe) => pe.valueOf())
+        result.push(monzo)
+      } else {
+        result.push(Array(numComponents).fill(0))
+      }
     }
     return result
   })

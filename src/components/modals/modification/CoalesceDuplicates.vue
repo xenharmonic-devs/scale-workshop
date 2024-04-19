@@ -10,7 +10,7 @@ const modal = useModalStore()
 const scale = useScaleStore()
 
 function modify(expand = true) {
-  scale.sourceText += `\ncoalesce(${centString(modal.tolerance)}, '${modal.coalescingAction}')`
+  scale.sourceText += `\ncoalesce(${centString(modal.tolerance)}, '${modal.coalescingAction}', ${modal.preserveBoundary})`
   if (expand) {
     const { visitor, defaults } = scale.getVisitors()
     scale.sourceText = visitor.expand(defaults)
@@ -52,7 +52,7 @@ function modify(expand = true) {
               value="simplest"
               v-model="modal.coalescingAction"
             />
-            <label for="action-simplest"> Simplest </label>
+            <label for="action-simplest">Simplest</label>
           </span>
 
           <span>
@@ -62,7 +62,7 @@ function modify(expand = true) {
               value="lowest"
               v-model="modal.coalescingAction"
             />
-            <label for="action-lowest"> Lowest </label>
+            <label for="action-lowest">Lowest</label>
           </span>
 
           <span>
@@ -72,16 +72,16 @@ function modify(expand = true) {
               value="highest"
               v-model="modal.coalescingAction"
             />
-            <label for="action-highest"> Highest </label>
+            <label for="action-highest">Highest</label>
           </span>
           <label>Replace with (which) average</label>
           <span>
             <input type="radio" id="action-avg" value="avg" v-model="modal.coalescingAction" />
-            <label for="action-avg"> Arithmetic </label>
+            <label for="action-avg">Arithmetic</label>
           </span>
           <span>
             <input type="radio" id="action-havg" value="havg" v-model="modal.coalescingAction" />
-            <label for="action-havg"> Harmonic </label>
+            <label for="action-havg">Harmonic</label>
           </span>
           <span>
             <input
@@ -90,8 +90,12 @@ function modify(expand = true) {
               value="geoavg"
               v-model="modal.coalescingAction"
             />
-            <label for="action-geoavg"> Geometric </label>
+            <label for="action-geoavg">Geometric</label>
           </span>
+        </div>
+        <div class="control checkbox-container">
+          <input type="checkbox" id="preserve-boundary" v-model="modal.preserveBoundary" />
+          <label for="preserve-boundary">Preserve small intervals near unison</label>
         </div>
       </div>
     </template>

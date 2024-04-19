@@ -11,8 +11,6 @@ import type { Interval } from 'sonic-weave'
 const props = defineProps<{
   newline: string
   scaleName: string
-  baseMidiNote: number
-  baseFrequency: number
   midiOctaveOffset: number
   relativeIntervals: Interval[]
   scale: Scale
@@ -58,8 +56,6 @@ function doExport() {
     newline: props.newline,
     scale: props.scale,
     filename: sanitizeFilename(props.scaleName),
-    baseMidiNote: props.baseMidiNote,
-    baseFrequency: props.baseFrequency,
     relativeIntervals: props.relativeIntervals,
     midiOctaveOffset: props.midiOctaveOffset,
     labels: props.labels,

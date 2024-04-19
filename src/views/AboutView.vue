@@ -53,12 +53,13 @@ const tagline = computed(() => TAGLINES[Math.floor(Math.random() * TAGLINES.leng
         Videco - <i>developer</i> <br />
         Inthar - <i>developer</i> <br />
         Wilckerson Ganda - <i>developer</i> <br />
+        Marc Sabat - <i>developer / notation-hardware advisor</i> <br />
         Kraig Grady - <i>lattice advisor</i> <br />
         Abnormality - <i>quality assurance</i> <br />
         Kite Giedraitis - <i>notation advisor</i> <br />
         Scott Dakota - <i>lattice advisor / generator sequence advisor</i> <br />
         Richie Greene - <i>quality assurance</i> <br />
-        Akselai - <i>mathematics advisor</i> <br />
+        Akselai - <i>quality assurance</i> <br />
         <span class="spoob">Spoob<img src="@/assets/img/spoob.png" /></span> -
         <i>emotional support</i>
       </p>

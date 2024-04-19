@@ -6,7 +6,7 @@ import { KorgExporter, KorgModels, KorgExporterError } from '../korg'
 
 import { getTestData } from './test-data'
 import { Scale } from '../../scale'
-import { Interval, TimeMonzo } from 'sonic-weave'
+import { Interval, TimeReal } from 'sonic-weave'
 
 describe('Korg exporters', () => {
   it('can export a scale encountered while debugging issue #393', async () => {
@@ -83,7 +83,7 @@ describe('Korg exporters', () => {
 
   it('throws error if 12-note octave tuning is selected, but equave is not 2/1', () => {
     const params = getTestData("Korg 'logue exporter unit test v0.0.0")
-    params.relativeIntervals.push(new Interval(TimeMonzo.fromCents(100.0, 3), 'logarithmic'))
+    params.relativeIntervals.push(new Interval(TimeReal.fromCents(100.0), 'logarithmic'))
     params.sourceText += '\n100.'
     const ratios = params.relativeIntervals.map((i) => i.value.valueOf())
     params.scale = new Scale(ratios, 440, 69)
@@ -101,20 +101,12 @@ describe('Korg exporters', () => {
 
   it('throws error if 12-note octave tuning is selected, but scale contains an interval that is below unison', () => {
     const params = getTestData("Korg 'logue exporter unit test v0.0.0")
-    params.relativeIntervals.splice(
-      0,
-      0,
-      new Interval(TimeMonzo.fromCents(-500.0, 3), 'logarithmic')
-    )
+    params.relativeIntervals.splice(0, 0, new Interval(TimeReal.fromCents(-500.0), 'logarithmic'))
     params.sourceText = '-500.\n' + params.sourceText
 
     // Make sure there's 12 notes in the test scale
     while (params.relativeIntervals.length < 12) {
-      params.relativeIntervals.splice(
-        0,
-        0,
-        new Interval(TimeMonzo.fromCents(100.0, 3), 'logarithmic')
-      )
+      params.relativeIntervals.splice(0, 0, new Interval(TimeReal.fromCents(100.0), 'logarithmic'))
       params.sourceText += '100.\n' + params.sourceText
     }
     const ratios = params.relativeIntervals.map((i) => i.value.valueOf())
@@ -127,19 +119,11 @@ describe('Korg exporters', () => {
 
   it('throws error if 12-note octave tuning is selected, but scale contains an interval that is greater than an octave', () => {
     const params = getTestData("Korg 'logue exporter unit test v0.0.0")
-    params.relativeIntervals.splice(
-      0,
-      0,
-      new Interval(TimeMonzo.fromCents(1300.0, 3), 'logarithmic')
-    )
+    params.relativeIntervals.splice(0, 0, new Interval(TimeReal.fromCents(1300.0), 'logarithmic'))
 
     // Make sure there's 12 notes in the test scale
     while (params.relativeIntervals.length < 12) {
-      params.relativeIntervals.splice(
-        0,
-        0,
-        new Interval(TimeMonzo.fromCents(100.0, 3), 'logarithmic')
-      )
+      params.relativeIntervals.splice(0, 0, new Interval(TimeReal.fromCents(100.0), 'logarithmic'))
       params.sourceText += '100.\n' + params.sourceText
     }
     const ratios = params.relativeIntervals.map((i) => i.value.valueOf())
@@ -155,11 +139,7 @@ describe('Korg exporters', () => {
 
     // Make sure there's 12 notes in the test scale
     while (params.relativeIntervals.length < 12) {
-      params.relativeIntervals.splice(
-        0,
-        0,
-        new Interval(TimeMonzo.fromCents(100.0, 3), 'logarithmic')
-      )
+      params.relativeIntervals.splice(0, 0, new Interval(TimeReal.fromCents(100.0), 'logarithmic'))
       params.sourceText += '100.\n' + params.sourceText
     }
     const ratios = params.relativeIntervals.map((i) => i.value.valueOf())
