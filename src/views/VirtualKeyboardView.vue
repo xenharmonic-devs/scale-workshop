@@ -44,7 +44,7 @@ type NoteOnCallback = (index: number) => NoteOff
       :colorMap="scale.colorForIndex"
       :noteOn="noteOn"
       :heldNotes="state.heldNotes"
-      :baseFrequency="scale.baseFrequency"
+      :baseFrequency="scale.scale.baseFrequency"
       :frequencies="scale.frequencies"
       :centss="scale.centss"
       :labelMap="scale.labelForIndex"
