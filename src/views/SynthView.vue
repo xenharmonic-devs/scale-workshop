@@ -454,6 +454,31 @@ onUnmounted(() => {
           </template>
         </div>
         <template v-if="scale.keyboardMode === 'isomorphic'">
+          <h2>Keyboard notes</h2>
+          <div class="control-group" style="flex-direction: row; flex-wrap: wrap">
+            <div class="control checkbox-container">
+              <input id="keyboard-show-label" type="checkbox" v-model="state.showKeyboardLabel" />
+              <label for="keyboard-show-label">Display label</label>
+            </div>
+            <div class="control checkbox-container">
+              <input id="keyboard-show-cents" type="checkbox" v-model="state.showKeyboardCents" />
+              <label for="keyboard-show-cents">Display cents</label>
+            </div>
+            <div class="control checkbox-container">
+              <input id="keyboard-show-ratio" type="checkbox" v-model="state.showKeyboardRatio" />
+              <label for="keyboard-show-ratio">Display ratio</label>
+            </div>
+            <div class="control checkbox-container">
+              <input
+                id="keyboard-show-frequency"
+                type="checkbox"
+                v-model="state.showKeyboardFrequency"
+              />
+              <label for="keyboard-show-frequency">Display frequency</label>
+            </div>
+          </div>
+        </template>
+        <template v-if="scale.keyboardMode === 'isomorphic'">
           <h2>Isomorphic key mapping</h2>
           <p>
             Distance between adjacent keys on the horizontal/vertical axes, in scale degrees.

@@ -100,7 +100,7 @@ onUnmounted(() => {
   <td
     :data-key-number="index"
     :style="'background-color:' + color"
-    :class="{ active }"
+    :class="{ active, 'black-key': color === 'black', 'white-key': color === 'white' }"
     @touchstart="onTouchStart"
     @touchend="onTouchEnd"
     @touchcancel="onTouchEnd"
@@ -108,7 +108,9 @@ onUnmounted(() => {
     @mouseup="onMouseUp"
     @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave"
-  ></td>
+    >
+    <slot></slot>
+  </td>
 </template>
 
 <style scoped>
