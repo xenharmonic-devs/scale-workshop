@@ -24,6 +24,10 @@ export const useStateStore = defineStore('state', () => {
   const centsFractionDigits = ref(parseInt(storage.getItem('centsFractionDigits') ?? '3', 10))
   const decimalFractionDigits = ref(parseInt(storage.getItem('decimalFractionDigits') ?? '5', 10))
   const showVirtualQwerty = ref(storage.getItem('showVirtualQwerty') === 'true')
+  const showKeyboardLabel = ref(storage.getItem('showKeyboardLabel') !== 'false')
+  const showKeyboardCents = ref(storage.getItem('showKeyboardCents') !== 'false')
+  const showKeyboardRatio = ref(storage.getItem('showKeyboardRatio') !== 'false')
+  const showKeyboardFrequency = ref(storage.getItem('showKeyboardFrequency') !== 'false')
 
   // Analysis preferences
   const intervalMatrixIndexing = ref(parseInt(storage.getItem('intervalMatrixIndexing') ?? '0', 10))
@@ -50,6 +54,10 @@ export const useStateStore = defineStore('state', () => {
     centsFractionDigits,
     decimalFractionDigits,
     showVirtualQwerty,
+    showKeyboardLabel,
+    showKeyboardCents,
+    showKeyboardRatio,
+    showKeyboardFrequency,
     intervalMatrixIndexing,
     maxMatrixWidth,
     calculateConstantStructureViolations,
@@ -84,6 +92,10 @@ export const useStateStore = defineStore('state', () => {
     centsFractionDigits,
     decimalFractionDigits,
     showVirtualQwerty,
+    showKeyboardLabel,
+    showKeyboardCents,
+    showKeyboardRatio,
+    showKeyboardFrequency,
     intervalMatrixIndexing,
     maxMatrixWidth,
     calculateConstantStructureViolations,

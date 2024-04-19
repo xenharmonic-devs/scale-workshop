@@ -1,19 +1,29 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import VirtualKeyboardKey from '@/components/VirtualKeyboardKey.vue'
-import { mmod } from 'xen-dev-utils'
+import VirtualKeyInfo from '@/components/VirtualKeyInfo.vue'
 
 type NoteOff = () => void
 type NoteOnCallback = (index: number) => NoteOff
+type ColorMap = (index: number) => string
+type LabelMap = (index: number) => string
 
 const props = defineProps<{
   baseIndex: number // Should incorporate equave shift
   baseMidiNote: number
-  keyColors: string[]
   isomorphicHorizontal: number
   isomorphicVertical: number
   noteOn: NoteOnCallback
   heldNotes: Map<number, number>
+  baseFrequency: number
+  frequencies: number[]
+  centss: number[]
+  colorMap: ColorMap
+  labelMap: LabelMap
+  showLabel: boolean
+  showCent: boolean
+  showRatio: boolean
+  showFrequency: boolean
 }>()
 
 type VirtualKey = {
@@ -21,22 +31,35 @@ type VirtualKey = {
   y: number
   index: number
   color: string
+  frequency: number
+  cent: number
+  ratio: number
+  label: string
 }
 
 const virtualKeys = computed(() => {
-  const colors = props.keyColors.length ? props.keyColors : ['white']
   const horizontal = props.isomorphicHorizontal
   const vertical = props.isomorphicVertical
   const result: [number, VirtualKey[]][] = []
+  const inverseBaseFreq = 1 / props.baseFrequency
   for (let y = 3; y >= -1; y--) {
     const row = []
     for (let x = 0; x <= 12; ++x) {
       const index = props.baseIndex + x * horizontal + y * vertical
+      const color = props.colorMap(index)
+      const frequency = props.frequencies[index]
+      const cent = props.centss[index]
+      const ratio = frequency * inverseBaseFreq
+      const label = props.labelMap(index)
       row.push({
         x,
         y,
         index,
-        color: colors[mmod(index - props.baseMidiNote - 1, colors.length)]
+        color,
+        frequency,
+        cent,
+        ratio,
+        label
       })
     }
     result.push([y, row])
@@ -63,7 +86,18 @@ const isMousePressed = ref(false)
         :noteOn="() => noteOn(key.index)"
         @press="isMousePressed = true"
         @unpress="isMousePressed = false"
-      ></VirtualKeyboardKey>
+      >
+        <VirtualKeyInfo
+          :label="key.label"
+          :cent="key.cent"
+          :ratio="key.ratio"
+          :frequency="key.frequency"
+          :showLabel="props.showLabel"
+          :showCent="props.showCent"
+          :showRatio="props.showRatio"
+          :showFrequency="props.showFrequency"
+        />
+      </VirtualKeyboardKey>
     </tr>
   </table>
 </template>
@@ -75,5 +109,6 @@ table {
   width: 100%;
   height: 100%;
   min-width: 500px; /* this stops the keys getting too close together for portrait mobile users */
+  table-layout: fixed;
 }
 </style>

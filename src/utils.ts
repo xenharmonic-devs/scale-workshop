@@ -248,6 +248,10 @@ export function autoKeyColors(size: number) {
   return result
 }
 
+export function formatCents(x: number, fractionDigits = 3) {
+  return formatExponential(x, fractionDigits) + '¢'
+}
+
 /**
  * Fill in the gaps of a parent scale (in white) with accidentals (in black).
  * @param generatorPerPeriod Generator sizre divided by period size (in pitch space).
