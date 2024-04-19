@@ -34,12 +34,12 @@ const props = defineProps<{
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
 }
 
-.black-key .key-info {
+.dark .key-info {
   color: white;
   text-shadow: none;
 }
 
-.white-key .key-info {
+.light .key-info {
   color: black;
   text-shadow: none;
 }
