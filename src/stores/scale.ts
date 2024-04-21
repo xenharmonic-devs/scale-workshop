@@ -395,11 +395,11 @@ export const useScaleStore = defineStore('scale', () => {
           )
         } else if (autoColors.value === 'cents') {
           colors.value = intervals.map(
-            (interval) => interval.color?.value ?? centsColor(interval).value
+            (interval) => interval.color?.value ?? centsColor.bind(ev)(interval).value
           )
         } else {
           colors.value = intervals.map(
-            (interval) => interval.color?.value ?? factorColor(interval).value
+            (interval) => interval.color?.value ?? factorColor.bind(ev)(interval).value
           )
         }
         labels.value = intervals.map((interval) => interval.label || name(interval))
