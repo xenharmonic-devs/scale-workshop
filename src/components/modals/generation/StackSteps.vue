@@ -21,7 +21,7 @@ function computeTotal() {
 const updateTotal = debounce(computeTotal)
 
 function generate(expand = true) {
-  const source = scaleData.value + '\nstack()\ni => simplify(i) if isLinear(i) else i'
+  const source = scaleData.value + '\nstack()'
   if (expand) {
     emit('update:source', expandCode(source))
   } else {

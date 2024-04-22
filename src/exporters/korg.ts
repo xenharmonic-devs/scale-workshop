@@ -178,7 +178,7 @@ export class KorgExporter extends BaseExporter {
     const tuningInfo = this.getTuningInfoXml(
       this.modelName,
       'ScaleWorkshop',
-      this.params.name ?? ''
+      scale.title
     )
     const fileInfo = this.getFileInfoXml(this.modelName)
     const [fileNameHeader, fileType] = this.useOctaveFormat

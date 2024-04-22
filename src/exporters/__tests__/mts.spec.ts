@@ -28,7 +28,7 @@ describe('MTS exporter', () => {
 
   it('can gracefully handle invalid parameters', async () => {
     const params = getTestData('MTS Sysex Bulk Tuning Dump exporter unit test v0.0.0')
-    params.name = 'Super Special Test Scale'
+    params.scale.title = 'Super Special Test Scale'
     params.presetIndex = -1
 
     const exporter = new MtsSysexExporter(params)

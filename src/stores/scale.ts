@@ -63,6 +63,7 @@ export const useScaleStore = defineStore('scale', () => {
   // Computational budget to prevent tab hanging.
   const gas = ref(parseInt(localStorage.getItem('gas') ?? '10000', 10))
 
+  // The title the user inputs in the textarea. May be overridden in the source.
   const name = ref('')
   // For the v-model. Consider stores.scale.scale.baseMidiNote the source of truth.
   const baseMidiNote = ref(60)
@@ -83,7 +84,7 @@ export const useScaleStore = defineStore('scale', () => {
     }
   })
   // XXX: baseFrequencyDisplay is merely used for convenience here. This is the last time there's a direct connection.
-  const scale = ref(new Scale(TET12, baseFrequencyDisplay.value, baseMidiNote.value))
+  const scale = ref(new Scale(TET12, baseFrequencyDisplay.value, baseMidiNote.value, name.value))
   const autoColors = ref<'silver' | 'cents' | 'factors'>('silver')
   const sourceText = ref('')
   const relativeIntervals = ref(INTERVALS_12TET)
@@ -110,7 +111,7 @@ export const useScaleStore = defineStore('scale', () => {
 
   // === Computed state ===
   const sourcePrefix = computed(() => {
-    const base = `numComponents(${DEFAULT_NUMBER_OF_COMPONENTS})\n`
+    const base = `${JSON.stringify(name.value)}\nnumComponents(${DEFAULT_NUMBER_OF_COMPONENTS})\n`
     const rootPitch = midiNoteNumberToName(baseMidiNote.value)
     if (autoFrequency.value) {
       return `${base}${rootPitch} = mtof(_) = 1/1`
@@ -387,7 +388,7 @@ export const useScaleStore = defineStore('scale', () => {
       }
       if (ratios.length) {
         const name = str.bind(ev)
-        scale.value = new Scale(ratios, visitorBaseFrequency, baseMidiNote.value)
+        scale.value = new Scale(ratios, visitorBaseFrequency, baseMidiNote.value, ev.rootContext!.title)
         if (autoColors.value === 'silver') {
           colors.value = intervals.map(
             (interval, i) =>
@@ -404,7 +405,7 @@ export const useScaleStore = defineStore('scale', () => {
         }
         labels.value = intervals.map((interval) => interval.label || name(interval))
       } else {
-        scale.value = new Scale(TET12, visitorBaseFrequency, baseMidiNote.value)
+        scale.value = new Scale(TET12, visitorBaseFrequency, baseMidiNote.value, name.value)
         colors.value = defaultColors(baseMidiNote.value)
         labels.value = defaultLabels(baseMidiNote.value, accidentalPreference.value)
         warning.value = 'Empty scale defaults to 12-tone equal temperament.'

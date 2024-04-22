@@ -11,7 +11,7 @@ export default class AbletonAsclExporter extends BaseExporter {
 
   constructor(params: ExporterParams) {
     super(params)
-    this.name = params.name || 'Untitled tuning'
+    this.name = params.scale.title || 'Untitled tuning'
     this.appTitle = params.appTitle || APP_TITLE
   }
 

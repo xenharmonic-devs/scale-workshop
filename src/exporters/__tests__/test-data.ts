@@ -68,12 +68,11 @@ export function getTestData(appTitle: string) {
     })
   ]
   const ratios = relativeIntervals.map((i) => i.value.valueOf())
-  const scale = new Scale(ratios, 440, 69)
+  const scale = new Scale(ratios, 440, 69, 'Test Scale')
   const params: ExporterParams = {
     filename: 'test',
     newline: process.platform === 'linux' ? UNIX_NEWLINE : WINDOWS_NEWLINE,
     scaleUrl: 'https://scaleworkshop.plainsound.org/',
-    name: 'Test Scale',
     relativeIntervals,
     scale,
     appTitle,

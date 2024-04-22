@@ -10,7 +10,6 @@ export type ExporterParams = {
   midiOctaveOffset: number
   scale: Scale
   labels: string[]
-  name?: string
   scaleUrl?: string
   description?: string
   sourceText?: string // May contain invalid lines
