@@ -23,7 +23,7 @@ export default class KontaktExporter extends BaseExporter {
 
     // assemble the kontakt script contents
     let file = '{**************************************' + newline
-    file += this.params.name + newline
+    file += this.params.scale.title + newline
     file +=
       'MIDI note ' +
       baseMidiNote.toString() +

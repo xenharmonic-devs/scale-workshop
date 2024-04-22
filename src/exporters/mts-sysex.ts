@@ -34,7 +34,7 @@ export default class MtsSysexExporter extends BaseExporter {
   }
 
   getNameData() {
-    let name = this.params.name ?? ''
+    let name = this.params.scale.title
     while (name.length < 16) {
       name += ' '
     }

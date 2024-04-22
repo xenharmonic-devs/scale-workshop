@@ -34,7 +34,7 @@ class AnaMarkExporter extends BaseExporter {
 
     // Comment section
     let file = '; VAZ Plus/AnaMark softsynth tuning file' + newline
-    file += '; ' + this.params.name + newline
+    file += '; ' + this.params.scale.title + newline
     file += ';' + newline
 
     // If version 200 or higher, display the scale URL so user can easily get back to the original scale that generates this tun file.

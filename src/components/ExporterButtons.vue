@@ -42,14 +42,13 @@ function copyToClipboard() {
 function doExport(exporter: ExporterKey) {
   const params: ExporterParams = {
     newline: state.newline,
-    name: scale.name,
     scaleUrl: window.location.href,
-    filename: sanitizeFilename(scale.name),
+    filename: sanitizeFilename(scale.scale.title),
     relativeIntervals: scale.relativeIntervals,
     scale: scale.scale,
     labels: scale.labels,
     midiOctaveOffset: -1,
-    description: scale.name,
+    description: scale.scale.title,
     sourceText: scale.sourceText,
     appTitle: APP_TITLE,
     date: new Date()
@@ -65,7 +64,6 @@ function doExport(exporter: ExporterKey) {
       @confirm="showKorgExportModal = false"
       @cancel="showKorgExportModal = false"
       :newline="state.newline"
-      :scaleName="scale.name"
       :relativeIntervals="scale.relativeIntervals"
       :midiOctaveOffset="-1"
       :scale="scale.scale"
@@ -77,7 +75,6 @@ function doExport(exporter: ExporterKey) {
       @confirm="showMtsSysexExportModal = false"
       @cancel="showMtsSysexExportModal = false"
       :newline="state.newline"
-      :scaleName="scale.name"
       :relativeIntervals="scale.relativeIntervals"
       :midiOctaveOffset="-1"
       :scale="scale.scale"
@@ -89,7 +86,6 @@ function doExport(exporter: ExporterKey) {
       @confirm="showReaperExportModal = false"
       @cancel="showReaperExportModal = false"
       :newline="state.newline"
-      :scaleName="scale.name"
       :relativeIntervals="scale.relativeIntervals"
       :midiOctaveOffset="-1"
       :scale="scale.scale"

@@ -11,11 +11,11 @@ import { Interval, TimeReal } from 'sonic-weave'
 describe('Korg exporters', () => {
   it('can export a scale encountered while debugging issue #393', async () => {
     const params = getTestData("Korg 'logue exporter unit test")
-    params.baseMidiNote = 60
     params.scale = new Scale(
       [...Array(12).keys()].map((i) => 24 / (23 - i)),
       256,
-      60
+      60,
+      'Test Scale'
     )
 
     const exporter = new KorgExporter(params, KorgModels.MINILOGUE, false)
@@ -86,7 +86,7 @@ describe('Korg exporters', () => {
     params.relativeIntervals.push(new Interval(TimeReal.fromCents(100.0), 'logarithmic'))
     params.sourceText += '\n100.'
     const ratios = params.relativeIntervals.map((i) => i.value.valueOf())
-    params.scale = new Scale(ratios, 440, 69)
+    params.scale = new Scale(ratios, 440, 69, 'Test Scale')
     expect(() => new KorgExporter(params, KorgModels.MINILOGUE, true)).toThrowError(
       KorgExporterError.OCTAVE_INVALID_EQUAVE
     )
@@ -110,7 +110,7 @@ describe('Korg exporters', () => {
       params.sourceText += '100.\n' + params.sourceText
     }
     const ratios = params.relativeIntervals.map((i) => i.value.valueOf())
-    params.scale = new Scale(ratios, 440, 69)
+    params.scale = new Scale(ratios, 440, 69, 'Test Scale')
 
     expect(() => new KorgExporter(params, KorgModels.MINILOGUE, true)).toThrowError(
       KorgExporterError.OCTAVE_INVALID_INTERVAL
@@ -127,7 +127,7 @@ describe('Korg exporters', () => {
       params.sourceText += '100.\n' + params.sourceText
     }
     const ratios = params.relativeIntervals.map((i) => i.value.valueOf())
-    params.scale = new Scale(ratios, 440, 69)
+    params.scale = new Scale(ratios, 440, 69, 'Test Scale')
 
     expect(() => new KorgExporter(params, KorgModels.MINILOGUE, true)).toThrowError(
       KorgExporterError.OCTAVE_INVALID_INTERVAL
@@ -143,7 +143,7 @@ describe('Korg exporters', () => {
       params.sourceText += '100.\n' + params.sourceText
     }
     const ratios = params.relativeIntervals.map((i) => i.value.valueOf())
-    params.scale = new Scale(ratios, 440, 69)
+    params.scale = new Scale(ratios, 440, 69, 'Test Scale')
 
     const exporter = new KorgExporter(params, KorgModels.MINILOGUE, true)
     const [zip, fileType] = exporter.getFileContents()

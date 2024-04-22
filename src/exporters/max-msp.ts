@@ -17,7 +17,7 @@ export default class MaxMSPExporter extends BaseExporter {
       '# Tuning file for Max/MSP coll objects. - Created using ' +
       this.appTitle +
       this.params.newline
-    file += '# ' + this.params.name + this.params.newline
+    file += '# ' + this.params.scale.title + this.params.newline
     file += '#' + this.params.newline
     file += '# ' + this.params.scaleUrl + this.params.newline
     file += '#' + this.params.newline

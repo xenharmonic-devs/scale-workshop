@@ -5,6 +5,7 @@ export class Scale {
   intervalRatios: number[]
   baseFrequency: number
   baseMidiNote: number
+  title: string
 
   /**
    * Construct a new musical scale.
@@ -12,10 +13,11 @@ export class Scale {
    * @param baseFrequency Base frequency of 1/1.
    * @param baseMidiNote MIDI note corresponfing to base frequency
    */
-  constructor(intervalRatios: number[], baseFrequency: number, baseMidiNote: number) {
+  constructor(intervalRatios: number[], baseFrequency: number, baseMidiNote: number, title: string) {
     this.intervalRatios = intervalRatios
     this.baseFrequency = baseFrequency
     this.baseMidiNote = baseMidiNote
+    this.title = title
   }
 
   /** Number of intervals in the scale. */
