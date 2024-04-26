@@ -388,7 +388,12 @@ export const useScaleStore = defineStore('scale', () => {
       }
       if (ratios.length) {
         const name = str.bind(ev)
-        scale.value = new Scale(ratios, visitorBaseFrequency, baseMidiNote.value, ev.rootContext!.title)
+        scale.value = new Scale(
+          ratios,
+          visitorBaseFrequency,
+          baseMidiNote.value,
+          ev.rootContext!.title
+        )
         if (autoColors.value === 'silver') {
           colors.value = intervals.map(
             (interval, i) =>
