@@ -175,11 +175,7 @@ export class KorgExporter extends BaseExporter {
 
     // prepare files for zipping
     const format = getKorgModelInfo(this.modelName)
-    const tuningInfo = this.getTuningInfoXml(
-      this.modelName,
-      'ScaleWorkshop',
-      scale.title
-    )
+    const tuningInfo = this.getTuningInfoXml(this.modelName, 'ScaleWorkshop', scale.title)
     const fileInfo = this.getFileInfoXml(this.modelName)
     const [fileNameHeader, fileType] = this.useOctaveFormat
       ? ['TunO_000.TunO_', format.octave]
