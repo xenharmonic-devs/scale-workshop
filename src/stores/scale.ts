@@ -408,7 +408,9 @@ export const useScaleStore = defineStore('scale', () => {
         scale.value = new Scale(TET12, visitorBaseFrequency, baseMidiNote.value, name.value)
         colors.value = defaultColors(baseMidiNote.value)
         labels.value = defaultLabels(baseMidiNote.value, accidentalPreference.value)
-        warning.value = 'Empty scale defaults to 12-tone equal temperament.'
+        if (!warning.value) {
+          warning.value = 'Empty scale defaults to 12-tone equal temperament.'
+        }
       }
       const noteNumber = baseMidiNote.value
       if (!warning.value && isBlackMidiNote(noteNumber) && !userDeclaredPitch) {
