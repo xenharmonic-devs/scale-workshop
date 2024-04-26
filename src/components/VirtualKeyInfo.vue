@@ -3,11 +3,11 @@ import { formatHertz, formatExponential, formatCents } from '@/utils'
 
 const props = defineProps<{
   label: string
-  cent: number
+  cents: number
   ratio: number
   frequency: number
   showLabel: boolean
-  showCent: boolean
+  showCents: boolean
   showRatio: boolean
   showFrequency: boolean
 }>()
@@ -18,7 +18,7 @@ const props = defineProps<{
     <div v-if="props.showLabel">
       <strong>{{ props.label }}</strong>
     </div>
-    <div v-if="props.showCent">{{ formatCents(props.cent, 0) }}</div>
+    <div v-if="props.showCents">{{ formatCents(props.cents, 0) }}</div>
     <div v-if="props.showRatio">{{ formatExponential(props.ratio) }}</div>
     <div v-if="props.showFrequency">{{ formatHertz(props.frequency) }}</div>
   </div>

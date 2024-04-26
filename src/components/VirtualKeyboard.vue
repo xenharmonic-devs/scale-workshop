@@ -21,7 +21,7 @@ const props = defineProps<{
   colorMap: ColorMap
   labelMap: LabelMap
   showLabel: boolean
-  showCent: boolean
+  showCents: boolean
   showRatio: boolean
   showFrequency: boolean
 }>()
@@ -32,7 +32,7 @@ type VirtualKey = {
   index: number
   color: string
   frequency: number
-  cent: number
+  cents: number
   ratio: number
   label: string
 }
@@ -48,7 +48,7 @@ const virtualKeys = computed(() => {
       const index = props.baseIndex + x * horizontal + y * vertical
       const color = props.colorMap(index)
       const frequency = props.frequencies[index]
-      const cent = props.centss[index]
+      const cents = props.centss[index]
       const ratio = frequency * inverseBaseFreq
       const label = props.labelMap(index)
       row.push({
@@ -57,7 +57,7 @@ const virtualKeys = computed(() => {
         index,
         color,
         frequency,
-        cent,
+        cents,
         ratio,
         label
       })
@@ -89,11 +89,11 @@ const isMousePressed = ref(false)
       >
         <VirtualKeyInfo
           :label="key.label"
-          :cent="key.cent"
+          :cents="key.cents"
           :ratio="key.ratio"
           :frequency="key.frequency"
           :showLabel="props.showLabel"
-          :showCent="props.showCent"
+          :showCents="props.showCents"
           :showRatio="props.showRatio"
           :showFrequency="props.showFrequency"
         />
