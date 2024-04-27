@@ -63,6 +63,7 @@ export function expandCode(source: string) {
   const globalVisitor = getSourceVisitor()
   const defaults = globalVisitor.rootContext!.clone()
   const visitor = new StatementVisitor(globalVisitor)
+  visitor.isUserRoot = true
   const ast = parseAST(source)
   for (const statement of ast.body) {
     const interupt = visitor.visit(statement)
