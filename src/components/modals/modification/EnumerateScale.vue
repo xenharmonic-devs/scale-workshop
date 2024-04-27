@@ -7,10 +7,10 @@ const emit = defineEmits(['done', 'cancel'])
 const scale = useScaleStore()
 
 function overtonal() {
-  scale.sourceText += ';elevate();simplify;repr'
+  scale.sourceText += ';elevate();simplify;map(repr)'
   const { visitor, defaults } = scale.getVisitors()
-  const overtones = visitor.mutables.get('$') as unknown as string[]
-  visitor.mutables.set('$', [])
+  const overtones = visitor.currentScale.map(i => i.label)
+  visitor.currentScale.length = 0
   scale.sourceText = visitor.expand(defaults)
   if (scale.sourceText) {
     scale.sourceText += '\n'
@@ -21,10 +21,10 @@ function overtonal() {
 }
 
 function undertonal() {
-  scale.sourceText += ';reflect();elevate();simplify;repr'
+  scale.sourceText += ';reflect();elevate();simplify;map(repr)'
   const { visitor, defaults } = scale.getVisitors()
-  const undertones = visitor.mutables.get('$') as unknown as string[]
-  visitor.mutables.set('$', [])
+  const undertones = visitor.currentScale.map(i => i.label)
+  visitor.currentScale.length = 0
   scale.sourceText = visitor.expand(defaults)
   if (scale.sourceText) {
     scale.sourceText += '\n'
@@ -35,10 +35,10 @@ function undertonal() {
 }
 
 function retroversion() {
-  scale.sourceText += ';retrovert();elevate();simplify;repr'
+  scale.sourceText += ';retrovert();elevate();simplify;map(repr)'
   const { visitor, defaults } = scale.getVisitors()
-  const tones = visitor.mutables.get('$') as unknown as string[]
-  visitor.mutables.set('$', [])
+  const tones = visitor.currentScale.map(i => i.label)
+  visitor.currentScale.length = 0
   scale.sourceText = visitor.expand(defaults)
   if (scale.sourceText) {
     scale.sourceText += '\n'
@@ -49,10 +49,10 @@ function retroversion() {
 }
 
 function revposition() {
-  scale.sourceText += ';revpose();elevate();simplify;repr'
+  scale.sourceText += ';revpose();elevate();simplify;map(repr)'
   const { visitor, defaults } = scale.getVisitors()
-  const tones = visitor.mutables.get('$') as unknown as string[]
-  visitor.mutables.set('$', [])
+  const tones = visitor.currentScale.map(i => i.label)
+  visitor.currentScale.length = 0
   scale.sourceText = visitor.expand(defaults)
   if (scale.sourceText) {
     scale.sourceText += '\n'

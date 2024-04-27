@@ -111,7 +111,7 @@ export const useScaleStore = defineStore('scale', () => {
 
   // === Computed state ===
   const sourcePrefix = computed(() => {
-    const base = `${JSON.stringify(name.value)}\nnumComponents(${DEFAULT_NUMBER_OF_COMPONENTS})\n`
+    const base = `numComponents(${DEFAULT_NUMBER_OF_COMPONENTS})\n`
     const rootPitch = midiNoteNumberToName(baseMidiNote.value)
     if (autoFrequency.value) {
       return `${base}${rootPitch} = mtof(_) = 1/1`
@@ -339,6 +339,7 @@ export const useScaleStore = defineStore('scale', () => {
   function getVisitors() {
     const globalVisitor = getGlobalVisitor()
     const visitor = new StatementVisitor(globalVisitor)
+    visitor.isUserRoot = true
     const defaults = visitor.rootContext!.clone()
     defaults.gas = gas.value
 
@@ -387,12 +388,12 @@ export const useScaleStore = defineStore('scale', () => {
         visitorBaseFrequency = visitor.rootContext!.unisonFrequency.valueOf()
       }
       if (ratios.length) {
-        const name = str.bind(ev)
+        const evStr = str.bind(ev)
         scale.value = new Scale(
           ratios,
           visitorBaseFrequency,
           baseMidiNote.value,
-          ev.rootContext!.title
+          ev.rootContext!.title || name.value
         )
         if (autoColors.value === 'silver') {
           colors.value = intervals.map(
@@ -408,7 +409,7 @@ export const useScaleStore = defineStore('scale', () => {
             (interval) => interval.color?.value ?? factorColor.bind(ev)(interval).value
           )
         }
-        labels.value = intervals.map((interval) => interval.label || name(interval))
+        labels.value = intervals.map((interval) => interval.label || evStr(interval))
       } else {
         scale.value = new Scale(TET12, visitorBaseFrequency, baseMidiNote.value, name.value)
         colors.value = defaultColors(baseMidiNote.value)
