@@ -308,6 +308,11 @@
     "source": "88.0 white",
     "categories": ["non-octave", "equal temperament"]
   },
+  "otonalstacks": {
+    "name": "Sevish stacked otonal framents",
+    "source": "unstacked(24 white:27:30:32:36)\nunstacked(24 lightblue:27:28:32:36)\nunstacked(24 palegoldenrod:27:30:32:36)\nstack()\n",
+    "categories": ["non-octave", "just intonation"]
+  },
   "blackdye": {
     "title": "Blackdye GO",
     "name": "Blackdye",
