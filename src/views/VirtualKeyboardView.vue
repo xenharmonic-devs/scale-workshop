@@ -34,7 +34,7 @@ type NoteOnCallback = (index: number) => NoteOff
       :heldNotes="state.heldNotes"
       :frequencies="state.frequencies"
       :baseFrequency="state.scaleRaw.baseFrequency"
-      :scale="state.scale"      
+      :scale="state.scale"
       :showLabel="state.showKeyboardLabel"
       :showCents="state.showKeyboardCents"
       :showRatio="state.showKeyboardRatio"

@@ -2,7 +2,7 @@
 import { formatHertz, formatExponential, formatCents } from '@/utils'
 
 const props = defineProps<{
-  label:string
+  label: string
   cents: number
   ratio: number
   frequency: number

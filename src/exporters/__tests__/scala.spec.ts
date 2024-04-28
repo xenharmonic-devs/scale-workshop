@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest'
 
 import { ScalaSclExporter, ScalaKbmExporter } from '../scala'
 import { getTestData } from './test-data'
-import { UNIX_NEWLINE, WINDOWS_NEWLINE } from '../../constants';
+import { UNIX_NEWLINE, WINDOWS_NEWLINE } from '../../constants'
 
-const NEWLINE = process.platform === 'linux' ? UNIX_NEWLINE : WINDOWS_NEWLINE;
+const NEWLINE = process.platform === 'linux' ? UNIX_NEWLINE : WINDOWS_NEWLINE
 
 describe('Scala exporters', () => {
   it('can handle all line types', () => {

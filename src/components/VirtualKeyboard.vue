@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import VirtualKeyboardKey from '@/components/VirtualKeyboardKey.vue'
 import VirtualKeyInfo from '@/components/VirtualKeyInfo.vue'
 import { mmod, valueToCents } from 'xen-dev-utils'
-import type { Scale } from 'scale-workshop-core';
+import type { Scale } from 'scale-workshop-core'
 
 type NoteOff = () => void
 type NoteOnCallback = (index: number) => NoteOff

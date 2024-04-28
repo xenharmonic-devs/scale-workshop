@@ -178,7 +178,7 @@ export const useStateStore = defineStore('state', () => {
     degreeUpCode,
     degreeDownCode
   })
-    watch(
+  watch(
     colorScheme,
     (newValue) => {
       window.localStorage.setItem('colorScheme', newValue)
