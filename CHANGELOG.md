@@ -1,5 +1,8 @@
 # Change log
 
+## 2.5.0
+ * Feature: Labels, cents, ratios and frequencies can now be shown on virtual keyboard cells [#534](https://github.com/xenharmonic-devs/scale-workshop/issues/534)
+
 ## 2.4.1
  * Bug fix: Unison is no longer affected by random variance [#613](https://github.com/xenharmonic-devs/scale-workshop/issues/613)
 

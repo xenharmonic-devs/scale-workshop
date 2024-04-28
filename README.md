@@ -2,6 +2,10 @@
 
 ![Scale Workshop screenshot](https://raw.githubusercontent.com/xenharmonic-devs/scale-workshop/main/src/assets/img/opengraph-image.png)
 
+## End-of-life warning
+
+Scale Workshop 2 is nearing the end of its development cycle and will be deprecated once v3 completes the beta cycle and is realeased.
+
 ## Description
 
 [Scale Workshop](https://scaleworkshop.plainsound.org/) allows you to design microtonal scales and play them in your web browser. Export your scales for use with VST instruments. Convert Scala files to various tuning formats.
