@@ -1,5 +1,5 @@
 import { parseChord } from 'scale-workshop-core'
-import { computed, type ComputedRef } from 'vue'
+import { computed, watch, type ComputedRef, type Ref } from 'vue'
 import { gcd, mmod } from 'xen-dev-utils'
 import { DEFAULT_NUMBER_OF_COMPONENTS } from './constants'
 
@@ -172,6 +172,10 @@ export function autoKeyColors(size: number) {
   return result
 }
 
+export function formatCents(x: number, fractionDigits = 3) {
+  return formatExponential(x, fractionDigits) + '¢'
+}
+
 /**
  * Fill in the gaps of a parent scale (in white) with accidentals (in black).
  * @param generatorPerPeriod Generator sizre divided by period size (in pitch space).
@@ -312,4 +316,14 @@ export function spineLabel(fifthsUp: number, style: AccidentalStyle = 'double'):
     label += flat
   }
   return label
+}
+
+/**
+ * Synchronize local storage with the values of Vue refs.
+ * @param values Vue refs to watch in a `{ref1, ref2}` record.
+ */
+export function syncValues(values: Record<string, Ref>) {
+  for (const [key, value] of Object.entries(values)) {
+    watch(value, (newValue) => window.localStorage.setItem(key, String(newValue)))
+  }
 }

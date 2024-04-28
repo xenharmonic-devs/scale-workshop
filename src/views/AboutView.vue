@@ -31,6 +31,7 @@
         Forrest Cahoon - <i>developer</i> <br />
         Videco - <i>developer</i> <br />
         Inthar - <i>developer</i> <br />
+        Wilckerson Ganda - <i>developer</i> <br />
         Kraig Grady - <i>lattice advisor</i> <br />
         Abnormality - <i>quality assurance</i>
       </p>

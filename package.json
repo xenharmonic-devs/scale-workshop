@@ -22,6 +22,7 @@
     "qs": "^6.11.2",
     "scale-workshop-core": "github:xenharmonic-devs/scale-workshop-core#v0.1.5",
     "temperaments": "^0.5.3",
+    "values.js": "^2.1.1",
     "vue": "^3.3.4",
     "vue-router": "^4.3.0",
     "webmidi": "^3.1.8",
