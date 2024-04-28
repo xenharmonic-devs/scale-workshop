@@ -76,24 +76,6 @@ export const useStateStore = defineStore('state', () => {
   const degreeUpCode = ref(storage.getItem('degreeUpCode') ?? 'NumpadAdd')
   const degreeDownCode = ref(storage.getItem('degreeDownCode') ?? 'NumpadSubtract')
 
-  // Local storage watchers
-  syncValues({
-    newline,
-    centsFractionDigits,
-    decimalFractionDigits,
-    showVirtualQwerty,
-    showKeyboardLabel,
-    showKeyboardCents,
-    showKeyboardRatio,
-    showKeyboardFrequency,
-    intervalMatrixIndexing,
-    deactivationCode,
-    equaveUpCode,
-    equaveDownCode,
-    degreeUpCode,
-    degreeDownCode
-  })
-
   // === Computed state ===
   const frequencies = computed(() =>
     scale.getFrequencyRange(-baseMidiNote.value, NUMBER_OF_NOTES - baseMidiNote.value)
@@ -177,8 +159,26 @@ export const useStateStore = defineStore('state', () => {
   })
 
   // Local storage watchers
-  watch(newline, (newValue) => window.localStorage.setItem('newline', newValue))
-  watch(
+  syncValues({
+    newline,
+    centsFractionDigits,
+    decimalFractionDigits,
+    showVirtualQwerty,
+    midiOctaveOffset,
+    accidentalPreference,
+    showKeyboardLabel,
+    showKeyboardCents,
+    showKeyboardRatio,
+    showKeyboardFrequency,
+    intervalMatrixIndexing,
+    // keymaps
+    deactivationCode,
+    equaveUpCode,
+    equaveDownCode,
+    degreeUpCode,
+    degreeDownCode
+  })
+    watch(
     colorScheme,
     (newValue) => {
       window.localStorage.setItem('colorScheme', newValue)
@@ -186,28 +186,6 @@ export const useStateStore = defineStore('state', () => {
     },
     { immediate: true }
   )
-  watch(centsFractionDigits, (newValue) =>
-    window.localStorage.setItem('centsFractionDigits', newValue.toString())
-  )
-  watch(decimalFractionDigits, (newValue) =>
-    window.localStorage.setItem('decimalFractionDigits', newValue.toString())
-  )
-  watch(showVirtualQwerty, (newValue) =>
-    window.localStorage.setItem('showVirtualQwerty', newValue.toString())
-  )
-  watch(midiOctaveOffset, (newValue) =>
-    window.localStorage.setItem('midiOctaveOffset', newValue.toString())
-  )
-  watch(intervalMatrixIndexing, (newValue) =>
-    window.localStorage.setItem('intervalMatrixIndexing', newValue.toString())
-  )
-  watch(accidentalPreference, (newValue) => localStorage.setItem('accidentalPreference', newValue))
-  // Store keymaps
-  watch(deactivationCode, (newValue) => window.localStorage.setItem('deactivationCode', newValue))
-  watch(equaveUpCode, (newValue) => window.localStorage.setItem('equaveUpCode', newValue))
-  watch(equaveDownCode, (newValue) => window.localStorage.setItem('equaveDownCode', newValue))
-  watch(degreeUpCode, (newValue) => window.localStorage.setItem('degreeUpCode', newValue))
-  watch(degreeDownCode, (newValue) => window.localStorage.setItem('degreeDownCode', newValue))
 
   // Sanity watchers
   watch(baseMidiNote, (newValue) => {
