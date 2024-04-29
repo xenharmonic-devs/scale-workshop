@@ -148,7 +148,7 @@ function generate(expand = true) {
       } else {
         up = size - n - rank2.down
       }
-      labelString = `\nlabel([${colors.join(', ')}])`
+      labelString = `\n[${colors.join(', ')}]`
     }
     const source = `rank2(${rank2.generator.toString()}, ${up}, ${down}, ${rank2.period.toString()}, ${n})${labelString}`
     emit('update:scaleName', `Rank 2 temperament (${rank2.generatorString}, ${rank2.periodString})`)
