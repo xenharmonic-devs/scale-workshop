@@ -18,7 +18,7 @@
   },
   "ragabhairavi": {
     "name": "Raga Bhairavi",
-    "source": "eulerGenus(135, 5)\n$[5] = 16/15\nsort()\nlabel([black, white, black, black, white, black, black, white])\n",
+    "source": "eulerGenus(135, 5)\n$[5] = 16/15\nsort()\n[black, white, black, black, white, black, black, white]\n",
     "categories": ["traditional", "just intonation"]
   },
   "ragakafi": {
@@ -134,7 +134,7 @@
   },
   "pythagorean": {
     "name": "Pythagorean",
-    "source": "[3^i rdc 2 white for i of [-2..4]] ['F', 'C', 'G', 'D', 'A', 'E', 'B']\n[3^i rdc 2 black for i of [-7..-3]] ['G♭', 'D♭', 'A♭', 'E♭', 'B♭']\nsort()\n",
+    "source": "(3^[-2..4] rdc 2) white ['F', 'C', 'G', 'D', 'A', 'E', 'B']\n(3^[-7..-3] rdc 2) black ['G♭', 'D♭', 'A♭', 'E♭', 'B♭']\nsort()\n",
     "categories": ["traditional", "just intonation"],
     "baseMidiNote": 67,
     "baseFrequency": 391
@@ -238,7 +238,7 @@
   },
   "22orwell9": {
     "name": "22edo orwell[9]",
-    "source": "rank2(7/6, 4, 4)\nlabel([black, white, black, white, white, black, white, black, white])\n22@\n",
+    "source": "rank2(7/6, 4, 4)\n[black, white, black, white, white, black, white, black, white]\n22@\n",
     "categories": ["MOS", "equal temperament"]
   },
   "22pajara12": {

@@ -153,14 +153,14 @@ function generate(expand = true) {
   ) {
     emit('update:baseFrequency', FREQUENCY_C)
     emit('update:baseMidiNote', MIDI_NOTE_C)
-    source += `\nlabel([${KEY_COLORS_C.join(', ')}])`
+    source += `\n[${KEY_COLORS_C.join(', ')}]`
     const labels: string[] = []
     for (let i = 0; i < historical.size; ++i) {
       labels[mmod(7 * (i - historical.down) - 1, historical.size)] = JSON.stringify(
         spineLabel(i - historical.down)
       )
     }
-    source += `\nlabel([${labels.join(', ')}])`
+    source += `\n[${labels.join(', ')}]`
   }
   if (expand) {
     source = expandCode(source)
