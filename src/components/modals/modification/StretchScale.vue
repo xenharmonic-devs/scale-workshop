@@ -16,7 +16,7 @@ const state = useStateStore()
 function modify(expand = true) {
   scale.sourceText += `\nstretch(${decimalString(modal.stretchAmount)})\ninterval => cents(interval, ${state.centsFractionDigits})`
   if (expand) {
-    const { visitor, defaults } = scale.getVisitors()
+    const { visitor, defaults } = scale.getUserScopeVisitor()
     scale.sourceText = visitor.expand(defaults)
   }
   scale.computeScale()

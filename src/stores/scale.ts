@@ -10,7 +10,6 @@ import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
 import { Fraction, mmod, mtof } from 'xen-dev-utils'
 import {
-  getSourceVisitor,
   parseAST,
   relative,
   Interval,
@@ -22,7 +21,8 @@ import {
   StatementVisitor,
   ExpressionVisitor,
   builtinNode,
-  repr
+  repr,
+  getGlobalVisitor
 } from 'sonic-weave'
 import {
   APP_TITLE,
@@ -307,7 +307,7 @@ export const useScaleStore = defineStore('scale', () => {
   warn.__node__ = builtinNode(warn)
 
   // Local helpers
-  function getGlobalVisitor() {
+  function getGlobalScaleWorkshopVisitor() {
     // Inject global variables
     const _ = Interval.fromInteger(baseMidiNote.value)
     const baseFreq = new Interval(
@@ -323,7 +323,7 @@ export const useScaleStore = defineStore('scale', () => {
       latticeView,
       warn
     }
-    const visitor = getSourceVisitor(true, extraBuiltins)
+    const visitor = getGlobalVisitor(true, extraBuiltins)
     visitor.rootContext!.gas = gas.value
 
     // Declare base nominal and unison frequency
@@ -336,10 +336,10 @@ export const useScaleStore = defineStore('scale', () => {
   }
 
   // Methods
-  function getVisitors() {
-    const globalVisitor = getGlobalVisitor()
-    const visitor = new StatementVisitor(globalVisitor)
-    visitor.isUserRoot = true
+  function getUserScopeVisitor() {
+    const globalVisitor = getGlobalScaleWorkshopVisitor()
+    const visitor = new StatementVisitor(globalVisitor);
+    visitor.isUserRoot = true;
     const defaults = visitor.rootContext!.clone()
     defaults.gas = gas.value
 
@@ -361,8 +361,9 @@ export const useScaleStore = defineStore('scale', () => {
       error.value = ''
       warning.value = ''
       latticeIntervals.value = []
-      const globalVisitor = getGlobalVisitor()
+      const globalVisitor = getGlobalScaleWorkshopVisitor()
       const visitor = new StatementVisitor(globalVisitor)
+      visitor.isUserRoot = true;
       const ast = parseAST(sourceText.value)
       let userDeclaredPitch = false
       for (const statement of ast.body) {
@@ -484,7 +485,7 @@ export const useScaleStore = defineStore('scale', () => {
     whiteIndices,
     whiteModeOffset,
     // Methods
-    getVisitors,
+    getUserScopeVisitor,
     computeScale,
     getFrequency,
     colorForIndex,

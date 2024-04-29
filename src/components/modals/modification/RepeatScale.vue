@@ -11,7 +11,7 @@ const scale = useScaleStore()
 function modify(expand = true) {
   scale.sourceText += `\nrepeat(${modal.numRepeats})`
   if (expand) {
-    const { visitor, defaults } = scale.getVisitors()
+    const { visitor, defaults } = scale.getUserScopeVisitor()
     scale.sourceText = visitor.expand(defaults)
   }
   scale.computeScale()

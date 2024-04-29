@@ -115,7 +115,7 @@ function modifyAndAdvance() {
 
 function modify(expand = true) {
   if (expand) {
-    const { visitor, defaults } = scale.getVisitors()
+    const { visitor, defaults } = scale.getUserScopeVisitor()
     scale.sourceText = visitor.expand(defaults)
   }
   scale.computeScale()

@@ -31,7 +31,7 @@ const error = computed(() => {
 function modify(expand = true) {
   scale.sourceText += `\ntoHarmonics(${modal.largeInteger})`
   if (expand) {
-    const { visitor, defaults } = scale.getVisitors()
+    const { visitor, defaults } = scale.getUserScopeVisitor()
     scale.sourceText = visitor.expand(defaults)
   }
   scale.computeScale()

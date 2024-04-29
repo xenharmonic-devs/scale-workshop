@@ -20,7 +20,7 @@ watch(
 function modify(expand = true) {
   scale.sourceText += `\nmergeOffset(${arrayToString(modal.offsets as Interval[])}, '${modal.overflowType}')`
   if (expand) {
-    const { visitor, defaults } = scale.getVisitors()
+    const { visitor, defaults } = scale.getUserScopeVisitor()
     scale.sourceText = visitor.expand(defaults)
   }
   scale.computeScale()

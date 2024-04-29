@@ -5,8 +5,7 @@ import {
   getSourceVisitor,
   Interval,
   parseAST,
-  repr,
-  StatementVisitor
+  repr
 } from 'sonic-weave'
 
 /**
@@ -60,10 +59,8 @@ export function splitText(text: string) {
 }
 
 export function expandCode(source: string) {
-  const globalVisitor = getSourceVisitor()
-  const defaults = globalVisitor.rootContext!.clone()
-  const visitor = new StatementVisitor(globalVisitor)
-  visitor.isUserRoot = true
+  const visitor = getSourceVisitor()
+  const defaults = visitor.rootContext!.clone()
   const ast = parseAST(source)
   for (const statement of ast.body) {
     const interupt = visitor.visit(statement)
