@@ -29,7 +29,7 @@ function modify(expand = true) {
   if (modal.errorModel === 'rooted') {
     scale.sourceText += `\nequalize(${modal.largeDivisions})`
     if (expand) {
-      const { visitor, defaults } = scale.getVisitors()
+      const { visitor, defaults } = scale.getUserScopeVisitor()
       scale.sourceText = visitor.expand(defaults)
     }
   } else {

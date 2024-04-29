@@ -38,7 +38,7 @@ function modify(expand = true) {
   subset.sort((a, b) => a - b)
   scale.sourceText += `\nsubset(${arrayToString(subset)})`
   if (expand) {
-    const { visitor, defaults } = scale.getVisitors()
+    const { visitor, defaults } = scale.getUserScopeVisitor()
     scale.sourceText = visitor.expand(defaults)
   }
   scale.computeScale()

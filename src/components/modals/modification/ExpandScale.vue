@@ -15,7 +15,7 @@ function modify() {
   if (modal.bleach) {
     scale.sourceText += ';bleach'
   }
-  const { visitor, defaults } = scale.getVisitors()
+  const { visitor, defaults } = scale.getUserScopeVisitor()
   scale.sourceText = visitor.expand(defaults)
   scale.computeScale()
   emit('done')

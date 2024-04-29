@@ -109,7 +109,7 @@ function closeModals() {
 }
 
 function expandAndQuit() {
-  const { visitor, defaults } = scale.getVisitors()
+  const { visitor, defaults } = scale.getUserScopeVisitor()
   scale.sourceText = visitor.expand(defaults)
   scale.computeScale()
   emit('done')

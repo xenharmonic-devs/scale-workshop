@@ -68,7 +68,7 @@ function modify(expand = true) {
     scale.sourceText += `\nPrimeMapping(${mapping.map((c) => c.toFixed(state.centsFractionDigits)).join(', ')})`
   }
   if (expand) {
-    const { visitor, defaults } = scale.getVisitors()
+    const { visitor, defaults } = scale.getUserScopeVisitor()
     scale.sourceText = visitor.expand(defaults)
   }
   scale.computeScale()

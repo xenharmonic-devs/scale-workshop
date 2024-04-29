@@ -49,7 +49,7 @@ type NoteOnCallback = (index: number) => NoteOff
       :centss="scale.centss"
       :labelMap="scale.labelForIndex"
       :showLabel="state.showKeyboardLabel"
-      :showCent="state.showKeyboardCents"
+      :showCents="state.showKeyboardCents"
       :showRatio="state.showKeyboardRatio"
       :showFrequency="state.showKeyboardFrequency"
     ></VirtualKeyboard>

@@ -23,7 +23,7 @@ onMounted(() => {
 function modify(expand = false) {
   scale.sourceText += '\n'
   if (modal.type === 'decimal') {
-    scale.sourceText += `interval => decimal(interval, ${myDecimalFractionDigits.value})`
+    scale.sourceText += `interval => interval lest decimal(interval, ${myDecimalFractionDigits.value})`
   } else if (modal.type === 'fraction') {
     if (modal.fractionTolerance || modal.preferredNumerator || modal.preferredEtEquaveDenominator) {
       scale.sourceText += `interval => interval lest fraction(interval, ${modal.fractionTolerance ? centString(modal.fractionTolerance) : 'niente'}, ${modal.preferredNumerator}, ${modal.preferredDenominator})`
@@ -33,12 +33,12 @@ function modify(expand = false) {
   } else if (modal.type === 'nedji') {
     scale.sourceText += `interval => interval lest nedji(interval, ${modal.preferredEtNumerator}, ${modal.preferredEtDenominator}, ${modal.preferredEtEquaveNumerator}, ${modal.preferredEtEquaveDenominator})`
   } else if (modal.type === 'cents') {
-    scale.sourceText += `interval => cents(interval, ${myCentsFractionDigits.value})`
+    scale.sourceText += `interval => interval lest cents(interval, ${myCentsFractionDigits.value})`
   } else {
     scale.sourceText += `interval => interval lest ${modal.type}(interval)`
   }
   if (expand) {
-    const { visitor, defaults } = scale.getVisitors()
+    const { visitor, defaults } = scale.getUserScopeVisitor()
     scale.sourceText = visitor.expand(defaults)
   }
   scale.computeScale()
