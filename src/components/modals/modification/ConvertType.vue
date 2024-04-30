@@ -23,19 +23,19 @@ onMounted(() => {
 function modify(expand = false) {
   scale.sourceText += '\n'
   if (modal.type === 'decimal') {
-    scale.sourceText += `interval => interval lest decimal(interval, ${myDecimalFractionDigits.value})`
+    scale.sourceText += `interval => decimal(interval, ${myDecimalFractionDigits.value}) lest interval`
   } else if (modal.type === 'fraction') {
     if (modal.fractionTolerance || modal.preferredNumerator || modal.preferredEtEquaveDenominator) {
-      scale.sourceText += `interval => interval lest fraction(interval, ${modal.fractionTolerance ? centString(modal.fractionTolerance) : 'niente'}, ${modal.preferredNumerator}, ${modal.preferredDenominator})`
+      scale.sourceText += `interval => fraction(interval, ${modal.fractionTolerance ? centString(modal.fractionTolerance) : 'niente'}, ${modal.preferredNumerator}, ${modal.preferredDenominator}) lest interval`
     } else {
-      scale.sourceText += 'interval => interval lest fraction(interval)'
+      scale.sourceText += 'interval => fraction(interval) lest interval'
     }
   } else if (modal.type === 'nedji') {
-    scale.sourceText += `interval => interval lest nedji(interval, ${modal.preferredEtNumerator}, ${modal.preferredEtDenominator}, ${modal.preferredEtEquaveNumerator}, ${modal.preferredEtEquaveDenominator})`
+    scale.sourceText += `interval => nedji(interval, ${modal.preferredEtNumerator}, ${modal.preferredEtDenominator}, ${modal.preferredEtEquaveNumerator}, ${modal.preferredEtEquaveDenominator}) lest interval`
   } else if (modal.type === 'cents') {
-    scale.sourceText += `interval => interval lest cents(interval, ${myCentsFractionDigits.value})`
+    scale.sourceText += `interval => cents(interval, ${myCentsFractionDigits.value}) lest interval`
   } else {
-    scale.sourceText += `interval => interval lest ${modal.type}(interval)`
+    scale.sourceText += `interval => ${modal.type}(interval) lest interval`
   }
   if (expand) {
     const { visitor, defaults } = scale.getUserScopeVisitor()
