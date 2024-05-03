@@ -28,7 +28,9 @@ export function getTestData(appTitle: string) {
       type: 'CentsLiteral',
       sign: '',
       whole: 100n,
-      fractional: ''
+      fractional: '',
+      exponent: null,
+      real: false,
     }),
     relativeC5,
     new Interval(

@@ -62,12 +62,7 @@ export function expandCode(source: string) {
   const visitor = getSourceVisitor()
   const defaults = visitor.rootContext!.clone()
   const ast = parseAST(source)
-  for (const statement of ast.body) {
-    const interupt = visitor.visit(statement)
-    if (interupt) {
-      throw new Error('Illegal statement.')
-    }
-  }
+  visitor.executeProgram(ast);
   return visitor.expand(defaults)
 }
 
