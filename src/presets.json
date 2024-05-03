@@ -228,7 +228,7 @@
   },
   "17rast": {
     "name": "17edo Rast",
-    "source": "M2 white\nn3 gray\nP4 white\nP5 white\nM6 white\nn7 gray\nP8 white\nmap(str)\n17@\n",
+    "source": "defer 17@\nM2 white\nn3 gray\nP4 white\nP5 white\nM6 white\nn7 gray\nP8 white\nmap(str)\n",
     "categories": ["MOS", "equal temperament"]
   },
   "22porcupine8": {
@@ -260,7 +260,7 @@
   },
   "31meantone19": {
     "name": "31edo meantone[19]",
-    "source": "A♮4 = 440 Hz\nA♯4 navy\nB♭4 maroon\nB♮4 white\nC♭5 maroon\nC♮5 white\nC♯5 navy\nD♭5 maroon\nD♮5 white\nD♯5 navy\nE♭5 maroon\nE♮5 white\nE♯5 navy\nF♮5 white\nF♯5 navy\nG♭5 maroon\nG♮5 white\nG♯5 navy\nA♭5 maroon\nA♮5 white\nmap(i => str(i)[..1])\n31@\n",
+    "source": "defer 31@\ndefer map(i => str(i)[..1])\nA♮4 = 440 Hz\nA♯4 navy\nB♭4 maroon\nB♮4 white\nC♭5 maroon\nC♮5 white\nC♯5 navy\nD♭5 maroon\nD♮5 white\nD♯5 navy\nE♭5 maroon\nE♮5 white\nE♯5 navy\nF♮5 white\nF♯5 navy\nG♭5 maroon\nG♮5 white\nG♯5 navy\nA♭5 maroon\nA♮5 white\n",
     "categories": ["MOS", "equal temperament"]
   },
   "46sensi11": {
@@ -275,7 +275,7 @@
   },
   "bohlenpierceeq": {
     "name": "Bohlen-Pierce equal (13ed3)",
-    "source": "27/25 black 'C♯/D♭'\n25/21 white 'D'\n9/7 white 'E'\n7/5 white 'F'\n75/49 black 'F♯/G♭'\n5/3 white 'G'\n9/5 white 'H'\n49/25 black 'H♯/J♭'\n15/7 white 'J'\n7/3 white 'A'\n63/25 black 'A♯/B♭'\n25/9 white 'B'\n3/1 white 'C'\nb13@\n",
+    "source": "defer b13@\n27/25 black 'C♯/D♭'\n25/21 white 'D'\n9/7 white 'E'\n7/5 white 'F'\n75/49 black 'F♯/G♭'\n5/3 white 'G'\n9/5 white 'H'\n49/25 black 'H♯/J♭'\n15/7 white 'J'\n7/3 white 'A'\n63/25 black 'A♯/B♭'\n25/9 white 'B'\n3/1 white 'C'\n",
     "categories": ["non-octave", "equal temperament"]
   },
   "bohlenpierceji": {

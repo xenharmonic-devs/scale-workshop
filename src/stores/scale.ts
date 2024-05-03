@@ -328,9 +328,7 @@ export const useScaleStore = defineStore('scale', () => {
 
     // Declare base nominal and unison frequency
     const prefixAst = parseAST(sourcePrefix.value)
-    for (const statement of prefixAst.body) {
-      visitor.visit(statement)
-    }
+    visitor.executeProgram(prefixAst)
 
     return visitor
   }
@@ -344,12 +342,7 @@ export const useScaleStore = defineStore('scale', () => {
     defaults.gas = gas.value
 
     const ast = parseAST(sourceText.value)
-    for (const statement of ast.body) {
-      const interupt = visitor.visit(statement)
-      if (interupt) {
-        throw new Error('Illegal statement.')
-      }
-    }
+    visitor.executeProgram(ast);
     return {
       defaults,
       visitor
@@ -365,14 +358,12 @@ export const useScaleStore = defineStore('scale', () => {
       const visitor = new StatementVisitor(globalVisitor)
       visitor.isUserRoot = true;
       const ast = parseAST(sourceText.value)
+      visitor.executeProgram(ast);
       let userDeclaredPitch = false
       for (const statement of ast.body) {
         if (statement.type === 'PitchDeclaration') {
           userDeclaredPitch = true
-        }
-        const interupt = visitor.visit(statement)
-        if (interupt) {
-          throw new Error('Illegal statement.')
+          break
         }
       }
 
