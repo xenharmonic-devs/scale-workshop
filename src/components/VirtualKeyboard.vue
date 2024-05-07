@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import VirtualKeyboardKey from '@/components/VirtualKeyboardKey.vue'
 import VirtualKeyInfo from '@/components/VirtualKeyInfo.vue'
-import { mmod, valueToCents } from 'xen-dev-utils'
+import { mmod } from 'xen-dev-utils'
 import type { Scale } from 'scale-workshop-core'
 
 type NoteOff = () => void
@@ -46,11 +46,12 @@ const virtualKeys = computed(() => {
     const row = []
     for (let x = 0; x <= 12; ++x) {
       const index = props.baseIndex + x * horizontal + y * vertical
-      const color = colors[mmod(index - props.baseMidiNote, colors.length)]
+      const scaleIndex = index - props.baseMidiNote;
+      const color = colors[mmod(scaleIndex, colors.length)]
       const frequency = props.frequencies[index]
       const ratio = frequency * inverseBaseFreq
-      const cents = valueToCents(ratio)
-      const label = props.scale.getName(index)
+      const cents = props.scale.getCents(scaleIndex)
+      const label = props.scale.getName(scaleIndex)
       row.push({
         x,
         y,

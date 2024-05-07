@@ -1,5 +1,8 @@
 # Change log
 
+## 2.5.1
+ * Bug fix: Labels are now shown on the correct virtual keyboard cells [#684](https://github.com/xenharmonic-devs/scale-workshop/issues/684)
+
 ## 2.5.0
  * Feature: Labels, cents, ratios and frequencies can now be shown on virtual keyboard cells [#534](https://github.com/xenharmonic-devs/scale-workshop/issues/534)
 
