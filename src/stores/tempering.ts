@@ -160,9 +160,13 @@ export const useRank2Store = defineStore('rank2', () => {
   const subgroupString = state.subgroupString
 
   // === Computed state ===
-  const generatorPerPeriod = computed(
-    () => generator.value.totalCents() / period.value.totalCents()
-  )
+  const generatorPerPeriod = computed(() => {
+    const p = period.value.totalCents()
+    if (!p) {
+      return 0;
+    }
+    return generator.value.totalCents() / p
+  })
   const safeNumPeriods = computed(() => {
     const value = Math.abs(parseInt(numPeriods.value as unknown as string, 10))
     if (isNaN(value)) {
@@ -170,9 +174,7 @@ export const useRank2Store = defineStore('rank2', () => {
     }
     return value || 1
   })
-  const opposite = computed(() =>
-    isBright(generatorPerPeriod.value, safeSize.value / safeNumPeriods.value) ? 'dark' : 'bright'
-  )
+  const opposite = computed(() => isBright(generatorPerPeriod.value, safeSize.value / safeNumPeriods.value) ? 'dark' : 'bright')
 
   const [mosPatterns, mosPatternsError] = computedAndError(() => {
     if (method.value === 'generator') {
@@ -219,19 +221,27 @@ export const useRank2Store = defineStore('rank2', () => {
   }, [])
 
   const circlePeriodCents = computed(() => {
+    const p = period.value.totalCents()
+    if (!p || isNaN(p)) {
+      return 0.0001;
+    }
     const stretch = parseFloat(periodStretch.value)
     if (isNaN(stretch)) {
-      return period.value.totalCents()
+      return p
     }
-    return period.value.totalCents() * Math.exp(stretch)
+    return p * Math.exp(stretch)
   })
 
   const circleGeneratorCents = computed(() => {
+    const g = generator.value.totalCents()
+    if (isNaN(g)) {
+      return 0;
+    }
     const fine = parseFloat(generatorFineCents.value)
     if (isNaN(fine)) {
-      return generator.value.totalCents()
+      return g
     }
-    return generator.value.totalCents() + fine
+    return g + fine
   })
 
   const safeSize = computed(

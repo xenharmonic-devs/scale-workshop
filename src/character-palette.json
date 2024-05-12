@@ -27,9 +27,11 @@
   "ε": "Interordinal nominal epsilon. <code>ε4</code> is a semioctave above <code>E4</code>.",
   "ζ": "Interordinal nominal zeta. <code>ζ4</code> is a semioctave above <code>F4</code>.",
   "η": "Interordinal nominal eta. <code>η4</code> is a semioctave below <code>G4</code>.",
+  "φ": "Interordinal nominal phi. <code>φ4</code> is a semifourth above <code>C4</code>.",
+  "χ": "Interordinal nominal chi. <code>χ4</code> is 9/8 above <code>φ4</code>.",
+  "ψ": "Interordinal nominal psi. <code>ψ4</code> is a semifourth below <code>C5</code>.",
+  "ω": "Interordinal nominal omega. <code>ω4</code> is 9/8 above <code>ψ4</code>.",
   "¢": "Cent. <code>1¢</code> is equal to <code>1\\1200</code>.",
-  "€": "Reciprocal cent. <code>€ · 1¢</code> is <code>1</code>.",
-  "¶": "Geometric inverse of the Hertz. <code>¶ · 1Hz</code> is <code>1</code>.",
   "µ": "Metric prefix micro. E.g. Period of oscillation <code>2000 µs</code> corresponds to frequency of oscillation <code>500 Hz</code>.",
   "⟨": "Val angle bracket. <code>⟨12 19 28]</code>.",
   "⟩": "Monzo angle bracket. <code>[-4 4 -1⟩</code>."
