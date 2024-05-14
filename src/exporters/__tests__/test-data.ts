@@ -30,7 +30,7 @@ export function getTestData(appTitle: string) {
       whole: 100n,
       fractional: '',
       exponent: null,
-      real: false,
+      real: false
     }),
     relativeC5,
     new Interval(

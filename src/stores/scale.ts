@@ -336,13 +336,13 @@ export const useScaleStore = defineStore('scale', () => {
   // Methods
   function getUserScopeVisitor() {
     const globalVisitor = getGlobalScaleWorkshopVisitor()
-    const visitor = new StatementVisitor(globalVisitor);
-    visitor.isUserRoot = true;
+    const visitor = new StatementVisitor(globalVisitor)
+    visitor.isUserRoot = true
     const defaults = visitor.rootContext!.clone()
     defaults.gas = gas.value
 
     const ast = parseAST(sourceText.value)
-    visitor.executeProgram(ast);
+    visitor.executeProgram(ast)
     return {
       defaults,
       visitor
@@ -356,9 +356,9 @@ export const useScaleStore = defineStore('scale', () => {
       latticeIntervals.value = []
       const globalVisitor = getGlobalScaleWorkshopVisitor()
       const visitor = new StatementVisitor(globalVisitor)
-      visitor.isUserRoot = true;
+      visitor.isUserRoot = true
       const ast = parseAST(sourceText.value)
-      visitor.executeProgram(ast);
+      visitor.executeProgram(ast)
       let userDeclaredPitch = false
       for (const statement of ast.body) {
         if (statement.type === 'PitchDeclaration') {

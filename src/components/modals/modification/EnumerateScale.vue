@@ -9,7 +9,7 @@ const scale = useScaleStore()
 function overtonal() {
   scale.sourceText += ';elevate();simplify;map(repr)'
   const { visitor, defaults } = scale.getUserScopeVisitor()
-  const overtones = visitor.currentScale.map(i => i.label)
+  const overtones = visitor.currentScale.map((i) => i.label)
   visitor.currentScale.length = 0
   scale.sourceText = visitor.expand(defaults)
   if (scale.sourceText) {
@@ -23,7 +23,7 @@ function overtonal() {
 function undertonal() {
   scale.sourceText += ';reflect();elevate();simplify;map(repr)'
   const { visitor, defaults } = scale.getUserScopeVisitor()
-  const undertones = visitor.currentScale.map(i => i.label)
+  const undertones = visitor.currentScale.map((i) => i.label)
   visitor.currentScale.length = 0
   scale.sourceText = visitor.expand(defaults)
   if (scale.sourceText) {
@@ -37,7 +37,7 @@ function undertonal() {
 function retroversion() {
   scale.sourceText += ';retrovert();elevate();simplify;map(repr)'
   const { visitor, defaults } = scale.getUserScopeVisitor()
-  const tones = visitor.currentScale.map(i => i.label)
+  const tones = visitor.currentScale.map((i) => i.label)
   visitor.currentScale.length = 0
   scale.sourceText = visitor.expand(defaults)
   if (scale.sourceText) {
@@ -51,7 +51,7 @@ function retroversion() {
 function revposition() {
   scale.sourceText += ';revpose();elevate();simplify;map(repr)'
   const { visitor, defaults } = scale.getUserScopeVisitor()
-  const tones = visitor.currentScale.map(i => i.label)
+  const tones = visitor.currentScale.map((i) => i.label)
   visitor.currentScale.length = 0
   scale.sourceText = visitor.expand(defaults)
   if (scale.sourceText) {
