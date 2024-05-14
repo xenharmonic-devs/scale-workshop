@@ -1,12 +1,6 @@
 import { computed, watch, type ComputedRef, type Ref } from 'vue'
 import { gcd, mmod } from 'xen-dev-utils'
-import {
-  evaluateExpression,
-  getSourceVisitor,
-  Interval,
-  parseAST,
-  repr
-} from 'sonic-weave'
+import { evaluateExpression, getSourceVisitor, Interval, parseAST, repr } from 'sonic-weave'
 
 /**
  * Calculate the smallest power of two greater or equal to the input value.
@@ -62,7 +56,7 @@ export function expandCode(source: string) {
   const visitor = getSourceVisitor()
   const defaults = visitor.rootContext!.clone()
   const ast = parseAST(source)
-  visitor.executeProgram(ast);
+  visitor.executeProgram(ast)
   return visitor.expand(defaults)
 }
 
