@@ -27,7 +27,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: cp vite.config.ts.template vite.config.ts
     - run: npm ci
     - run: npm run build --if-present
     - run: npm run lint:no-fix
