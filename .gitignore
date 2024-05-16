@@ -27,6 +27,3 @@ coverage
 *.njsproj
 *.sln
 *.sw?
-
-# Local vite config
-vite.config.ts

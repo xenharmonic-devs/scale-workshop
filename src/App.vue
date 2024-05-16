@@ -24,7 +24,7 @@ const audio = useAudioStore()
 
 // == URL path handling ==
 /**
- * Strip away base path such as /scaleworkshop-dev/
+ * Strip away base path "/"
  */
 function getPath(url: URL) {
   return url.pathname.slice(import.meta.env.BASE_URL.length)
