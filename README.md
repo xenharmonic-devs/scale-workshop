@@ -192,6 +192,10 @@ npm run test:e2e
 npm run lint
 ```
 
+### Run the backend server
+
+See [sw-server](https://github.com/xenharmonic-devs/sw-server) for the backend component for storing and retrieving scales.
+
 ## License
 
 MIT, see [LICENCE](LICENSE) for details.

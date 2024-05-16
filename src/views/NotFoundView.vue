@@ -27,7 +27,7 @@ function openTheGates(source: string) {
       <h2>Not found</h2>
       <p>
         We couldn't find what you were looking for, but
-        <a href="#" @click="ritualInProgress = true">here's an octaplex</a>.
+        <a id="octaplex" href="#" @click="ritualInProgress = true">here's an octaplex</a>.
       </p>
     </div>
     <Teleport to="body">

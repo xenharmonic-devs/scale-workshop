@@ -38,6 +38,21 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue')
     },
     {
+      path: '/scale/:id',
+      name: 'load-scale',
+      component: () => import('../views/LoadScaleView.vue')
+    },
+    {
+      path: '/privacy-policy',
+      name: 'privacy-policy',
+      component: () => import('../views/PrivacyPolicy.vue')
+    },
+    {
+      path: '/terms-of-service',
+      name: 'terms-of-service',
+      component: () => import('../views/TermsOfService.vue')
+    },
+    {
       path: '/analysis',
       name: 'analysis',
       component: () => import('../views/AnalysisView.vue')

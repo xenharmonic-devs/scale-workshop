@@ -17,6 +17,7 @@ const state = useStateStore()
 const controls = ref<typeof ScaleControls | null>(null)
 const newScale = ref<typeof NewScale | null>(null)
 const modifyScale = ref<typeof ModifyScale | null>(null)
+const exporterButtons = ref<typeof ExporterButtons | null>(null)
 
 const updateScale = debounce(scale.computeScale)
 
@@ -56,8 +57,8 @@ onMounted(() => {
           :labels="scale.labels"
         />
       </div>
-      <div class="column exporters">
-        <ExporterButtons />
+      <div class="column exporters" @mouseenter="exporterButtons!.uploadScale()">
+        <ExporterButtons ref="exporterButtons" />
       </div>
     </div>
   </main>

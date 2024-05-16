@@ -25,7 +25,7 @@ describe("404 page", () => {
   it("creates an octaplex", () => {
     cy.visit("/non-existing-page");
     cy.contains("h2", "Not found");
-    cy.get("a").last().click();
+    cy.get("#octaplex").click();
     cy.get("button").first().click();
     cy.contains("h2", "Scale data");
     cy.get("#scale-name").should(

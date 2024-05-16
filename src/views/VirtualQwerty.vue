@@ -25,12 +25,12 @@ const baseIndex = computed(
   <main>
     <VirtualTypingKeyboard
       :baseIndex="baseIndex"
-      :isomorphicHorizontal="state.isomorphicHorizontal"
+      :isomorphicHorizontal="scale.isomorphicHorizontal"
       :keyboardMode="scale.keyboardMode"
       :colorScheme="state.colorScheme"
       :qwertyMapping="scale.qwertyMapping"
       :hasLeftOfZ="scale.hasLeftOfZ"
-      :isomorphicVertical="state.isomorphicVertical"
+      :isomorphicVertical="scale.isomorphicVertical"
       :colorMap="scale.colorForIndex"
       :noteOn="noteOn"
       :heldNotes="state.heldNotes"

@@ -1,6 +1,13 @@
 import { describe, it, expect } from 'vitest'
 
-import { autoKeyColors, formatExponential, formatHertz, gapKeyColors } from '../utils'
+import {
+  autoKeyColors,
+  encodeUrlSafe64,
+  formatExponential,
+  formatHertz,
+  gapKeyColors,
+  randomId
+} from '../utils'
 
 function naiveExponential(x: number, fractionDigits = 3) {
   if (Math.abs(x) < 10000) {
@@ -90,5 +97,29 @@ describe('Gap key color algorithm', () => {
     expect(colors.join(' ')).toBe(
       'white black white black white white black white black white black white'
     )
+  })
+})
+
+describe('URL safe number encoder', () => {
+  it('encodes the whole range', () => {
+    const expected = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-~'
+    for (let i = 0; i < 64; ++i) {
+      expect(encodeUrlSafe64(i)).toBe(expected[i])
+    }
+  })
+})
+
+describe('Unique ID generator', () => {
+  it('produces a short URL-friendly identifier', () => {
+    const urlSafe = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-~'
+    const id = randomId()
+    expect(id).toHaveLength(9)
+    for (const char of id) {
+      expect(urlSafe).toContain(char)
+    }
+  })
+
+  it("won't collide with this particular identifier for 30 years", () => {
+    expect(randomId()).not.toBe('oKh5gWb04')
   })
 })
