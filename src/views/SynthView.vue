@@ -490,11 +490,11 @@ onUnmounted(() => {
           >
             <div class="control" style="width: 50%">
               <label for="vertical">Vertical</label>
-              <input type="number" id="vertical" v-model="state.isomorphicVertical" />
+              <input type="number" id="vertical" v-model="scale.isomorphicVertical" />
             </div>
             <div class="control" style="width: 50%">
               <label for="horizontal">Horizontal</label>
-              <input type="number" id="horizontal" v-model="state.isomorphicHorizontal" />
+              <input type="number" id="horizontal" v-model="scale.isomorphicHorizontal" />
             </div>
           </div>
         </template>

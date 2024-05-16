@@ -25,6 +25,8 @@ import {
 type AudioStore = {
   initialize: () => void
   unintialize: () => Promise<void>
+  toJSON: () => any
+  fromJSON: (data: any) => void
   context: Ref<AudioContext>
   mainVolume: Ref<number>
   waveform: Ref<string>
@@ -363,13 +365,7 @@ export const useAudioStore = defineStore<'audio', AudioStore>('audio', () => {
     pingPongGainNode.value.gain.setValueAtTime(newValue, context.value.currentTime)
   })
 
-  return {
-    // Methods
-    initialize,
-    unintialize,
-
-    // Public state
-    context,
+  const LIVE_STATE = {
     mainVolume,
     waveform,
     attackTime,
@@ -380,16 +376,49 @@ export const useAudioStore = defineStore<'audio', AudioStore>('audio', () => {
     spread,
     aperiodicWaveform,
     audioDelay,
-    maxPolyphony,
-    synth,
     synthType,
-    virtualSynth,
-    pingPongDelay,
     pingPongDelayTime,
     pingPongFeedback,
     pingPongGain,
-    pingPongSeparation,
+    pingPongSeparation
+  }
 
+  /**
+   * Convert live state to a format suitable for storing on the server.
+   */
+  function toJSON() {
+    const result: any = {}
+    for (const [key, value] of Object.entries(LIVE_STATE)) {
+      result[key] = value.value
+    }
+    return result
+  }
+
+  /**
+   * Apply revived state to current state.
+   * @param data JSON data as an Object instance.
+   */
+  function fromJSON(data: any) {
+    for (const key in LIVE_STATE) {
+      LIVE_STATE[key as keyof typeof LIVE_STATE].value = data[key]
+    }
+  }
+
+  return {
+    // Methods
+    initialize,
+    unintialize,
+    toJSON,
+    fromJSON,
+
+    // Live state
+    ...LIVE_STATE,
+    // Other public state
+    context,
+    maxPolyphony,
+    synth,
+    virtualSynth,
+    pingPongDelay,
     // "Private" state must be exposed for Pinia
     mainGain,
     mainLowpass,

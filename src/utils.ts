@@ -1,6 +1,8 @@
 import { computed, watch, type ComputedRef, type Ref } from 'vue'
 import { gcd, mmod } from 'xen-dev-utils'
 import { evaluateExpression, getSourceVisitor, Interval, parseAST, repr } from 'sonic-weave'
+import { version } from '../package.json'
+import { Scale } from './scale'
 
 /**
  * Calculate the smallest power of two greater or equal to the input value.
@@ -471,4 +473,80 @@ export function padEndOrTruncate<T>(array: T[], targetLength: number, padValue: 
     array.push(padValue)
   }
   array.length = targetLength
+}
+
+const URL_SAFE_CHARS64 = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-~'
+
+export function encodeUrlSafe64(n: number) {
+  if (n < 0 || n >= 64 || !Number.isInteger(n)) {
+    throw new Error('Number outside integer range 0-63')
+  }
+  return URL_SAFE_CHARS64[n]
+}
+
+/**
+ * Generate a random 9-character identifier
+ * @returns Random identifiers with a low chance of collision
+ */
+export function randomId() {
+  // Coarce timestamp for indexing in ~30 year cycles
+  const msSince1970 = new Date().valueOf()
+  const hour = Math.floor(msSince1970 / (1000 * 60 * 60))
+  const hourLow = hour & 63
+  const hourMid = (hour >> 5) & 63
+  const hourHigh = (hour >> 10) & 63
+
+  const ns = [hourLow, hourMid, hourHigh]
+
+  // Random segment to avoid collisions within one hour
+  // Chance of collision assuming 1000 identifiers per hour ~ 0.047 %
+  const r = new Uint32Array(1)
+  crypto.getRandomValues(r)
+  for (let i = 0; i < 6; ++i) {
+    ns.push(r[0] & 63)
+    r[0] >>>= 5
+  }
+  // 2 bits of randomness wasted
+
+  return ns.map(encodeUrlSafe64).join('')
+}
+
+export function isRandomId(identifier: string) {
+  if (identifier.length !== 9) {
+    return false
+  }
+  for (const char of identifier) {
+    if (!URL_SAFE_CHARS64.includes(char)) {
+      return false
+    }
+  }
+  return true
+}
+
+export function makeEnvelope(shareStatistics = false) {
+  const sonicWeaveVersion = evaluateExpression('VERSION')
+  const msSince1970 = new Date().valueOf()
+  let navigatorPart = null
+  let userUUID = null
+  if (shareStatistics) {
+    navigatorPart = {
+      userAgent: navigator.userAgent,
+      language: navigator.language,
+      languages: navigator.languages
+    }
+    userUUID = localStorage.getItem('uuid')
+  }
+  return {
+    version,
+    sonicWeaveVersion,
+    msSince1970,
+    navigator: navigatorPart,
+    userUUID
+  }
+}
+
+export function unpackPayload(body: string, id: string) {
+  const data = JSON.parse(body, (key, value) => Interval.reviver(key, Scale.reviver(key, value)))
+  data.scale.id = id
+  return data
 }

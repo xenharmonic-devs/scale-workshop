@@ -4,8 +4,6 @@ import { UNIX_NEWLINE } from '@/constants'
 import { syncValues } from '@/utils'
 
 export const useStateStore = defineStore('state', () => {
-  const isomorphicVertical = ref(5)
-  const isomorphicHorizontal = ref(1)
   // Mapping from MIDI index to number of interfaces currently pressing the key down
   const heldNotes = reactive(new Map<number, number>())
   const typingActive = ref(true)
@@ -48,6 +46,9 @@ export const useStateStore = defineStore('state', () => {
   const degreeUpCode = ref(storage.getItem('degreeUpCode') ?? 'NumpadAdd')
   const degreeDownCode = ref(storage.getItem('degreeDownCode') ?? 'NumpadSubtract')
 
+  // Opt-in for user statistics
+  const shareStatistics = ref(storage.getItem('shareStatistics') === 'true')
+
   // Local storage watchers
   syncValues({
     newline,
@@ -68,7 +69,8 @@ export const useStateStore = defineStore('state', () => {
     equaveUpCode,
     equaveDownCode,
     degreeUpCode,
-    degreeDownCode
+    degreeDownCode,
+    shareStatistics
   })
   watch(
     colorScheme,
@@ -81,8 +83,6 @@ export const useStateStore = defineStore('state', () => {
 
   return {
     // Live state
-    isomorphicVertical,
-    isomorphicHorizontal,
     heldNotes,
     typingActive,
     latticeType,
@@ -106,6 +106,7 @@ export const useStateStore = defineStore('state', () => {
     equaveUpCode,
     equaveDownCode,
     degreeUpCode,
-    degreeDownCode
+    degreeDownCode,
+    shareStatistics
   }
 })

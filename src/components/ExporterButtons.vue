@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { APP_TITLE } from '@/constants'
+import { API_URL, APP_TITLE } from '@/constants'
 import { exportFile, type ExporterKey } from '@/exporters'
 import type { ExporterParams } from '@/exporters/base'
+import { useAudioStore } from '@/stores/audio'
 import { useScaleStore } from '@/stores/scale'
 import { useStateStore } from '@/stores/state'
-import { sanitizeFilename } from '@/utils'
-import { defineAsyncComponent, ref } from 'vue'
+import { makeEnvelope, sanitizeFilename } from '@/utils'
+import { computed, defineAsyncComponent, ref } from 'vue'
 
 const KorgExportModal = defineAsyncComponent(
   () => import('@/components/modals/export/KorgExport.vue')
@@ -19,42 +20,90 @@ const ReaperExportModal = defineAsyncComponent(
 
 const state = useStateStore()
 const scale = useScaleStore()
+const audio = useAudioStore()
 
-const exportTextClipboard = ref('[URL sharing disabled]')
+const exportTextClipboard = ref(
+  API_URL ? "Copy this scale's unique URL to clipboard" : '[URL sharing disabled]'
+)
 const showKorgExportModal = ref(false)
 const showMtsSysexExportModal = ref(false)
 const showReaperExportModal = ref(false)
 
+const uploadBody = computed(() => {
+  return JSON.stringify({
+    id: scale.id,
+    payload: {
+      scale: scale.toJSON(),
+      audio: audio.toJSON()
+    },
+    envelope: makeEnvelope(state.shareStatistics)
+  })
+})
+
+function uploadScale(retries = 1): Promise<string> {
+  const uploadId = scale.id
+  if (scale.uploadedId === uploadId) {
+    return Promise.resolve(`${window.location.origin}/scale/${uploadId}`)
+  }
+  return new Promise((resolve) => {
+    if (!API_URL) {
+      return resolve(window.location.origin)
+    }
+    fetch(new URL('scale', API_URL), { method: 'POST', body: uploadBody.value })
+      .then((res) => {
+        // Id collision: Retry
+        if (res.status === 409 && retries > 0) {
+          scale.rerollId()
+          return uploadScale(retries - 1).then(resolve)
+        }
+        if (res.ok) {
+          scale.uploadedId = uploadId
+          return resolve(`${window.location.origin}/scale/${uploadId}`)
+        } else {
+          return resolve(window.location.origin)
+        }
+      })
+      .catch(() => resolve(window.location.origin))
+  })
+}
+
+defineExpose({ uploadScale })
+
 function copyToClipboard() {
-  exportTextClipboard.value = 'No!'
-  window.setTimeout(() => {
-    exportTextClipboard.value = '[URL sharing disabled]'
-  }, 5000)
-  /*
-  window.navigator.clipboard.writeText(window.location.href)
-  exportTextClipboard.value = '[Copied URL to clipboard]'
-  window.setTimeout(() => {
-    exportTextClipboard.value = "Copy this scale's unique URL to clipboard"
-  }, 5000)
-  */
+  if (API_URL) {
+    uploadScale().then((url) => {
+      window.navigator.clipboard.writeText(url)
+      exportTextClipboard.value = '[Copied URL to clipboard]'
+      window.setTimeout(() => {
+        exportTextClipboard.value = "Copy this scale's unique URL to clipboard"
+      }, 5000)
+    })
+  } else {
+    exportTextClipboard.value = 'You must have sw-server running for this to work!'
+    window.setTimeout(() => {
+      exportTextClipboard.value = '[URL sharing disabled]'
+    }, 5000)
+  }
 }
 
 function doExport(exporter: ExporterKey) {
-  const params: ExporterParams = {
-    newline: state.newline,
-    scaleUrl: window.location.href,
-    filename: sanitizeFilename(scale.scale.title),
-    relativeIntervals: scale.relativeIntervals,
-    scale: scale.scale,
-    labels: scale.labels,
-    midiOctaveOffset: -1,
-    description: scale.scale.title,
-    sourceText: scale.sourceText,
-    appTitle: APP_TITLE,
-    date: new Date()
-  }
+  uploadScale().then((scaleUrl) => {
+    const params: ExporterParams = {
+      newline: state.newline,
+      scaleUrl,
+      filename: sanitizeFilename(scale.scale.title),
+      relativeIntervals: scale.relativeIntervals,
+      scale: scale.scale,
+      labels: scale.labels,
+      midiOctaveOffset: -1,
+      description: scale.scale.title,
+      sourceText: scale.sourceText,
+      appTitle: APP_TITLE,
+      date: new Date()
+    }
 
-  exportFile(exporter, params)
+    exportFile(exporter, params)
+  })
 }
 </script>
 <template>
@@ -93,7 +142,7 @@ function doExport(exporter: ExporterKey) {
     />
   </Teleport>
   <h2>Export current settings</h2>
-  <a href="#" class="btn disabled" @click="copyToClipboard">
+  <a href="#" :class="{ btn: true, disabled: !API_URL }" @click="copyToClipboard">
     <p><strong>Share scale</strong></p>
     <p>{{ exportTextClipboard }}</p>
   </a>

@@ -4,7 +4,8 @@ import {
   type AccidentalStyle,
   syncValues,
   isBlackMidiNote,
-  midiNoteNumberToName
+  midiNoteNumberToName,
+  randomId
 } from '@/utils'
 import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
@@ -94,6 +95,9 @@ export const useScaleStore = defineStore('scale', () => {
   const error = ref('')
   const warning = ref('')
 
+  // Isomorphic offsets don't couple to anything else here, but they're part of the shareable live state.
+  const isomorphicVertical = ref(5)
+  const isomorphicHorizontal = ref(1)
   // Keyboard mode affects both physical qwerty and virtual keyboards
   const keyboardMode = ref<'isomorphic' | 'piano'>('isomorphic')
   // QWERTY mapping is coupled to equave and degree shifts
@@ -108,6 +112,9 @@ export const useScaleStore = defineStore('scale', () => {
   const lowAccidentalColor = ref('maroon')
   const middleAccidentalColor = ref('navy')
   const highAccidentalColor = ref('indigo')
+
+  const id = ref('000000000')
+  const uploadedId = ref('000000000')
 
   // === Computed state ===
   const sourcePrefix = computed(() => {
@@ -334,6 +341,10 @@ export const useScaleStore = defineStore('scale', () => {
   }
 
   // Methods
+  function rerollId() {
+    id.value = randomId()
+  }
+
   function getUserScopeVisitor() {
     const globalVisitor = getGlobalScaleWorkshopVisitor()
     const visitor = new StatementVisitor(globalVisitor)
@@ -435,27 +446,21 @@ export const useScaleStore = defineStore('scale', () => {
     }
   }
 
-  return {
-    // Live state
+  const LIVE_STATE = {
     name,
     baseMidiNote,
     userBaseFrequency,
     autoFrequency,
     autoColors,
-    baseFrequencyDisplay,
-    sourcePrefix,
     sourceText,
     scale,
     relativeIntervals,
     colors,
     labels,
-    latticePermutation,
-    inverseLatticePermutation,
-    latticeIntervals,
-    latticeColors,
-    latticeLabels,
     error,
     warning,
+    isomorphicVertical,
+    isomorphicHorizontal,
     keyboardMode,
     equaveShift,
     degreeShift,
@@ -463,12 +468,69 @@ export const useScaleStore = defineStore('scale', () => {
     accidentalColor,
     lowAccidentalColor,
     middleAccidentalColor,
-    highAccidentalColor,
+    highAccidentalColor
+  }
+
+  let skipNextRerollWatch = false
+  watch(Object.values(LIVE_STATE), () => {
+    if (skipNextRerollWatch) {
+      skipNextRerollWatch = false
+      return
+    }
+    if (uploadedId.value === id.value) {
+      rerollId()
+    }
+  })
+
+  /**
+   * Convert live state to a format suitable for storing on the server.
+   */
+  function toJSON() {
+    const result: any = {
+      scale: scale.value.toJSON(),
+      relativeIntervals: relativeIntervals.value.map((i) => i.toJSON())
+    }
+    for (const [key, value] of Object.entries(LIVE_STATE)) {
+      if (key in result) {
+        continue
+      }
+      result[key] = value.value
+    }
+    return result
+  }
+
+  /**
+   * Apply revived state to current state.
+   * @param data JSON revived through {@link Scale.reviver} and {@link Interval.reviver}.
+   */
+  function fromJSON(data: any) {
+    skipNextRerollWatch = true
+    for (const key in LIVE_STATE) {
+      LIVE_STATE[key as keyof typeof LIVE_STATE].value = data[key]
+    }
+    id.value = data['id']
+    uploadedId.value = data['id']
+  }
+
+  return {
+    // Live state
+    ...LIVE_STATE,
+    id,
+    uploadedId,
     // Presistent state
     accidentalPreference,
     hasLeftOfZ,
     gas,
     // Computed state
+    // With setters
+    baseFrequencyDisplay,
+    // Get only
+    sourcePrefix,
+    latticePermutation,
+    inverseLatticePermutation,
+    latticeIntervals,
+    latticeColors,
+    latticeLabels,
     frequencies,
     centss,
     qwertyMapping,
@@ -476,10 +538,13 @@ export const useScaleStore = defineStore('scale', () => {
     whiteIndices,
     whiteModeOffset,
     // Methods
+    rerollId,
     getUserScopeVisitor,
     computeScale,
     getFrequency,
     colorForIndex,
-    labelForIndex
+    labelForIndex,
+    toJSON,
+    fromJSON
   }
 })

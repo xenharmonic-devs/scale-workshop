@@ -2,6 +2,9 @@ import { Interval, TimeMonzo } from 'sonic-weave'
 import { version } from '../package.json'
 import { Fraction, PRIME_CENTS } from 'xen-dev-utils'
 
+// .env config
+export const API_URL: string | undefined = import.meta.env.VITE_API_URL
+
 // GLOBALS
 export const APP_TITLE = `Scale Workshop ${version}`
 

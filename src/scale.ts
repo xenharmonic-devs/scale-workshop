@@ -39,6 +39,39 @@ export class Scale {
   }
 
   /**
+   * Convert this {@link Scale} instance to JSON.
+   * @returns The serialized object with property `type` set to `'ScaleWorkshopScale'`.
+   */
+  toJSON() {
+    return {
+      type: 'ScaleWorkshopScale',
+      intervalRatios: this.intervalRatios,
+      baseFrequency: this.baseFrequency,
+      baseMidiNote: this.baseMidiNote,
+      title: this.title
+    }
+  }
+
+  /**
+   * Revive a {@link Scale} instance produced by `Scale.toJSON()`. Return everything else as is.
+   *
+   * Intended usage:
+   * ```ts
+   * const data = JSON.parse(serializedData, Scale.reviver);
+   * ```
+   *
+   * @param key Property name.
+   * @param value Property value.
+   * @returns Deserialized {@link Scale} instance or other data without modifications.
+   */
+  static reviver(key: string, value: any) {
+    if (typeof value === 'object' && value !== null && value.type === 'ScaleWorkshopScale') {
+      return new Scale(value.intervalRatios, value.baseFrequency, value.baseMidiNote, value.title)
+    }
+    return value
+  }
+
+  /**
    * Obtain the ratio against the base MIDI note.
    * @param index MIDI index of a note.
    * @returns Ratio associated with the MIDI index.

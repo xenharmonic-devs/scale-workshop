@@ -313,7 +313,7 @@ function typingKeydown(event: CoordinateKeyboardEvent) {
   let index = scale.scale.baseMidiNote + scale.scale.size * scale.equaveShift + scale.degreeShift
 
   if (scale.keyboardMode === 'isomorphic') {
-    index += x * state.isomorphicHorizontal + (2 - y) * state.isomorphicVertical
+    index += x * scale.isomorphicHorizontal + (2 - y) * scale.isomorphicVertical
   } else {
     if (scale.qwertyMapping.has(event.code)) {
       // QWERTY mapping incorporates shifts
@@ -356,8 +356,8 @@ onMounted(() => {
       scale.userBaseFrequency = scaleWorkshopOneData.freq
       scale.autoFrequency = false
       scale.baseMidiNote = scaleWorkshopOneData.midi
-      state.isomorphicHorizontal = scaleWorkshopOneData.horizontal
-      state.isomorphicVertical = scaleWorkshopOneData.vertical
+      scale.isomorphicHorizontal = scaleWorkshopOneData.horizontal
+      scale.isomorphicVertical = scaleWorkshopOneData.vertical
 
       if (scaleWorkshopOneData.data !== undefined) {
         const colors = scaleWorkshopOneData.colors ?? ''
@@ -394,8 +394,8 @@ onMounted(() => {
       scale.userBaseFrequency = decodedState.baseFrequency
       scale.autoFrequency = false
       scale.baseMidiNote = decodedState.baseMidiNote
-      state.isomorphicHorizontal = decodedState.isomorphicHorizontal
-      state.isomorphicVertical = decodedState.isomorphicVertical
+      scale.isomorphicHorizontal = decodedState.isomorphicHorizontal
+      scale.isomorphicVertical = decodedState.isomorphicVertical
       scale.keyboardMode = decodedState.keyboardMode
       scale.pianoMode = pianoMode
       scale.equaveShift = decodedState.equaveShift
@@ -505,6 +505,10 @@ function panic() {
     :typingKeyboard="typingKeyboard"
     @panic="panic"
   />
+  <footer id="app-footer">
+    <RouterLink to="/privacy-policy">Privacy policy</RouterLink>,
+    <RouterLink to="/terms-of-service">Terms of service</RouterLink>
+  </footer>
 </template>
 
 <style>
@@ -599,5 +603,15 @@ nav a:first-of-type {
 
 #app-tray ul li .active {
   color: var(--color-accent-text);
+}
+
+#app-footer {
+  font-size: small;
+  line-height: 1;
+  padding-right: 1em;
+  text-align: right;
+}
+#app-footer a {
+  color: var(--color-text-mute);
 }
 </style>
