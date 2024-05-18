@@ -32,7 +32,6 @@ type NoteOnCallback = (index: number) => NoteOff
       :keyColors="state.keyColors"
       :noteOn="noteOn"
       :heldNotes="state.heldNotes"
-      :frequencies="state.frequencies"
       :baseFrequency="state.scaleRaw.baseFrequency"
       :scale="state.scale"
       :showLabel="state.showKeyboardLabel"

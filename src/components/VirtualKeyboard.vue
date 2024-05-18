@@ -16,7 +16,6 @@ const props = defineProps<{
   noteOn: NoteOnCallback
   heldNotes: Map<number, number>
   baseFrequency: number
-  frequencies: number[]
   keyColors: string[]
   showLabel: boolean
   showCents: boolean
@@ -41,15 +40,14 @@ const virtualKeys = computed(() => {
   const horizontal = props.isomorphicHorizontal
   const vertical = props.isomorphicVertical
   const result: [number, VirtualKey[]][] = []
-  const inverseBaseFreq = 1 / props.baseFrequency
   for (let y = 3; y >= -1; y--) {
     const row = []
     for (let x = 0; x <= 12; ++x) {
       const index = props.baseIndex + x * horizontal + y * vertical
-      const scaleIndex = index - props.baseMidiNote;
+      const scaleIndex = index - props.baseMidiNote
       const color = colors[mmod(scaleIndex, colors.length)]
-      const frequency = props.frequencies[index]
-      const ratio = frequency * inverseBaseFreq
+      const ratio = props.scale.getRatio(scaleIndex)
+      const frequency = props.baseFrequency * ratio
       const cents = props.scale.getCents(scaleIndex)
       const label = props.scale.getName(scaleIndex)
       row.push({

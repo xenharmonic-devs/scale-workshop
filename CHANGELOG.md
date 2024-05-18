@@ -1,5 +1,8 @@
 # Change log
 
+## 2.5.2
+ * Bug fix: Virtual keyboard frequencies no longer appear as NaN for large offsets [#696](https://github.com/xenharmonic-devs/scale-workshop/issues/696)
+
 ## 2.5.1
  * Bug fix: Labels are now shown on the correct virtual keyboard cells [#684](https://github.com/xenharmonic-devs/scale-workshop/issues/684)
 
