@@ -39,7 +39,7 @@ export class Scale {
   }
 
   /**
-   * Obtain the ratio agains the base MIDI note.
+   * Obtain the ratio against the base MIDI note.
    * @param index MIDI index of a note.
    * @returns Ratio associated with the MIDI index.
    */
@@ -61,6 +61,24 @@ export class Scale {
    */
   getFrequency(index: number) {
     return this.baseFrequency * this.getRatio(index)
+  }
+
+  /**
+   * Obtain the cents offset from the base MIDI note.
+   * @param index MIDI index of a note.
+   * @returns Cents associated with the MIDI index.
+   */
+  getCents(index: number) {
+    // Deal with implicit 0c
+    index -= 1
+    // Center on base MIDI note
+    index -= this.baseMidiNote
+
+    const baseIndex = mmod(index, this.size)
+    const numEquaves = (index - baseIndex) / this.size
+    return (
+      valueToCents(this.intervalRatios[baseIndex]) + valueToCents(this.equaveRatio) * numEquaves
+    )
   }
 
   /**

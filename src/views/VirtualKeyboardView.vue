@@ -38,15 +38,12 @@ type NoteOnCallback = (index: number) => NoteOff
     <VirtualKeyboard
       v-else
       :baseIndex="baseIndex"
-      :baseMidiNote="scale.scale.baseMidiNote"
       :isomorphicHorizontal="state.isomorphicHorizontal"
       :isomorphicVertical="state.isomorphicVertical"
       :colorMap="scale.colorForIndex"
       :noteOn="noteOn"
       :heldNotes="state.heldNotes"
-      :baseFrequency="scale.scale.baseFrequency"
-      :frequencies="scale.frequencies"
-      :centss="scale.centss"
+      :scale="scale.scale"
       :labelMap="scale.labelForIndex"
       :showLabel="state.showKeyboardLabel"
       :showCents="state.showKeyboardCents"

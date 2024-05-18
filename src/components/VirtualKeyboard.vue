@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import VirtualKeyboardKey from '@/components/VirtualKeyboardKey.vue'
 import VirtualKeyInfo from '@/components/VirtualKeyInfo.vue'
+import type { Scale } from '@/scale'
 
 type NoteOff = () => void
 type NoteOnCallback = (index: number) => NoteOff
@@ -10,14 +11,11 @@ type LabelMap = (index: number) => string
 
 const props = defineProps<{
   baseIndex: number // Should incorporate equave shift
-  baseMidiNote: number
   isomorphicHorizontal: number
   isomorphicVertical: number
   noteOn: NoteOnCallback
   heldNotes: Map<number, number>
-  baseFrequency: number
-  frequencies: number[]
-  centss: number[]
+  scale: Scale
   colorMap: ColorMap
   labelMap: LabelMap
   showLabel: boolean
@@ -41,15 +39,14 @@ const virtualKeys = computed(() => {
   const horizontal = props.isomorphicHorizontal
   const vertical = props.isomorphicVertical
   const result: [number, VirtualKey[]][] = []
-  const inverseBaseFreq = 1 / props.baseFrequency
   for (let y = 3; y >= -1; y--) {
     const row = []
     for (let x = 0; x <= 12; ++x) {
       const index = props.baseIndex + x * horizontal + y * vertical
       const color = props.colorMap(index)
-      const frequency = props.frequencies[index]
-      const cents = props.centss[index]
-      const ratio = frequency * inverseBaseFreq
+      const ratio = props.scale.getRatio(index)
+      const frequency = props.scale.baseFrequency * ratio
+      const cents = props.scale.getCents(index)
       const label = props.labelMap(index)
       row.push({
         x,
