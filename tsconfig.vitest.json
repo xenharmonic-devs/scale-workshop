@@ -4,6 +4,7 @@
   "exclude": [],
   "compilerOptions": {
     "composite": true,
-    "types": ["node", "jsdom"]
+    "lib": [],
+    "types": ["node", "jsdom"],
   }
 }
