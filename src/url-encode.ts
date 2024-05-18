@@ -80,15 +80,15 @@ function decodeDigits(digits: string) {
 
 function encodeLine(scaleLine: string) {
   scaleLine = scaleLine
-    .replace(ESCAPE, ESCAPE + ESCAPE)
-    .replace(FRACTION, ESCAPE + FRACTION)
-    .replace(COMMA, ESCAPE + COMMA)
-    .replace(BACKSLASH, ESCAPE + BACKSLASH)
-    .replace(SPACE, ESCAPE + SPACE)
-    .replace(LEFT_ANGLE_BRACKET, ESCAPE + LEFT_ANGLE_BRACKET)
-    .replace(RIGHT_ANGLE_BRACKET, ESCAPE + RIGHT_ANGLE_BRACKET)
-    .replace(LEFT_SQUARE_BRACKET, ESCAPE + LEFT_SQUARE_BRACKET)
-    .replace(PLUS, ESCAPE + PLUS)
+    .replaceAll(ESCAPE, ESCAPE + ESCAPE)
+    .replaceAll(FRACTION, ESCAPE + FRACTION)
+    .replaceAll(COMMA, ESCAPE + COMMA)
+    .replaceAll(BACKSLASH, ESCAPE + BACKSLASH)
+    .replaceAll(SPACE, ESCAPE + SPACE)
+    .replaceAll(LEFT_ANGLE_BRACKET, ESCAPE + LEFT_ANGLE_BRACKET)
+    .replaceAll(RIGHT_ANGLE_BRACKET, ESCAPE + RIGHT_ANGLE_BRACKET)
+    .replaceAll(LEFT_SQUARE_BRACKET, ESCAPE + LEFT_SQUARE_BRACKET)
+    .replaceAll(PLUS, ESCAPE + PLUS)
 
   scaleLine = scaleLine
     .replace(/\//g, FRACTION)
