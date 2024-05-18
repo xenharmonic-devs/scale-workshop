@@ -13,16 +13,17 @@ import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { computed, reactive, ref } from 'vue'
 import { useAudioStore } from '@/stores/audio'
 import { useStateStore } from '@/stores/state'
-import type { Interval } from 'sonic-weave'
+import { literalToString, type Interval } from 'sonic-weave'
 import { useScaleStore } from '@/stores/scale'
-import { mmod } from 'xen-dev-utils'
-import { OCTAVE } from '@/constants'
+import { Fraction, mmod } from 'xen-dev-utils'
+import { OCTAVE, UNISON } from '@/constants'
 
 const audio = useAudioStore()
 const state = useStateStore()
 const scale = useScaleStore()
 
-const cellFormat = ref<'best' | 'cents' | 'decimal'>('best')
+const cellFormat = ref<'best' | 'fraction' | 'cents' | 'decimal'>('best')
+const simplifyTolerance = ref(3.5)
 const showOptions = ref(false)
 const trailLongevity = ref(70)
 const maxOtonalRoot = ref(16)
@@ -67,6 +68,22 @@ const strokeStyle = computed(() => {
 // While interval.name suffices for the tuning table
 // we want more accurate results here.
 function formatMatrixCell(interval: Interval) {
+  if (cellFormat.value === 'fraction') {
+    if (interval.value.isFractional()) {
+      const node = interval.value.asFractionLiteral()
+      if (node) {
+        return literalToString(node)
+      }
+    }
+    try {
+      return (
+        '~' +
+        new Fraction(interval.valueOf()).simplifyRelative(simplifyTolerance.value).toFraction()
+      )
+    } catch {
+      return '?'
+    }
+  }
   if (cellFormat.value === 'cents') {
     return interval.totalCents(true).toFixed(1)
   }
@@ -203,7 +220,12 @@ function highlight(y?: number, x?: number) {
         </tr>
         <tr v-for="(row, i) of matrixRows" :key="i">
           <th :class="{ held: heldScaleDegrees.has(i) }">
-            {{ scale.labels[mmod(i - 1, scale.labels.length)] }}
+            <template v-if="cellFormat === 'best'">
+              {{ scale.labels[mmod(i - 1, scale.labels.length)] }}
+            </template>
+            <template v-else>
+              {{ formatMatrixCell(i ? scale.relativeIntervals[i - 1] : UNISON) }}
+            </template>
           </th>
           <td
             v-for="(name, j) of row"
@@ -234,6 +256,11 @@ function highlight(y?: number, x?: number) {
         </span>
 
         <span>
+          <input type="radio" id="format-fraction" value="fraction" v-model="cellFormat" />
+          <label for="format-fraction">Fraction</label>
+        </span>
+
+        <span>
           <input type="radio" id="format-cents" value="cents" v-model="cellFormat" />
           <label for="format-cents">Cents</label>
         </span>
@@ -259,6 +286,16 @@ function highlight(y?: number, x?: number) {
           <input type="radio" id="indexing-one" value="1" v-model="intervalMatrixIndexingRadio" />
           <label for="indexing-one">1-indexing</label>
         </span>
+      </div>
+      <div class="control">
+        <label for="simplify-tolerance">Fraction approximation tolerance in cents</label>
+        <input
+          id="simplify-tolerance"
+          type="number"
+          min="0.1"
+          step="0.1"
+          v-model="simplifyTolerance"
+        />
       </div>
       <div class="control">
         <label for="max-matrix-width">Maximum matrix width</label>

@@ -64,6 +64,10 @@ export const FIFTH_12TET = new Interval(
   TimeMonzo.fromEqualTemperament('7/12', 2, DEFAULT_NUMBER_OF_COMPONENTS),
   'logarithmic'
 )
+export const UNISON = new Interval(
+  TimeMonzo.fromFraction(1, DEFAULT_NUMBER_OF_COMPONENTS),
+  'linear'
+)
 
 export const INTERVALS_12TET = [...Array(12).keys()].map(
   (i) =>
