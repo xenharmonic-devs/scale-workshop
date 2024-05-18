@@ -1,6 +1,7 @@
 # Change log
 
 ## 2.5.2
+ * Bug fix: All characters of invalid lines are now encoded in the URL [#688](https://github.com/xenharmonic-devs/scale-workshop/issues/688)
  * Bug fix: Entering 1/1 for the period in "Rank-2 temperament" no longer crashes the application [#690](https://github.com/xenharmonic-devs/scale-workshop/issues/690)
  * Bug fix: Virtual keyboard frequencies no longer appear as NaN for large offsets [#696](https://github.com/xenharmonic-devs/scale-workshop/issues/696)
 

@@ -134,6 +134,15 @@ describe('URL encoder', () => {
     const expected = ['3/2', 'foo', 'BAR', '2/1']
     expect(arraysEqual(decodeLines('3F2_EfEoEo_EBAER_2F1'), expected)).toBeTruthy()
   })
+
+  it('can encode repeated L characters in invalid lines', () => {
+    const lines = ['sLL', '9/8', '3/2', '2/1']
+    expect(encodeLines(lines)).toBe('EsELEL_9F8_3F2_2F1')
+  })
+
+  it('can decode repeated L characters in invalid lines', () => {
+    expect(decodeLines('EsELEL_9F8_3F2_2F1')).toEqual(['sLL', '9/8', '3/2', '2/1'])
+  })
 })
 
 describe('URL decoder', () => {
