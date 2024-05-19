@@ -455,6 +455,7 @@ export const useScaleStore = defineStore('scale', () => {
     sourceText,
     scale,
     relativeIntervals,
+    latticeIntervals,
     colors,
     labels,
     error,
@@ -490,6 +491,11 @@ export const useScaleStore = defineStore('scale', () => {
       scale: scale.value.toJSON(),
       relativeIntervals: relativeIntervals.value.map((i) => i.toJSON())
     }
+    if (relativeIntervals.value === latticeIntervals.value) {
+      result.latticeIntervals = null
+    } else {
+      result.latticeIntervals = latticeIntervals.value.map((i) => i.toJSON())
+    }
     for (const [key, value] of Object.entries(LIVE_STATE)) {
       if (key in result) {
         continue
@@ -506,7 +512,11 @@ export const useScaleStore = defineStore('scale', () => {
   function fromJSON(data: any) {
     skipNextRerollWatch = true
     for (const key in LIVE_STATE) {
-      LIVE_STATE[key as keyof typeof LIVE_STATE].value = data[key]
+      if (key === 'latticeIntervals' && !data[key]) {
+        latticeIntervals.value = data['relativeIntervals']
+      } else {
+        LIVE_STATE[key as keyof typeof LIVE_STATE].value = data[key]
+      }
     }
     id.value = data['id']
     uploadedId.value = data['id']
@@ -528,7 +538,6 @@ export const useScaleStore = defineStore('scale', () => {
     sourcePrefix,
     latticePermutation,
     inverseLatticePermutation,
-    latticeIntervals,
     latticeColors,
     latticeLabels,
     frequencies,
