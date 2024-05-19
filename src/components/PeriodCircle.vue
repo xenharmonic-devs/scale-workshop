@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LEFT_MOUSE_BTN } from '@/constants'
+import { CS_EDO, LEFT_MOUSE_BTN } from '@/constants'
 import { generatorRanges } from 'moment-of-symmetry'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { mmod } from 'xen-dev-utils'
@@ -64,6 +64,16 @@ const periodCents = computed(() => {
   return 1200
 })
 
+const generatorTickRatios = computed(() => {
+  if (props.generatorCents === null) {
+    return []
+  }
+  const periodScale = 1 / periodCents.value
+  return [...Array(props.size).keys()].map(
+    (i) => (i + props.up + 1 - props.size) * props.generatorCents! * periodScale
+  )
+})
+
 const mosLabel = computed(() => {
   if (props.generatorCents === null) {
     return ''
@@ -74,6 +84,34 @@ const mosLabel = computed(() => {
       return `${range.numberOfLargeSteps * props.numPeriods}L ${range.numberOfSmallSteps * props.numPeriods}s`
     }
   }
+  // Compute pattern for step variety = 3
+  let rs = generatorTickRatios.value
+  if (!rs.length) {
+    return ''
+  }
+  rs = rs.map((r) => mmod(r, 1))
+  rs.push(1)
+  rs.sort((a, b) => a - b)
+  let diffs = []
+  for (let i = 1; i < rs.length; ++i) {
+    diffs.push(rs[i] - rs[i - 1])
+  }
+  diffs = diffs.map((r) => Math.round(r * CS_EDO))
+  const uniques = Array.from(new Set(diffs)).sort((a, b) => a - b)
+
+  if (uniques.length === 3) {
+    const [s, M, L] = uniques
+    let countS = 0
+    let countM = 0
+    let countL = 0
+    for (const step of diffs) {
+      if (step === s) countS++
+      else if (step === M) countM++
+      else if (step === L) countL++
+    }
+    return `${countL}L ${countM}M ${countS}s`
+  }
+  // There are degenerate edgecases with step variety = 2. Show nothing to avoid implying MOS.
   return ''
 })
 
@@ -82,7 +120,7 @@ const scaleTickDirections = computed(() => {
     return []
   }
   const result = props.scale.intervalRatios.map((r) => valueToCents(Math.abs(r)))
-  const angleScale = (2 * Math.PI) / periodCents.value
+  const angleScale = TAU / periodCents.value
   return result
     .map((cents) => cents * angleScale)
     .map((theta) => [Math.sin(theta), Math.cos(theta)])
@@ -119,15 +157,8 @@ const scaleLabels = computed(() => {
 })
 
 const generatorTickDirections = computed(() => {
-  if (props.generatorCents === null) {
-    return []
-  }
-  const result = [...Array(props.size).keys()].map(
-    (i) => (i + props.up + 1 - props.size) * props.generatorCents!
-  )
-  const angleScale = (2 * Math.PI) / periodCents.value
-  return result
-    .map((cents) => cents * angleScale)
+  return generatorTickRatios.value
+    .map((r) => r * TAU)
     .map((theta) => [Math.sin(theta), Math.cos(theta)])
 })
 
@@ -204,7 +235,7 @@ function onMouseMove(event: MouseEvent) {
   const x = event.offsetX - container.value!.clientWidth * 0.5
   const y = event.offsetY - container.value!.clientHeight * 0.5
 
-  const clockwise = 1 - (Math.PI + Math.atan2(x, y)) / (2 * Math.PI)
+  const clockwise = 1 - (Math.PI + Math.atan2(x, y)) / TAU
   emit('update:generatorCents', clockwise * periodCents.value)
 }
 
@@ -226,7 +257,7 @@ function handleTouch(touch: Touch) {
   const x = touch.pageX - bounds.left - svg.clientWidth * 0.5
   const y = touch.pageY - bounds.top - svg.clientHeight * 0.5
 
-  const clockwise = 1 - (Math.PI + Math.atan2(x, y)) / (2 * Math.PI)
+  const clockwise = 1 - (Math.PI + Math.atan2(x, y)) / TAU
   emit('update:generatorCents', clockwise * periodCents.value)
 }
 
