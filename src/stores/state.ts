@@ -22,6 +22,7 @@ export const useStateStore = defineStore('state', () => {
   const centsFractionDigits = ref(parseInt(storage.getItem('centsFractionDigits') ?? '3', 10))
   const decimalFractionDigits = ref(parseInt(storage.getItem('decimalFractionDigits') ?? '5', 10))
   const showVirtualQwerty = ref(storage.getItem('showVirtualQwerty') === 'true')
+  const showMosTab = ref(storage.getItem('showMosTab') === 'true')
   const showKeyboardLabel = ref(storage.getItem('showKeyboardLabel') !== 'false')
   const showKeyboardCents = ref(storage.getItem('showKeyboardCents') !== 'false')
   const showKeyboardRatio = ref(storage.getItem('showKeyboardRatio') !== 'false')
@@ -55,6 +56,7 @@ export const useStateStore = defineStore('state', () => {
     centsFractionDigits,
     decimalFractionDigits,
     showVirtualQwerty,
+    showMosTab,
     showKeyboardLabel,
     showKeyboardCents,
     showKeyboardRatio,
@@ -92,6 +94,7 @@ export const useStateStore = defineStore('state', () => {
     centsFractionDigits,
     decimalFractionDigits,
     showVirtualQwerty,
+    showMosTab,
     showKeyboardLabel,
     showKeyboardCents,
     showKeyboardRatio,

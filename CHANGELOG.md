@@ -17,6 +17,7 @@
  * Feature: New "repeat" modifier [#406](https://github.com/xenharmonic-devs/scale-workshop/issues/406)
  * Feature: Implement multi-channel MIDI mode compatible with the Lumatone [#649](https://github.com/xenharmonic-devs/scale-workshop/pull/649)
  * Feature: Show labels, ratios, cents and frequencies on the tuning table [#534](https://github.com/xenharmonic-devs/scale-workshop/issues/534)
+ * Feature: Full width view dedicated to the MOS pyramid [#700](https://github.com/xenharmonic-devs/scale-workshop/issues/700)
  * Bug fix: Extreme ratios now only break parts of the tuning table that do not have IEEE floating point representation and format better when non-finite [#631](https://github.com/xenharmonic-devs/scale-workshop/issues/631), [#632](https://github.com/xenharmonic-devs/scale-workshop/issues/632)
  * Style fix: Make checkbox and radio button labels more consistent [#644](https://github.com/xenharmonic-devs/scale-workshop/issues/644)
  * Beta cycle issues: [#643](https://github.com/xenharmonic-devs/scale-workshop/issues/643), [#640](https://github.com/xenharmonic-devs/scale-workshop/issues/640), [#577](https://github.com/xenharmonic-devs/scale-workshop/issues/577), [#513](https://github.com/xenharmonic-devs/scale-workshop/issues/513), [#658](https://github.com/xenharmonic-devs/scale-workshop/issues/658), [#664](https://github.com/xenharmonic-devs/scale-workshop/issues/664), [#666](https://github.com/xenharmonic-devs/scale-workshop/issues/666)

@@ -87,6 +87,11 @@ const router = createRouter({
       name: 'qwerty',
       component: () => import('../views/VirtualQwerty.vue')
     },
+    {
+      path: '/mos',
+      name: 'mos',
+      component: () => import('../views/MosView.vue')
+    },
     // Root aliases mainly for compatibility with old SW1 URLs.
     {
       path: '/index.html',
