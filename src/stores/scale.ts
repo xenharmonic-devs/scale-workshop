@@ -29,6 +29,7 @@ import {
   APP_TITLE,
   DEFAULT_NUMBER_OF_COMPONENTS,
   INTERVALS_12TET,
+  MAX_NUMBER_OF_SHARED_INTERVALS,
   MIDI_NOTE_COLORS,
   MIDI_NOTE_NAMES,
   NUMBER_OF_NOTES,
@@ -487,14 +488,52 @@ export const useScaleStore = defineStore('scale', () => {
    * Convert live state to a format suitable for storing on the server.
    */
   function toJSON() {
+    let slicedScale = scale.value
+    let slicedIntervals = relativeIntervals.value
+    let slicedColors = colors.value
+    let slicedLabels = labels.value
+    if (slicedScale.intervalRatios.length > MAX_NUMBER_OF_SHARED_INTERVALS) {
+      slicedScale = slicedScale.clone()
+      slicedIntervals = [...slicedIntervals]
+      slicedColors = [...slicedColors]
+      slicedLabels = [...slicedLabels]
+      const equave = slicedScale.intervalRatios.pop()!
+      const equaveInterval = slicedIntervals.pop()!
+      const equaveColor = slicedColors.pop()!
+      const equaveLabel = slicedLabels.pop()!
+      slicedScale.intervalRatios = slicedScale.intervalRatios.slice(
+        0,
+        MAX_NUMBER_OF_SHARED_INTERVALS - 1
+      )
+      slicedScale.intervalRatios.push(equave)
+      slicedIntervals = slicedIntervals.slice(0, MAX_NUMBER_OF_SHARED_INTERVALS - 1)
+      slicedIntervals.push(equaveInterval)
+      slicedColors = slicedColors.slice(0, MAX_NUMBER_OF_SHARED_INTERVALS - 1)
+      slicedColors.push(equaveColor)
+      slicedLabels = slicedLabels.slice(0, MAX_NUMBER_OF_SHARED_INTERVALS - 1)
+      slicedLabels.push(equaveLabel)
+    }
     const result: any = {
-      scale: scale.value.toJSON(),
-      relativeIntervals: relativeIntervals.value.map((i) => i.toJSON())
+      scale: slicedScale.toJSON(),
+      relativeIntervals: slicedIntervals.map((i) => i.toJSON()),
+      colors: slicedColors,
+      labels: slicedLabels
+    }
+    if (result.colors.length) {
+      result.colors[result.colors.length - 1] = colors.value[colors.value.length - 1]
+    }
+    if (result.labels.length) {
+      result.labels[result.labels.length - 1] = labels.value[labels.value.length - 1]
     }
     if (relativeIntervals.value === latticeIntervals.value) {
       result.latticeIntervals = null
     } else {
-      result.latticeIntervals = latticeIntervals.value.map((i) => i.toJSON())
+      if (latticeIntervals.value.length <= MAX_NUMBER_OF_SHARED_INTERVALS) {
+        result.latticeIntervals = latticeIntervals.value.map((i) => i.toJSON())
+      } else {
+        // Give up. The lattice would be incomprehensible anyway.
+        result.latticeIntervals = null
+      }
     }
     for (const [key, value] of Object.entries(LIVE_STATE)) {
       if (key in result) {

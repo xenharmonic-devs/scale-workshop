@@ -38,6 +38,10 @@ export class Scale {
     return valueToCents(this.equaveRatio)
   }
 
+  clone() {
+    return new Scale([...this.intervalRatios], this.baseFrequency, this.baseMidiNote, this.title)
+  }
+
   /**
    * Convert this {@link Scale} instance to JSON.
    * @returns The serialized object with property `type` set to `'ScaleWorkshopScale'`.

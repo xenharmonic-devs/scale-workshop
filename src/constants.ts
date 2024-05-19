@@ -26,6 +26,9 @@ export const MAX_INTERACTIVE_SUBGROUP_SIZE = 6
 // Anything larger than this uses O(n²) methods (if available) instead of O(exp(n))
 export const MAX_GEO_SUBGROUP_SIZE = 9
 
+// === Sanity limits for scale sharing ===
+export const MAX_NUMBER_OF_SHARED_INTERVALS = 255
+
 export const SEMITONE_12TET = 2 ** (1 / 12)
 
 export const TET12 = [...Array(12).keys()].map((i) => SEMITONE_12TET ** (i + 1))
