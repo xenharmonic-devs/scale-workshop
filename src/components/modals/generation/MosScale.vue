@@ -311,6 +311,9 @@ function edoClick(info: MosScaleInfo) {
           ><i>{{ modal.hardness }}</i>
         </template>
         <i v-else>{{ modal.previewName }}</i>
+        <template v-if="modal.method === 'pyramid'">
+          <RouterLink class="right" to="/mos">Fullscreen view</RouterLink>
+        </template>
       </div>
     </template>
   </Modal>
@@ -326,6 +329,9 @@ function edoClick(info: MosScaleInfo) {
 }
 .pyramid button {
   font-size: small;
+}
+.right {
+  margin-left: auto;
 }
 @media only screen and (max-width: 38rem) {
   .pyramid {

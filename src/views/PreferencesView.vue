@@ -39,6 +39,10 @@ const scale = useScaleStore()
         <h2>Advanced</h2>
         <div class="control-group">
           <div class="control checkbox-container">
+            <input id="mos-tab" type="checkbox" v-model="state.showMosTab" />
+            <label for="mos-tab" class="right-of-checkbox">MOS tab in top menu</label>
+          </div>
+          <div class="control checkbox-container">
             <input id="virtual-qwerty" type="checkbox" v-model="state.showVirtualQwerty" />
             <label for="virtual-qwerty" class="right-of-checkbox">Virtual QWERTY in top menu</label>
           </div>

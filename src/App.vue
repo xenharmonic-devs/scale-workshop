@@ -474,6 +474,9 @@ function panic() {
         <RouterLink to="/about"><strong>Sw</strong></RouterLink>
       </li>
       <li><RouterLink to="/">Build Scale</RouterLink></li>
+      <li v-if="state.showMosTab">
+        <RouterLink to="/mos">MOS</RouterLink>
+      </li>
       <li><RouterLink to="/analysis">Analysis</RouterLink></li>
       <li><RouterLink to="/lattice">Lattice</RouterLink></li>
       <li><RouterLink to="/vk">Virtual Keyboard</RouterLink></li>
@@ -610,6 +613,7 @@ nav a:first-of-type {
   line-height: 1;
   padding-right: 1em;
   text-align: right;
+  color: var(--color-text-mute);
 }
 #app-footer a {
   color: var(--color-text-mute);
