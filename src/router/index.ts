@@ -92,6 +92,11 @@ const router = createRouter({
       name: 'mos',
       component: () => import('../views/MosView.vue')
     },
+    {
+      path: '/debug',
+      name: 'debug',
+      component: () => import('../views/DebugView.vue')
+    },
     // Root aliases mainly for compatibility with old SW1 URLs.
     {
       path: '/index.html',
