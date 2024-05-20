@@ -4,12 +4,10 @@ import type { Keyboard } from 'isomorphic-qwerty'
 import { useStateStore } from '@/stores/state'
 import { useScaleStore } from '@/stores/scale'
 import { computed } from 'vue'
+import type { NoteOnCallback } from 'xen-midi'
 
 const state = useStateStore()
 const scale = useScaleStore()
-
-type NoteOff = () => void
-type NoteOnCallback = (index: number) => NoteOff
 
 defineProps<{
   noteOn: NoteOnCallback

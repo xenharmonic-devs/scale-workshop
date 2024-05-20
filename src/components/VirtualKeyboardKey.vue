@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { LEFT_MOUSE_BTN } from '@/constants'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onUnmounted, ref } from 'vue'
 import Values from 'values.js'
-
-type NoteOff = () => void
-type NoteOnCallback = () => NoteOff
+import type { NoteOnCallback } from 'xen-midi';
+import { usePlayNote } from './hooks/usePlayNote';
 
 const props = defineProps<{
   index: number
@@ -14,88 +12,11 @@ const props = defineProps<{
 }>()
 
 const active = ref(false)
-
 const light = computed(() => new Values(props.color).getBrightness() > 50)
-
-const emit = defineEmits(['press', 'unpress'])
-
-let noteOff: NoteOff | null = null
-
-function start() {
-  active.value = true
-  if (noteOff !== null) {
-    noteOff()
-  }
-  noteOff = props.noteOn()
-}
-
-function end() {
-  active.value = false
-  if (noteOff !== null) {
-    noteOff()
-    noteOff = null
-  }
-}
-
-function onTouchStart(event: TouchEvent) {
-  event.preventDefault()
-  start()
-}
-
-function onTouchEnd(event: TouchEvent) {
-  event.preventDefault()
-  end()
-}
-
-function onMouseDown(event: MouseEvent) {
-  if (event.button !== LEFT_MOUSE_BTN) {
-    return
-  }
-  event.preventDefault()
-  emit('press')
-  start()
-}
-
-function onMouseUp(event: MouseEvent) {
-  if (event.button !== LEFT_MOUSE_BTN) {
-    return
-  }
-  event.preventDefault()
-}
-
-function onWindowMouseUp(event: MouseEvent) {
-  if (event.button !== LEFT_MOUSE_BTN) {
-    return
-  }
-  emit('unpress')
-  end()
-}
-
-function onMouseEnter(event: MouseEvent) {
-  if (!props.isMousePressed) {
-    return
-  }
-  event.preventDefault()
-  start()
-}
-
-function onMouseLeave(event: MouseEvent) {
-  if (!props.isMousePressed) {
-    return
-  }
-  event.preventDefault()
-  end()
-}
-
-onMounted(() => {
-  window.addEventListener('mouseup', onWindowMouseUp)
-})
+const playNote = usePlayNote(props.noteOn);
 
 onUnmounted(() => {
-  if (noteOff !== null) {
-    noteOff()
-  }
-  window.removeEventListener('mouseup', onWindowMouseUp)
+  playNote.onUnmounted()
 })
 </script>
 
@@ -104,13 +25,13 @@ onUnmounted(() => {
     :data-key-number="index"
     :style="'background-color:' + color"
     :class="{ active, light, dark: !light }"
-    @touchstart="onTouchStart"
-    @touchend="onTouchEnd"
-    @touchcancel="onTouchEnd"
-    @mousedown="onMouseDown"
-    @mouseup="onMouseUp"
-    @mouseenter="onMouseEnter"
-    @mouseleave="onMouseLeave"
+    @touchstart="playNote.onTouchStart"
+    @touchend="playNote.onTouchEnd"
+    @touchcancel="playNote.onTouchEnd"
+    @mousedown="playNote.onMouseDown"
+    @mouseup="playNote.onMouseUp"
+    @mouseenter="playNote.onMouseEnter"
+    @mouseleave="playNote.onMouseLeave"
   >
     <slot></slot>
   </td>

@@ -4,6 +4,7 @@ import VirtualPiano from '@/components/VirtualPiano.vue'
 import { useStateStore } from '@/stores/state'
 import { useScaleStore } from '@/stores/scale'
 import { computed } from 'vue'
+import type { NoteOnCallback } from 'xen-midi'
 
 defineProps<{
   noteOn: NoteOnCallback
@@ -15,9 +16,6 @@ const scale = useScaleStore()
 const baseIndex = computed(
   () => scale.scale.baseMidiNote + scale.equaveShift * scale.scale.size + scale.degreeShift
 )
-
-type NoteOff = () => void
-type NoteOnCallback = (index: number) => NoteOff
 </script>
 
 <template>

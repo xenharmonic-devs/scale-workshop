@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { LEFT_MOUSE_BTN } from '@/constants'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onUnmounted } from 'vue'
+import type { NoteOnCallback } from 'xen-midi';
+import { usePlayNote } from './hooks/usePlayNote';
 
-type NoteOff = () => void
-type NoteOnCallback = (index: number) => NoteOff
 type ColorMap = (index: number) => string
 
 const props = defineProps<{
@@ -45,8 +44,6 @@ const NUM_KEYS = 30
 // Percentages of SVG height
 const TOP_Y = 20
 const SPLIT_BOTTOM_Y = 60
-
-const noteOffs: Map<number, NoteOff> = new Map()
 
 const whiteKeys = computed(() => {
   const low = props.lowAccidentalColor.toLowerCase()
@@ -248,83 +245,10 @@ const splitKeys = computed(() => {
   return result
 })
 
-const isMousePressed = ref(false)
-
-function start(index: number) {
-  noteOffs.set(index, props.noteOn(index))
-}
-
-function end(index: number) {
-  if (noteOffs.has(index)) {
-    noteOffs.get(index)!()
-    noteOffs.delete(index)
-  }
-}
-
-function onTouchEnd(event: TouchEvent, index: number) {
-  event.preventDefault()
-  end(index)
-}
-
-function onTouchStart(event: TouchEvent, index: number) {
-  event.preventDefault()
-  // Make sure that we start a new note.
-  end(index)
-
-  start(index)
-}
-
-function onMouseDown(event: MouseEvent, index: number) {
-  if (event.button !== LEFT_MOUSE_BTN) {
-    return
-  }
-  event.preventDefault()
-  isMousePressed.value = true
-  start(index)
-}
-
-function onMouseUp(event: MouseEvent, index: number) {
-  if (event.button !== LEFT_MOUSE_BTN) {
-    return
-  }
-  event.preventDefault()
-  isMousePressed.value = false
-  end(index)
-}
-
-function onMouseEnter(event: MouseEvent, index: number) {
-  if (!isMousePressed.value) {
-    return
-  }
-  event.preventDefault()
-  start(index)
-}
-
-function onMouseLeave(event: MouseEvent, index: number) {
-  if (!isMousePressed.value) {
-    return
-  }
-  event.preventDefault()
-  end(index)
-}
-
-function windowMouseUp(event: MouseEvent) {
-  if (event.button === LEFT_MOUSE_BTN) {
-    isMousePressed.value = false
-  }
-}
-
-onMounted(() => {
-  window.addEventListener('mouseup', windowMouseUp)
-})
+const playNote = usePlayNote(props.noteOn);
 
 onUnmounted(() => {
-  noteOffs.forEach((off) => {
-    if (off !== null) {
-      off()
-    }
-  })
-  window.removeEventListener('mouseup', windowMouseUp)
+  playNote.onUnmounted()
 })
 </script>
 
@@ -333,13 +257,13 @@ onUnmounted(() => {
     <rect
       v-for="(key, i) of whiteKeys"
       :key="i"
-      @touchstart="onTouchStart($event, key.index)"
-      @touchend="onTouchEnd($event, key.index)"
-      @touchcancel="onTouchEnd($event, key.index)"
-      @mousedown="onMouseDown($event, key.index)"
-      @mouseup="onMouseUp($event, key.index)"
-      @mouseenter="onMouseEnter($event, key.index)"
-      @mouseleave="onMouseLeave($event, key.index)"
+      @touchstart="playNote.onTouchStart($event, key.index)"
+      @touchend="playNote.onTouchEnd($event, key.index)"
+      @touchcancel="playNote.onTouchEnd($event, key.index)"
+      @mousedown="playNote.onMouseDown($event, key.index)"
+      @mouseup="playNote.onMouseUp($event, key.index)"
+      @mouseenter="playNote.onMouseEnter($event, key.index)"
+      @mouseleave="playNote.onMouseLeave($event, key.index)"
       :class="{ white: true, active: (heldNotes.get(key.index) || 0) > 0 }"
       :x="4 * key.x - 2 * key.left + '%'"
       y="20%"
@@ -351,13 +275,13 @@ onUnmounted(() => {
       <rect
         v-for="(key, i) of splitKeys"
         :key="i"
-        @touchstart="onTouchStart($event, key.index)"
-        @touchend="onTouchEnd($event, key.index)"
-        @touchcancel="onTouchEnd($event, key.index)"
-        @mousedown="onMouseDown($event, key.index)"
-        @mouseup="onMouseUp($event, key.index)"
-        @mouseenter="onMouseEnter($event, key.index)"
-        @mouseleave="onMouseLeave($event, key.index)"
+        @touchstart="playNote.onTouchStart($event, key.index)"
+        @touchend="playNote.onTouchEnd($event, key.index)"
+        @touchcancel="playNote.onTouchEnd($event, key.index)"
+        @mousedown="playNote.onMouseDown($event, key.index)"
+        @mouseup="playNote.onMouseUp($event, key.index)"
+        @mouseenter="playNote.onMouseEnter($event, key.index)"
+        @mouseleave="playNote.onMouseLeave($event, key.index)"
         :class="{ black: true, active: (heldNotes.get(key.index) || 0) > 0 }"
         :x="4 * key.x + '%'"
         :y="key.y"
@@ -370,13 +294,13 @@ onUnmounted(() => {
       <rect
         v-for="(key, i) of blackKeys"
         :key="i"
-        @touchstart="onTouchStart($event, key.index)"
-        @touchend="onTouchEnd($event, key.index)"
-        @touchcancel="onTouchEnd($event, key.index)"
-        @mousedown="onMouseDown($event, key.index)"
-        @mouseup="onMouseUp($event, key.index)"
-        @mouseenter="onMouseEnter($event, key.index)"
-        @mouseleave="onMouseLeave($event, key.index)"
+        @touchstart="playNote.onTouchStart($event, key.index)"
+        @touchend="playNote.onTouchEnd($event, key.index)"
+        @touchcancel="playNote.onTouchEnd($event, key.index)"
+        @mousedown="playNote.onMouseDown($event, key.index)"
+        @mouseup="playNote.onMouseUp($event, key.index)"
+        @mouseenter="playNote.onMouseEnter($event, key.index)"
+        @mouseleave="playNote.onMouseLeave($event, key.index)"
         :class="{ black: true, active: (heldNotes.get(key.index) || 0) > 0 }"
         :x="4 * key.x + '%'"
         y="20%"
