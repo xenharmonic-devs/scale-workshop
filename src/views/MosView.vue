@@ -16,7 +16,9 @@ const message = ref('Your scale will be replaced with a MOS scale upon interacti
 const hardness = ref(2)
 
 const rationalHardness = computed(() =>
-  isFinite(hardness.value) ? new Fraction(hardness.value).simplify(0.03) : { n: 1, d: 0 }
+  isFinite(hardness.value)
+    ? new Fraction(hardness.value).sub(1).simplifyRelative(25).add(1)
+    : { n: 1, d: 0 }
 )
 
 const hardnessRange = computed(() =>
