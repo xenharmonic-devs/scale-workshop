@@ -5,6 +5,8 @@ import { ScalaImporter } from '../scala'
 import SHANG_TEST_SCALE from './shang_pentatonic.scl?raw'
 // @ts-ignore
 import ZHI_TEST_SCALE from './zhi_pentatonic.scl?raw'
+// @ts-ignore
+import BRUN_WILSONIC from './brun_wilsonic.scl?raw'
 
 describe('Scala importer', () => {
   it('can handle all line types', () => {
@@ -29,7 +31,9 @@ describe('Scala importer', () => {
     ].join('\n')
 
     const importer = new ScalaImporter()
-    const { scale } = importer.parseText(text)
+    const { name, scale } = importer.parseText(text)
+
+    expect(name).toBe('1/8-schisma temperament, Helmholtz')
 
     expect(scale.getMonzo(0).totalCents()).toBe(0)
 
@@ -54,5 +58,13 @@ describe('Scala importer', () => {
 
     expect(scale.getMonzo(3).valueOf()).toBeCloseTo(1.5)
     expect(scale.size).toBe(5)
+  })
+
+  it('can handle the wilsonic test scale', () => {
+    const importer = new ScalaImporter()
+    const { name, scale } = importer.parseText(BRUN_WILSONIC)
+    expect(name).toBe('Brun3: G1:0.2000,G0:0.5833,O:1,AB,L:4,NPO=7,M=0')
+    expect(scale.size).toBe(7)
+    expect(scale.getMonzo(2).totalCents()).toBeCloseTo(260)
   })
 })

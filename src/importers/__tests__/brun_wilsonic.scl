@@ -1,0 +1,23 @@
+!BRUN3_G1_0.2000_G0_0.5833_O_1_AB_NPO_7_M_0.scl
+!
+Brun3: G1:0.2000,G0:0.5833,O:1,AB,L:4,NPO=7,M=0
+7
+!
+239.999968
+260.000020
+499.999952
+699.999905
+939.999819
+959.999871
+2/1
+! Created with the iOS app "Wilsonic" by Marcus Hobbs
+!
+! 0.000000 
+! 239.999968 
+! 260.000020 
+! 499.999952 
+! 699.999905 
+! 939.999819 
+! 959.999871 
+
+! Please see the Scala archives at: http://www.huygens-fokker.org/docs/scalesdir.txt
