@@ -31,10 +31,13 @@ type BasicInfo = {
 const basics = computed(() => {
   const v = props.vertical
   const rows: BasicInfo[][] = []
-  // Do two extra rows to compensate for potentially non-square container.
+  // Do two extra rows at both ends to compensate for potentially non-square container.
   for (let size = Math.max(2, v); size < props.rows + v + 4; ++size) {
     const row: BasicInfo[] = []
-    for (let numL = 1; numL < size; ++numL) {
+    // Do six extra columns at both ends.
+    const low = Math.max(1, Math.floor(props.horizontal - props.rows / 2 + size / 2 - 6))
+    const high = Math.min(size, Math.ceil(props.horizontal + props.rows / 2 + size / 2 + 6))
+    for (let numL = low; numL < high; ++numL) {
       const numS = size - numL
       const info = mosScaleInfo(numL, numS)
       const p = info.numberOfPeriods

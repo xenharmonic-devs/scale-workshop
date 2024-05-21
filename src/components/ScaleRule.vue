@@ -3,13 +3,10 @@ import type { Scale } from '@/scale'
 import { computed } from 'vue'
 import { mmod, valueToCents } from 'xen-dev-utils'
 
-const props = withDefaults(
-  defineProps<{
-    scale: Scale
-    orientation: 'horizontal' | 'vertical'
-  }>(),
-  { orientation: 'horizontal' }
-)
+const props = defineProps<{
+  scale: Scale
+  orientation: 'horizontal' | 'vertical'
+}>()
 
 const ticksAndColors = computed(() => {
   const equaveCents = valueToCents(props.scale.equaveRatio)

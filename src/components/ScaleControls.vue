@@ -126,7 +126,7 @@ defineExpose({ focus, clearPaletteInfo })
         @focus="clearPaletteInfo"
       ></textarea>
     </div>
-    <ScaleRule :scale="scale.scale" />
+    <ScaleRule :scale="scale.scale" orientation="horizontal" />
     <p v-if="scale.error" class="error">{{ scale.error }}</p>
     <p v-else-if="scale.warning" class="warning">{{ scale.warning }}</p>
     <h3>Character palette</h3>
