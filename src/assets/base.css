@@ -25,6 +25,9 @@
   --color-warning: orangered;
   --color-indicator: #c35;
 
+  --color-bright-indicator: #63d023;
+  --color-dark-indicator: #427210;
+
   /* Mimic Bootstrap alert with 'danger' variant */
   --color-alert-danger: rgba(104, 35, 39, 1);
   --color-alert-danger-background: rgba(243, 216, 218, 1);

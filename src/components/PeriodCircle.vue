@@ -378,9 +378,9 @@ svg text.generator {
 }
 
 path.bright {
-  stroke: #23ff23;
+  stroke: var(--color-bright-indicator);
 }
 path.dark {
-  stroke: #007200;
+  stroke: var(--color-dark-indicator);
 }
 </style>
