@@ -97,7 +97,7 @@ function generate() {
   emit('update:scaleName', name)
 
   const projector = modal.equave.compare(OCTAVE) ? `<${modal.equave.toString()}>` : ''
-  const divisions = steps[steps.length - 1]
+  const divisions = Math.abs(steps[steps.length - 1])
   let source = ''
   for (let i = 0; i < steps.length; ++i) {
     const color = colors[i] ? ' ' + colors[i] : ''
