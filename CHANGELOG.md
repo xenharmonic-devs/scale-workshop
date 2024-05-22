@@ -1,5 +1,8 @@
 # Change log
 
+## 2.5.4
+ * Bug fix: Fix the URL being eaten from the left on every state change [#709](https://github.com/xenharmonic-devs/scale-workshop/issues/709)
+
 ## 2.5.3
  * Feature: Import scale title from .scl files
  * Bug fix: Fix handling of trailing comments when importing .scl files [#706](https://github.com/xenharmonic-devs/scale-workshop/issues/706)

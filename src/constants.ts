@@ -12,6 +12,11 @@ export const WINDOWS_NEWLINE = '\r\n'
 
 export const NUMBER_OF_NOTES = 128
 
+// Vite production build workarounds
+export const BASE_URL = import.meta.env.BASE_URL.startsWith('.')
+  ? import.meta.env.BASE_URL.slice(1)
+  : import.meta.env.BASE_URL
+
 // Browser interaction
 export const LEFT_MOUSE_BTN = 0
 

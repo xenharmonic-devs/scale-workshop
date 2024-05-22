@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, reactive, watch } from 'vue'
 import { RouterLink, RouterView, useRouter, type LocationQuery } from 'vue-router'
-import { NEWLINE_TEST } from '@/constants'
+import { BASE_URL, NEWLINE_TEST } from '@/constants'
 import { ScaleWorkshopOneData } from '@/scale-workshop-one'
 import type { Input, Output } from 'webmidi'
 import { MidiIn, midiKeyInfo, MidiOut } from 'xen-midi'
@@ -23,7 +23,7 @@ const midi = useMidiStore()
  * Strip away base path such as /scaleworkshop-dev/
  */
 function getPath(url: URL) {
-  return url.pathname.slice(import.meta.env.BASE_URL.length)
+  return url.pathname.slice(BASE_URL.length)
 }
 
 // == State encoding ==
