@@ -93,40 +93,16 @@ const generators = computed(() => {
         :class="{ selected: selected === info.pattern }"
       >
         <rect :x="info.x - 0.45" :y="info.y - 0.45" width="0.9" height="0.9" />
-        <text
-          :x="info.x - 0.4"
-          :y="info.y - 0.3"
-          font-size="0.11"
-          dominant-baseline="middle"
-          text-anchor="start"
-        >
+        <text :x="info.x - 0.4" :y="info.y - 0.3" font-size="0.11" text-anchor="start">
           {{ info.pattern }}
         </text>
-        <text
-          :x="info.x + 0.4"
-          :y="info.y - 0.3"
-          font-size="0.11"
-          dominant-baseline="middle"
-          text-anchor="end"
-        >
+        <text :x="info.x + 0.4" :y="info.y - 0.3" font-size="0.11" text-anchor="end">
           {{ generators[i][j] }}
         </text>
-        <text
-          :x="info.x"
-          :y="info.y"
-          font-size="0.25"
-          dominant-baseline="middle"
-          text-anchor="middle"
-        >
+        <text :x="info.x" :y="info.y" font-size="0.25" text-anchor="middle">
           {{ info.abbreviation }}
         </text>
-        <text
-          :x="info.x"
-          :y="info.y + 0.3"
-          font-size="0.09"
-          dominant-baseline="middle"
-          text-anchor="middle"
-        >
+        <text :x="info.x" :y="info.y + 0.3" font-size="0.09" text-anchor="middle">
           {{ info.name }}
         </text>
       </g>
@@ -155,6 +131,7 @@ g:hover > rect {
   stroke-width: 0.02;
 }
 text {
+  dominant-baseline: central;
   fill: var(--color-accent-text-btn);
 }
 g:hover > text {
