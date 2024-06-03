@@ -102,7 +102,7 @@ describe('Gap key color algorithm', () => {
 
 describe('URL safe number encoder', () => {
   it('encodes the whole range', () => {
-    const expected = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-~'
+    const expected = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_'
     for (let i = 0; i < 64; ++i) {
       expect(encodeUrlSafe64(i)).toBe(expected[i])
     }
@@ -111,7 +111,7 @@ describe('URL safe number encoder', () => {
 
 describe('Unique ID generator', () => {
   it('produces a short URL-friendly identifier', () => {
-    const urlSafe = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-~'
+    const urlSafe = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_'
     const id = randomId()
     expect(id).toHaveLength(9)
     for (const char of id) {

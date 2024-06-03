@@ -475,7 +475,7 @@ export function padEndOrTruncate<T>(array: T[], targetLength: number, padValue: 
   array.length = targetLength
 }
 
-const URL_SAFE_CHARS64 = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-~'
+const URL_SAFE_CHARS64 = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_'
 
 export function encodeUrlSafe64(n: number) {
   if (n < 0 || n >= 64 || !Number.isInteger(n)) {

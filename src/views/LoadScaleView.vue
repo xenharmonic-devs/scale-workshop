@@ -15,7 +15,9 @@ const text = ref('Loading scale...')
 
 onMounted(() => {
   const route = useRoute()
-  const id = route.params.id as string
+  // Tildes are now wiki or filesystem friendly.
+  // Versions < 3.0.0-beta.38 used them. This replacing can be removed at the end of the beta cycle.
+  const id = (route.params.id as string).replaceAll('~', '_')
 
   if (id === '000000000') {
     router.push('/')
@@ -30,7 +32,7 @@ onMounted(() => {
   if (!API_URL) {
     alert('API URL not configured')
   } else {
-    fetch(new URL(`scale/${id}.json`, API_URL))
+    fetch(new URL(`scale/${id}.json.gz`, API_URL))
       .then((res) => {
         if (res.ok) {
           text.value = 'Scale loaded. Redirecting...'
