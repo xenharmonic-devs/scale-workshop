@@ -71,9 +71,9 @@ function done() {
   router.push('/')
 }
 
-const EASTER_EGG_SOURCE = `// Create a fairly even lattice using the generators
+const EASTER_EGG_SOURCE = `(* Create a fairly even lattice using the generators *)
 parallelotope([3, 5, 7], [1, 1, 1], [0, 0, 1], 1\\6)
-// Temper out the Spoob comma
+(* Temper out the Spoob comma *)
 PrimeMapping(1200.000, 1901.955, 2786.316, 3368.819, 4151.323)
 `
 

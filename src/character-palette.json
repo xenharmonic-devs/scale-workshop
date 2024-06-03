@@ -13,6 +13,7 @@
   "¾": "Sesqui-semi-prefix. E.g. D sesqui semisharp four <code>D¾♯4</code>.",
   "⅓": "One-third-prefix. E.g. Third-major second <code>⅓M2</code>.",
   "⅔": "Two-thirds-prefix. E.g. E two-thirds flat four <code>E⅔♭4</code>.",
+  "£": "Popped scale. E.g. <code>£ rdc £[-1]</code> reduces all intervals in your scale by the equave.",
   "×": "Times symbol. E.g. <code>4/3 × 4/3</code> is <code>16/9</code>.",
   "÷": "Division symbol. E.g. <code>9/8 ÷ 81/80</code> is <code>10/9</code>.",
   "·": "Dot product. E.g. <code>12@ · 3/2</code> is <code>7</code> i.e. a fifth is seven steps of 12-tone equal temperament.",

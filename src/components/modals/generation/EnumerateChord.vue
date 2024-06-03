@@ -12,7 +12,7 @@ function generate(expand = true) {
     let source = modal.chordIntervals.map((i) => i.toString()).join(':')
     emit('update:scaleName', `Chord ${modal.chord}`)
     if (modal.retrovertChord) {
-      source = `retroverted(${source})`
+      source = `retrovert(${source})`
     }
     if (expand) {
       emit('update:source', expandCode(source))

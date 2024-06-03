@@ -141,7 +141,7 @@
   },
   "werckmeisteriii": {
     "name": "Werckmeister III (1691)",
-    "source": "{\n  const pythComma = aa1 - M2\n  const flatFif = P5 - pythComma / 4\n  P5 white 'C'\n  P5 white 'G'\n  flatFif white 'D'\n  P5 white 'A'\n  P5 white 'E'\n  P5 white 'B'\n  P5 black 'F♯'\n  P5 black 'C♯'\n  P5 black 'G♯'\n  flatFif black 'D♯'\n  flatFif black 'A♯'\n  stack()\n  P8 white 'F'\n  reduce()\n  sort()\n  i => cents(i, 3)\n}\n",
+    "source": "{\n  const pythComma = aa1 - M2\n  const flatFif = P5 - pythComma / 4\n  P5 white 'C'\n  P5 white 'G'\n  flatFif white 'D'\n  P5 white 'A'\n  P5 white 'E'\n  P5 white 'B'\n  P5 black 'F♯'\n  P5 black 'C♯'\n  P5 black 'G♯'\n  flatFif black 'D♯'\n  flatFif black 'A♯'\n  stack()\n  P8 white 'F'\n  reduce()\n  sort()\n  cents(£, 3)\n}\n",
     "categories": ["traditional"],
     "baseMidiNote": 65,
     "baseFrequency": 349
@@ -310,7 +310,7 @@
   },
   "otonalstacks": {
     "name": "Sevish stacked otonal framents",
-    "source": "unstacked(24 white:27:30:32:36)\nunstacked(24 lightblue:27:28:32:36)\nunstacked(24 palegoldenrod:27:30:32:36)\nstack()\n",
+    "source": "unstack(24 white:27:30:32:36)\nunstack(24 lightblue:27:28:32:36)\nunstack(24 palegoldenrod:27:30:32:36)\nstack()\n",
     "categories": ["non-octave", "just intonation"]
   },
   "blackdye": {
