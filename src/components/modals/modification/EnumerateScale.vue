@@ -43,7 +43,7 @@ function retroversion() {
   if (scale.sourceText) {
     scale.sourceText += '\n'
   }
-  scale.sourceText += 'retroverted(' + tones.join(':') + ')'
+  scale.sourceText += 'retrovert(' + tones.join(':') + ')'
   scale.computeScale()
   emit('done')
 }
@@ -57,7 +57,7 @@ function revposition() {
   if (scale.sourceText) {
     scale.sourceText += '\n'
   }
-  scale.sourceText += 'revposed(' + tones.join(':') + ')'
+  scale.sourceText += 'revpose(' + tones.join(':') + ')'
   scale.computeScale()
   emit('done')
 }
