@@ -66,9 +66,9 @@ function mos(mosName: string, mosPattern: string, udpStr: string) {
   updateScale()
 }
 
-function done() {
+async function done() {
   computeScale()
-  router.push('/')
+  await router.push('/')
 }
 
 const EASTER_EGG_SOURCE = `(* Create a fairly even lattice using the generators *)
@@ -77,11 +77,11 @@ parallelotope([3, 5, 7], [1, 1, 1], [0, 0, 1], 1\\6)
 PrimeMapping(1200.000, 1901.955, 2786.316, 3368.819, 4151.323)
 `
 
-function easterEgg() {
+async function easterEgg() {
   scale.name = 'Spoob'
   scale.sourceText = EASTER_EGG_SOURCE
   scale.computeScale()
-  router.push('/')
+  await router.push('/')
 }
 </script>
 

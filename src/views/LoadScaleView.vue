@@ -13,14 +13,14 @@ const router = useRouter()
 
 const text = ref('Loading scale...')
 
-onMounted(() => {
+onMounted(async () => {
   const route = useRoute()
-  // Tildes are now wiki or filesystem friendly.
+  // Tildes are not wiki friendly.
   // Versions < 3.0.0-beta.38 used them. This replacing can be removed at the end of the beta cycle.
   const id = (route.params.id as string).replaceAll('~', '_')
 
   if (id === '000000000') {
-    router.push('/')
+    await router.push('/')
     return
   }
 
@@ -32,27 +32,30 @@ onMounted(() => {
   if (!API_URL) {
     alert('API URL not configured')
   } else {
-    fetch(new URL(`scale/${id}.json.gz`, API_URL))
-      .then((res) => {
-        if (res.ok) {
-          text.value = 'Scale loaded. Redirecting...'
-          return res.text()
-        } else if (res.status === 404) {
-          text.value = 'Scale not found.'
-        } else {
-          text.value = 'Internal server error.'
-        }
-      })
-      .then((body) => {
+    try {
+      // XXX: Dashes are not filesystem friendly, but that's a problem for sw-server to solve.
+      // XXX: The api should probably be extensionless now that compression negotation makes sw-server bypassing much harder.
+      const res = await fetch(new URL(`scale/${id}.json.gz`, API_URL))
+      if (res.ok) {
+        text.value = 'Scale loaded. Redirecting...'
+        const body = await res.text()
         if (body) {
           const payload = unpackPayload(body, id)
           audio.initialize()
           audio.fromJSON(payload.audio)
           scale.fromJSON(payload.scale)
-          router.push('/')
+          await router.push('/')
+        } else {
+          text.value = 'Received empty response from the server.'
         }
-      })
-      .catch(() => (text.value = 'Failed to connect to server.'))
+      } else if (res.status === 404) {
+        text.value = 'Scale not found.'
+      } else {
+        text.value = 'Internal server error.'
+      }
+    } catch {
+      text.value = 'Failed to connect to server.'
+    }
   }
 })
 </script>

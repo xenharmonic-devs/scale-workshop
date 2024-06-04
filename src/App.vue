@@ -348,7 +348,7 @@ onMounted(async () => {
   // Special handling for the empty app state so that
   // the browser's back button can undo to the clean state.
   if (![...query.keys()].length) {
-    router.push({ path: getPath(url), query: { version } })
+    await router.push({ path: getPath(url), query: { version } })
   } else if (!query.has('version')) {
     // Scale Workshop 1 compatibility
     try {
@@ -378,7 +378,7 @@ onMounted(async () => {
       audio.releaseTime = scaleWorkshopOneData.releaseTime
 
       // Replace query with version 3.
-      router.push({ path: getPath(url), query: { version } })
+      await router.push({ path: getPath(url), query: { version } })
     } catch (error) {
       console.error('Error parsing version 1 URL', error)
     }
@@ -433,7 +433,7 @@ onMounted(async () => {
       scale.computeScale()
 
       // Replace query with version 3.
-      router.push({ path: getPath(url), query: { version } })
+      await router.push({ path: getPath(url), query: { version } })
     } catch (error) {
       console.error(`Error parsing version ${query.get('version')} URL`, error)
     }

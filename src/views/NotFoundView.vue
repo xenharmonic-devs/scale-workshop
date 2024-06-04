@@ -13,11 +13,11 @@ const ritualInProgress = ref(false)
 const router = useRouter()
 const scale = useScaleStore()
 
-function openTheGates(source: string) {
+async function openTheGates(source: string) {
   scale.sourceText = source
   scale.computeScale()
   ritualInProgress.value = false
-  router.push({ path: '/' })
+  await router.push({ path: '/' })
 }
 </script>
 
