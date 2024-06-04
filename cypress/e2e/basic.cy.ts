@@ -51,3 +51,11 @@ describe("Scale generation/modification", () => {
     cy.get("#scale-data").should("contain.value", "8/7");
   });
 });
+
+describe("Scale Workshop 1 compatibility", () => {
+  it('re-encodes old URLs', () => {
+    cy.visit("/?name=Chord%203%3A4%3A5%3A6&data=4%2F3%0A5%2F3%0A2%2F1&freq=440&midi=69&vert=5&horiz=1&colors=white%20black%20white%20white%20black%20white%20black%20white%20white%20black%20white%20black&waveform=semisine&ampenv=organ");
+    cy.contains("h2", "Scale data");
+    cy.url().should("contain", "l=4F3_5F3_2F1");
+  });
+});

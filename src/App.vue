@@ -29,19 +29,14 @@ function getPath(url: URL) {
 // == State encoding ==
 const router = useRouter()
 
-// Flags to prevent infinite decode - watch - encode loops
-let justEncodedUrl = false
-let justDecodedUrl = false
+let justDecoded = false
 
-// Debounced to stagger navigation loops if the flags fail
-const encodeState = debounce(() => {
-  // Navigation loop prevention
-  if (justDecodedUrl) {
-    justDecodedUrl = false
+const encodeState = debounce(async () => {
+  if (justDecoded) {
+    // The watchers react to the initial state decoding. Ignore it.
+    justDecoded = false
     return
   }
-  justEncodedUrl = true
-
   const decodedState: DecodedState = {
     scaleName: state.scaleName,
     scaleLines: state.scaleLines,
@@ -72,7 +67,7 @@ const encodeState = debounce(() => {
   // so we use native URL.pathname.
   const url = new URL(window.location.href)
 
-  router.push({ path: getPath(url), query })
+  await router.push({ path: getPath(url), query })
 }, 200)
 
 watch(
@@ -100,52 +95,6 @@ watch(
   ],
   encodeState
 )
-
-// == State decoding ==
-router.afterEach((to, from) => {
-  if (to.fullPath === from.fullPath) {
-    return
-  }
-  // Navigation loop prevention
-  if (justEncodedUrl) {
-    justEncodedUrl = false
-    return
-  }
-
-  // XXX: There are some sporadic issues with useRoute().fullPath
-  // so we use native URL.searchParams.
-  const url = new URL(window.location.href)
-  const query = url.searchParams
-  if (query.has('version')) {
-    try {
-      const decodedState = decodeQuery(query)
-      justDecodedUrl = true
-
-      state.scaleName = decodedState.scaleName
-      state.scale.baseFrequency = decodedState.baseFrequency
-      state.baseMidiNote = decodedState.baseMidiNote
-      state.keyColors = decodedState.keyColors
-      state.isomorphicHorizontal = decodedState.isomorphicHorizontal
-      state.isomorphicVertical = decodedState.isomorphicVertical
-      state.keyboardMode = decodedState.keyboardMode
-      state.pianoMode = decodedState.pianoMode
-      state.scaleLines = decodedState.scaleLines
-      state.equaveShift = decodedState.equaveShift
-      state.degreeShift = decodedState.degreeShift
-      audio.waveform = decodedState.waveform
-      audio.attackTime = decodedState.attackTime
-      audio.decayTime = decodedState.decayTime
-      audio.sustainLevel = decodedState.sustainLevel
-      audio.releaseTime = decodedState.releaseTime
-      audio.pingPongDelayTime = decodedState.pingPongDelayTime
-      audio.pingPongFeedback = decodedState.pingPongFeedback
-      audio.pingPongSeparation = decodedState.pingPongSeparation
-      audio.pingPongGain = decodedState.pingPongGain
-    } catch (error) {
-      console.error(`Error parsing version ${query.get('version')} URL`, error)
-    }
-  }
-})
 
 // === Tuning table highlighting ===
 // We use hacks to bypass Vue state management for real-time gains
@@ -448,7 +397,7 @@ function typingKeydown(event: CoordinateKeyboardEvent) {
 }
 
 // === Lifecycle ===
-onMounted(() => {
+onMounted(async () => {
   window.addEventListener('keyup', windowKeyup)
   window.addEventListener('keydown', windowKeydownOrUp)
   window.addEventListener('keyup', windowKeydownOrUp)
@@ -463,10 +412,39 @@ onMounted(() => {
   // Special handling for the empty app state so that
   // the browser's back button can undo to the clean state.
   if (![...query.keys()].length) {
-    router.push({ path: getPath(url), query: { version } })
+    await router.push({ path: getPath(url), query: { version } })
+  } else if (query.has('version')) {
+    try {
+      const decodedState = decodeQuery(query)
+      // Signal the encoder to skip the first watch
+      justDecoded = true
+
+      state.scaleName = decodedState.scaleName
+      state.scale.baseFrequency = decodedState.baseFrequency
+      state.baseMidiNote = decodedState.baseMidiNote
+      state.keyColors = decodedState.keyColors
+      state.isomorphicHorizontal = decodedState.isomorphicHorizontal
+      state.isomorphicVertical = decodedState.isomorphicVertical
+      state.keyboardMode = decodedState.keyboardMode
+      state.pianoMode = decodedState.pianoMode
+      state.scaleLines = decodedState.scaleLines
+      state.equaveShift = decodedState.equaveShift
+      state.degreeShift = decodedState.degreeShift
+      audio.waveform = decodedState.waveform
+      audio.attackTime = decodedState.attackTime
+      audio.decayTime = decodedState.decayTime
+      audio.sustainLevel = decodedState.sustainLevel
+      audio.releaseTime = decodedState.releaseTime
+      audio.pingPongDelayTime = decodedState.pingPongDelayTime
+      audio.pingPongFeedback = decodedState.pingPongFeedback
+      audio.pingPongSeparation = decodedState.pingPongSeparation
+      audio.pingPongGain = decodedState.pingPongGain
+    } catch (error) {
+      console.error(`Error parsing version ${query.get('version')} URL`, error)
+    }
   }
   // Scale Workshop 1 compatibility
-  else if (!query.has('version')) {
+  else {
     try {
       const scaleWorkshopOneData = new ScaleWorkshopOneData()
 
@@ -491,6 +469,9 @@ onMounted(() => {
       audio.decayTime = scaleWorkshopOneData.decayTime
       audio.sustainLevel = scaleWorkshopOneData.sustainLevel
       audio.releaseTime = scaleWorkshopOneData.releaseTime
+
+      // Re-encode the URL to the latest version
+      encodeState()
     } catch (error) {
       console.error('Error parsing version 1 URL', error)
     }

@@ -25,7 +25,7 @@ function openTheGates(scale: Scale) {
 
   // Unfortunately we need to encode the state here.
   // Simply navigating to "/" triggers decoding of the default empty state.
-  nextTick(() => {
+  nextTick(async () => {
     const encodedState = {
       scaleName: state.scaleName,
       scaleLines: state.scaleLines,
@@ -54,7 +54,7 @@ function openTheGates(scale: Scale) {
     const query = encodeQuery(encodedState) as LocationQuery
     query.version = version
 
-    router.push({ path: '/', query })
+    await router.push({ path: '/', query })
   })
 }
 </script>
