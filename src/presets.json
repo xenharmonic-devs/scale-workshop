@@ -181,7 +181,7 @@
   "gradycentauras": {
     "title": "Kraig Grady Centaura Subharmonic (11-limit)",
     "name": "Kraig Grady Centaura Subharmonic",
-    "source": "4/3 white\n3/2 white\n2/1 white\nmergeOffset([15/14 cyan, 5/4 yellow, 20/11 black, 5/3 yellow], 'wrap')\nvoid(pop($, 5))\n",
+    "source": "4/3 white\n3/2 white\n2/1 white\nmergeOffset([15/14 cyan, 5/4 yellow, 20/11 black, 5/3 yellow], 'wrap')\ndel $[5]\n",
     "baseFrequency": 264,
     "baseMidiNote": 60,
     "categories": ["just intonation"]
@@ -189,7 +189,7 @@
   "gradycentaurah": {
     "title": "Kraig Grady Centaura Harmonic (11-limit)",
     "name": "Kraig Grady Centaura Harmonic",
-    "source": "4/3 white\n3/2 white\n2/1 white\nmergeOffset([7/6 blue, 5/4 yellow, 11/8 lavender, 3/2 white], 'wrap')\nvoid(pop($, 11))\nsimplify\n",
+    "source": "4/3 white\n3/2 white\n2/1 white\nmergeOffset([7/6 blue, 5/4 yellow, 11/8 lavender, 3/2 white], 'wrap')\ndel $[10]\nsimplify\n",
     "baseFrequency": 264,
     "baseMidiNote": 60,
     "categories": ["just intonation"]
