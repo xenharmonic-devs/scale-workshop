@@ -72,6 +72,7 @@ const encodeState = debounce(() => {
   // so we use native URL.pathname.
   const url = new URL(window.location.href)
 
+  // XXX: This should technically be awaited, but debouncing interferes with that too much.
   router.push({ path: getPath(url), query })
 }, 200)
 
@@ -448,7 +449,7 @@ function typingKeydown(event: CoordinateKeyboardEvent) {
 }
 
 // === Lifecycle ===
-onMounted(() => {
+onMounted(async () => {
   window.addEventListener('keyup', windowKeyup)
   window.addEventListener('keydown', windowKeydownOrUp)
   window.addEventListener('keyup', windowKeydownOrUp)
@@ -463,7 +464,7 @@ onMounted(() => {
   // Special handling for the empty app state so that
   // the browser's back button can undo to the clean state.
   if (![...query.keys()].length) {
-    router.push({ path: getPath(url), query: { version } })
+    await router.push({ path: getPath(url), query: { version } })
   }
   // Scale Workshop 1 compatibility
   else if (!query.has('version')) {
