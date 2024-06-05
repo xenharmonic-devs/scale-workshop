@@ -4,6 +4,7 @@ import { shortestEdge, type GridOptions } from 'ji-lattice'
 import { LOG_PRIMES, mmod } from 'xen-dev-utils'
 import { Val, evaluateExpression, parseChord } from 'sonic-weave'
 import { computedAndError } from '@/utils'
+import { FIFTH, THIRD } from '@/constants'
 
 const TWELVE = evaluateExpression('12@', false) as Val
 
@@ -142,6 +143,33 @@ export const useGridStore = defineStore('grid', () => {
     edgesString.value = '3/2 5/4'
   }
 
+  /**
+   * Create a square lattice configuration based on the val and edges.
+   */
+  function autoSquare() {
+    resetBounds()
+
+    size.value = 0.15
+    viewScale.value = 3.1
+    viewCenterX.value = 0
+    viewCenterY.value = -0.1
+
+    const edge1 = edges.value[0] ?? FIFTH
+    delta1.value = val.value.dot(edge1).valueOf()
+    delta1X.value = 1
+    delta1Y.value = 0
+
+    const edge2 = edges.value[1] ?? THIRD
+    delta2.value = val.value.dot(edge2).valueOf()
+    delta2X.value = 0
+    delta2Y.value = -1
+
+    gridlines1.value = true
+    gridlines2.value = true
+    diagonals1.value = false
+    diagonals2.value = false
+  }
+
   function squareBP(divisions: number) {
     resetBounds()
 
@@ -184,6 +212,33 @@ export const useGridStore = defineStore('grid', () => {
     diagonals1.value = true
     diagonals2.value = false
     edgesString.value = '3/2 5/4 6/5'
+  }
+
+  /**
+   * Create a triangular lattice configuration based on the val and edges.
+   */
+  function autoTonnetz() {
+    resetBounds()
+
+    size.value = 1
+    viewScale.value = 30.1
+    viewCenterX.value = 0
+    viewCenterY.value = 0
+
+    const edge1 = edges.value[0] ?? FIFTH
+    delta1.value = val.value.dot(edge1).valueOf()
+    delta1X.value = 6
+    delta1Y.value = 0
+
+    const edge2 = edges.value[1] ?? THIRD
+    delta2.value = val.value.dot(edge2).valueOf()
+    delta2X.value = 3
+    delta2Y.value = -5
+
+    gridlines1.value = true
+    gridlines2.value = true
+    diagonals1.value = true
+    diagonals2.value = false
   }
 
   function preset311() {
@@ -239,10 +294,13 @@ export const useGridStore = defineStore('grid', () => {
     val,
     modulus,
     gridOptions,
-    // Methods
+    // Methods (presets)
     square,
     squareBP,
     tonnetz,
-    preset311
+    preset311,
+    // Methods (auto-params)
+    autoSquare,
+    autoTonnetz
   }
 })

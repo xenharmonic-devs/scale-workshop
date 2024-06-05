@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import { mmod } from 'xen-dev-utils'
-// import ScaleLattice from '@/components/ScaleLattice.vue'
+import { computed, onMounted, ref, watch } from 'vue'
+import { Fraction, isPrime, mmod, nthPrime, primeLimit } from 'xen-dev-utils'
 import GridLattice from '@/components/GridLattice.vue'
 import JustIntonationLattice from '@/components/JustIntonationLattice.vue'
 import Modal from '@/components/ModalDialog.vue'
@@ -17,8 +16,8 @@ const jiLattice = useJiLatticeStore()
 const grid = useGridStore()
 
 const showConfig = ref(false)
-const jiPreset = ref<'nothing' | 'grady' | 'grady3' | 'dakota' | 'pr72' | 'pe72'>('grady')
-const etPreset = ref<'nothing' | '12' | '53' | '311' | 'b13'>('12')
+const jiPreset = ref<'nothing' | 'grady' | 'grady3' | 'dakota' | 'pr72' | 'pe72'>('nothing')
+const etPreset = ref<'nothing' | '12' | '53' | '311' | 'b13'>('nothing')
 
 const extraEdgesElement = ref<HTMLInputElement | null>(null)
 watch(extraEdgesElement, (newElement) => setAndReportValidity(newElement, jiLattice.edgesError), {
@@ -88,6 +87,107 @@ watch(etPreset, (newValue) => {
       return
   }
 })
+
+function inferConfig() {
+  // Default to 12-TET even if it looks bad
+  state.latticeType = 'et'
+
+  // Infer initial configuration
+  const monzos = scale.latticeIntervals.map((i) => i.value)
+  if (!monzos.length) {
+    return
+  }
+
+  let isFractional = true
+  let isEqualTemperament = true
+  for (const monzo of monzos) {
+    if (!monzo.isFractional()) {
+      isFractional = false
+    }
+    if (!monzo.isEqualTemperament()) {
+      isEqualTemperament = false
+    }
+  }
+
+  if (isFractional) {
+    let limit = 0
+    for (const monzo of monzos) {
+      try {
+        const { n, d } = monzo.toFraction()
+        limit = Math.max(primeLimit(n, true), primeLimit(d, true), limit)
+      } catch {
+        return
+      }
+    }
+
+    let equaveIndex = 0
+    const equave = monzos.pop()!
+    const { n, d } = equave.toFraction()
+    if (d === 1 && isPrime(n)) {
+      equaveIndex = primeLimit(n, true) - 1
+    }
+    if (limit <= 9) {
+      jiLattice.kraigGrady(equaveIndex)
+    } else if (limit <= 24) {
+      jiLattice.scott24(equaveIndex)
+    } else if (equaveIndex < 72) {
+      jiLattice.pe72(equaveIndex)
+    } else {
+      return
+    }
+    state.latticeType = 'ji'
+    return
+  }
+
+  if (isEqualTemperament) {
+    const equave = monzos.pop()!
+    if (!equave.isFractional()) {
+      return
+    }
+    try {
+      const { n, d } = equave.toFraction()
+      let wartPrefix = ''
+      let edges = '3/2 5/4'
+      if (d === 1 && isPrime(n)) {
+        const index = primeLimit(n, true) - 1
+        if (index > 14) {
+          return
+        }
+        if (index) {
+          wartPrefix = String.fromCharCode(97 + index)
+          const e1 = new Fraction(nthPrime(index + 1)).geoMod(n)
+          const e2 = new Fraction(nthPrime(index + 2)).geoMod(n)
+          edges = `${e1.toFraction()} ${e2.toFraction()}`
+        }
+      } else {
+        return
+      }
+
+      let divisions = 1
+      for (const monzo of monzos) {
+        const log = monzo.log(equave)
+        if (typeof log === 'number') {
+          return
+        }
+        divisions = Math.max(log.d, divisions)
+      }
+      grid.valString = `${wartPrefix}${divisions}p`
+      grid.edgesString = edges
+      grid.autoSquare()
+      state.latticeType = 'et'
+    } catch {
+      return
+    }
+  }
+}
+
+onMounted(() => {
+  // Non-auto lattice presumably pre-loaded from the database
+  if (state.latticeType !== 'auto') {
+    return
+  }
+  inferConfig()
+})
 </script>
 
 <template>
@@ -101,12 +201,15 @@ watch(etPreset, (newValue) => {
       :heldNotes="heldNotes"
     />
     <GridLattice
-      v-else
+      v-else-if="state.latticeType === 'et'"
       :labels="scale.latticeLabels"
       :colors="scale.latticeColors"
       :relativeIntervals="scale.latticeIntervals"
       :heldNotes="heldNotes"
     />
+    <template v-else>
+      <h1>Selecting lattice...</h1>
+    </template>
     <button @click="showConfig = true">Configure</button>
     <Modal
       :show="showConfig"
@@ -196,7 +299,7 @@ watch(etPreset, (newValue) => {
               <input id="verticals" type="text" v-model="jiLattice.verticals" />
             </div>
           </template>
-          <template v-else>
+          <template v-else-if="state.latticeType === 'et'">
             <div class="control">
               <label for="Preset">Preset</label>
               <select v-model="etPreset">
@@ -206,6 +309,10 @@ watch(etPreset, (newValue) => {
                 <option value="311">13-limit 311p</option>
                 <option value="b13">Square-b13p</option>
               </select>
+            </div>
+            <div class="btn-group">
+              <button @click="grid.autoSquare">Auto-square</button>
+              <button @click="grid.autoTonnetz">Auto-tonnetz</button>
             </div>
             <div class="control">
               <label for="val">Val</label>
@@ -290,11 +397,15 @@ watch(etPreset, (newValue) => {
               <input id="view-y" type="number" step="0.1" v-model="grid.viewCenterY" />
             </div>
           </template>
+          <template v-else>
+            <h2>Selecting lattice...</h2>
+          </template>
         </div>
       </template>
       <template #footer>
         <div class="btn-group">
           <button @click="showConfig = false">Done</button>
+          <button @click="inferConfig">Auto-config</button>
         </div>
       </template>
     </Modal>

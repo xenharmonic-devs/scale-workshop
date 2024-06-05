@@ -92,7 +92,18 @@ watch(svgElement, (element) => {
   observer.observe(element)
 })
 
-watch(() => store.modulus, computeExtent)
+watch(
+  () => [
+    store.viewScale,
+    store.minX,
+    store.maxX,
+    store.minY,
+    store.maxY,
+    store.viewCenterX,
+    store.viewCenterY
+  ],
+  computeExtent
+)
 </script>
 
 <template>
