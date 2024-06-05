@@ -1,5 +1,9 @@
 # Change log
 
+## 2.5.5
+ * Bug fix: Correctly sort intervals below 1/1 [#720](https://github.com/xenharmonic-devs/scale-workshop/issues/720)
+ * Stability: Improve programmatic navigation stability [#721](https://github.com/xenharmonic-devs/scale-workshop/issues/721)
+
 ## 2.5.4
  * Bug fix: Fix the URL being eaten from the left on every state change [#709](https://github.com/xenharmonic-devs/scale-workshop/issues/709)
 
