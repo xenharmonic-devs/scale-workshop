@@ -541,8 +541,16 @@ const sSlider = computed({
           <input id="N" type="number" min="1000" step="1000" v-model="entropy.N" />
         </div>
         <label for="a">Rényi order: {{ entropy.a.toFixed(4) }}</label>
-        <input class="control" id="a" type="range" min="0" max="7" step="any" v-model="aSlider" />
-        <label for="s">Frequency deviation: {{ (entropy.s * 100).toFixed(1) }}%</label>
+        <input
+          class="control"
+          id="a"
+          type="range"
+          min="0.02"
+          max="7"
+          step="any"
+          v-model="aSlider"
+        />
+        <label for="s">Frequency deviation: {{ (entropy.s * 100).toFixed(2) }}%</label>
         <input
           class="control"
           id="s"
