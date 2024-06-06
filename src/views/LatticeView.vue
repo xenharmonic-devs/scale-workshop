@@ -2,18 +2,21 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { Fraction, isPrime, mmod, nthPrime, primeLimit } from 'xen-dev-utils'
 import GridLattice from '@/components/GridLattice.vue'
+import EdoCycles from '@/components/EdoCycles.vue'
 import JustIntonationLattice from '@/components/JustIntonationLattice.vue'
 import Modal from '@/components/ModalDialog.vue'
 import { useStateStore } from '@/stores/state'
 import { useScaleStore } from '@/stores/scale'
 import { useJiLatticeStore } from '@/stores/ji-lattice'
 import { useGridStore } from '@/stores/grid'
+import { useCyclesStore } from '@/stores/edo-cycles'
 import { setAndReportValidity } from '@/utils'
 
 const state = useStateStore()
 const scale = useScaleStore()
 const jiLattice = useJiLatticeStore()
 const grid = useGridStore()
+const cycles = useCyclesStore()
 
 const showConfig = ref(false)
 const jiPreset = ref<'nothing' | 'grady' | 'grady3' | 'dakota' | 'pr72' | 'pe72'>('nothing')
@@ -178,6 +181,9 @@ function inferConfig() {
       grid.edgesString = edges
       grid.autoSquare()
       state.latticeType = 'et'
+
+      // Set config, but don't switch to
+      cycles.valString = grid.valString
     } catch {
       return
     }
@@ -210,6 +216,13 @@ onMounted(() => {
       :relativeIntervals="scale.latticeIntervals"
       :heldNotes="heldNotes"
     />
+    <EdoCycles
+      v-else-if="state.latticeType === 'cycles'"
+      :labels="scale.latticeLabels"
+      :colors="scale.latticeColors"
+      :relativeIntervals="scale.latticeIntervals"
+      :heldNotes="heldNotes"
+    />
     <template v-else>
       <h1>Selecting lattice...</h1>
     </template>
@@ -234,6 +247,10 @@ onMounted(() => {
             <span>
               <input type="radio" id="et" value="et" v-model="state.latticeType" />
               <label for="et">Equal temperament</label>
+            </span>
+            <span>
+              <input type="radio" id="cycles" value="cycles" v-model="state.latticeType" />
+              <label for="cycles">Cycles</label>
             </span>
           </div>
           <template v-if="state.latticeType === 'ji'">
@@ -398,6 +415,28 @@ onMounted(() => {
             <div class="control">
               <label for="view-y">View center y</label>
               <input id="view-y" type="number" step="0.1" v-model="grid.viewCenterY" />
+            </div>
+          </template>
+          <template v-if="state.latticeType === 'cycles'">
+            <div class="control">
+              <label for="val">Val</label>
+              <input type="text" id="val" placeholder="17c" v-model="cycles.valString" />
+            </div>
+            <div class="control">
+              <label for="generator">Generator</label>
+              <input type="number" step="1" v-model="cycles.generator" />
+            </div>
+            <div class="control">
+              <label for="size">Text size</label>
+              <input id="size" type="number" min="0.01" step="0.01" v-model="cycles.size" />
+            </div>
+            <div class="control">
+              <label for="label-offset">Text offset</label>
+              <input id="label-offset" type="number" step="0.04" v-model="cycles.labelOffset" />
+            </div>
+            <div class="control checkbox-container">
+              <input type="checkbox" id="show-labels" v-model="cycles.showLabels" />
+              <label for="show-labels">Show labels</label>
             </div>
           </template>
           <template v-else>

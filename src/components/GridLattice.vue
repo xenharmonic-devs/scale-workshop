@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useGridStore } from '@/stores/grid'
-import { debounce } from '@/utils'
+import { debounce, labelX, labelY } from '@/utils'
 import { spanGrid } from 'ji-lattice'
 import { type Interval } from 'sonic-weave'
 import { computed, ref, watch } from 'vue'
@@ -23,29 +23,6 @@ const steps = computed(() => {
   }
   return result
 })
-
-// Multi-label offsets
-function lx(n: number, num: number) {
-  if (num < 3) {
-    return 0
-  }
-  if (num & 1) {
-    // Odd counts exploit a different starting angle.
-    return store.labelOffset * store.size * Math.cos((2 * Math.PI * n) / num)
-  }
-  // Text tends to extend horizontally so we draw an ellipse.
-  return 1.5 * store.labelOffset * store.size * Math.sin((2 * Math.PI * n) / num)
-}
-function ly(n: number, num: number) {
-  if (num === 1) {
-    return -store.labelOffset * store.size
-  }
-  if (num & 1) {
-    // Odd counts exploit a different starting angle.
-    return store.labelOffset * store.size * Math.sin((2 * Math.PI * n) / num)
-  }
-  return -store.labelOffset * store.size * Math.cos((2 * Math.PI * n) / num)
-}
 
 const grid = computed(() => {
   const result = spanGrid(steps.value, store.gridOptions)
@@ -145,8 +122,8 @@ watch(
           v-for="(idx, j) of v.indices"
           :key="idx"
           class="node-label"
-          :x="v.x + lx(j, v.indices.length)"
-          :y="v.y + ly(j, v.indices.length)"
+          :x="v.x + store.size * store.labelOffset * labelX(j, v.indices.length)"
+          :y="v.y + store.size * store.labelOffset * labelY(j, v.indices.length)"
           :font-size="`${2.5 * store.size}px`"
           :stroke-width="store.size * 0.05"
           dominant-baseline="middle"
