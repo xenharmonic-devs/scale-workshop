@@ -91,6 +91,7 @@ export const useScaleStore = defineStore('scale', () => {
   const sourceText = ref('')
   const relativeIntervals = ref(INTERVALS_12TET)
   const latticeIntervals = ref(INTERVALS_12TET)
+  const latticeEquave = ref<Interval | undefined>(undefined)
   const colors = ref(defaultColors(baseMidiNote.value))
   const labels = ref(defaultLabels(baseMidiNote.value, accidentalPreference.value))
   const error = ref('')
@@ -293,7 +294,7 @@ export const useScaleStore = defineStore('scale', () => {
   syncValues({ accidentalPreference, hasLeftOfZ, gas })
 
   // Extra builtins
-  function latticeView(this: ExpressionVisitor) {
+  function latticeView(this: ExpressionVisitor, equave?: Interval) {
     const scale = this.currentScale
     for (let i = 0; i < scale.length; ++i) {
       scale[i] = scale[i].shallowClone()
@@ -302,8 +303,11 @@ export const useScaleStore = defineStore('scale', () => {
     }
     const rel = relative.bind(this)
     latticeIntervals.value = scale.map((i) => rel(i))
+
+    latticeEquave.value = equave
   }
-  latticeView.__doc__ = 'Store the current scale to be displayed in the lattice tab.'
+  latticeView.__doc__ =
+    'Store the current scale to be displayed in the lattice tab. Optionally with an explicit equave.'
   latticeView.__node__ = builtinNode(latticeView)
 
   function warn(this: ExpressionVisitor, ...args: any[]) {
@@ -366,6 +370,7 @@ export const useScaleStore = defineStore('scale', () => {
       error.value = ''
       warning.value = ''
       latticeIntervals.value = []
+      latticeEquave.value = undefined
       const globalVisitor = getGlobalScaleWorkshopVisitor()
       const visitor = new StatementVisitor(globalVisitor)
       visitor.isUserRoot = true
@@ -457,6 +462,7 @@ export const useScaleStore = defineStore('scale', () => {
     scale,
     relativeIntervals,
     latticeIntervals,
+    latticeEquave,
     colors,
     labels,
     error,

@@ -98,6 +98,11 @@ function inferConfig() {
     return
   }
 
+  let equave = monzos[monzos.length - 1]
+  if (scale.latticeEquave) {
+    equave = scale.latticeEquave.value
+  }
+
   let isFractional = true
   let isEqualTemperament = true
   for (const monzo of monzos) {
@@ -121,7 +126,6 @@ function inferConfig() {
     }
 
     let equaveIndex = 0
-    const equave = monzos.pop()!
     const { n, d } = equave.toFraction()
     if (d === 1 && isPrime(n)) {
       equaveIndex = primeLimit(n, true) - 1
@@ -140,7 +144,6 @@ function inferConfig() {
   }
 
   if (isEqualTemperament) {
-    const equave = monzos.pop()!
     if (!equave.isFractional()) {
       return
     }

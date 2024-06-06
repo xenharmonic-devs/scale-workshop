@@ -88,7 +88,7 @@ function generate(kind: 'expanded' | 'raw' | 'lattice' = 'expanded') {
       source += `repeat(${modal.numPeriods})\n`
     }
     source += 'unshift(pop())\n'
-    source += 'latticeView()\n'
+    source += `latticeView(${modal.period})\n`
     source += 'sort()\n'
   } else {
     source = `gs(${arrayToString(modal.generators)}, ${modal.size}`
