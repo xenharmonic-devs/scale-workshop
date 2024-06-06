@@ -2,11 +2,9 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { shortestEdge, type GridOptions } from 'ji-lattice'
 import { LOG_PRIMES, mmod } from 'xen-dev-utils'
-import { Val, evaluateExpression, parseChord } from 'sonic-weave'
-import { computedAndError } from '@/utils'
+import { parseChord } from 'sonic-weave'
+import { computedAndError, parseVal } from '@/utils'
 import { FIFTH, THIRD } from '@/constants'
-
-const TWELVE = evaluateExpression('12@', false) as Val
 
 export const useGridStore = defineStore('grid', () => {
   // View
@@ -36,25 +34,7 @@ export const useGridStore = defineStore('grid', () => {
   const diagonals1 = ref(false)
   const diagonals2 = ref(false)
 
-  const val = computed<Val>(() => {
-    try {
-      const val = evaluateExpression(valString.value)
-      if (val instanceof Val) {
-        return val
-      }
-    } catch {
-      /* empty */
-    }
-    try {
-      const val = evaluateExpression(valString.value.trim() + '@')
-      if (val instanceof Val) {
-        return val
-      }
-    } catch {
-      /* empty */
-    }
-    return TWELVE
-  })
+  const val = computed(() => parseVal(valString.value))
 
   const modulus = computed(() => val.value.divisions.round().valueOf())
 

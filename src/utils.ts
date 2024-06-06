@@ -1,8 +1,12 @@
 import { computed, watch, type ComputedRef, type Ref } from 'vue'
 import { gcd, mmod } from 'xen-dev-utils'
-import { evaluateExpression, getSourceVisitor, Interval, parseAST, repr } from 'sonic-weave'
+import { evaluateExpression, getSourceVisitor, Interval, parseAST, repr, Val } from 'sonic-weave'
 import { version } from '../package.json'
 import { Scale } from './scale'
+
+const TAU = 2 * Math.PI
+
+const TWELVE = evaluateExpression('12@', false) as Val
 
 /**
  * Calculate the smallest power of two greater or equal to the input value.
@@ -22,6 +26,26 @@ export function parseInterval(input: string) {
     return result
   }
   throw new Error('Must evaluate to an interval')
+}
+
+export function parseVal(input: string) {
+  try {
+    const val = evaluateExpression(input)
+    if (val instanceof Val) {
+      return val
+    }
+  } catch {
+    /* empty */
+  }
+  try {
+    const val = evaluateExpression(input.trim() + '@')
+    if (val instanceof Val) {
+      return val
+    }
+  } catch {
+    /* empty */
+  }
+  return TWELVE
 }
 
 export function decimalString(amount: number) {
@@ -549,4 +573,28 @@ export function unpackPayload(body: string, id: string) {
   const data = JSON.parse(body, (key, value) => Interval.reviver(key, Scale.reviver(key, value)))
   data.scale.id = id
   return data
+}
+
+// Multi-label offsets
+export function labelX(n: number, num: number) {
+  if (num < 3) {
+    return 0
+  }
+  if (num & 1) {
+    // Odd counts exploit a different starting angle.
+    return Math.cos((TAU * n) / num)
+  }
+  // Text tends to extend horizontally so we draw an ellipse.
+  return 1.5 * Math.sin((TAU * n) / num)
+}
+
+export function labelY(n: number, num: number) {
+  if (num === 1) {
+    return -1
+  }
+  if (num & 1) {
+    // Odd counts exploit a different starting angle.
+    return Math.sin((TAU * n) / num)
+  }
+  return -Math.cos((TAU * n) / num)
 }
