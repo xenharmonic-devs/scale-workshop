@@ -1,5 +1,9 @@
 # Change log
 
+## 2.5.6
+ * Bug fix: Fix a crash when "down" was non-zero in "Generate Rank-2" [#729](https://github.com/xenharmonic-devs/scale-workshop/issues/729)
+ * Bug fix: Fix duplicate coalescing in "merge offset" [#728](https://github.com/xenharmonic-devs/scale-workshop/issues/728)
+
 ## 2.5.5
  * Bug fix: Correctly sort intervals below 1/1 [#720](https://github.com/xenharmonic-devs/scale-workshop/issues/720)
  * Stability: Improve programmatic navigation stability [#721](https://github.com/xenharmonic-devs/scale-workshop/issues/721)

@@ -26,14 +26,14 @@ function modify() {
     let unison: Interval
     if (scale.intervals.length) {
       unison = scale.intervals.shift()!
-      scale = props.scale.merge(transposed)
+      scale = scale.merge(transposed)
       if (scale.intervals.length) {
         const highest = scale.intervals.pop()!
         const equave = scale.equave
         if (highest.compare(equave) > 0) {
           scale.intervals.push(equave)
           scale.equave = highest
-          scale.sortInPlace()
+          scale.sortInPlace(false)
         }
       }
       scale.intervals.unshift(unison!)
