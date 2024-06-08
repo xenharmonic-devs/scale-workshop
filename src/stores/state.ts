@@ -8,7 +8,7 @@ export const useStateStore = defineStore('state', () => {
   const heldNotes = reactive(new Map<number, number>())
   const typingActive = ref(true)
 
-  const latticeType = ref<'ji' | 'et' | 'cycles' | 'auto'>('auto')
+  const latticeType = ref<'ji' | 'et' | 'cycles' | '3d' | 'auto'>('auto')
 
   // These user preferences are fetched from local storage.
   const storage = window.localStorage

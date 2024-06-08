@@ -11,6 +11,7 @@ import { useJiLatticeStore } from '@/stores/ji-lattice'
 import { useGridStore } from '@/stores/grid'
 import { useCyclesStore } from '@/stores/edo-cycles'
 import { setAndReportValidity } from '@/utils'
+import Faux3DLattice from '@/components/Faux3DLattice.vue'
 
 const state = useStateStore()
 const scale = useScaleStore()
@@ -21,6 +22,7 @@ const cycles = useCyclesStore()
 const showConfig = ref(false)
 const jiPreset = ref<'nothing' | 'grady' | 'grady3' | 'dakota' | 'pr72' | 'pe72'>('nothing')
 const etPreset = ref<'nothing' | '12' | '53' | '311' | 'b13'>('nothing')
+const preset3D = ref<'nothing' | 'WGP' | 'sphere' | 'sphere3'>('nothing')
 
 const extraEdgesElement = ref<HTMLInputElement | null>(null)
 watch(extraEdgesElement, (newElement) => setAndReportValidity(newElement, jiLattice.edgesError), {
@@ -91,6 +93,20 @@ watch(etPreset, (newValue) => {
   }
 })
 
+watch(preset3D, (newValue) => {
+  switch (newValue) {
+    case 'WGP':
+      jiLattice.WGP()
+      return
+    case 'sphere':
+      jiLattice.sphere()
+      return
+    case 'sphere3':
+      jiLattice.sphere(1)
+      return
+  }
+})
+
 function inferConfig() {
   // Default to 12-TET even if it looks bad
   state.latticeType = 'et'
@@ -133,11 +149,15 @@ function inferConfig() {
     if (d === 1 && isPrime(n)) {
       equaveIndex = primeLimit(n, true) - 1
     }
+    // Set the config for 3D too, but use isometric by default
     if (limit <= 9) {
+      jiLattice.WGP(equaveIndex)
       jiLattice.kraigGrady(equaveIndex)
     } else if (limit <= 24) {
+      jiLattice.sphere(equaveIndex, 24)
       jiLattice.scott24(equaveIndex)
     } else if (equaveIndex < 72) {
+      jiLattice.sphere(equaveIndex, 72)
       jiLattice.pe72(equaveIndex)
     } else {
       return
@@ -223,6 +243,13 @@ onMounted(() => {
       :relativeIntervals="scale.latticeIntervals"
       :heldNotes="heldNotes"
     />
+    <Faux3DLattice
+      v-else-if="state.latticeType === '3d'"
+      :labels="scale.latticeLabels"
+      :colors="scale.latticeColors"
+      :relativeIntervals="scale.latticeIntervals"
+      :heldNotes="heldNotes"
+    />
     <template v-else>
       <h1>Selecting lattice...</h1>
     </template>
@@ -251,6 +278,10 @@ onMounted(() => {
             <span>
               <input type="radio" id="cycles" value="cycles" v-model="state.latticeType" />
               <label for="cycles">Cycles</label>
+            </span>
+            <span>
+              <input type="radio" id="3d" value="3d" v-model="state.latticeType" />
+              <label for="3d">3D</label>
             </span>
           </div>
           <template v-if="state.latticeType === 'ji'">
@@ -417,7 +448,7 @@ onMounted(() => {
               <input id="view-y" type="number" step="0.1" v-model="grid.viewCenterY" />
             </div>
           </template>
-          <template v-if="state.latticeType === 'cycles'">
+          <template v-else-if="state.latticeType === 'cycles'">
             <div class="control">
               <label for="val">Val</label>
               <input type="text" id="val" placeholder="17c" v-model="cycles.valString" />
@@ -437,6 +468,85 @@ onMounted(() => {
             <div class="control checkbox-container">
               <input type="checkbox" id="show-labels" v-model="cycles.showLabels" />
               <label for="show-labels">Show labels</label>
+            </div>
+          </template>
+          <template v-else-if="state.latticeType === '3d'">
+            <div class="control">
+              <label for="preset">Preset</label>
+              <select id="preset" v-model="preset3D">
+                <option value="nothing">--Select preset--</option>
+                <option value="WGP">Wilson-Grady-Pakkanen</option>
+                <option value="sphere">Prime sphere</option>
+                <option value="sphere3">Tritave sphere</option>
+              </select>
+            </div>
+            <div class="control">
+              <label for="max-distance">Maximum connection distance</label>
+              <input
+                id="max-distance"
+                type="number"
+                min="0"
+                max="2"
+                v-model="jiLattice.maxDistance"
+              />
+            </div>
+            <div class="control">
+              <label for="size">Object depth</label>
+              <input id="size" type="number" step="1" v-model="jiLattice.depth" />
+            </div>
+            <div class="control">
+              <label for="size">Text size</label>
+              <input id="size" type="number" min="0.5" step="0.5" v-model="jiLattice.size" />
+            </div>
+            <div class="control">
+              <label for="label-offset">Text offset</label>
+              <input id="label-offset" type="number" step="0.1" v-model="jiLattice.labelOffset" />
+            </div>
+            <div class="control checkbox-container">
+              <input type="checkbox" id="show-labels" v-model="jiLattice.showLabels" />
+              <label for="show-labels">Show labels</label>
+            </div>
+            <div class="control checkbox-container">
+              <input type="checkbox" id="gray-extras" v-model="jiLattice.grayExtras" />
+              <label for="gray-extras">Gray extra edges</label>
+            </div>
+            <div class="control">
+              <label for="extra-edges">Extra edges</label>
+              <input
+                ref="extraEdgesElement"
+                id="extra-edges"
+                type="text"
+                class="control"
+                placeholder="6/5"
+                v-model="jiLattice.edgesString"
+              />
+            </div>
+            <div class="control">
+              <label>Pitch</label>
+              <button @click="jiLattice.pitch(5)">up</button>
+              <button @click="jiLattice.pitch(-5)">down</button>
+            </div>
+            <div class="control">
+              <label>Yaw</label>
+              <button @click="jiLattice.yaw(5)">left</button>
+              <button @click="jiLattice.yaw(-5)">right</button>
+            </div>
+            <div class="control">
+              <label>Roll</label>
+              <button @click="jiLattice.roll(-5)">clockwise</button>
+              <button @click="jiLattice.roll(5)">counterclockwise</button>
+            </div>
+            <div class="control">
+              <label for="horizontals">Horizontal coordinates</label>
+              <input id="horizontals" type="text" v-model="jiLattice.xs" />
+            </div>
+            <div class="control">
+              <label for="verticals">Vertical coordinates</label>
+              <input id="verticals" type="text" v-model="jiLattice.ys" />
+            </div>
+            <div class="control">
+              <label for="verticals">Depthwise coordinates</label>
+              <input id="verticals" type="text" v-model="jiLattice.zs" />
             </div>
           </template>
           <template v-else>
@@ -486,6 +596,16 @@ line.edge.auxiliary {
   stroke-dasharray: 3 1;
 }
 
+polygon.edge.primary {
+  fill: var(--color-accent);
+}
+polygon.edge.custom {
+  fill: var(--color-accent-deeper);
+}
+polygon.edge.auxiliary {
+  fill: var(--color-accent-mute);
+}
+
 marker#arrow {
   fill: var(--color-indicator);
 }
@@ -512,5 +632,6 @@ text.node-label {
   fill: var(--color-text);
   text-anchor: middle;
   stroke: var(--color-background);
+  dominant-baseline: middle;
 }
 </style>

@@ -192,7 +192,6 @@ watch(
         v-for="(v, i) of lattice.vertices"
         :key="i"
         class="node-label"
-        dominant-baseline="middle"
         :x="v.x"
         :y="v.y - store.labelOffset * store.size"
         :font-size="`${3 * store.size}px`"
