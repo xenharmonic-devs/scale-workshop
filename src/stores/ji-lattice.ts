@@ -1,6 +1,15 @@
 import { computed, reactive, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
-import { kraigGrady9, type LatticeOptions, scottDakota24, primeRing72, align } from 'ji-lattice'
+import {
+  kraigGrady9,
+  type LatticeOptions,
+  scottDakota24,
+  primeRing72,
+  align,
+  type LatticeOptions3D,
+  WGP9,
+  primeSphere
+} from 'ji-lattice'
 import { LOG_PRIMES, mmod } from 'xen-dev-utils'
 import { computedAndError } from '@/utils'
 import { TimeMonzo, parseChord } from 'sonic-weave'
@@ -52,6 +61,48 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
       )
     }
   })
+  const xs = computed({
+    get() {
+      return xCoords.map((x) => x.toFixed(2)).join(' ')
+    },
+    set(value: string) {
+      xCoords.length = 0
+      xCoords.push(
+        ...value.split(' ').map((v) => {
+          const c = parseFloat(v)
+          return isNaN(c) ? 0 : c
+        })
+      )
+    }
+  })
+  const ys = computed({
+    get() {
+      return yCoords.map((y) => y.toFixed(2)).join(' ')
+    },
+    set(value: string) {
+      yCoords.length = 0
+      yCoords.push(
+        ...value.split(' ').map((v) => {
+          const c = parseFloat(v)
+          return isNaN(c) ? 0 : c
+        })
+      )
+    }
+  })
+  const zs = computed({
+    get() {
+      return zCoords.map((z) => z.toFixed(2)).join(' ')
+    },
+    set(value: string) {
+      zCoords.length = 0
+      zCoords.push(
+        ...value.split(' ').map((v) => {
+          const c = parseFloat(v)
+          return isNaN(c) ? 0 : c
+        })
+      )
+    }
+  })
 
   const edgeMonzos = computed(() => {
     const numComponents = horizontalCoordinates.length
@@ -79,11 +130,30 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
     }
   })
 
+  const opts3D = WGP9(0)
+  const xCoords = reactive(opts3D.horizontalCoordinates)
+  const yCoords = reactive(opts3D.verticalCoordinates)
+  const zCoords = reactive(opts3D.depthwiseCoordinates)
+  const depth = ref(100)
+
+  const latticeOptions3D = computed<LatticeOptions3D>(() => {
+    return {
+      horizontalCoordinates: xCoords,
+      verticalCoordinates: yCoords,
+      depthwiseCoordinates: zCoords,
+      maxDistance: maxDistance.value,
+      edgeMonzos: edgeMonzos.value,
+      mergeEdges: false
+    }
+  })
+
   watch(rotation, (newValue) => {
     if (newValue < 0 || newValue >= 360) {
       rotation.value = mmod(newValue, 360)
     }
   })
+
+  // 2D presets
 
   function kraigGrady(equaveIndex = 0) {
     size.value = 2
@@ -97,45 +167,112 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
 
   function scott24(equaveIndex = 0) {
     size.value = 2
-    const logs = LOG_PRIMES.slice(0, 24)
-    if (equaveIndex !== 0) {
-      logs.unshift(logs.splice(equaveIndex, 1)[0])
-    }
-    const sd = scottDakota24(logs)
+    const sd = scottDakota24(equaveIndex)
     horizontalCoordinates.length = 0
     horizontalCoordinates.push(...sd.horizontalCoordinates)
     verticalCoordinates.length = 0
     verticalCoordinates.push(...sd.verticalCoordinates)
-    edgesString.value = '6/5'
+    if (equaveIndex === 0) {
+      edgesString.value = '6/5'
+    } else {
+      edgesString.value = ''
+    }
   }
 
   function pr72(equaveIndex = 0) {
     size.value = 4
-    const logs = LOG_PRIMES.slice(0, 72)
-    if (equaveIndex !== 0) {
-      logs.unshift(logs.splice(equaveIndex, 1)[0])
-    }
-    const pr = primeRing72(logs)
+    const pr = primeRing72(equaveIndex)
     horizontalCoordinates.length = 0
     horizontalCoordinates.push(...pr.horizontalCoordinates)
     verticalCoordinates.length = 0
     verticalCoordinates.push(...pr.verticalCoordinates)
-    edgesString.value = '6/5'
+    if (equaveIndex === 0) {
+      edgesString.value = '6/5'
+    } else {
+      edgesString.value = ''
+    }
   }
 
   function pe72(equaveIndex = 0) {
     size.value = 4
-    const logs = LOG_PRIMES.slice(0, 72)
-    if (equaveIndex !== 0) {
-      logs.unshift(logs.splice(equaveIndex, 1)[0])
-    }
-    const pr = primeRing72(logs, false)
-    align(pr, 1, 2)
+    const pr = primeRing72(equaveIndex, undefined, false)
+    align(pr, equaveIndex + 1, equaveIndex + 2)
     horizontalCoordinates.length = 0
     horizontalCoordinates.push(...pr.horizontalCoordinates.map(Math.round))
     verticalCoordinates.length = 0
     verticalCoordinates.push(...pr.verticalCoordinates.map(Math.round))
-    edgesString.value = '6/5'
+    if (equaveIndex === 0) {
+      edgesString.value = '6/5'
+    } else {
+      edgesString.value = ''
+    }
+  }
+
+  // 3D presets
+  function WGP(equaveIndex = 0) {
+    size.value = 2
+    const w = WGP9(equaveIndex)
+    xCoords.length = 0
+    xCoords.push(...w.horizontalCoordinates)
+    yCoords.length = 0
+    yCoords.push(...w.verticalCoordinates)
+    zCoords.length = 0
+    zCoords.push(...w.depthwiseCoordinates)
+    edgesString.value = ''
+  }
+
+  function sphere(equaveIndex = 0, numberOfComponents = 24) {
+    size.value = 2
+    depth.value = 300
+    const ps = primeSphere(equaveIndex, LOG_PRIMES.slice(0, numberOfComponents))
+    const scale = 3000
+    xCoords.length = 0
+    xCoords.push(...ps.horizontalCoordinates.map((x) => Math.round(x * scale) / 100))
+    yCoords.length = 0
+    yCoords.push(...ps.verticalCoordinates.map((y) => Math.round(y * scale) / 100))
+    zCoords.length = 0
+    zCoords.push(...ps.depthwiseCoordinates.map((z) => Math.round(z * scale) / 100))
+    if (equaveIndex === 0) {
+      edgesString.value = '6/5'
+    } else {
+      edgesString.value = ''
+    }
+  }
+
+  function pitch(degrees: number) {
+    const theta = (degrees / 180) * Math.PI
+    const c = Math.cos(theta)
+    const s = Math.sin(theta)
+    for (let i = 0; i < Math.max(yCoords.length, zCoords.length); ++i) {
+      const y = yCoords[i] ?? 0
+      const z = zCoords[i] ?? 0
+      yCoords[i] = c * y + s * z
+      zCoords[i] = c * z - s * y
+    }
+  }
+
+  function yaw(degrees: number) {
+    const theta = (degrees / 180) * Math.PI
+    const c = Math.cos(theta)
+    const s = Math.sin(theta)
+    for (let i = 0; i < Math.max(xCoords.length, zCoords.length); ++i) {
+      const x = xCoords[i] ?? 0
+      const z = zCoords[i] ?? 0
+      xCoords[i] = c * x + s * z
+      zCoords[i] = c * z - s * x
+    }
+  }
+
+  function roll(degrees: number) {
+    const theta = (degrees / 180) * Math.PI
+    const c = Math.cos(theta)
+    const s = Math.sin(theta)
+    for (let i = 0; i < Math.max(xCoords.length, yCoords.length); ++i) {
+      const x = xCoords[i] ?? 0
+      const y = yCoords[i] ?? 0
+      xCoords[i] = c * x + s * y
+      yCoords[i] = c * y - s * x
+    }
   }
 
   return {
@@ -150,16 +287,29 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
     rotation,
     drawArrows,
     grayExtras,
+    xCoords,
+    yCoords,
+    zCoords,
+    depth,
     // Computed state
     edgeMonzos,
     edgesError,
     horizontals,
     verticals,
     latticeOptions,
+    latticeOptions3D,
+    xs,
+    ys,
+    zs,
     // Methods
     kraigGrady,
     scott24,
     pr72,
-    pe72
+    pe72,
+    WGP,
+    sphere,
+    pitch,
+    yaw,
+    roll
   }
 })

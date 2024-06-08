@@ -17,7 +17,7 @@
   "dependencies": {
     "harmonic-entropy": "^0.2.0",
     "isomorphic-qwerty": "^0.0.2",
-    "ji-lattice": "^0.0.3",
+    "ji-lattice": "^0.2.0",
     "jszip": "^3.10.1",
     "moment-of-symmetry": "^0.8.0",
     "pinia": "^2.1.7",

@@ -108,7 +108,6 @@ const viewBox = computed(
           :y="v.y + store.size * store.labelOffset * labelY(j, v.indices.length)"
           :font-size="`${1.1 * store.size}px`"
           :stroke-width="store.size * 0.01"
-          dominant-baseline="middle"
         >
           {{ labels[idx] }}
         </text>
