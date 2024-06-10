@@ -1,13 +1,21 @@
 <script setup lang="ts">
 import { API_URL } from '@/constants'
 import { useAudioStore } from '@/stores/audio'
+import { useCyclesStore } from '@/stores/edo-cycles'
+import { useGridStore } from '@/stores/grid'
+import { useJiLatticeStore } from '@/stores/ji-lattice'
 import { useScaleStore } from '@/stores/scale'
+import { useStateStore } from '@/stores/state'
 import { isRandomId, unpackPayload } from '@/utils'
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const scale = useScaleStore()
 const audio = useAudioStore()
+const state = useStateStore()
+const jiLattice = useJiLatticeStore()
+const grid = useGridStore()
+const cycles = useCyclesStore()
 
 const router = useRouter()
 
@@ -34,8 +42,7 @@ onMounted(async () => {
   } else {
     try {
       // XXX: Dashes are not filesystem friendly, but that's a problem for sw-server to solve.
-      // XXX: The api should probably be extensionless now that compression negotation makes sw-server bypassing much harder.
-      const res = await fetch(new URL(`scale/${id}.json.gz`, API_URL))
+      const res = await fetch(new URL(`scale/${id}`, API_URL))
       if (res.ok) {
         text.value = 'Scale loaded. Redirecting...'
         const body = await res.text()
@@ -44,6 +51,18 @@ onMounted(async () => {
           audio.initialize()
           audio.fromJSON(payload.audio)
           scale.fromJSON(payload.scale)
+          if ('state' in payload) {
+            state.fromJSON(payload.state)
+          }
+          if ('ji-lattice' in payload) {
+            jiLattice.fromJSON(payload['ji-lattice'])
+          }
+          if ('grid' in payload) {
+            grid.fromJSON(payload.grid)
+          }
+          if ('edo-cycles' in payload) {
+            cycles.fromJSON(payload['edo-cycles'])
+          }
           await router.push('/')
         } else {
           text.value = 'Received empty response from the server.'

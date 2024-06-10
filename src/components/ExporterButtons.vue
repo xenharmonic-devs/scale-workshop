@@ -3,6 +3,9 @@ import { API_URL, APP_TITLE } from '@/constants'
 import { exportFile, type ExporterKey } from '@/exporters'
 import type { ExporterParams } from '@/exporters/base'
 import { useAudioStore } from '@/stores/audio'
+import { useCyclesStore } from '@/stores/edo-cycles'
+import { useGridStore } from '@/stores/grid'
+import { useJiLatticeStore } from '@/stores/ji-lattice'
 import { useScaleStore } from '@/stores/scale'
 import { useStateStore } from '@/stores/state'
 import { makeEnvelope, sanitizeFilename } from '@/utils'
@@ -21,6 +24,9 @@ const ReaperExportModal = defineAsyncComponent(
 const state = useStateStore()
 const scale = useScaleStore()
 const audio = useAudioStore()
+const jiLattice = useJiLatticeStore()
+const grid = useGridStore()
+const cycles = useCyclesStore()
 
 const exportTextClipboard = ref(
   API_URL ? "Copy this scale's unique URL to clipboard" : '[URL sharing disabled]'
@@ -34,7 +40,11 @@ const uploadBody = computed(() => {
     id: scale.id,
     payload: {
       scale: scale.toJSON(),
-      audio: audio.toJSON()
+      audio: audio.toJSON(),
+      state: state.toJSON(),
+      'ji-lattice': jiLattice.toJSON(),
+      grid: grid.toJSON(),
+      'edo-cycles': cycles.toJSON()
     },
     envelope: makeEnvelope(state.shareStatistics)
   })

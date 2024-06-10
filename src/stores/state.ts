@@ -50,6 +50,21 @@ export const useStateStore = defineStore('state', () => {
   // Opt-in for user statistics
   const shareStatistics = ref(storage.getItem('shareStatistics') === 'true')
 
+  /**
+   * Convert live state to a format suitable for storing on the server.
+   */
+  function toJSON() {
+    return { latticeType: latticeType.value }
+  }
+
+  /**
+   * Apply revived state to current state.
+   * @param data JSON data as an Object instance.
+   */
+  function fromJSON(data: any) {
+    latticeType.value = data.latticeType
+  }
+
   // Local storage watchers
   syncValues({
     newline,
@@ -110,6 +125,9 @@ export const useStateStore = defineStore('state', () => {
     equaveDownCode,
     degreeUpCode,
     degreeDownCode,
-    shareStatistics
+    shareStatistics,
+    // Methods
+    toJSON,
+    fromJSON
   }
 })
