@@ -22,18 +22,46 @@ export const useCyclesStore = defineStore('edo-cycles', () => {
   )
   const cycleLength = computed(() => modulus.value / numCycles.value)
 
-  return {
-    // State
+  const LIVE_STATE = {
     size,
     labelOffset,
     showLabels,
     valString,
-    generator,
+    generator
+  }
+
+  /**
+   * Convert live state to a format suitable for storing on the server.
+   */
+  function toJSON() {
+    const result: any = {}
+    for (const [key, value] of Object.entries(LIVE_STATE)) {
+      result[key] = value.value
+    }
+    return result
+  }
+
+  /**
+   * Apply revived state to current state.
+   * @param data JSON data as an Object instance.
+   */
+  function fromJSON(data: any) {
+    for (const key in LIVE_STATE) {
+      LIVE_STATE[key as keyof typeof LIVE_STATE].value = data[key]
+    }
+  }
+
+  return {
+    // State
+    ...LIVE_STATE,
     // Computed state
     val,
     modulus,
     generatorPseudoInverse,
     numCycles,
-    cycleLength
+    cycleLength,
+    // Methods
+    toJSON,
+    fromJSON
   }
 })

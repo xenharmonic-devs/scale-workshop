@@ -243,8 +243,7 @@ export const useGridStore = defineStore('grid', () => {
     edgesString.value = '3/2 5/4 6/5 7/4 11/8 13/8'
   }
 
-  return {
-    // State
+  const LIVE_STATE = {
     size,
     viewCenterX,
     viewCenterY,
@@ -266,7 +265,33 @@ export const useGridStore = defineStore('grid', () => {
     gridlines1,
     gridlines2,
     diagonals1,
-    diagonals2,
+    diagonals2
+  }
+
+  /**
+   * Convert live state to a format suitable for storing on the server.
+   */
+  function toJSON() {
+    const result: any = {}
+    for (const [key, value] of Object.entries(LIVE_STATE)) {
+      result[key] = value.value
+    }
+    return result
+  }
+
+  /**
+   * Apply revived state to current state.
+   * @param data JSON data as an Object instance.
+   */
+  function fromJSON(data: any) {
+    for (const key in LIVE_STATE) {
+      LIVE_STATE[key as keyof typeof LIVE_STATE].value = data[key]
+    }
+  }
+
+  return {
+    // State
+    ...LIVE_STATE,
     // Computed state
     edges,
     edgesError,
@@ -281,6 +306,9 @@ export const useGridStore = defineStore('grid', () => {
     preset311,
     // Methods (auto-params)
     autoSquare,
-    autoTonnetz
+    autoTonnetz,
+    // sw-server
+    toJSON,
+    fromJSON
   }
 })

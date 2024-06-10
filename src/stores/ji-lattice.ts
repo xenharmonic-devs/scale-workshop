@@ -275,10 +275,8 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
     }
   }
 
-  return {
-    // State
-    horizontalCoordinates,
-    verticalCoordinates,
+  /** Non-reactive live state */
+  const LIVE_STATE = {
     maxDistance,
     size,
     labelOffset,
@@ -287,10 +285,54 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
     rotation,
     drawArrows,
     grayExtras,
+    depth
+  }
+
+  /**
+   * Convert live state to a format suitable for storing on the server.
+   */
+  function toJSON() {
+    const result: any = {
+      horizontalCoordinates,
+      verticalCoordinates,
+      xCoords,
+      yCoords,
+      zCoords
+    }
+    for (const [key, value] of Object.entries(LIVE_STATE)) {
+      result[key] = value.value
+    }
+    return result
+  }
+
+  /**
+   * Apply revived state to current state.
+   * @param data JSON data as an Object instance.
+   */
+  function fromJSON(data: any) {
+    for (const key in LIVE_STATE) {
+      LIVE_STATE[key as keyof typeof LIVE_STATE].value = data[key]
+    }
+    horizontalCoordinates.length = 0
+    horizontalCoordinates.push(...data.horizontalCoordinates)
+    verticalCoordinates.length = 0
+    verticalCoordinates.push(...data.verticalCoordinates)
+    xCoords.length = 0
+    xCoords.push(...data.xCoords)
+    yCoords.length = 0
+    yCoords.push(...data.yCoords)
+    zCoords.length = 0
+    zCoords.push(...data.zCoords)
+  }
+
+  return {
+    // State
+    ...LIVE_STATE,
+    horizontalCoordinates,
+    verticalCoordinates,
     xCoords,
     yCoords,
     zCoords,
-    depth,
     // Computed state
     edgeMonzos,
     edgesError,
@@ -310,6 +352,8 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
     sphere,
     pitch,
     yaw,
-    roll
+    roll,
+    toJSON,
+    fromJSON
   }
 })
