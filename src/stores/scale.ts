@@ -38,6 +38,7 @@ import {
 import { pianoMap } from 'isomorphic-qwerty'
 import { computeWhiteIndices } from '@/midi'
 import { midiKeyInfo } from 'xen-midi'
+import { undoHistory } from '@/undo'
 
 // Colors from #1 to #12 inclusive.
 function defaultColors(base: number) {
@@ -365,7 +366,7 @@ export const useScaleStore = defineStore('scale', () => {
     }
   }
 
-  function computeScale() {
+  function computeScale(pushUndo = true) {
     try {
       error.value = ''
       warning.value = ''
@@ -433,6 +434,10 @@ export const useScaleStore = defineStore('scale', () => {
         const enharmonics = midiNoteNumberToEnharmonics(noteNumber)
         const rootFrequency = autoFrequency.value ? 'mtof(_)' : 'baseFrequency'
         warning.value = `Base MIDI note ${noteNumber} defaults to ${midiName}. Use an explicit ${enharmonics[0]} = ${rootFrequency} or ${enharmonics[1]} = ${rootFrequency} to get rid of this warning.`
+      }
+      // It's better to use a truthy value for this in case an event is passed to computeScale by accident.
+      if (pushUndo) {
+        history.pushState()
       }
     } catch (e) {
       if (e instanceof Error) {
@@ -567,6 +572,21 @@ export const useScaleStore = defineStore('scale', () => {
     uploadedId.value = data['id']
   }
 
+  function serialize() {
+    // We could store the whole state using toJSON() here, but lets see if sourceText is enough...
+    return sourceText.value
+  }
+
+  function restore(body: string) {
+    // We could restore the whole state using something like this:
+    // const data = JSON.parse(body, (key, value) => Interval.reviver(key, Scale.reviver(key, value)))
+
+    sourceText.value = body
+    computeScale(false)
+  }
+
+  const history = undoHistory(serialize, restore)
+
   return {
     // Live state
     ...LIVE_STATE,
@@ -599,6 +619,8 @@ export const useScaleStore = defineStore('scale', () => {
     colorForIndex,
     labelForIndex,
     toJSON,
-    fromJSON
+    fromJSON,
+    // Mini-stores
+    history
   }
 })

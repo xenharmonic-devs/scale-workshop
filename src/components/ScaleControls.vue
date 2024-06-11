@@ -54,7 +54,7 @@ defineExpose({ focus, clearPaletteInfo })
         type="number"
         step="1"
         v-model="scale.baseMidiNote"
-        @input="updateScale"
+        @input="updateScale()"
       />
     </div>
 
@@ -66,7 +66,7 @@ defineExpose({ focus, clearPaletteInfo })
         step="any"
         v-model="scale.baseFrequencyDisplay"
         :disabled="scale.autoFrequency"
-        @input="updateScale"
+        @input="updateScale()"
       />
     </div>
     <div class="control checkbox-container">
@@ -74,7 +74,7 @@ defineExpose({ focus, clearPaletteInfo })
         id="auto-frequency"
         type="checkbox"
         v-model="scale.autoFrequency"
-        @input="updateScale"
+        @input="updateScale()"
       /><label for="auto-frequency">Automatic base frequency</label>
     </div>
     <div class="control radio-group">
@@ -85,7 +85,7 @@ defineExpose({ focus, clearPaletteInfo })
           id="colors-silver"
           value="silver"
           v-model="scale.autoColors"
-          @input="updateScale"
+          @input="updateScale()"
         />
         <label for="colors-silver">Silver</label>
       </span>
@@ -96,7 +96,7 @@ defineExpose({ focus, clearPaletteInfo })
           id="colors-cents"
           value="cents"
           v-model="scale.autoColors"
-          @input="updateScale"
+          @input="updateScale()"
         />
         <label for="colors-cents">Cents</label>
       </span>
@@ -107,7 +107,7 @@ defineExpose({ focus, clearPaletteInfo })
           id="colors-factors"
           value="factors"
           v-model="scale.autoColors"
-          @input="updateScale"
+          @input="updateScale()"
         />
         <label for="colors-factors">Factors</label>
       </span>
@@ -115,14 +115,24 @@ defineExpose({ focus, clearPaletteInfo })
   </div>
 
   <div class="control-group">
-    <h2>Scale data</h2>
+    <h2>
+      <span class="scale-data-header">Scale data</span>
+      <span
+        :class="{ undo: true, disabled: scale.history.undoDisabled }"
+        @click="scale.history.undo"
+      ></span>
+      <span
+        :class="{ redo: true, disabled: scale.history.redoDisabled }"
+        @click="scale.history.redo"
+      ></span>
+    </h2>
     <div class="control">
       <textarea
         id="scale-data"
         ref="sourceEditor"
         rows="20"
         v-model="scale.sourceText"
-        @input="updateScale"
+        @input="updateScale()"
         @focus="clearPaletteInfo"
       ></textarea>
     </div>
@@ -148,5 +158,13 @@ defineExpose({ focus, clearPaletteInfo })
 .info {
   height: 3em;
   overflow-y: hidden;
+}
+.scale-data-header {
+  pointer-events: none;
+  user-select: none;
+}
+.undo,
+.redo {
+  margin-left: 1em;
 }
 </style>
