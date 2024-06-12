@@ -4,6 +4,8 @@ import { computed } from 'vue'
 const TAGLINES = [
   ['Because there are more than 12 notes.', 'Sean Archibald'],
   ['Electric Tunaloo', ''],
+  ['Powered by TypeScript', ''],
+  ['Powered by Vue', ''],
   ['Powered by SonicWeave', ''],
   ['We are friends now, right?', 'dotuXil'],
   ["Any JI scale is a NEJI if you're brave enough.", 'fredg999'],
@@ -64,12 +66,40 @@ const tagline = computed(() => TAGLINES[Math.floor(Math.random() * TAGLINES.leng
         <i>emotional support</i>
       </p>
     </div>
+    <hr />
+    <div id="documentation">
+      <h2>Documentation</h2>
+      <p>
+        The programming language used to create scales is called
+        <a href="https://github.com/xenharmonic-devs/sonic-weave">SonicWeave</a>. See the project's
+        <a href="https://github.com/xenharmonic-devs/sonic-weave/blob/main/documentation/dsl.md"
+          >DSL documentation</a
+        >
+        to learn more.
+      </p>
+    </div>
+    <hr />
+    <div id="about">
+      <h2>About Scale Workshop</h2>
+      <p>Scale Workshop is MIT licensensed open source.</p>
+      <p>
+        Feel free to check out the
+        <a href="https://github.com/xenharmonic-devs/scale-workshop">source code on GitHub</a>. You
+        are free to modify and sell copies of the software as allowed by the
+        <a href="https://opensource.org/license/mit">MIT license</a>.
+      </p>
+      <p>
+        Many of the xenharmonic utilities used by the project are published on
+        <a href="https://www.npmjs.com/">npm</a>. See
+        <a href="https://github.com/xenharmonic-devs/">Xenharmonic Developer's GitHub profile</a>
+        for the source code.
+      </p>
+    </div>
   </div>
 </template>
 
 <style scoped>
 .about {
-  height: 100vh;
   padding: 1rem;
   display: flex;
   flex-direction: column;
@@ -92,7 +122,12 @@ hr {
 .about > * {
   max-width: 30rem;
 }
-#contributors h2 {
+#contributors,
+#documentation {
+  margin-bottom: 1em;
+}
+
+h2 {
   border: unset;
   text-align: center;
 }

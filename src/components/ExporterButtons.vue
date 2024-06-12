@@ -224,7 +224,7 @@ function doExport(exporter: ExporterKey) {
   </a>
   <h3>Documentation</h3>
   <p>
-    You can read about the new syntax
+    You can read about the new SonicWeave syntax
     <a
       href="https://github.com/xenharmonic-devs/sonic-weave?tab=readme-ov-file#sonic-weave"
       target="_blank"
