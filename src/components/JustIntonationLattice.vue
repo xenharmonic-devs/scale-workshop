@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useJiLatticeStore } from '@/stores/ji-lattice'
+import type { MouseEventCallback, TouchEventCallback } from '@/types'
 import { spanLattice } from 'ji-lattice'
 import { TimeMonzo, type Interval } from 'sonic-weave'
 import { computed, nextTick, reactive, ref, watch } from 'vue'
@@ -11,7 +12,14 @@ const props = defineProps<{
   relativeIntervals: Interval[]
   labels: string[]
   colors: string[]
-  heldNotes: Set<number>
+  heldNotes: Set<number>   
+  baseMidiNote:number
+  onTouchStart:TouchEventCallback
+  onTouchEnd:TouchEventCallback
+  onMouseDown:MouseEventCallback
+  onMouseUp:MouseEventCallback
+  onMouseEnter:MouseEventCallback
+  onMouseLeave:MouseEventCallback
 }>()
 
 const svgElement = ref<SVGSVGElement | null>(null)
@@ -186,6 +194,13 @@ watch(
       :fill="colors[v.index!] ?? 'none'"
       :stroke="colors[v.index!] ?? 'none'"
       :stroke-width="store.size * 0.1"
+      @touchstart="onTouchStart($event, props.baseMidiNote + v.index! + 1)"
+      @touchend="onTouchEnd($event, props.baseMidiNote + v.index! + 1)"
+      @touchcancel="onTouchEnd($event, props.baseMidiNote + v.index! + 1)"
+      @mousedown="onMouseDown($event, props.baseMidiNote + v.index! + 1)"
+      @mouseup="onMouseUp($event, props.baseMidiNote + v.index! + 1)"
+      @mouseenter="onMouseEnter($event, props.baseMidiNote + v.index! + 1)"
+      @mouseleave="onMouseLeave($event, props.baseMidiNote + v.index! + 1)"
     />
     <template v-if="store.showLabels">
       <text
@@ -196,6 +211,13 @@ watch(
         :y="v.y - store.labelOffset * store.size"
         :font-size="`${3 * store.size}px`"
         :stroke-width="store.size * 0.08"
+        @touchstart="onTouchStart($event, props.baseMidiNote + v.index! + 1)"
+        @touchend="onTouchEnd($event, props.baseMidiNote + v.index! + 1)"
+        @touchcancel="onTouchEnd($event, props.baseMidiNote + v.index! + 1)"
+        @mousedown="onMouseDown($event, props.baseMidiNote + v.index! + 1)"
+        @mouseup="onMouseUp($event, props.baseMidiNote + v.index! + 1)"
+        @mouseenter="onMouseEnter($event, props.baseMidiNote + v.index! + 1)"
+        @mouseleave="onMouseLeave($event, props.baseMidiNote + v.index! + 1)"
       >
         {{ labels[v.index!] }}
       </text>

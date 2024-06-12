@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useGridStore } from '@/stores/grid'
+import type { MouseEventCallback, TouchEventCallback } from '@/types'
 import { debounce, labelX, labelY } from '@/utils'
 import { spanGrid } from 'ji-lattice'
 import { type Interval } from 'sonic-weave'
@@ -12,6 +13,13 @@ const props = defineProps<{
   labels: string[]
   colors: string[]
   heldNotes: Set<number>
+  baseMidiNote:number
+  onTouchStart:TouchEventCallback
+  onTouchEnd:TouchEventCallback
+  onMouseDown:MouseEventCallback
+  onMouseUp:MouseEventCallback
+  onMouseEnter:MouseEventCallback
+  onMouseLeave:MouseEventCallback
 }>()
 
 const svgElement = ref<SVGSVGElement | null>(null)
@@ -115,6 +123,13 @@ watch(
       :fill="colors[v.indices[0]] ?? 'none'"
       :stroke="colors[v.indices[0]] ?? 'none'"
       :stroke-width="store.size * 0.1"
+      @touchstart="onTouchStart($event, props.baseMidiNote + v.indices[0] + 1)"
+      @touchend="onTouchEnd($event, props.baseMidiNote + v.indices[0] + 1)"
+      @touchcancel="onTouchEnd($event, props.baseMidiNote + v.indices[0] + 1)"
+      @mousedown="onMouseDown($event, props.baseMidiNote + v.indices[0] + 1)"
+      @mouseup="onMouseUp($event, props.baseMidiNote + v.indices[0] + 1)"
+      @mouseenter="onMouseEnter($event, props.baseMidiNote + v.indices[0] + 1)"
+      @mouseleave="onMouseLeave($event, props.baseMidiNote + v.indices[0] + 1)"
     />
     <template v-if="store.showLabels">
       <template v-for="(v, i) of grid.vertices" :key="i">
@@ -126,6 +141,13 @@ watch(
           :y="v.y + store.size * store.labelOffset * labelY(j, v.indices.length)"
           :font-size="`${2.5 * store.size}px`"
           :stroke-width="store.size * 0.05"
+          @touchstart="onTouchStart($event, props.baseMidiNote + idx + 1)"
+          @touchend="onTouchEnd($event, props.baseMidiNote + idx + 1)"
+          @touchcancel="onTouchEnd($event, props.baseMidiNote + idx + 1)"
+          @mousedown="onMouseDown($event, props.baseMidiNote + idx + 1)"
+          @mouseup="onMouseUp($event, props.baseMidiNote + idx + 1)"
+          @mouseenter="onMouseEnter($event, props.baseMidiNote + idx + 1)"
+          @mouseleave="onMouseLeave($event, props.baseMidiNote + idx + 1)"
         >
           {{ labels[idx] }}
         </text>

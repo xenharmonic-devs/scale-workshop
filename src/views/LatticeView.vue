@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { Fraction, isPrime, mmod, nthPrime, primeLimit } from 'xen-dev-utils'
 import GridLattice from '@/components/GridLattice.vue'
 import EdoCycles from '@/components/EdoCycles.vue'
@@ -12,12 +12,19 @@ import { useGridStore } from '@/stores/grid'
 import { useCyclesStore } from '@/stores/edo-cycles'
 import { setAndReportValidity } from '@/utils'
 import Faux3DLattice from '@/components/Faux3DLattice.vue'
+import type { NoteOnCallback } from 'xen-midi'
+import { usePlayNote } from '@/components/hooks/usePlayNote'
+
+const props = defineProps<{
+  noteOn: NoteOnCallback
+}>()
 
 const state = useStateStore()
 const scale = useScaleStore()
 const jiLattice = useJiLatticeStore()
 const grid = useGridStore()
 const cycles = useCyclesStore()
+const playNote = usePlayNote(props.noteOn);
 
 const showConfig = ref(false)
 const jiPreset = ref<'nothing' | 'grady' | 'grady3' | 'dakota' | 'pr72' | 'pe72'>('nothing')
@@ -217,6 +224,10 @@ onMounted(() => {
   }
   inferConfig()
 })
+
+onUnmounted(() => {
+  playNote.onUnmounted()
+})
 </script>
 
 <template>
@@ -228,6 +239,13 @@ onMounted(() => {
       :colors="scale.latticeColors"
       :relativeIntervals="scale.latticeIntervals"
       :heldNotes="heldNotes"
+      :baseMidiNote="scale.baseMidiNote"
+      :onTouchStart="playNote.onTouchStart"
+      :onTouchEnd="playNote.onTouchEnd"
+      :onMouseDown="playNote.onMouseDown"
+      :onMouseUp="playNote.onMouseUp"
+      :onMouseEnter="playNote.onMouseEnter"
+      :onMouseLeave="playNote.onMouseLeave"
     />
     <GridLattice
       v-else-if="state.latticeType === 'et'"
@@ -235,6 +253,13 @@ onMounted(() => {
       :colors="scale.latticeColors"
       :relativeIntervals="scale.latticeIntervals"
       :heldNotes="heldNotes"
+      :baseMidiNote="scale.baseMidiNote"
+      :onTouchStart="playNote.onTouchStart"
+      :onTouchEnd="playNote.onTouchEnd"
+      :onMouseDown="playNote.onMouseDown"
+      :onMouseUp="playNote.onMouseUp"
+      :onMouseEnter="playNote.onMouseEnter"
+      :onMouseLeave="playNote.onMouseLeave"
     />
     <EdoCycles
       v-else-if="state.latticeType === 'cycles'"
@@ -616,6 +641,9 @@ path.arrow {
   stroke-dasharray: 1;
 }
 
+circle.node{
+  cursor: pointer;
+}
 circle.node:not(.held) {
   stroke: var(--color-text);
 }
@@ -633,5 +661,7 @@ text.node-label {
   text-anchor: middle;
   stroke: var(--color-background);
   dominant-baseline: middle;
+  user-select: none;
+  cursor: pointer;
 }
 </style>

@@ -3,9 +3,8 @@ import { computed, ref } from 'vue'
 import VirtualKeyboardKey from '@/components/VirtualKeyboardKey.vue'
 import VirtualKeyInfo from '@/components/VirtualKeyInfo.vue'
 import type { Scale } from '@/scale'
+import type { NoteOnCallback } from 'xen-midi';
 
-type NoteOff = () => void
-type NoteOnCallback = (index: number) => NoteOff
 type ColorMap = (index: number) => string
 type LabelMap = (index: number) => string
 
@@ -80,7 +79,7 @@ const isMousePressed = ref(false)
         :index="key.index"
         :color="key.color"
         :isMousePressed="isMousePressed"
-        :noteOn="() => noteOn(key.index)"
+        :noteOn="() => noteOn(key.index, 0, 0)"
         @press="isMousePressed = true"
         @unpress="isMousePressed = false"
       >
