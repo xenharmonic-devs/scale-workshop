@@ -10,7 +10,7 @@ import {
   WGP9,
   primeSphere
 } from 'ji-lattice'
-import { LOG_PRIMES, mmod } from 'xen-dev-utils'
+import { LOG_PRIMES, dot, mmod } from 'xen-dev-utils'
 import { computedAndError } from '@/utils'
 import { TimeMonzo, parseChord } from 'sonic-weave'
 
@@ -209,8 +209,25 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
   }
 
   // 3D presets
+
+  function autoDepth(monzos: number[][]) {
+    if (!xCoords.length || !yCoords.length || !zCoords.length) {
+      return
+    }
+    const x = monzos.map((m) => dot(m, xCoords))
+    const y = monzos.map((m) => dot(m, yCoords))
+    const z = monzos.map((m) => dot(m, zCoords))
+    const objectSize = Math.max(
+      Math.max(...x) - Math.min(...x),
+      Math.max(...y) - Math.min(...y),
+      Math.max(...z) - Math.min(...z)
+    )
+    depth.value = Math.ceil(2 * objectSize)
+  }
+
   function WGP(equaveIndex = 0) {
     size.value = 2
+    depth.value = 100
     const w = WGP9(equaveIndex)
     xCoords.length = 0
     xCoords.push(...w.horizontalCoordinates)
@@ -348,6 +365,7 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
     scott24,
     pr72,
     pe72,
+    autoDepth,
     WGP,
     sphere,
     pitch,

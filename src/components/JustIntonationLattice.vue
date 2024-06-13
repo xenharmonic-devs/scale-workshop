@@ -19,7 +19,10 @@ const svgElement = ref<SVGSVGElement | null>(null)
 const viewBox = reactive([-1, -1, 2, 2])
 
 const monzos = computed(() => {
-  const numComponents = store.horizontalCoordinates.length
+  const numComponents = Math.max(
+    store.horizontalCoordinates.length,
+    store.verticalCoordinates.length
+  )
   const result: number[][] = []
   for (const interval of props.relativeIntervals) {
     const value = interval.value.clone()

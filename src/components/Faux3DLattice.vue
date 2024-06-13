@@ -5,7 +5,6 @@
  */
 import { useJiLatticeStore } from '@/stores/ji-lattice'
 import { spanLattice3D } from 'ji-lattice'
-import { TimeMonzo, type Interval } from 'sonic-weave'
 import { computed, nextTick, reactive, ref, watch } from 'vue'
 
 const EPSILON = 1e-6
@@ -16,7 +15,7 @@ const NEAR_PLANE = 0.5
 const store = useJiLatticeStore()
 
 const props = defineProps<{
-  relativeIntervals: Interval[]
+  monzos: number[][]
   labels: string[]
   colors: string[]
   heldNotes: Set<number>
@@ -26,24 +25,8 @@ const svgElement = ref<SVGSVGElement | null>(null)
 
 const viewBox = reactive([-1, -1, 2, 2])
 
-const monzos = computed(() => {
-  const numComponents = store.horizontalCoordinates.length
-  const result: number[][] = []
-  for (const interval of props.relativeIntervals) {
-    const value = interval.value.clone()
-    if (value instanceof TimeMonzo) {
-      value.numberOfComponents = numComponents
-      const monzo = value.primeExponents.map((pe) => pe.valueOf())
-      result.push(monzo)
-    } else {
-      result.push(Array(numComponents).fill(0))
-    }
-  }
-  return result
-})
-
 const lattice = computed(() => {
-  const result = spanLattice3D(monzos.value, store.latticeOptions3D)
+  const result = spanLattice3D(props.monzos, store.latticeOptions3D)
   // Center everything so that the vanishing point is at the center of the view box
   const inorm = 1 / result.vertices.length
   const avgX = result.vertices.reduce((s, v) => s + v.x, 0) * inorm
@@ -72,6 +55,7 @@ watch(
     svgElement.value,
     lattice.value,
     props.labels,
+    store.depth,
     store.labelOffset,
     store.size,
     store.showLabels

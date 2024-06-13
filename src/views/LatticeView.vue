@@ -12,6 +12,7 @@ import { useGridStore } from '@/stores/grid'
 import { useCyclesStore } from '@/stores/edo-cycles'
 import { setAndReportValidity } from '@/utils'
 import Faux3DLattice from '@/components/Faux3DLattice.vue'
+import { TimeMonzo } from 'sonic-weave'
 
 const state = useStateStore()
 const scale = useScaleStore()
@@ -51,6 +52,26 @@ const heldNotes = computed(() => {
     if (state.heldNotes.get(midiIndex)! > 0) {
       // Offset by 1 to match relativeIntervals
       result.add(perm[mmod(midiIndex - scale.scale.baseMidiNote - 1, scale.scale.size)])
+    }
+  }
+  return result
+})
+
+const monzos3D = computed(() => {
+  const numComponents = Math.max(
+    jiLattice.xCoords.length,
+    jiLattice.yCoords.length,
+    jiLattice.zCoords.length
+  )
+  const result: number[][] = []
+  for (const interval of scale.latticeIntervals) {
+    const value = interval.value.clone()
+    if (value instanceof TimeMonzo) {
+      value.numberOfComponents = numComponents
+      const monzo = value.primeExponents.map((pe) => pe.valueOf())
+      result.push(monzo)
+    } else {
+      result.push(Array(numComponents).fill(0))
     }
   }
   return result
@@ -97,14 +118,15 @@ watch(preset3D, (newValue) => {
   switch (newValue) {
     case 'WGP':
       jiLattice.WGP()
-      return
+      break
     case 'sphere':
       jiLattice.sphere()
-      return
+      break
     case 'sphere3':
       jiLattice.sphere(1)
-      return
+      break
   }
+  jiLattice.autoDepth(monzos3D.value)
 })
 
 function inferConfig() {
@@ -152,12 +174,15 @@ function inferConfig() {
     // Set the config for 3D too, but use isometric by default
     if (limit <= 9) {
       jiLattice.WGP(equaveIndex)
+      jiLattice.autoDepth(monzos3D.value)
       jiLattice.kraigGrady(equaveIndex)
     } else if (limit <= 24) {
       jiLattice.sphere(equaveIndex, 24)
+      jiLattice.autoDepth(monzos3D.value)
       jiLattice.scott24(equaveIndex)
     } else if (equaveIndex < 72) {
       jiLattice.sphere(equaveIndex, 72)
+      jiLattice.autoDepth(monzos3D.value)
       jiLattice.pe72(equaveIndex)
     } else {
       return
@@ -247,7 +272,7 @@ onMounted(() => {
       v-else-if="state.latticeType === '3d'"
       :labels="scale.latticeLabels"
       :colors="scale.latticeColors"
-      :relativeIntervals="scale.latticeIntervals"
+      :monzos="monzos3D"
       :heldNotes="heldNotes"
     />
     <template v-else>
