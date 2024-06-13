@@ -49,7 +49,7 @@ describe("Scale generation/modification", () => {
     for (let i = 0; i < 5; ++i) {
       cy.get("button").contains("Apply").click();
     }
-    cy.get("button").contains("Close").click();
+    cy.get("button").contains("Done").click();
     cy.get("#scale-data").should("contain.value", "8/7");
   });
 });

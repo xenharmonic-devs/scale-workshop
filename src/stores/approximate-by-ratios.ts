@@ -12,6 +12,7 @@ export const useApproximateByRatiosStore = defineStore('approximate-by-ratios', 
   const oddLimit = ref(9)
   const primeLimit = ref(7)
   const maxExponent = ref(2)
+  const originalSource = ref('')
 
   const safeOddLimit = computed(() => clamp(3, 101, 2 * Math.floor(oddLimit.value / 2) + 1))
   const safePrimeLimit = computed(() => {
@@ -92,9 +93,10 @@ export const useApproximateByRatiosStore = defineStore('approximate-by-ratios', 
     return '>97-limit'
   }
 
-  function initialize() {
+  function initialize(source: string) {
     degree.value = 1
     approximationIndex.value = 0
+    originalSource.value = source
   }
 
   return {
@@ -110,6 +112,7 @@ export const useApproximateByRatiosStore = defineStore('approximate-by-ratios', 
     safeOddLimit,
     safePrimeLimit,
     safeMaxExponent,
+    originalSource,
     modifyPrimeLimit,
     primeLimitString,
     initialize

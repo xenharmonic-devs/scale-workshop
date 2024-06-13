@@ -141,7 +141,7 @@ function clickSubset() {
 }
 
 function clickApproximateByRatios() {
-  approx.initialize()
+  approx.initialize(scale.sourceText)
   showApproximateByRatiosModal.value = true
 }
 

@@ -121,10 +121,15 @@ function modify(expand = true) {
   scale.computeScale()
   emit('done')
 }
+
+function cancel() {
+  scale.sourceText = approx.originalSource
+  emit('done')
+}
 </script>
 
 <template>
-  <Modal @confirm="modify(true)" @cancel="modify(false)">
+  <Modal @confirm="modify(true)" @cancel="cancel">
     <template #header>
       <h2>Approximate by ratios</h2>
     </template>
@@ -233,8 +238,9 @@ function modify(expand = true) {
     <template #footer>
       <div class="btn-group">
         <button @click="modifyAndAdvance">Apply</button>
-        <button @click="modify(true)">Close</button>
+        <button @click="modify(true)">Done</button>
         <button @click="modify(false)">Raw</button>
+        <button @click="cancel">Cancel</button>
       </div>
     </template>
   </Modal>
