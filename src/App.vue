@@ -5,7 +5,7 @@ import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
 import { ScaleWorkshopOneData } from '@/scale-workshop-one'
 import type { Input, Output } from 'webmidi'
 import { MidiIn, midiKeyInfo, MidiOut } from 'xen-midi'
-import { Keyboard, type CoordinateKeyboardEvent } from 'isomorphic-qwerty'
+import { Keyboard, type CoordinateKeyboardEvent, COORDS_BY_CODE } from 'isomorphic-qwerty'
 import { decodeQuery } from '@/url-encode'
 import { annotateColors } from '@/utils'
 import { version } from '../package.json'
@@ -254,9 +254,28 @@ function windowKeydown(event: KeyboardEvent) {
     return
   }
 
-  // Disable browser specific features like quick find on Firefox,
-  // but allow normal copy & paste.
-  if (!event.ctrlKey && !event.altKey && !event.metaKey) {
+  if (event.ctrlKey) {
+    // Allow copy & paste.
+    return
+  } else if (event.altKey || event.metaKey) {
+    // Allow keyboard navigation out of the app.
+    return
+  } else if (
+    [
+      state.deactivationCode,
+      state.equaveUpCode,
+      state.equaveDownCode,
+      state.degreeUpCode,
+      state.degreeDownCode
+    ].includes(event.code)
+  ) {
+    // Prevent overlapping action with configurable state.
+    event.preventDefault()
+  } else if (COORDS_BY_CODE.has(event.code)) {
+    // Prevent action for keys that make sound.
+    event.preventDefault()
+  } else if (event.key === '/') {
+    // Disable browser specific features like quick find on Firefox.
     event.preventDefault()
   }
 
