@@ -5,6 +5,10 @@ import { computed } from 'vue'
 import { useScaleStore } from '@/stores/scale'
 import { valueToCents } from 'xen-dev-utils'
 
+defineProps<{
+  show: boolean
+}>()
+
 const emit = defineEmits(['done', 'cancel'])
 
 const modal = useModalStore()
@@ -40,7 +44,7 @@ function modify(expand = true) {
 </script>
 
 <template>
-  <Modal @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="modify" @cancel="$emit('cancel')">
     <template #header>
       <h2>Approximate by harmonics</h2>
     </template>

@@ -2,6 +2,10 @@
 import Modal from '@/components/ModalDialog.vue'
 import { useScaleStore } from '@/stores/scale'
 
+defineProps<{
+  show: boolean
+}>()
+
 const emit = defineEmits(['done', 'cancel'])
 
 const scale = useScaleStore()
@@ -64,7 +68,7 @@ function revposition() {
 </script>
 
 <template>
-  <Modal @confirm="$emit('done')" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="$emit('done')" @cancel="$emit('cancel')">
     <template #header>
       <h2>Enumerate</h2>
     </template>

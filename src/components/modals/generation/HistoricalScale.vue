@@ -11,6 +11,10 @@ import { useStateStore } from '@/stores/state'
 import { Interval, TimeMonzo } from 'sonic-weave'
 import { useScaleStore } from '@/stores/scale'
 
+defineProps<{
+  show: boolean
+}>()
+
 const emit = defineEmits([
   'update:scaleName',
   'update:source',
@@ -169,7 +173,7 @@ function generate(expand = true) {
 }
 </script>
 <template>
-  <Modal @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate historical temperament</h2>
     </template>

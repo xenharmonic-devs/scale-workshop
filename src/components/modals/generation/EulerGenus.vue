@@ -4,6 +4,10 @@ import { clamp } from 'xen-dev-utils'
 import { useModalStore } from '@/stores/modal'
 import { expandCode } from '@/utils'
 
+defineProps<{
+  show: boolean
+}>()
+
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
 const modal = useModalStore()
@@ -35,7 +39,7 @@ function generate(expand = true) {
 </script>
 
 <template>
-  <Modal @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate Euler-Fokker genus</h2>
     </template>

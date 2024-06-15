@@ -7,6 +7,10 @@ import { expandCode } from '@/utils'
 import { linear } from 'sonic-weave'
 import { mmod } from 'xen-dev-utils'
 
+defineProps<{
+  show: boolean
+}>()
+
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
 const modal = useModalStore()
@@ -51,7 +55,7 @@ function generate(shell = true, expand = true) {
 </script>
 
 <template>
-  <Modal @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate VAO / concordance shell</h2>
     </template>

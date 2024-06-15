@@ -7,6 +7,10 @@ import { useModalStore } from '@/stores/modal'
 import { setAndReportValidity } from '@/utils'
 import { arrayToString, expandCode } from '@/utils'
 
+defineProps<{
+  show: boolean
+}>()
+
 const emit = defineEmits(['update:scaleName', 'update:source', 'cancel'])
 
 const modal = useModalStore()
@@ -47,7 +51,7 @@ function generate(expand = true) {
 </script>
 
 <template>
-  <Modal @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate combination product set</h2>
     </template>

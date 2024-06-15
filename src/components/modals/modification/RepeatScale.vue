@@ -3,6 +3,10 @@ import Modal from '@/components/ModalDialog.vue'
 import { useModalStore } from '@/stores/modal'
 import { useScaleStore } from '@/stores/scale'
 
+defineProps<{
+  show: boolean
+}>()
+
 const emit = defineEmits(['done', 'cancel'])
 
 const modal = useModalStore()
@@ -20,7 +24,7 @@ function modify(expand = true) {
 </script>
 
 <template>
-  <Modal @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="modify" @cancel="$emit('cancel')">
     <template #header>
       <h2>Repeat scale</h2>
     </template>

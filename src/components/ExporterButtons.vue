@@ -120,6 +120,7 @@ function doExport(exporter: ExporterKey) {
   <Teleport to="body">
     <KorgExportModal
       v-if="showKorgExportModal"
+      :show="showKorgExportModal"
       @confirm="showKorgExportModal = false"
       @cancel="showKorgExportModal = false"
       :newline="state.newline"
@@ -131,6 +132,7 @@ function doExport(exporter: ExporterKey) {
 
     <MtsSysexExportModal
       v-if="showMtsSysexExportModal"
+      :show="showMtsSysexExportModal"
       @confirm="showMtsSysexExportModal = false"
       @cancel="showMtsSysexExportModal = false"
       :newline="state.newline"
@@ -142,6 +144,7 @@ function doExport(exporter: ExporterKey) {
 
     <ReaperExportModal
       v-if="showReaperExportModal"
+      :show="showReaperExportModal"
       @confirm="showReaperExportModal = false"
       @cancel="showReaperExportModal = false"
       :newline="state.newline"

@@ -6,6 +6,10 @@ import { OCTAVE } from '@/constants'
 import { computedAndError, expandCode, setAndReportValidity } from '@/utils'
 import { parseChord } from 'sonic-weave'
 
+defineProps<{
+  show: boolean
+}>()
+
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
 const basisString = ref('3 5 7 11')
@@ -49,7 +53,7 @@ function generate(expand = true) {
 </script>
 
 <template>
-  <Modal @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate octaplex (24-cell)</h2>
     </template>

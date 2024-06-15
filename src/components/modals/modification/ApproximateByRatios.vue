@@ -15,6 +15,10 @@ import { useScaleStore } from '@/stores/scale'
 
 const MAX_LENGTH = 128
 
+defineProps<{
+  show: boolean
+}>()
+
 const emit = defineEmits(['done', 'cancel'])
 
 const approx = useApproximateByRatiosStore()
@@ -129,7 +133,7 @@ function cancel() {
 </script>
 
 <template>
-  <Modal @confirm="modify(true)" @cancel="cancel">
+  <Modal :show="show" @confirm="modify(true)" @cancel="cancel">
     <template #header>
       <h2>Approximate by ratios</h2>
     </template>

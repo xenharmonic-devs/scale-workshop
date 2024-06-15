@@ -6,6 +6,10 @@ import { useScaleStore } from '@/stores/scale'
 import { centString } from '@/utils'
 import { useStateStore } from '@/stores/state'
 
+defineProps<{
+  show: boolean
+}>()
+
 const EPSILON = 1e-6
 
 const emit = defineEmits(['done', 'cancel'])
@@ -34,7 +38,7 @@ function modify(expand = true) {
 </script>
 
 <template>
-  <Modal @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="modify" @cancel="$emit('cancel')">
     <template #header>
       <h2>Random variance</h2>
     </template>

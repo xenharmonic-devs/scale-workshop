@@ -8,6 +8,7 @@ import type { Scale } from '@/scale'
 import type { Interval } from 'sonic-weave'
 
 const props = defineProps<{
+  show: boolean
   newline: string
   midiOctaveOffset: number
   relativeIntervals: Interval[]
@@ -55,7 +56,7 @@ function doExport() {
 </script>
 
 <template>
-  <Modal @confirm="doExport" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="doExport" @cancel="$emit('cancel')">
     <template #header>
       <h2>Export Reaper note name map</h2>
     </template>

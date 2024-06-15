@@ -168,50 +168,59 @@ defineExpose({ blur })
   />
 
   <Teleport to="body">
+    <!-- v-if is required to prevent premature asyncs while :show makes the focus watcher trigger -->
     <EnumerateModal
       v-if="showEnumerateModal"
+      :show="showEnumerateModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
       @cancel="showEnumerateModal = false"
     />
     <EqualTemperamentModal
       v-if="showEqualTemperamentModal"
+      :show="showEqualTemperamentModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
       @cancel="showEqualTemperamentModal = false"
     />
     <EulerGenusModal
       v-if="showEulerGenusModal"
+      :show="showEulerGenusModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
       @cancel="showEulerGenusModal = false"
     />
     <GeneratorSequenceModal
       v-if="showGeneratorSequenceModal"
+      :show="showGeneratorSequenceModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
       @cancel="showGeneratorSequenceModal = false"
     />
     <ConcordanceShellModal
       v-if="showConcordanceShellModal"
+      :show="showConcordanceShellModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
       @cancel="showConcordanceShellModal = false"
     />
     <CpsModal
       v-if="showCpsModal"
+      :show="showCpsModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
       @cancel="showCpsModal = false"
     />
     <HarmonicSeriesModal
       v-if="showHarmonicModal"
+      :show="showHarmonicModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
       @cancel="showHarmonicModal = false"
     />
     <HistoricalModal
       v-if="showHistoricalModal"
+      :show="showHistoricalModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
       @update:baseFrequency="updateBaseFrequency"
@@ -220,18 +229,21 @@ defineExpose({ blur })
     />
     <LatticeModal
       v-if="showLatticeModal"
+      :show="showLatticeModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
       @cancel="showLatticeModal = false"
     />
     <MosModal
       v-if="showMosModal"
+      :show="showMosModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
       @cancel="showMosModal = false"
     />
     <PresetModal
       v-if="showPresetModal"
+      :show="showPresetModal"
       @update:scaleName="scale.name = $event"
       @update:baseFrequency="updateBaseFrequency"
       @update:baseMidiNote="scale.baseMidiNote = $event"
@@ -240,18 +252,21 @@ defineExpose({ blur })
     />
     <RankTwoModal
       v-if="showRankTwoModal"
+      :show="showRankTwoModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
       @cancel="showRankTwoModal = false"
     />
     <StackModal
       v-if="showStackModal"
+      :show="showStackModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
       @cancel="showStackModal = false"
     />
     <SubharmonicSeriesModal
       v-if="showSubharmonicModal"
+      :show="showSubharmonicModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
       @cancel="showSubharmonicModal = false"
