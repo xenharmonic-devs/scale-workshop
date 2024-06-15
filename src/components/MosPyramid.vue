@@ -76,21 +76,26 @@ const generators = computed(() => {
 
 <template>
   <svg width="100%" height="100%" :viewBox="viewBox">
-    <image
-      href="@/assets/img/spoob.png"
-      x="-1"
-      y="-5"
-      width="2"
-      height="2"
-      @click="emit('easter-egg')"
-    />
+    <a @click="emit('easter-egg')" xlink:href="#">
+      <image href="@/assets/img/spoob.png" x="-1" y="-5" width="2" height="2" />
+      <ellipse cx="0" rx="0.8" ry="0.2" fill="none" stroke-width="0.1">
+        <animate
+          attributeName="stroke"
+          values="white;goldenrod;white"
+          dur="1s"
+          repeatCount="indefinite"
+        />
+        <animate attributeName="cy" values="-5;-5.1;-5" dur="1.5s" repeatCount="indefinite" />
+      </ellipse>
+    </a>
 
     <template v-for="(row, i) of basics" :key="i">
-      <g
+      <a
         v-for="(info, j) of row"
         :key="j"
         @click="emit('mos', info.name, info.pattern, info.udp)"
         :class="{ selected: selected === info.pattern }"
+        xlink:href="#"
       >
         <rect :x="info.x - 0.45" :y="info.y - 0.45" width="0.9" height="0.9" />
         <text :x="info.x - 0.4" :y="info.y - 0.3" font-size="0.11" text-anchor="start">
@@ -105,7 +110,7 @@ const generators = computed(() => {
         <text :x="info.x" :y="info.y + 0.3" font-size="0.09" text-anchor="middle">
           {{ info.name }}
         </text>
-      </g>
+      </a>
     </template>
   </svg>
 </template>
@@ -114,17 +119,25 @@ const generators = computed(() => {
 image {
   cursor: pointer;
 }
-g {
-  cursor: pointer;
-}
 rect {
   fill: var(--color-accent-background);
   stroke: var(--color-accent-text-btn);
   stroke-width: 0.01;
 }
-g:hover > rect {
+ellipse {
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+a:focus {
+  outline: none;
+}
+a:focus > rect,
+a:hover > rect {
   fill: var(--color-accent);
   stroke: var(--color-accent);
+}
+a:focus > ellipse {
+  opacity: 1;
 }
 .selected > rect {
   fill: var(--color-background-mute);
@@ -134,7 +147,8 @@ text {
   dominant-baseline: central;
   fill: var(--color-accent-text-btn);
 }
-g:hover > text {
+a:focus > text,
+a:hover > text {
   fill: white;
 }
 </style>
