@@ -226,17 +226,6 @@ p.alert-message-danger {
   color: var(--color-alert-danger);
 }
 
-.undo,
-.redo {
-  cursor: pointer;
-}
-
-.undo.disabled,
-.redo.disabled {
-  cursor: default;
-  color: var(--color-text-mute);
-}
-
 .undo::after {
   content: '↺';
 }

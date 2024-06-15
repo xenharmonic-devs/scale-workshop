@@ -118,14 +118,16 @@ defineExpose({ focus, clearPaletteInfo })
   <div class="control-group">
     <h2>
       <span class="scale-data-header">Scale data</span>
-      <span
-        :class="{ undo: true, disabled: scale.history.undoDisabled }"
+      <button
+        class="undo"
+        :disabled="scale.history.undoDisabled"
         @click="scale.history.undo"
-      ></span>
-      <span
-        :class="{ redo: true, disabled: scale.history.redoDisabled }"
+      ></button>
+      <button
+        class="redo"
+        :disabled="scale.history.redoDisabled"
         @click="scale.history.redo"
-      ></span>
+      ></button>
     </h2>
     <div class="control">
       <textarea
@@ -166,6 +168,17 @@ defineExpose({ focus, clearPaletteInfo })
 }
 .undo,
 .redo {
+  color: var(--color-text);
+  background: none;
+  border: none;
   margin-left: 1em;
+}
+.undo:disabled,
+.undo:disabled:hover,
+.redo:disabled,
+.redo:disabled:hover {
+  cursor: default;
+  background: none;
+  color: var(--color-text-mute);
 }
 </style>
