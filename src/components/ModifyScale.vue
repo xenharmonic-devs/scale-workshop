@@ -185,46 +185,93 @@ defineExpose({ blur })
   <Teleport to="body">
     <ApproximateByHarmonicsModal
       v-if="showApproximateByHarmonicsModal"
+      :show="showApproximateByHarmonicsModal"
       @done="closeModals"
       @cancel="showApproximateByHarmonicsModal = false"
     />
     <ApproximateByRatiosModal
       v-if="showApproximateByRatiosModal"
+      :show="showApproximateByRatiosModal"
       @done="closeModals"
       @cancel="showApproximateByRatiosModal = false"
     />
     <ApproximateBySubharmonicsModal
       v-if="showApproximateBySubharmonicsModal"
+      :show="showApproximateBySubharmonicsModal"
       @done="closeModals"
       @cancel="showApproximateBySubharmonicsModal = false"
     />
     <CoalesceModal
       v-if="showCoalesceModal"
+      :show="showCoalesceModal"
       @done="closeModals"
       @cancel="showCoalesceModal = false"
     />
-    <ConvertModal v-if="showConvertModal" @done="closeModals" @cancel="showConvertModal = false" />
+    <ConvertModal
+      v-if="showConvertModal"
+      :show="showConvertModal"
+      @done="closeModals"
+      @cancel="showConvertModal = false"
+    />
     <EnumerateModal
       v-if="showEnumerateModal"
+      :show="showEnumerateModal"
       @done="closeModals"
       @cancel="showEnumerateModal = false"
     />
     <EqualizeModal
       v-if="showEqualizeModal"
+      :show="showEqualizeModal"
       @done="closeModals"
       @cancel="showEqualizeModal = false"
     />
-    <ExpandModal v-if="showExpandModal" @done="closeModals" @cancel="showExpandModal = false" />
+    <ExpandModal
+      v-if="showExpandModal"
+      :show="showExpandModal"
+      @done="closeModals"
+      @cancel="showExpandModal = false"
+    />
     <MergeOffsetsModal
       v-if="showMergeOffsetsModal"
+      :show="showMergeOffsetsModal"
       @done="closeModals"
       @cancel="showMergeOffsetsModal = false"
     />
-    <RandomModal v-if="showRandomModal" @done="closeModals" @cancel="showRandomModal = false" />
-    <RepeatModal v-if="showRepeatModal" @done="closeModals" @cancel="showRepeatModal = false" />
-    <RotateModal v-if="showRotateModal" @done="closeModals" @cancel="showRotateModal = false" />
-    <StretchModal v-if="showStretchModal" @done="closeModals" @cancel="showStretchModal = false" />
-    <SubsetModal v-if="showSubsetModal" @done="closeModals" @cancel="showSubsetModal = false" />
-    <TemperModal v-if="showTemperModal" @done="closeModals" @cancel="showTemperModal = false" />
+    <RandomModal
+      v-if="showRandomModal"
+      :show="showRandomModal"
+      @done="closeModals"
+      @cancel="showRandomModal = false"
+    />
+    <RepeatModal
+      v-if="showRepeatModal"
+      :show="showRepeatModal"
+      @done="closeModals"
+      @cancel="showRepeatModal = false"
+    />
+    <RotateModal
+      v-if="showRotateModal"
+      :show="showRotateModal"
+      @done="closeModals"
+      @cancel="showRotateModal = false"
+    />
+    <StretchModal
+      v-if="showStretchModal"
+      :show="showStretchModal"
+      @done="closeModals"
+      @cancel="showStretchModal = false"
+    />
+    <SubsetModal
+      v-if="showSubsetModal"
+      :show="showSubsetModal"
+      @done="closeModals"
+      @cancel="showSubsetModal = false"
+    />
+    <TemperModal
+      v-if="showTemperModal"
+      :show="showTemperModal"
+      @done="closeModals"
+      @cancel="showTemperModal = false"
+    />
   </Teleport>
 </template>

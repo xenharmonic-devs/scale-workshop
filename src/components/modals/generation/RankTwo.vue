@@ -15,6 +15,10 @@ const state = useStateStore()
 const scale = useScaleStore()
 const rank2 = useRank2Store()
 
+defineProps<{
+  show: boolean
+}>()
+
 const emit = defineEmits(['update:scaleName', 'update:source', 'cancel'])
 
 const commasInput = ref<HTMLInputElement | null>(null)
@@ -170,6 +174,7 @@ function generate(expand = true) {
 
 <template>
   <Modal
+    :show="show"
     extraStyle="min-width: 30rem;max-width: 31rem"
     @confirm="generate"
     @cancel="$emit('cancel')"

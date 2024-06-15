@@ -4,6 +4,10 @@ import { presets, presetsByGroup } from '@/presets'
 import { expandCode } from '@/utils'
 import { ref } from 'vue'
 
+defineProps<{
+  show: boolean
+}>()
+
 const emit = defineEmits([
   'update:source',
   'update:scaleName',
@@ -29,7 +33,7 @@ function confirm(expand = true) {
 </script>
 
 <template>
-  <Modal @confirm="confirm" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="confirm" @cancel="$emit('cancel')">
     <template #header>
       <h2>Load preset scale</h2>
     </template>

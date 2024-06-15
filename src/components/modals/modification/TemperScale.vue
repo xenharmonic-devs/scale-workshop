@@ -7,6 +7,10 @@ import { useScaleStore } from '@/stores/scale'
 import { useStateStore } from '@/stores/state'
 import { setAndReportValidity } from '@/utils'
 
+defineProps<{
+  show: boolean
+}>()
+
 const emit = defineEmits(['done', 'cancel'])
 
 const temper = useTemperStore()
@@ -77,7 +81,7 @@ function modify(expand = true) {
 </script>
 
 <template>
-  <Modal @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="modify" @cancel="$emit('cancel')">
     <template #header>
       <h2>Temper scale</h2>
     </template>

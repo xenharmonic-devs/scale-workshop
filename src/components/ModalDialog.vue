@@ -71,7 +71,8 @@ watch(
         }
       })
     }
-  }
+  },
+  { immediate: true } // Needed to make async components work.
 )
 </script>
 

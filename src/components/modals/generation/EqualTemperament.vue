@@ -7,6 +7,10 @@ import { useModalStore } from '@/stores/modal'
 import { setAndReportValidity } from '@/utils'
 import { useStateStore } from '@/stores/state'
 
+defineProps<{
+  show: boolean
+}>()
+
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
 const state = useStateStore()
@@ -56,7 +60,7 @@ function generate(expand = true) {
 </script>
 
 <template>
-  <Modal @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate equal temperament</h2>
     </template>

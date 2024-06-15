@@ -8,6 +8,7 @@ import type { Interval } from 'sonic-weave'
 import type { Scale } from '@/scale'
 
 const props = defineProps<{
+  show: boolean
   newline: string
   midiOctaveOffset: number
   relativeIntervals: Interval[]
@@ -59,7 +60,7 @@ async function doExport() {
 </script>
 
 <template>
-  <Modal @cancel="$emit('cancel')">
+  <Modal :show="show" @cancel="$emit('cancel')">
     <template #header>
       <h2>Export Korg Sound Librarian scale</h2>
     </template>

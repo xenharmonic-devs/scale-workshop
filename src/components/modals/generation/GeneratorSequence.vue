@@ -6,6 +6,10 @@ import { useModalStore } from '@/stores/modal'
 import { OCTAVE } from '@/constants'
 import { ref, watch } from 'vue'
 
+defineProps<{
+  show: boolean
+}>()
+
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
 const modal = useModalStore()
@@ -107,7 +111,7 @@ function generate(kind: 'expanded' | 'raw' | 'lattice' = 'expanded') {
 </script>
 
 <template>
-  <Modal @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generator sequence</h2>
     </template>

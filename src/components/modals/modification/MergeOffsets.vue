@@ -6,6 +6,10 @@ import { arrayToString } from '@/utils'
 import type { Interval } from 'sonic-weave'
 import { ref, watch } from 'vue'
 
+defineProps<{
+  show: boolean
+}>()
+
 const emit = defineEmits(['done', 'cancel'])
 
 const modal = useModalStore()
@@ -29,7 +33,7 @@ function modify(expand = true) {
 </script>
 
 <template>
-  <Modal @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="modify" @cancel="$emit('cancel')">
     <template #header>
       <h2>Merge offset copies of the scale</h2>
     </template>

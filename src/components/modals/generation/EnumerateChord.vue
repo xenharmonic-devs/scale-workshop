@@ -3,6 +3,10 @@ import Modal from '@/components/ModalDialog.vue'
 import { expandCode } from '@/utils'
 import { useModalStore } from '@/stores/modal'
 
+defineProps<{
+  show: boolean
+}>()
+
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
 const modal = useModalStore()
@@ -30,7 +34,7 @@ function generate(expand = true) {
 </script>
 
 <template>
-  <Modal @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Enumerate chord</h2>
     </template>

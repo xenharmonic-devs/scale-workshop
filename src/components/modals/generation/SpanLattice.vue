@@ -10,6 +10,10 @@ import { useStateStore } from '@/stores/state'
 import { arrayToString, expandCode, parseInterval } from '@/utils'
 import { Interval, intervalValueAs } from 'sonic-weave'
 
+defineProps<{
+  show: boolean
+}>()
+
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
 const lattice = useLatticeStore()
@@ -94,7 +98,7 @@ function generate(expand = true) {
 </script>
 
 <template>
-  <Modal @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate parallelotope</h2>
     </template>

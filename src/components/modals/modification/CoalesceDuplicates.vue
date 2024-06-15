@@ -4,6 +4,10 @@ import { useModalStore } from '@/stores/modal'
 import { useScaleStore } from '@/stores/scale'
 import { centString } from '@/utils'
 
+defineProps<{
+  show: boolean
+}>()
+
 const emit = defineEmits(['done', 'cancel'])
 
 const modal = useModalStore()
@@ -21,7 +25,7 @@ function modify(expand = true) {
 </script>
 
 <template>
-  <Modal @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="modify" @cancel="$emit('cancel')">
     <template #header>
       <h2>Coalesce duplicates</h2>
     </template>

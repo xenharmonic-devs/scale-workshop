@@ -4,6 +4,10 @@ import Modal from '@/components/ModalDialog.vue'
 import { debounce, expandCode } from '@/utils'
 import { evaluateExpression } from 'sonic-weave'
 
+defineProps<{
+  show: boolean
+}>()
+
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
 const scaleData = ref('')
@@ -32,7 +36,7 @@ function generate(expand = true) {
 </script>
 
 <template>
-  <Modal @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Stack relative scale steps</h2>
     </template>

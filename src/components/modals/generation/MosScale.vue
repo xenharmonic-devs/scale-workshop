@@ -22,6 +22,10 @@ const COLORS = {
   unknown: 'indigo'
 }
 
+defineProps<{
+  show: boolean
+}>()
+
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
 const modal = useModalStore()
@@ -135,6 +139,7 @@ function edoClick(info: MosScaleInfo) {
 
 <template>
   <Modal
+    :show="show"
     extraStyle="min-width: 40rem;max-width: 41rem"
     @confirm="generate"
     @cancel="$emit('cancel')"
