@@ -1,6 +1,6 @@
 {
   "name": "scale-workshop",
-  "version": "3.0.0-beta.44",
+  "version": "3.0.0-beta.45",
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
@@ -19,17 +19,17 @@
     "isomorphic-qwerty": "^0.0.2",
     "ji-lattice": "^0.2.0",
     "jszip": "^3.10.1",
-    "moment-of-symmetry": "^0.8.1",
+    "moment-of-symmetry": "^0.8.2",
     "pinia": "^2.1.7",
     "qs": "^6.12.0",
-    "sonic-weave": "0.5.0",
+    "sonic-weave": "0.5.1",
     "sw-synth": "^0.1.0",
     "temperaments": "^0.5.3",
     "values.js": "^2.1.1",
     "vue": "^3.3.4",
     "vue-router": "^4.3.0",
     "webmidi": "^3.1.8",
-    "xen-dev-utils": "^0.9.0",
+    "xen-dev-utils": "^0.9.2",
     "xen-midi": "^0.2.0"
   },
   "devDependencies": {

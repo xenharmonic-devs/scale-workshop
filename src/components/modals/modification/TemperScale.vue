@@ -5,7 +5,7 @@ import { Temperament, tenneyVals, vanishCommas } from 'temperaments'
 import { useTemperStore } from '@/stores/tempering'
 import { useScaleStore } from '@/stores/scale'
 import { useStateStore } from '@/stores/state'
-import { setAndReportValidity } from '@/utils'
+import { setAndReportValidity, centString } from '@/utils'
 
 defineProps<{
   show: boolean
@@ -48,6 +48,7 @@ function modify(expand = true) {
           tenneyVals(temper.vals, temper.subgroup, temper.weights, 'cents')
         )
       }
+      scale.sourceText += `\n(* Vals = ${temper.valsString} *)`
     }
   } else if (temper.method === 'commas') {
     if (temper.constraintsAvailable) {
@@ -65,11 +66,12 @@ function modify(expand = true) {
         )
       )
     }
+    scale.sourceText += `\n(* Commas = ${temper.commasString} *)`
   }
   if (temper.method === 'mapping') {
     scale.sourceText += `\nPrimeMapping(${temper.mappingString})`
   } else if (mapping) {
-    scale.sourceText += `\nPrimeMapping(${mapping.map((c) => c.toFixed(state.centsFractionDigits)).join(', ')})`
+    scale.sourceText += `\nPrimeMapping(${mapping.map((c) => centString(c)).join(', ')})\ncents(£, ${state.centsFractionDigits})`
   }
   if (expand) {
     const { visitor, defaults } = scale.getUserScopeVisitor()
