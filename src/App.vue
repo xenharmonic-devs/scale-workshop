@@ -582,11 +582,13 @@ nav#app-navigation ul li a {
   cursor: default;
 }
 
+nav#app-navigation ul#app-tabs li a:focus,
 nav#app-navigation ul#app-tabs li a:hover {
   background-color: var(--color-accent-deeper);
 }
 
 nav#app-navigation ul#app-tabs li a.router-link-exact-active,
+nav#app-navigation ul#app-tabs li a.router-link-exact-active:focus,
 nav#app-navigation ul#app-tabs li a.router-link-exact-active:hover {
   background-color: var(--color-background);
   color: var(--color-text);
@@ -596,6 +598,7 @@ nav a.router-link-exact-active {
   color: var(--color-text);
 }
 
+nav a.router-link-exact-active:focus,
 nav a.router-link-exact-active:hover {
   background-color: transparent;
 }

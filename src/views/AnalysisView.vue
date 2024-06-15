@@ -605,10 +605,12 @@ nav ul li a {
   text-decoration: none;
   cursor: default;
 }
+nav ul li a:focus,
 nav ul li a:hover {
   background-color: var(--color-accent-mute);
 }
 nav ul li a.active,
+nav ul li a.active:focus,
 nav ul li a.active:hover {
   background-color: var(--color-background);
   color: var(--color-text);

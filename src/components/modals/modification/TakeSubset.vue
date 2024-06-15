@@ -88,4 +88,7 @@ function modify(expand = true) {
 .degree.selected:hover {
   background-color: var(--color-accent-deeper);
 }
+.degree:not(.selected):hover {
+  background-color: var(--color-accent-deepest);
+}
 </style>

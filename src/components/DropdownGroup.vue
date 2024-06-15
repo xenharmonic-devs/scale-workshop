@@ -59,6 +59,7 @@ defineExpose({ blur })
 .btn-dropdown-group a {
   text-decoration: none;
 }
+.btn-dropdown-group a:focus li,
 .btn-dropdown-group a:hover li {
   color: white;
   background-color: var(--color-accent);

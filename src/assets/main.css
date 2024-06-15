@@ -82,6 +82,7 @@ button,
   text-decoration: none;
   color: var(--color-accent-text-btn);
 }
+/* No button:focus styles because it looks like the button gets stuck */
 button:hover,
 .btn:hover {
   color: white;
