@@ -171,7 +171,7 @@ function doExport(exporter: ExporterKey) {
     <p><strong>Scala scale (.scl)</strong></p>
     <p>
       Scale file for various synths.<br />If you use this file without an accompanying .kbm file,
-      most synths will assume your scale starts on C ~261Hz
+      most synths will assume your scale starts on C ≈ 262Hz
     </p>
   </a>
   <a href="#" class="btn" @click="doExport('scalakbm')">
