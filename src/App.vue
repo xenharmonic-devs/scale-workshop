@@ -271,7 +271,7 @@ function windowKeydown(event: KeyboardEvent) {
   ) {
     // Prevent overlapping action with configurable state.
     event.preventDefault()
-  } else if (COORDS_BY_CODE.has(event.code)) {
+  } else if (COORDS_BY_CODE.has(event.code) && COORDS_BY_CODE.get(event.code)![2] === 1) {
     // Prevent action for keys that make sound.
     event.preventDefault()
   } else if (event.key === '/') {
