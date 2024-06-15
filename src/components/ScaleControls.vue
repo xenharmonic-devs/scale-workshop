@@ -33,6 +33,7 @@ function insertFromPalette(event: Event) {
     scale.sourceText.substring(0, start) +
     character +
     scale.sourceText.substring(end, scale.sourceText.length)
+  updateScale()
 }
 
 function focus() {
