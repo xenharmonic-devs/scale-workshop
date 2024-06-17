@@ -78,41 +78,6 @@ defineExpose({ focus, clearPaletteInfo })
         @input="updateScale()"
       /><label for="auto-frequency">Automatic base frequency</label>
     </div>
-    <div class="control radio-group">
-      <label>Automatic Colors</label>
-      <span>
-        <input
-          type="radio"
-          id="colors-silver"
-          value="silver"
-          v-model="scale.autoColors"
-          @input="updateScale()"
-        />
-        <label for="colors-silver">Silver</label>
-      </span>
-
-      <span>
-        <input
-          type="radio"
-          id="colors-cents"
-          value="cents"
-          v-model="scale.autoColors"
-          @input="updateScale()"
-        />
-        <label for="colors-cents">Cents</label>
-      </span>
-
-      <span>
-        <input
-          type="radio"
-          id="colors-factors"
-          value="factors"
-          v-model="scale.autoColors"
-          @input="updateScale()"
-        />
-        <label for="colors-factors">Factors</label>
-      </span>
-    </div>
   </div>
 
   <div class="control-group">
@@ -154,6 +119,43 @@ defineExpose({ focus, clearPaletteInfo })
       </button>
     </div>
     <p class="info" v-html="paletteInfo"></p>
+  </div>
+  <div class="control-group">
+    <div class="control radio-group">
+      <label>Automatic Colors</label>
+      <span>
+        <input
+          type="radio"
+          id="colors-silver"
+          value="silver"
+          v-model="scale.autoColors"
+          @input="updateScale()"
+        />
+        <label for="colors-silver">Silver</label>
+      </span>
+
+      <span>
+        <input
+          type="radio"
+          id="colors-cents"
+          value="cents"
+          v-model="scale.autoColors"
+          @input="updateScale()"
+        />
+        <label for="colors-cents">Cents</label>
+      </span>
+
+      <span>
+        <input
+          type="radio"
+          id="colors-factors"
+          value="factors"
+          v-model="scale.autoColors"
+          @input="updateScale()"
+        />
+        <label for="colors-factors">Factors</label>
+      </span>
+    </div>
   </div>
 </template>
 

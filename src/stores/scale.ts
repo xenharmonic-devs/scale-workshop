@@ -421,8 +421,21 @@ export const useScaleStore = defineStore('scale', () => {
         }
         labels.value = intervals.map((interval) => interval.label || evStr(interval))
       } else {
+        relativeIntervals.value = INTERVALS_12TET
+        latticeIntervals.value = INTERVALS_12TET
         scale.value = new Scale(TET12, visitorBaseFrequency, baseMidiNote.value, name.value)
-        colors.value = defaultColors(baseMidiNote.value)
+        if (autoColors.value === 'silver') {
+          colors.value = defaultColors(baseMidiNote.value)
+        } else if (autoColors.value === 'cents') {
+          colors.value = INTERVALS_12TET.map(
+            (interval) => interval.color?.value ?? centsColor.bind(ev)(interval).value
+          )
+        } else {
+          // XXX: This is just black, but whatever.
+          colors.value = INTERVALS_12TET.map(
+            (interval) => interval.color?.value ?? factorColor.bind(ev)(interval).value
+          )
+        }
         labels.value = defaultLabels(baseMidiNote.value, accidentalPreference.value)
         if (!warning.value) {
           warning.value = 'Empty scale defaults to 12-tone equal temperament.'
