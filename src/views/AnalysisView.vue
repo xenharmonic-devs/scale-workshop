@@ -19,6 +19,7 @@ import { useScaleStore } from '@/stores/scale'
 import { Fraction, mmod } from 'xen-dev-utils'
 import { OCTAVE, UNISON } from '@/constants'
 import { useHarmonicEntropyStore } from '@/stores/harmonic-entropy'
+import Values from 'values.js'
 
 const EPSILON = 1e-6
 
@@ -55,13 +56,7 @@ const backgroundRBG = computed<[number, number, number]>(() => {
     .getPropertyValue('--color-background')
     .trim()
     .toLowerCase()
-  if (css === '#fff' || css === '#fefdfe') {
-    return [255, 255, 255]
-  } else if (css === '#000' || css === '#060206') {
-    return [0, 0, 0]
-  } else {
-    throw new Error('General color parsing not implemented')
-  }
+  return new Values(css).rgb
 })
 
 const strokeStyle = computed(() => {
