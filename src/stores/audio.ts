@@ -52,6 +52,9 @@ type AudioStore = {
   mainHighpass: Ref<BiquadFilterNode>
 }
 
+const DEFAULT_WAVEFORM = 'semisine'
+const DEFAULT_APERIODIC = 'jegogan'
+
 export const useAudioStore = defineStore<'audio', AudioStore>('audio', () => {
   const context = ref<AudioContext | null>(null)
   // Chromium has some issues with audio nodes as props
@@ -71,14 +74,14 @@ export const useAudioStore = defineStore<'audio', AudioStore>('audio', () => {
   let aperiodicSynth: AperiodicSynth
 
   // Synth params
-  const waveform = ref('semisine')
+  const waveform = ref(DEFAULT_WAVEFORM)
   const attackTime = ref(0.01)
   const decayTime = ref(0.3)
   const sustainLevel = ref(0.8)
   const releaseTime = ref(0.01)
   const stackSize = ref(3)
   const spread = ref(2.5)
-  const aperiodicWaveform = ref('steel')
+  const aperiodicWaveform = ref(DEFAULT_APERIODIC)
   // Fix Firefox issues with audioContext.currentTime being in the past using a delay.
   // This is a locally stored user preference, but shown on the Synth tab.
   const audioDelay = ref(0.001)
@@ -198,10 +201,10 @@ export const useAudioStore = defineStore<'audio', AudioStore>('audio', () => {
     initializeCustomWaves(context.value)
 
     oscillatorVoiceParams.type = 'custom'
-    oscillatorVoiceParams.periodicWave = PERIODIC_WAVES['semisine'].value
+    oscillatorVoiceParams.periodicWave = PERIODIC_WAVES[DEFAULT_WAVEFORM].value
     unisonVoiceParams.type = 'custom'
-    unisonVoiceParams.periodicWave = PERIODIC_WAVES['semisine'].value
-    aperiodicVoiceParams.aperiodicWave = APERIODIC_WAVES['steel'].value
+    unisonVoiceParams.periodicWave = PERIODIC_WAVES[DEFAULT_WAVEFORM].value
+    aperiodicVoiceParams.aperiodicWave = APERIODIC_WAVES[DEFAULT_APERIODIC].value
 
     // These all should start with polyphony 0 to save resources
     oscillatorSynth = new Synth(context.value, audioDestination)

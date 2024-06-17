@@ -33,13 +33,15 @@ export const WAVEFORMS = BASIC_WAVEFORMS.concat(CUSTOM_WAVEFORMS)
 export const PERIODIC_WAVES: Record<string, ComputedRef<PeriodicWave>> = {}
 
 export const APERIODIC_WAVEFORMS = [
+  'jegogan',
+  'jublag',
+  'ugal',
+  'gender',
   'tin',
   'bronze',
   'steel',
   'silver',
   'platinum',
-  'pelog',
-  'slendro',
   '12-TET'
 ]
 export const APERIODIC_WAVES: Record<string, ComputedRef<AperiodicWave>> = {}
@@ -295,54 +297,70 @@ function initializeAperiodic(audioContext: BaseAudioContext) {
       )
   )
 
-  APERIODIC_WAVES['pelog'] = computed(() => {
-    const pelogSpectrum = [
-      0, 670, 1215, 1885, 2430, 2700, 3380, 4315, 4430, 4980, 5645, 5810, 6075, 6195, 6345, 6615,
-      6745, 6860, 7025, 7290, 7410, 7560, 7830, 7960, 8075, 8240
-    ].map((c) => centsToValue(0.999 * c))
-    const pelogAmplitudes = pelogSpectrum.map((_, i) => (i + 1) ** -1.2)
-    pelogAmplitudes[1] = 0.1
-    pelogAmplitudes[4] = 0.3
-    pelogAmplitudes[6] = 0.2
-    pelogAmplitudes[10] = 0.15
-    pelogSpectrum.push(9)
-    pelogAmplitudes.push(0.15)
-    pelogSpectrum.push(16)
-    pelogAmplitudes.push(0.09)
-    pelogSpectrum.push(64)
-    pelogAmplitudes.push(0.06)
-    return new AperiodicWave(
-      audioContext,
-      pelogSpectrum,
-      pelogAmplitudes.map((a) => 0.33 * a),
-      maxNumberOfVoices,
-      tolerance
-    )
+  APERIODIC_WAVES['gender'] = computed(() => {
+    const spectrum_ = [1, 2.26, 3.358, 3.973, 7.365, 13, 29, 31, 37]
+    const amplitudes_ = [1, 0.6, 0.3, 0.4, 0.2, 0.05, 0.04, 0.01, 0.006].map((a) => 0.4 * a)
+
+    // Add shimmer
+    const spectrum: number[] = []
+    const amplitudes: number[] = []
+    for (let i = 0; i < spectrum_.length; ++i) {
+      spectrum.push(spectrum_[i] * 1.004)
+      spectrum.push(spectrum_[i] / 1.004)
+      amplitudes.push(amplitudes_[i])
+      amplitudes.push(0.6 * amplitudes_[i])
+    }
+
+    return new AperiodicWave(audioContext, spectrum, amplitudes, maxNumberOfVoices, tolerance)
   })
 
-  APERIODIC_WAVES['slendro'] = computed(() => {
-    const slendroSpectrum = [
-      0, 717, 1208, 1682, 1925, 2416, 2647, 3371, 3624, 4579, 4832, 5063, 5549, 5787, 6040, 6271,
-      6514, 6757, 6995, 7248, 7479, 7722, 7965, 8203
-    ].map(centsToValue)
-    const slendroAmplitudes = slendroSpectrum.map((_, i) => (i + 1) ** -1.5)
-    slendroAmplitudes[1] = 0.01
-    for (let h = 2; h < 128; ++h) {
-      for (let i = 0; i < slendroSpectrum.length; ++i) {
-        if (Math.abs(Math.log(slendroSpectrum[i] / h)) < 0.01) {
-          slendroSpectrum[i] = Math.cbrt(h * slendroSpectrum[i] ** 2)
-          slendroAmplitudes[i] = 1.5 * (i + 1) ** -0.9
-          break
-        }
-      }
-    }
-    return new AperiodicWave(
-      audioContext,
-      slendroSpectrum,
-      slendroAmplitudes.map((a) => 0.3 * a),
-      maxNumberOfVoices,
-      tolerance
+  // https://pubs.aip.org/asa/jasa/article/127/5/EL197/783208/Vibrational-characteristics-of-Balinese-gamelan
+  APERIODIC_WAVES['jublag'] = computed(() => {
+    // Spectrum is from literature
+    const spectrum = [1, 2.77, 5.18, 5.33]
+    // Made up stuff to round it off
+    spectrum.push(9.1, 18.9, 23)
+    // Add shimmer
+    spectrum[0] = 1.01
+    spectrum.unshift(1 / spectrum[0])
+    spectrum.push(2.76)
+
+    // Amplitudes are made up
+    const amplitudes = [1, 0.5, 0.5, 0.3, 0.2, 0.15, 0.1, 0.09, 0.2].map((a) => 0.45 * a)
+
+    return new AperiodicWave(audioContext, spectrum, amplitudes, maxNumberOfVoices, tolerance)
+  })
+
+  // https://pubs.aip.org/asa/jasa/article/127/5/EL197/783208/Vibrational-characteristics-of-Balinese-gamelan
+  APERIODIC_WAVES['ugal'] = computed(() => {
+    // Spectrum is from literature
+    const spectrum = [1, 2.61, 4.8, 4.94, 6.32]
+    // Made up stuff to round it off
+    spectrum.push(9.9, 17, 24.1)
+    // Add shimmer
+    spectrum[0] = 1.008
+    spectrum.unshift(1 / spectrum[0])
+    spectrum.push(2.605)
+    spectrum.push(4.81)
+
+    // Amplitudes are made up
+    const amplitudes = [0.6, 1, 0.45, 0.3, 0.15, 0.2, 0.07, 0.08, 0.05, 0.1, 0.1].map(
+      (a) => 0.45 * a
     )
+
+    return new AperiodicWave(audioContext, spectrum, amplitudes, maxNumberOfVoices, tolerance)
+  })
+
+  // https://pubs.aip.org/asa/jasa/article/127/5/EL197/783208/Vibrational-characteristics-of-Balinese-gamelan
+  APERIODIC_WAVES['jegogan'] = computed(() => {
+    // Spectrum is from literature
+    const spectrum = [
+      1, 2.8, 5.5, 9, 16.7, 17.8, 20.5, 22.9, 24.9, 27, 28.1, 29.2, 29.5, 30, 31.8, 33.3, 36, 36.9,
+      40.6, 41.4
+    ]
+    // Amplitudes are made up
+    const amplitudes = spectrum.map((i) => (0.7 * (Math.cos(0.3 * i * i) + 1.6)) / (i ** 1.4 + 1.6))
+    return new AperiodicWave(audioContext, spectrum, amplitudes, maxNumberOfVoices, tolerance)
   })
 
   APERIODIC_WAVES['12-TET'] = computed(() => {
