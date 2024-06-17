@@ -1,6 +1,6 @@
 {
   "name": "scale-workshop",
-  "version": "3.0.0-beta.45",
+  "version": "3.0.0-beta.46",
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
