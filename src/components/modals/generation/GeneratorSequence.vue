@@ -74,7 +74,7 @@ function generate(kind: 'expanded' | 'raw' | 'lattice' = 'expanded') {
     const s = Math.round(modal.size / modal.numPeriods) - 1
     const repeats = Math.floor(s / modal.generators.length)
     if (repeats) {
-      source += `flatRepeat(${repeats})\n`
+      source += `repeatFlat(${repeats})\n`
     }
     const remaining = s - repeats * modal.generators.length
     if (remaining) {

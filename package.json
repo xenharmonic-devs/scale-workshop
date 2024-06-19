@@ -22,7 +22,7 @@
     "moment-of-symmetry": "^0.8.2",
     "pinia": "^2.1.7",
     "qs": "^6.12.0",
-    "sonic-weave": "0.5.1",
+    "sonic-weave": "0.6.0",
     "sw-synth": "^0.1.0",
     "temperaments": "^0.5.3",
     "values.js": "^2.1.1",
