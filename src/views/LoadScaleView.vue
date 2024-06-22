@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { API_URL } from '@/constants'
+import { API_URL, IS_SAFARI } from '@/constants'
 import { useAudioStore } from '@/stores/audio'
 import { useCyclesStore } from '@/stores/edo-cycles'
 import { useGridStore } from '@/stores/grid'
@@ -42,7 +42,7 @@ onMounted(async () => {
   } else {
     try {
       // XXX: Dashes are not filesystem friendly, but that's a problem for sw-server to solve.
-      const res = await fetch(new URL(`scale/${id}`, API_URL))
+      const res = await fetch(new URL(`scale/${id}${IS_SAFARI ? '?gzip=0' : ''}`, API_URL))
       if (res.ok) {
         text.value = 'Scale loaded. Redirecting...'
         const body = await res.text()

@@ -19,6 +19,14 @@ export const NUMBER_OF_NOTES = 128
 // Browser interaction
 export const LEFT_MOUSE_BTN = 0
 
+// Browser detection
+export const IS_SAFARI =
+  navigator.vendor &&
+  navigator.vendor.indexOf('Apple') > -1 &&
+  navigator.userAgent &&
+  navigator.userAgent.indexOf('CriOS') == -1 &&
+  navigator.userAgent.indexOf('FxiOS') == -1
+
 // === Sanity limits for tempering ===
 
 // Anything larger than this isn't evaluated interactively
