@@ -344,19 +344,19 @@
   "marveldene": {
     "title": "Marveldene TE",
     "name": "The Marveldene, a 2.3.5.7 classic. Septimal Aeolian minor oriented.",
-    "source": "eulerGenus(675 white, 15, 2 gray)\nPrimeMapping(1200.5978, 1901.3543, 2785.0245, 3369.7682)\n",
+    "source": "eulerGenus(675 white, 15, 2 gray)\nTE(225/224)\ncents(£, 3)",
     "categories": ["TE", "rank 3"]
   },
   "meantone": {
     "title": "Meantone CTE",
     "name": "Meantone[12], TE optimized with a 2/1 constraint.",
-    "source": "A♮4 = 440Hz\nB♭4 black\nB♮4 white\nC♮5 white\nC♯5 black\nD♮5 white\nE♭5 black\nE♮5 white\nF♮5 white\nF♯5 black\nG♮5 white\nG♯5 black\nA♮5 white\nmap(i => str(i)[..1])\nPrimeMapping(1200.000, 1897.214, 2788.857)\n",
+    "source": "A♮4 = 440Hz\nB♭4 black\nB♮4 white\nC♮5 white\nC♯5 black\nD♮5 white\nE♭5 black\nE♮5 white\nF♮5 white\nF♯5 black\nG♮5 white\nG♯5 black\nA♮5 white\nmap(i => str(i)[..1])\nTE(81/80, 1000)\ncents(£, 3)",
     "categories": ["MOS", "CTE", "rank 2"]
   },
   "orgone": {
     "title": "Orgone POTE",
     "name": "Orgone[7], a 2.7.11 classic. POTE optimized.",
-    "source": "rank2(77/64 white, 3, 3, 2/1 gray)\nPrimeMapping(1200.000, niente, niente, 3370.115, 4153.257)\n",
+    "source": "rank2(77/64 white, 3, 3, 2/1 gray)\nTE([11@2.7.11, 26@2.7.11])\n£ ~^ (2 ~/_ £[-1])\ncents(£, 3)",
     "categories": ["MOS", "POTE", "rank 2"]
   }
 }
