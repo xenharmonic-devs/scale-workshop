@@ -50,6 +50,9 @@ export const useStateStore = defineStore('state', () => {
   // Opt-in for user statistics
   const shareStatistics = ref(storage.getItem('shareStatistics') === 'true')
 
+  // The app doesn't fully work on Safari. Inform the user.
+  const showSafariWarning = ref(storage.getItem('showSafariWarning') !== 'false')
+
   /**
    * Convert live state to a format suitable for storing on the server.
    */
@@ -87,7 +90,8 @@ export const useStateStore = defineStore('state', () => {
     equaveDownCode,
     degreeUpCode,
     degreeDownCode,
-    shareStatistics
+    shareStatistics,
+    showSafariWarning
   })
   watch(
     colorScheme,
@@ -126,6 +130,7 @@ export const useStateStore = defineStore('state', () => {
     degreeUpCode,
     degreeDownCode,
     shareStatistics,
+    showSafariWarning,
     // Methods
     toJSON,
     fromJSON

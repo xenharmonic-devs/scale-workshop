@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { API_URL, APP_TITLE } from '@/constants'
+import { API_URL, APP_TITLE, IS_SAFARI } from '@/constants'
 import { exportFile, type ExporterKey } from '@/exporters'
 import type { ExporterParams } from '@/exporters/base'
 import { useAudioStore } from '@/stores/audio'
@@ -159,6 +159,11 @@ function doExport(exporter: ExporterKey) {
     <p><strong>Share scale</strong></p>
     <p>{{ exportTextClipboard }}</p>
   </a>
+  <div v-if="IS_SAFARI && state.showSafariWarning">
+    <h3 class="warning">Warning</h3>
+    <p class="warning">File export is known to be broken on Safari. Root cause unknown.</p>
+    <button class="warning" @click="state.showSafariWarning = false">Dismiss</button>
+  </div>
   <a href="#" class="btn" @click="doExport('anamarkv1')">
     <p><strong>AnaMark v1 tuning (.tun)</strong></p>
     <p>Tuning file for various synths</p>
@@ -249,5 +254,8 @@ function doExport(exporter: ExporterKey) {
   display: block;
   margin-bottom: 1rem;
   margin-left: 0;
+}
+button.warning {
+  margin-bottom: 0.5em;
 }
 </style>
