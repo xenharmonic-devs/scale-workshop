@@ -350,13 +350,13 @@
   "meantone": {
     "title": "Meantone CTE",
     "name": "Meantone[12], TE optimized with a 2/1 constraint.",
-    "source": "A♮4 = 440Hz\nB♭4 black\nB♮4 white\nC♮5 white\nC♯5 black\nD♮5 white\nE♭5 black\nE♮5 white\nF♮5 white\nF♯5 black\nG♮5 white\nG♯5 black\nA♮5 white\nmap(i => str(i)[..1])\nTE(81/80, 1000)\ncents(£, 3)",
+    "source": "A♮4 = 440Hz\nB♭4 black\nB♮4 white\nC♮5 white\nC♯5 black\nD♮5 white\nE♭5 black\nE♮5 white\nF♮5 white\nF♯5 black\nG♮5 white\nG♯5 black\nA♮5 white\nmap(i => str(i)[..1])\nCTE(81/80)\ncents(£, 3)",
     "categories": ["MOS", "CTE", "rank 2"]
   },
   "orgone": {
     "title": "Orgone POTE",
     "name": "Orgone[7], a 2.7.11 classic. POTE optimized.",
-    "source": "rank2(77/64 white, 3, 3, 2/1 gray)\nTE([11@2.7.11, 26@2.7.11])\n£ ~^ (2 ~/_ £[-1])\ncents(£, 3)",
+    "source": "rank2(77/64 white, 3, 3, 2/1 gray)\nPOTE([11@2.7.11, 26@2.7.11])\ncents(£, 3)",
     "categories": ["MOS", "POTE", "rank 2"]
   }
 }
