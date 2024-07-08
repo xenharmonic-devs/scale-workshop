@@ -27,13 +27,6 @@ export const IS_SAFARI =
   navigator.userAgent.indexOf('CriOS') == -1 &&
   navigator.userAgent.indexOf('FxiOS') == -1
 
-// === Sanity limits for tempering ===
-
-// Anything larger than this isn't evaluated interactively
-export const MAX_INTERACTIVE_SUBGROUP_SIZE = 6
-// Anything larger than this uses O(n²) methods (if available) instead of O(exp(n))
-export const MAX_GEO_SUBGROUP_SIZE = 9
-
 // === Sanity limits for scale sharing ===
 export const MAX_NUMBER_OF_SHARED_INTERVALS = 255
 
