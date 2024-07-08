@@ -3,12 +3,12 @@ import { ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { OCTAVE } from '@/constants'
-import Temperament from 'temperaments'
 import { useLatticeStore } from '@/stores/tempering'
-import { setAndReportValidity } from '@/utils'
+import { centString, setAndReportValidity } from '@/utils'
 import { useStateStore } from '@/stores/state'
 import { arrayToString, expandCode, parseInterval } from '@/utils'
 import { Interval, intervalValueAs } from 'sonic-weave'
+import { mmod } from 'xen-dev-utils'
 
 defineProps<{
   show: boolean
@@ -20,33 +20,36 @@ const lattice = useLatticeStore()
 const state = useStateStore()
 
 const basisElement = ref<HTMLInputElement | null>(null)
+const valsInput = ref<HTMLInputElement | null>(null)
+const commasInput = ref<HTMLInputElement | null>(null)
+const subgroupInput = ref<HTMLInputElement | null>(null)
+
 watch(
   () => lattice.basisError,
   (newError) => setAndReportValidity(basisElement.value, newError)
 )
 
 function calculateGenerators() {
-  let temperament: Temperament
-  if (lattice.method === 'vals') {
-    temperament = Temperament.fromVals(lattice.vals, lattice.subgroup)
-  } else {
-    temperament = Temperament.fromCommas(lattice.commas, lattice.subgroup)
-  }
-  let periodGenerators: number[]
-  try {
-    periodGenerators = temperament.periodGenerators(lattice.options)
-  } catch {
-    alert('Unable to calculate generators.')
+  const generators = lattice.temperament.generators
+  if (!generators.length) {
     return
   }
+  if (lattice.method === 'vals') {
+    lattice.comment = `vals = ${lattice.valsString}`
+  } else if (lattice.method === 'commas') {
+    lattice.comment = `commas = ${lattice.commasString}`
+  } else {
+    lattice.comment = ''
+  }
+  const period = generators.shift()!
+  for (let i = 0; i < generators.length; ++i) {
+    generators[i] = mmod(generators[i], period)
+  }
 
-  lattice.equaveString = periodGenerators[0].toFixed(state.centsFractionDigits)
+  lattice.equaveString = centString(period, state.centsFractionDigits)
   lattice.equave = parseInterval(lattice.equaveString)
 
-  lattice.basisString = periodGenerators
-    .slice(1)
-    .map((g) => g.toFixed(state.centsFractionDigits))
-    .join(' ')
+  lattice.basisString = generators.map((g) => centString(g, state.centsFractionDigits)).join(' ')
   lattice.method = 'generators'
 }
 
@@ -71,28 +74,24 @@ function flip(index: number) {
 }
 
 function generate(expand = true) {
-  try {
-    const source = `parallelotope(${arrayToString(lattice.basis)}, ${arrayToString(lattice.ups)}, ${arrayToString(lattice.downs)}, ${lattice.equave.toString()})`
-    let name = `Parallelotope (${lattice.dimensions} of ${lattice.basisString}`
-    if (lattice.basis.length === 0) {
-      name = 'Parallelotope (unison'
-    }
-    if (!lattice.equave.equals(OCTAVE)) {
-      name += ` over ${lattice.equave.toString()}`
-    }
-    name += ')'
-    emit('update:scaleName', name)
-    if (expand) {
-      emit('update:source', expandCode(source))
-    } else {
-      emit('update:source', source)
-    }
-  } catch (error) {
-    if (error instanceof Error) {
-      alert(error.message)
-    } else {
-      alert(error)
-    }
+  let source = ''
+  if (lattice.comment.length) {
+    source = `(* ${lattice.comment} *)\n`
+  }
+  source += `parallelotope(${arrayToString(lattice.basis)}, ${arrayToString(lattice.ups)}, ${arrayToString(lattice.downs)}, ${lattice.equave.toString()})`
+  let name = `Parallelotope (${lattice.dimensions} of ${lattice.basisString}`
+  if (lattice.basis.length === 0) {
+    name = 'Parallelotope (unison'
+  }
+  if (!lattice.equave.equals(OCTAVE)) {
+    name += ` over ${lattice.equave.toString()}`
+  }
+  name += ')'
+  emit('update:scaleName', name)
+  if (expand) {
+    emit('update:source', expandCode(source))
+  } else {
+    emit('update:source', source)
   }
 }
 </script>
@@ -167,14 +166,22 @@ function generate(expand = true) {
             />
           </div>
         </div>
+
         <div class="control" v-show="lattice.method === 'vals'">
           <label for="vals">Vals</label>
-          <input type="text" id="vals" placeholder="8d & 12 & 19" v-model="lattice.valsString" />
+          <input
+            ref="valsInput"
+            type="text"
+            id="vals"
+            placeholder="8d & 12 & 19"
+            v-model="lattice.valsString"
+          />
         </div>
 
         <div class="control" v-show="lattice.method === 'commas'">
           <label for="commas">Comma list</label>
           <input
+            ref="commasInput"
             type="text"
             id="commas"
             placeholder="225/224, 385/384"
@@ -185,6 +192,7 @@ function generate(expand = true) {
         <div class="control" v-show="lattice.method === 'vals' || lattice.method === 'commas'">
           <label for="subgroup">Subgroup / Prime limit</label>
           <input
+            ref="subgroupInput"
             type="text"
             id="subgroup"
             :placeholder="lattice.method === 'vals' ? '2.3.5.7' : ''"
@@ -192,46 +200,47 @@ function generate(expand = true) {
           />
         </div>
       </div>
-      <div class="control-group">
-        <div v-show="lattice.method === 'vals' || lattice.method === 'commas'">
-          <p
-            class="section"
-            :class="{ open: lattice.showAdvanced }"
-            @click="lattice.showAdvanced = !lattice.showAdvanced"
-          >
-            Advanced options
-          </p>
-          <div class="control-group" v-show="lattice.showAdvanced">
-            <div class="control radio-group">
-              <span>
-                <input type="radio" id="tempering-TE" value="TE" v-model="lattice.tempering" />
-                <label for="tempering-TE">TE</label>
-              </span>
+      <div class="control-group" v-show="lattice.method === 'vals' || lattice.method === 'commas'">
+        <div class="control radio-group">
+          <span>
+            <input type="radio" id="tempering-TE" value="TE" v-model="lattice.optimizationScheme" />
+            <label for="tempering-TE">TE</label>
+          </span>
 
-              <span>
-                <input type="radio" id="tempering-POTE" value="POTE" v-model="lattice.tempering" />
-                <label for="tempering-POTE">POTE</label>
-              </span>
+          <span>
+            <input
+              type="radio"
+              id="tempering-POTE"
+              value="POTE"
+              v-model="lattice.optimizationScheme"
+            />
+            <label for="tempering-POTE">POTE</label>
+          </span>
 
-              <span>
-                <input type="radio" id="tempering-CTE" value="CTE" v-model="lattice.tempering" />
-                <label for="tempering-CTE">CTE</label>
-              </span>
-            </div>
-
-            <div v-show="lattice.tempering === 'CTE'" class="control">
-              <label for="constraints">Constraints</label>
-              <textarea id="constraints" v-model="lattice.constraintsString"></textarea>
-            </div>
-
-            <div class="control">
-              <label for="weights">Weights</label>
-              <textarea id="weights" v-model="lattice.weightsString"></textarea>
-            </div>
-          </div>
+          <span>
+            <input
+              type="radio"
+              id="tempering-CTE"
+              value="CTE"
+              v-model="lattice.optimizationScheme"
+            />
+            <label for="tempering-CTE">CTE</label>
+          </span>
         </div>
+        <p
+          class="section"
+          :class="{ open: lattice.showAdvanced }"
+          @click="lattice.showAdvanced = !lattice.showAdvanced"
+        >
+          Advanced options
+        </p>
+        <div class="control" v-show="lattice.showAdvanced">
+          <label for="weights">Weights for {{ lattice.subgroupLabel }}</label>
+          <textarea id="weights" v-model="lattice.weightsString"></textarea>
+        </div>
+        <p class="warning">{{ lattice.error }}</p>
         <div class="control" v-show="lattice.method === 'vals' || lattice.method === 'commas'">
-          <button @click="calculateGenerators" :disabled="lattice.subgroupError.length !== 0">
+          <button @click="calculateGenerators" :disabled="!!lattice.error.length">
             Calculate generators
           </button>
         </div>
@@ -246,3 +255,10 @@ function generate(expand = true) {
     </template>
   </Modal>
 </template>
+
+<style>
+p.warning {
+  height: 3em;
+  overflow-y: hidden;
+}
+</style>

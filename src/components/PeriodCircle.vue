@@ -109,7 +109,8 @@ const mosLabel = computed(() => {
       else if (step === M) countM++
       else if (step === L) countL++
     }
-    return `${countL}L ${countM}M ${countS}s`
+    const n = props.numPeriods
+    return `${n * countL}L ${n * countM}M ${n * countS}s`
   }
   // There are degenerate edgecases with step variety = 2. Show nothing to avoid implying MOS.
   return ''
