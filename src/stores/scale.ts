@@ -5,7 +5,9 @@ import {
   syncValues,
   isBlackMidiNote,
   midiNoteNumberToName,
-  randomId
+  randomId,
+  centString,
+  decimalString
 } from '@/utils'
 import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
@@ -23,7 +25,8 @@ import {
   ExpressionVisitor,
   builtinNode,
   repr,
-  getGlobalVisitor
+  getGlobalVisitor,
+  TimeReal
 } from 'sonic-weave'
 import {
   APP_TITLE,
@@ -55,6 +58,11 @@ function defaultLabels(base: number, accidentalStyle: AccidentalStyle) {
 }
 
 export const useScaleStore = defineStore('scale', () => {
+  // The scale store should remain unit-test friendly so this state needs to be here as well
+  const centsFractionDigits = ref(parseInt(localStorage.getItem('centsFractionDigits') ?? '3', 10))
+  const decimalFractionDigits = ref(
+    parseInt(localStorage.getItem('decimalFractionDigits') ?? '5', 10)
+  )
   // Note that most of these values are debounce-computed due to being expensive.
   // The second party is responsible for debouncing `computeScale`.
   const accidentalPreference = ref<AccidentalStyle>(
@@ -292,7 +300,13 @@ export const useScaleStore = defineStore('scale', () => {
   })
 
   // Local storage watchers
-  syncValues({ accidentalPreference, hasLeftOfZ, gas })
+  syncValues({
+    centsFractionDigits,
+    decimalFractionDigits,
+    accidentalPreference,
+    hasLeftOfZ,
+    gas
+  })
 
   // Extra builtins
   function latticeView(this: ExpressionVisitor, equave?: Interval) {
@@ -399,6 +413,47 @@ export const useScaleStore = defineStore('scale', () => {
       }
       if (ratios.length) {
         const evStr = str.bind(ev)
+        // eslint-disable-next-line no-inner-declarations
+        function autoLabel(interval: Interval) {
+          if (interval.label.length) {
+            return interval.label
+          }
+          const node = interval.node
+          if (node) {
+            if (
+              node.type === 'DecimalLiteral' &&
+              node.fractional.length > decimalFractionDigits.value
+            ) {
+              return decimalString(
+                interval.valueOf(),
+                decimalFractionDigits.value,
+                interval.value instanceof TimeReal
+              )
+            } else if (
+              node.type === 'CentsLiteral' &&
+              node.fractional.length > centsFractionDigits.value
+            ) {
+              return centString(
+                interval.totalCents(),
+                centsFractionDigits.value,
+                interval.value instanceof TimeReal
+              )
+            }
+            return evStr(interval)
+          }
+          if (interval.domain === 'linear') {
+            return decimalString(
+              interval.valueOf(),
+              decimalFractionDigits.value,
+              interval.value instanceof TimeReal
+            )
+          }
+          return centString(
+            interval.totalCents(),
+            centsFractionDigits.value,
+            interval.value instanceof TimeReal
+          )
+        }
         scale.value = new Scale(
           ratios,
           visitorBaseFrequency,
@@ -419,7 +474,7 @@ export const useScaleStore = defineStore('scale', () => {
             (interval) => interval.color?.value ?? factorColor.bind(ev)(interval).value
           )
         }
-        labels.value = intervals.map((interval) => interval.label || evStr(interval))
+        labels.value = intervals.map(autoLabel)
       } else {
         relativeIntervals.value = INTERVALS_12TET
         latticeIntervals.value = INTERVALS_12TET
@@ -606,6 +661,8 @@ export const useScaleStore = defineStore('scale', () => {
     id,
     uploadedId,
     // Presistent state
+    centsFractionDigits,
+    decimalFractionDigits,
     accidentalPreference,
     hasLeftOfZ,
     gas,

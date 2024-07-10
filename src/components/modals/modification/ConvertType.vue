@@ -2,7 +2,6 @@
 import { onMounted, ref } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import { useModalStore } from '@/stores/modal'
-import { useStateStore } from '@/stores/state'
 import { useScaleStore } from '@/stores/scale'
 import { centString } from '@/utils'
 
@@ -14,14 +13,13 @@ const emit = defineEmits(['done', 'cancel'])
 
 const modal = useModalStore()
 const scale = useScaleStore()
-const state = useStateStore()
 
 const myCentsFractionDigits = ref(3)
 const myDecimalFractionDigits = ref(5)
 
 onMounted(() => {
-  myCentsFractionDigits.value = state.centsFractionDigits
-  myDecimalFractionDigits.value = state.decimalFractionDigits
+  myCentsFractionDigits.value = scale.centsFractionDigits
+  myDecimalFractionDigits.value = scale.decimalFractionDigits
 })
 
 function modify(expand = false) {

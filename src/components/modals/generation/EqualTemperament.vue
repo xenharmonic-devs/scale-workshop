@@ -5,7 +5,7 @@ import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { useModalStore } from '@/stores/modal'
 import { setAndReportValidity } from '@/utils'
-import { useStateStore } from '@/stores/state'
+import { useScaleStore } from '@/stores/scale'
 
 defineProps<{
   show: boolean
@@ -13,7 +13,7 @@ defineProps<{
 
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
-const state = useStateStore()
+const scale = useScaleStore()
 const modal = useModalStore()
 
 const divisionsElement = ref<HTMLInputElement | null>(null)
@@ -32,7 +32,7 @@ watch(
 function generate(expand = true) {
   if (modal.singleStepOnly) {
     const stepCents = modal.equave.value.totalCents() / modal.divisions
-    const line = stepCents.toFixed(state.centsFractionDigits)
+    const line = stepCents.toFixed(scale.centsFractionDigits)
     emit('update:scaleName', `${line} cET`)
     emit('update:source', line)
   } else {

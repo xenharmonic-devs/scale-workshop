@@ -6,12 +6,10 @@ import PeriodCircle from '@/components/PeriodCircle.vue'
 import { expandCode, gapKeyColors, parseCents } from '@/utils'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { useRank2Store } from '@/stores/tempering'
-import { useStateStore } from '@/stores/state'
 import { Interval, intervalValueAs } from 'sonic-weave'
 import { useScaleStore } from '@/stores/scale'
 import { mmod } from 'xen-dev-utils'
 
-const state = useStateStore()
 const scale = useScaleStore()
 const rank2 = useRank2Store()
 
@@ -29,10 +27,10 @@ const subgroupInput = ref<HTMLInputElement | null>(null)
 
 // Consolidate circle method's fine tuning to hard values when changing "tabs"
 function consolidateCircle() {
-  rank2.period = parseCents(rank2.circlePeriodCents, state.centsFractionDigits)
+  rank2.period = parseCents(rank2.circlePeriodCents, scale.centsFractionDigits)
   rank2.periodString = rank2.period.toString()
 
-  rank2.generator = parseCents(rank2.circleGeneratorCents, state.centsFractionDigits)
+  rank2.generator = parseCents(rank2.circleGeneratorCents, scale.centsFractionDigits)
   rank2.generatorString = rank2.generator.toString()
 
   rank2.periodStretch = '0'
@@ -66,16 +64,16 @@ function selectMosSize(mosSize: number) {
     rank2.numPeriods = rank2.temperament.numberOfPeriods
     rank2.method = 'generator'
 
-    rank2.period = parseCents(period, state.centsFractionDigits)
+    rank2.period = parseCents(period, scale.centsFractionDigits)
     rank2.periodString = rank2.period.toString()
 
-    rank2.generator = parseCents(generator, state.centsFractionDigits)
+    rank2.generator = parseCents(generator, scale.centsFractionDigits)
     rank2.generatorString = rank2.generator.toString()
   }
 }
 
 function updateCircleGenerator(value: number) {
-  rank2.generator = parseCents(value, state.centsFractionDigits)
+  rank2.generator = parseCents(value, scale.centsFractionDigits)
   rank2.generatorString = rank2.generator.toString()
   rank2.generatorFineCents = '0'
 }

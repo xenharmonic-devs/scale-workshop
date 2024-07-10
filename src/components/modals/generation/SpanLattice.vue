@@ -5,10 +5,10 @@ import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { OCTAVE } from '@/constants'
 import { useLatticeStore } from '@/stores/tempering'
 import { centString, setAndReportValidity } from '@/utils'
-import { useStateStore } from '@/stores/state'
 import { arrayToString, expandCode, parseInterval } from '@/utils'
 import { Interval, intervalValueAs } from 'sonic-weave'
 import { mmod } from 'xen-dev-utils'
+import { useScaleStore } from '@/stores/scale'
 
 defineProps<{
   show: boolean
@@ -17,7 +17,7 @@ defineProps<{
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
 const lattice = useLatticeStore()
-const state = useStateStore()
+const scale = useScaleStore()
 
 const basisElement = ref<HTMLInputElement | null>(null)
 const valsInput = ref<HTMLInputElement | null>(null)
@@ -46,10 +46,10 @@ function calculateGenerators() {
     generators[i] = mmod(generators[i], period)
   }
 
-  lattice.equaveString = centString(period, state.centsFractionDigits)
+  lattice.equaveString = centString(period, scale.centsFractionDigits)
   lattice.equave = parseInterval(lattice.equaveString)
 
-  lattice.basisString = generators.map((g) => centString(g, state.centsFractionDigits)).join(' ')
+  lattice.basisString = generators.map((g) => centString(g, scale.centsFractionDigits)).join(' ')
   lattice.method = 'generators'
 }
 

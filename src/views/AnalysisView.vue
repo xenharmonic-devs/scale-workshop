@@ -565,7 +565,7 @@ const sSlider = computed({
           </tr>
           <tr v-for="(cents, i) of centss" :key="i">
             <td>{{ labels[i] }}</td>
-            <td>{{ cents.toFixed(state.centsFractionDigits) }}</td>
+            <td>{{ cents.toFixed(scale.centsFractionDigits) }}</td>
             <td>{{ (100 * entropy.entropyPercentage(cents)).toFixed(3) }}</td>
           </tr>
         </table>

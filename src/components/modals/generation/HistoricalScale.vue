@@ -7,7 +7,6 @@ import { circleDifference, mmod } from 'xen-dev-utils'
 import { mosSizes } from 'moment-of-symmetry'
 import { spineLabel as spineLabel_, parseInterval, expandCode } from '@/utils'
 import { useHistoricalStore } from '@/stores/historical'
-import { useStateStore } from '@/stores/state'
 import { Interval, TimeMonzo } from 'sonic-weave'
 import { useScaleStore } from '@/stores/scale'
 
@@ -23,7 +22,6 @@ const emit = defineEmits([
   'cancel'
 ])
 
-const state = useStateStore()
 const scale = useScaleStore()
 const historical = useHistoricalStore()
 
@@ -98,13 +96,13 @@ const temperedGenerator = computed(() => {
   }
   const cents =
     historical.pureGenerator.totalCents() + historical.tempering * historical.temperingStrength
-  return parseInterval(cents.toFixed(state.centsFractionDigits))
+  return parseInterval(cents.toFixed(scale.centsFractionDigits))
 })
 
 const enharmonicCents = computed(() => {
   const ws = historical.wellIntervals
   return circleDifference(ws[ws.length - 1].totalCents(), ws[0].totalCents()).toFixed(
-    state.centsFractionDigits
+    scale.centsFractionDigits
   )
 })
 
@@ -131,7 +129,7 @@ function generate(expand = true) {
 
     let genString = temperedGenerator.value.toString()
     if (historical.format === 'cents') {
-      genString = temperedGenerator.value.totalCents().toFixed(state.centsFractionDigits)
+      genString = temperedGenerator.value.totalCents().toFixed(scale.centsFractionDigits)
     }
     emit('update:scaleName', `Rank 2 temperament (${genString}, ${historical.periodString})`)
   } else {
@@ -147,7 +145,7 @@ function generate(expand = true) {
     }
   }
   if (historical.format === 'cents') {
-    source += `\ni => cents(i, ${state.centsFractionDigits})`
+    source += `\ni => cents(i, ${scale.centsFractionDigits})`
   }
   // Check if the scale can be centered around C
   if (
@@ -308,7 +306,7 @@ function generate(expand = true) {
                 :value="candidate.exponent"
               >
                 {{ candidate.exponent }} /
-                {{ candidate.tempering.toFixed(state.centsFractionDigits) }} ¢
+                {{ candidate.tempering.toFixed(scale.centsFractionDigits) }} ¢
               </option>
             </select>
           </div>

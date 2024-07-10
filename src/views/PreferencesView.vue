@@ -108,7 +108,7 @@ const scale = useScaleStore()
               type="number"
               class="control"
               min="0"
-              v-model="state.centsFractionDigits"
+              v-model="scale.centsFractionDigits"
             />
           </div>
           <div class="control">
@@ -118,7 +118,7 @@ const scale = useScaleStore()
               type="number"
               class="control"
               min="0"
-              v-model="state.decimalFractionDigits"
+              v-model="scale.decimalFractionDigits"
             />
           </div>
         </div>

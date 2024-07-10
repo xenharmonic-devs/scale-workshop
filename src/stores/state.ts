@@ -19,8 +19,6 @@ export const useStateStore = defineStore('state', () => {
   const colorScheme = ref<'light' | 'dark'>(
     (storedScheme ?? mediaScheme) === 'dark' ? 'dark' : 'light'
   )
-  const centsFractionDigits = ref(parseInt(storage.getItem('centsFractionDigits') ?? '3', 10))
-  const decimalFractionDigits = ref(parseInt(storage.getItem('decimalFractionDigits') ?? '5', 10))
   const showVirtualQwerty = ref(storage.getItem('showVirtualQwerty') === 'true')
   const showMosTab = ref(storage.getItem('showMosTab') === 'true')
   const showKeyboardLabel = ref(storage.getItem('showKeyboardLabel') !== 'false')
@@ -71,8 +69,6 @@ export const useStateStore = defineStore('state', () => {
   // Local storage watchers
   syncValues({
     newline,
-    centsFractionDigits,
-    decimalFractionDigits,
     showVirtualQwerty,
     showMosTab,
     showKeyboardLabel,
@@ -110,8 +106,6 @@ export const useStateStore = defineStore('state', () => {
     // Persistent state
     newline,
     colorScheme,
-    centsFractionDigits,
-    decimalFractionDigits,
     showVirtualQwerty,
     showMosTab,
     showKeyboardLabel,

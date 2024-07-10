@@ -4,7 +4,6 @@ import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { FIFTH, FIFTH_12TET } from '@/constants'
 import { useModalStore } from '@/stores/modal'
 import { useScaleStore } from '@/stores/scale'
-import { useStateStore } from '@/stores/state'
 import { decimalString } from '@/utils'
 
 defineProps<{
@@ -15,10 +14,9 @@ const emit = defineEmits(['done', 'cancel'])
 
 const modal = useModalStore()
 const scale = useScaleStore()
-const state = useStateStore()
 
 function modify(expand = true) {
-  scale.sourceText += `\nstretch(${decimalString(modal.stretchAmount)})\ninterval => cents(interval, ${state.centsFractionDigits})`
+  scale.sourceText += `\nstretch(${decimalString(modal.stretchAmount)})\ninterval => cents(interval, ${scale.centsFractionDigits})`
   if (expand) {
     const { visitor, defaults } = scale.getUserScopeVisitor()
     scale.sourceText = visitor.expand(defaults)

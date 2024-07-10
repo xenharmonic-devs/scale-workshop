@@ -3,7 +3,6 @@ import { ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import { useTemperStore } from '@/stores/tempering'
 import { useScaleStore } from '@/stores/scale'
-import { useStateStore } from '@/stores/state'
 import { setAndReportValidity } from '@/utils'
 
 defineProps<{
@@ -14,7 +13,6 @@ const emit = defineEmits(['done', 'cancel'])
 
 const temper = useTemperStore()
 const scale = useScaleStore()
-const state = useStateStore()
 
 const valsInput = ref<HTMLInputElement | null>(null)
 const commasInput = ref<HTMLInputElement | null>(null)
@@ -52,7 +50,7 @@ function modify(expand = true) {
   if (temper.method === 'mapping') {
     scale.sourceText += `\nPrimeMapping(${temper.mappingString})`
   } else if (!temper.convertToEdoSteps) {
-    scale.sourceText += `\ncents(£, ${state.centsFractionDigits})`
+    scale.sourceText += `\ncents(£, ${scale.centsFractionDigits})`
   }
   if (expand) {
     const { visitor, defaults } = scale.getUserScopeVisitor()

@@ -48,16 +48,22 @@ export function parseVal(input: string) {
   return TWELVE
 }
 
-export function decimalString(amount: number) {
-  const result = amount.toString()
+export function decimalString(amount: number, fractionDigits?: number, real = false) {
+  const result = fractionDigits === undefined ? amount.toString() : amount.toFixed(fractionDigits)
+  if (real) {
+    return result + 'r'
+  }
   if (result.includes('e')) {
     return result
   }
   return result + 'e'
 }
 
-export function centString(cents: number, fractionDigits?: number) {
+export function centString(cents: number, fractionDigits?: number, real = false) {
   const result = fractionDigits === undefined ? cents.toString() : cents.toFixed(fractionDigits)
+  if (real) {
+    return result + ' rc'
+  }
   if (result.includes('e')) {
     return result + ' c'
   }

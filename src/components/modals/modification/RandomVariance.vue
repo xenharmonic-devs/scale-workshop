@@ -4,7 +4,6 @@ import Modal from '@/components/ModalDialog.vue'
 import { useModalStore } from '@/stores/modal'
 import { useScaleStore } from '@/stores/scale'
 import { centString } from '@/utils'
-import { useStateStore } from '@/stores/state'
 
 defineProps<{
   show: boolean
@@ -16,7 +15,6 @@ const emit = defineEmits(['done', 'cancel'])
 
 const modal = useModalStore()
 const scale = useScaleStore()
-const state = useStateStore()
 
 const equave = computed(() => {
   // Biased compared to cents, but who cares.
@@ -27,7 +25,7 @@ const equave = computed(() => {
 })
 
 function modify(expand = true) {
-  scale.sourceText += `\nrandomVariance(${centString(modal.varianceAmount)}, ${modal.varyEquave})\ninterval => cents(interval, ${state.centsFractionDigits})`
+  scale.sourceText += `\nrandomVariance(${centString(modal.varianceAmount)}, ${modal.varyEquave})\ninterval => cents(interval, ${scale.centsFractionDigits})`
   if (expand) {
     const { visitor, defaults } = scale.getUserScopeVisitor()
     scale.sourceText = visitor.expand(defaults)
