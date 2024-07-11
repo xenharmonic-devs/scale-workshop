@@ -460,6 +460,9 @@ export const useScaleStore = defineStore('scale', () => {
             return convertAccidentals(evStr(interval), accidentalPreference.value)
           }
           if (interval.domain === 'linear') {
+            if (interval.value.isFractional()) {
+              return evStr(interval)
+            }
             return decimalString(
               interval.valueOf(),
               decimalFractionDigits.value,

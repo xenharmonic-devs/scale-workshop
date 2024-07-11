@@ -13,12 +13,12 @@
   },
   "ragabageshri": {
     "name": "Raga Bageshri",
-    "source": "54 white:\n60 black:\n64 white:\n72 white:\n81 white:\n90 black:\n96 white:\n108 '2/1'\n\nsimplify\n",
+    "source": "54 white:\n60 black:\n64 white:\n72 white:\n81 white:\n90 black:\n96 white:\n108\n\nfraction\n",
     "categories": ["traditional", "just intonation"]
   },
   "ragabhairavi": {
     "name": "Raga Bhairavi",
-    "source": "eulerGenus(135, 5)\n$[5] = 16/15\nsort()\n[black, white, black, black, white, black, black, white]\n",
+    "source": "eulerGenus(135, 5)\n$[5] = 16/15\nsort()\n[black, white, black, black, white, black, black, white]\nfraction\n",
     "categories": ["traditional", "just intonation"]
   },
   "ragakafi": {
@@ -38,7 +38,7 @@
   },
   "22shruti": {
     "name": "22 Shruti",
-    "source": "rank2(3/2 white, 4, 0, 2/1 white)\nmergeOffset([10/9 yellow, 16/15 green, 256/243 white, 9/8 white], 'wrap')\nsimplify\n",
+    "source": "rank2(3/2 white, 4, 0, 2/1 white)\nmergeOffset([10/9 yellow, 16/15 green, 256/243 white, 9/8 white], 'wrap')\n",
     "categories": ["traditional", "just intonation"]
   },
   "hirajoshi": {
@@ -50,7 +50,7 @@
   "hirajoshi-ji": {
     "title": "Hirajoshi just",
     "name": "Japanese pentatonic koto scale, theoretical. Helmholz/Ellis p.519, nr.110",
-    "source": "9/8 white\neulerGenus(15 white, 5, 2 gray)\n",
+    "source": "9/8 white\neulerGenus(15 white, 5, 2/1 gray)\n",
     "categories": ["traditional", "just intonation"]
   },
   "balafon": {
@@ -109,17 +109,17 @@
   },
   "archytasdiatonic": {
     "name": "Archytas Diatonic",
-    "source": "(2::4) white\nmergeOffset([28/27 blue, 32/27 white, 4/3 white])\nsimplify\n",
+    "source": "(2::4) white\nmergeOffset([28/27 blue, 32/27 white, 4/3 white])\nfraction\n",
     "categories": ["traditional", "just intonation"]
   },
   "archytasenharmonic": {
     "name": "Archytas Enharmonic",
-    "source": "(2::4) white\nmergeOffset([28/27 blue, 16/15 green, 4/3 white])\nsimplify\n",
+    "source": "(2::4) white\nmergeOffset([28/27 blue, 16/15 green, 4/3 white])\nfraction\n",
     "categories": ["traditional", "just intonation"]
   },
   "didymuschromatic": {
     "name": "Didymus Chromatic",
-    "source": "2 white::4\nmergeOffset([16/15 green, 10/9 yellow, 4/3 white])\nsimplify\n",
+    "source": "2 white::4\nmergeOffset([16/15 green, 10/9 yellow, 4/3 white])\nfraction\n",
     "categories": ["traditional", "just intonation"]
   },
   "ptolemydiatonicditoniaion": {
@@ -129,12 +129,12 @@
   },
   "ptolemydiatonichemiolion": {
     "name": "Ptolemy Diatonic Hemiolion",
-    "source": "2::4\nmergeOffset([12/11 black, 6/5 green, 4/3])\nwhite\nsimplify\n",
+    "source": "2::4\nmergeOffset([12/11 black, 6/5 green, 4/3])\nwhite\nfraction\n",
     "categories": ["traditional", "just intonation"]
   },
   "pythagorean": {
     "name": "Pythagorean",
-    "source": "(3^[-2..4] rdc 2) white ['F', 'C', 'G', 'D', 'A', 'E', 'B']\n(3^[-7..-3] rdc 2) black ['G♭', 'D♭', 'A♭', 'E♭', 'B♭']\nsort()\n",
+    "source": "(3^[-2..4] rdc 2/1) white ['F', 'C', 'G', 'D', 'A', 'E', 'B']\n(3^[-7..-3] rdc 2/1) black ['G♭', 'D♭', 'A♭', 'E♭', 'B♭']\nsort()\n",
     "categories": ["traditional", "just intonation"],
     "baseMidiNote": 67,
     "baseFrequency": 391
@@ -165,7 +165,7 @@
   },
   "carlossuperjust": {
     "name": "Wendy Carlos Super Just",
-    "source": "[3,5..17]\n[white, yellow, blue, white, lavender, chocolate, yellow, indigo]\n1/3 white\n3/5 green\n5/3 yellow\n2 white\norganize()\n",
+    "source": "[3,5..17]\n[white, yellow, blue, white, lavender, chocolate, yellow, indigo]\n1/3 white\n3/5 green\n5/3 yellow\n2/1 white\norganize()\n",
     "baseFrequency": 264,
     "baseMidiNote": 60,
     "categories": ["just intonation"]
@@ -189,7 +189,7 @@
   "gradycentaurah": {
     "title": "Kraig Grady Centaura Harmonic (11-limit)",
     "name": "Kraig Grady Centaura Harmonic",
-    "source": "4/3 white\n3/2 white\n2/1 white\nmergeOffset([7/6 blue, 5/4 yellow, 11/8 lavender, 3/2 white], 'wrap')\ndel $[10]\nsimplify\n",
+    "source": "4/3 white\n3/2 white\n2/1 white\nmergeOffset([7/6 blue, 5/4 yellow, 11/8 lavender, 3/2 white], 'wrap')\ndel $[10]\n",
     "baseFrequency": 264,
     "baseMidiNote": 60,
     "categories": ["just intonation"]
