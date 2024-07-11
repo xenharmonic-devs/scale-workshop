@@ -9,6 +9,7 @@ const NEWLINE = process.platform === 'linux' ? UNIX_NEWLINE : WINDOWS_NEWLINE
 describe('Scala exporters', () => {
   it('can handle all line types', () => {
     const params = getTestData('Scala exporter unit test v0.0.0')
+    params.labels = Array(params.labels.length).fill('')
     const sclExporter = new ScalaSclExporter(params)
     const expectedSclContents = [
       '! test.scl',
@@ -64,5 +65,31 @@ describe('Scala exporters', () => {
     ].join(NEWLINE)
 
     expect(kbmExporter.getFileContents()).toBe(expectedKbmContents)
+  })
+
+  it('can include labels', () => {
+    const params = getTestData('Scala exporter unit test v0.0.0')
+    params.centsFractionDigits = 1
+    params.labels = params.labels.map((l) => ' ! ' + l)
+    const sclExporter = new ScalaSclExporter(params)
+    const expectedSclContents = [
+      '! test.scl',
+      '! Created using Scala exporter unit test v0.0.0',
+      '!',
+      '! https://scaleworkshop.plainsound.org/',
+      '!',
+      'Test Scale',
+      ' 7',
+      '!',
+      ' 100.0 ! 100.',
+      ' 6/5 ! C5_5',
+      ' 960.0 ! 4\\5',
+      ' 5/3 ! 5/3',
+      ' 531.2 ! 1,3591409142295225r',
+      ' 107.5 ! 3486784401/3276800000',
+      ' 2/1 ! 2/1',
+      ''
+    ].join(NEWLINE)
+    expect(sclExporter.getFileContents()).toBe(expectedSclContents)
   })
 })

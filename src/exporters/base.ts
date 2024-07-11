@@ -22,6 +22,7 @@ export type ExporterParams = {
   displayPeriod?: boolean
   integratePeriod?: boolean
   presetIndex?: number
+  centsFractionDigits?: number
 }
 
 export class BaseExporter {

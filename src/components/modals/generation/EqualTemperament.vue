@@ -115,9 +115,3 @@ function generate(expand = true) {
     </template>
   </Modal>
 </template>
-
-<style scoped>
-label.disabled {
-  color: var(--color-text-mute);
-}
-</style>

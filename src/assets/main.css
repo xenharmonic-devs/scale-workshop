@@ -102,6 +102,9 @@ input:disabled {
   color: var(--color-accent-mute);
   background-color: var(--color-background-mute);
 }
+label.disabled {
+  color: var(--color-text-mute);
+}
 ul.btn-group {
   list-style: none;
   padding-left: unset;

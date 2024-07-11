@@ -16,6 +16,8 @@ export class ScalaSclExporter extends BaseExporter {
   getFileContents() {
     const newline = this.params.newline
     const intervals = this.params.relativeIntervals
+    const labels = this.params.labels
+    const centsFractionDigits = this.params.centsFractionDigits ?? 6
     // assemble the .scl file contents
     let file = '! ' + this.params.filename + '.scl' + newline
     file += '! Created using ' + this.appTitle + newline
@@ -39,10 +41,13 @@ export class ScalaSclExporter extends BaseExporter {
         ) {
           file += `${numerator}/${denominator}`
         } else {
-          file += monzo.toCents().toFixed(6)
+          file += monzo.toCents().toFixed(centsFractionDigits)
         }
       } else {
-        file += monzo.toCents().toFixed(6)
+        file += monzo.toCents().toFixed(centsFractionDigits)
+      }
+      if (labels[i]?.length) {
+        file += labels[i]
       }
       file += newline
     }

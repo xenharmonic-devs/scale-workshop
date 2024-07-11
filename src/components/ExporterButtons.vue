@@ -11,6 +11,10 @@ import { useStateStore } from '@/stores/state'
 import { makeEnvelope, sanitizeFilename } from '@/utils'
 import { computed, defineAsyncComponent, ref } from 'vue'
 
+const ScalaExportModal = defineAsyncComponent(
+  () => import('@/components/modals/export/ScalaExport.vue')
+)
+
 const KorgExportModal = defineAsyncComponent(
   () => import('@/components/modals/export/KorgExport.vue')
 )
@@ -31,6 +35,7 @@ const cycles = useCyclesStore()
 const exportTextClipboard = ref(
   API_URL ? "Copy this scale's unique URL to clipboard" : '[URL sharing disabled]'
 )
+const showScalaExportModal = ref(false)
 const showKorgExportModal = ref(false)
 const showMtsSysexExportModal = ref(false)
 const showReaperExportModal = ref(false)
@@ -118,6 +123,19 @@ function doExport(exporter: ExporterKey) {
 </script>
 <template>
   <Teleport to="body">
+    <ScalaExportModal
+      v-if="showScalaExportModal"
+      :show="showScalaExportModal"
+      @confirm="showScalaExportModal = false"
+      @cancel="showScalaExportModal = false"
+      :newline="state.newline"
+      :relativeIntervals="scale.relativeIntervals"
+      :midiOctaveOffset="-1"
+      :scale="scale.scale"
+      :labels="scale.labels"
+      :colors="scale.colors"
+    />
+
     <KorgExportModal
       v-if="showKorgExportModal"
       :show="showKorgExportModal"
@@ -172,7 +190,7 @@ function doExport(exporter: ExporterKey) {
     <p><strong>AnaMark v2 tuning (.tun)</strong></p>
     <p>Tuning file for various synths</p>
   </a>
-  <a href="#" class="btn" @click="doExport('scalascl')">
+  <a href="#" class="btn" @click="showScalaExportModal = true">
     <p><strong>Scala scale (.scl)</strong></p>
     <p>
       Scale file for various synths.<br />If you use this file without an accompanying .kbm file,
