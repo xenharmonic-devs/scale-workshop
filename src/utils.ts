@@ -377,6 +377,18 @@ export type AccidentalStyle = 'double' | 'single' | 'ASCII'
 
 const NOMINALS = ['F', 'C', 'G', 'D', 'A', 'E', 'B']
 
+export function convertAccidentals(label: string, style: AccidentalStyle) {
+  if (style === 'double') {
+    // Discriminating between pitches and generic labels not supported.
+    return label
+  }
+  label = label.replaceAll('𝄪', '♯♯').replaceAll('𝄫', '♭♭')
+  if (style === 'single') {
+    return label
+  }
+  return label.replaceAll('♯', '#').replaceAll('♭', 'b')
+}
+
 /**
  * Obtain a nominal with sharps and flats along the chain of fifths starting from C.
  * @param fifthsUp How far clockwise to travel along the spiral of fifths.

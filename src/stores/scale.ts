@@ -7,7 +7,8 @@ import {
   midiNoteNumberToName,
   randomId,
   centString,
-  decimalString
+  decimalString,
+  convertAccidentals
 } from '@/utils'
 import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
@@ -416,7 +417,7 @@ export const useScaleStore = defineStore('scale', () => {
         // eslint-disable-next-line no-inner-declarations
         function autoLabel(interval: Interval) {
           if (interval.label.length) {
-            return interval.label
+            return convertAccidentals(interval.label, accidentalPreference.value)
           }
           const node = interval.node
           if (node) {
@@ -439,7 +440,7 @@ export const useScaleStore = defineStore('scale', () => {
                 interval.value instanceof TimeReal
               )
             }
-            return evStr(interval)
+            return convertAccidentals(evStr(interval), accidentalPreference.value)
           }
           if (interval.domain === 'linear') {
             return decimalString(
