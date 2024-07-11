@@ -6,7 +6,7 @@ import { defineStore } from 'pinia'
 import { type HarmonicEntropyOptions } from 'harmonic-entropy'
 
 // The app freezes if we try to recalculate entropy in the main thread.
-const worker = new EntropyWorker()
+let worker: Worker | undefined
 // Debounce doesn't block workers so we need extra guards to hide changes that would be overwritten.
 let jobId = 0
 
@@ -18,6 +18,10 @@ const SERIES = 'tenney'
 const NORMALIZE = true
 
 export const useHarmonicEntropyStore = defineStore('harmonic-entropy', () => {
+  if (worker === undefined) {
+    worker = new EntropyWorker()
+  }
+
   const table = reactive<[number, number][]>([])
 
   // The fetched N is much larger, but we use a smaller value for the UI.
@@ -79,7 +83,7 @@ export const useHarmonicEntropyStore = defineStore('harmonic-entropy', () => {
     debounce((newValue) => {
       const opts = { ...options.value }
       opts.N = newValue
-      worker.postMessage({ options: opts, jobId: ++jobId })
+      worker!.postMessage({ options: opts, jobId: ++jobId })
     })
   )
 
@@ -88,7 +92,7 @@ export const useHarmonicEntropyStore = defineStore('harmonic-entropy', () => {
     debounce((newValue) => {
       const opts = { ...options.value }
       opts.a = newValue
-      worker.postMessage({ options: opts, jobId: ++jobId })
+      worker!.postMessage({ options: opts, jobId: ++jobId })
     })
   )
 
@@ -97,7 +101,7 @@ export const useHarmonicEntropyStore = defineStore('harmonic-entropy', () => {
     debounce((newValue) => {
       const opts = { ...options.value }
       opts.s = newValue
-      worker.postMessage({ options: opts, jobId: ++jobId })
+      worker!.postMessage({ options: opts, jobId: ++jobId })
     })
   )
 
