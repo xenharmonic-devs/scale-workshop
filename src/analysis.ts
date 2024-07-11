@@ -1,4 +1,4 @@
-import { Interval, TimeMonzo, TimeReal } from 'sonic-weave'
+import { Interval, TimeMonzo, TimeReal, type IntervalDomain } from 'sonic-weave'
 import { circleDistance, mmod, valueToCents } from 'xen-dev-utils'
 
 const EPSILON = 1e-6
@@ -358,6 +358,20 @@ export function freeVAOs(
   return result
 }
 
+// There's no perfect solution here, but I guess this is somewhat reasonable.
+function mixedFormat(value: TimeMonzo | TimeReal): Interval {
+  let domain: IntervalDomain = 'logarithmic'
+  let label = ''
+  if (value.isFractional()) {
+    domain = 'linear'
+  } else {
+    label = value.totalCents().toFixed(1)
+  }
+  const interval = new Interval(value, domain)
+  interval.label = label
+  return interval
+}
+
 // Interval matrix a.k.a the modes of a scale
 export function intervalMatrix(intervals: Interval[]) {
   intervals = intervals.map((i) => i.shallowClone())
@@ -367,9 +381,9 @@ export function intervalMatrix(intervals: Interval[]) {
     intervals[i].color = undefined
     intervals[i].label = ''
   }
-  const equave = intervals[intervals.length - 1]
-  const unison = new Interval(equave.value.div(equave.value), equave.domain)
-  const result = [[unison, ...intervals]]
+  const equave = mixedFormat(intervals[intervals.length - 1].value)
+  const unison = mixedFormat(equave.value.div(equave.value))
+  const result = [[unison, ...intervals.map((i) => mixedFormat(i.value))]]
   for (let i = 0; i < intervals.length - 1; ++i) {
     const root = intervals[i].value
     const row = []
@@ -378,7 +392,7 @@ export function intervalMatrix(intervals: Interval[]) {
       if (j < i) {
         value = value.mul(equave.value)
       }
-      row[mmod(j - i, intervals.length)] = new Interval(value, intervals[j].domain)
+      row[mmod(j - i, intervals.length)] = mixedFormat(value)
     }
     row.push(equave)
     result.push(row)

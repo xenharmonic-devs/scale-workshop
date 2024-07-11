@@ -16,7 +16,7 @@ import { useAudioStore } from '@/stores/audio'
 import { useStateStore } from '@/stores/state'
 import { literalToString, type Interval } from 'sonic-weave'
 import { useScaleStore } from '@/stores/scale'
-import { Fraction, mmod } from 'xen-dev-utils'
+import { Fraction, lcm, mmod } from 'xen-dev-utils'
 import { OCTAVE, UNISON } from '@/constants'
 import { useHarmonicEntropyStore } from '@/stores/harmonic-entropy'
 import Values from 'values.js'
@@ -29,7 +29,7 @@ const scale = useScaleStore()
 const entropy = useHarmonicEntropyStore()
 
 const subtab = ref<'matrix' | 'wheels' | 'entropy'>('matrix')
-const cellFormat = ref<'best' | 'fraction' | 'cents' | 'decimal'>('best')
+const cellFormat = ref<'best' | 'fraction' | 'cents' | 'et' | 'decimal'>('best')
 const simplifyTolerance = ref(3.5)
 const showOptions = ref(false)
 const trailLongevity = ref(70)
@@ -66,6 +66,23 @@ const strokeStyle = computed(() => {
   return getComputedStyle(document.documentElement).getPropertyValue('--color-text').trim()
 })
 
+const scaleEquave = computed(
+  () => scale.relativeIntervals[scale.relativeIntervals.length - 1].value
+)
+
+const etDenominator = computed(() => {
+  const e = scaleEquave.value
+  let result = 1
+  for (const interval of scale.relativeIntervals) {
+    const fractionOfEquave = interval.value.log(e)
+    if (typeof fractionOfEquave === 'number') {
+      return null
+    }
+    result = lcm(result, fractionOfEquave.d)
+  }
+  return result
+})
+
 // While interval.name suffices for the tuning table
 // we want more accurate results here.
 function formatMatrixCell(interval: Interval) {
@@ -92,8 +109,20 @@ function formatMatrixCell(interval: Interval) {
     // Consistent with tuning table localization.
     return interval.valueOf().toFixed(3)
   }
+  if (cellFormat.value === 'et') {
+    const fractionOfEquave = interval.value.log(scaleEquave.value)
+    if (typeof fractionOfEquave === 'number') {
+      return `~${Math.round(fractionOfEquave * 100)}%`
+    }
+    const denom = etDenominator.value
+    if (denom === null) {
+      return fractionOfEquave.toFraction().replace('/', '\\')
+    }
+    const { s, n, d } = fractionOfEquave
+    return `${s * n * (denom / d)}\\${denom}`
+  }
 
-  return interval.toString()
+  return interval.label || interval.toString()
 }
 
 const highlights = reactive<boolean[][]>([])
@@ -324,7 +353,7 @@ const sSlider = computed({
           <label>Display intervals in matrix as</label>
           <span>
             <input type="radio" id="format-best" value="best" v-model="cellFormat" />
-            <label for="format-best">Default</label>
+            <label for="format-best">Mixed</label>
           </span>
 
           <span>
@@ -335,6 +364,11 @@ const sSlider = computed({
           <span>
             <input type="radio" id="format-cents" value="cents" v-model="cellFormat" />
             <label for="format-cents">Cents</label>
+          </span>
+
+          <span>
+            <input type="radio" id="format-et" value="et" v-model="cellFormat" />
+            <label for="format-et">Equal temperament</label>
           </span>
 
           <span>
