@@ -243,7 +243,7 @@ const centss = computed(() => {
   const baseCents = scale.scale.getCents(index)
   while (index < 10000) {
     const cents = scale.scale.getCents(index++) - baseCents
-    if (cents > 6000 + EPSILON) {
+    if (isNaN(cents) || Math.abs(cents) > 6000 + EPSILON) {
       break
     }
     result.push(cents)

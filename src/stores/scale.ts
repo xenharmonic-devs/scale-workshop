@@ -27,7 +27,9 @@ import {
   builtinNode,
   repr,
   getGlobalVisitor,
-  TimeReal
+  TimeReal,
+  upcastBool,
+  unaryBroadcast
 } from 'sonic-weave'
 import {
   APP_TITLE,
@@ -43,6 +45,7 @@ import { pianoMap } from 'isomorphic-qwerty'
 import { computeWhiteIndices } from '@/midi'
 import { midiKeyInfo } from 'xen-midi'
 import { undoHistory } from '@/undo'
+import { useHarmonicEntropyStore } from './harmonic-entropy'
 
 // Colors from #1 to #12 inclusive.
 function defaultColors(base: number) {
@@ -57,6 +60,19 @@ function defaultLabels(base: number, accidentalStyle: AccidentalStyle) {
   }
   return result.map((n) => n.replace('#', '♯'))
 }
+
+function harmonicEntropy(this: ExpressionVisitor, interval: SonicWeaveValue): SonicWeaveValue {
+  if (typeof interval === 'boolean' || interval instanceof Interval) {
+    const hes = useHarmonicEntropyStore()
+    const he = hes.entropyPercentage(relative.bind(this)(upcastBool(interval)).totalCents())
+    return Interval.fromValue(he)
+  }
+  const h = harmonicEntropy.bind(this)
+  return unaryBroadcast.bind(this)(interval, h)
+}
+harmonicEntropy.__doc__ =
+  'Compute the harmonic entropy as a percentage of the range of observed values.'
+harmonicEntropy.__node__ = builtinNode(harmonicEntropy)
 
 export const useScaleStore = defineStore('scale', () => {
   // The scale store should remain unit-test friendly so this state needs to be here as well
@@ -349,7 +365,8 @@ export const useScaleStore = defineStore('scale', () => {
       baseMidiNote: _,
       baseFrequency: baseFreq,
       latticeView,
-      warn
+      warn,
+      harmonicEntropy
     }
     const visitor = getGlobalVisitor(true, extraBuiltins)
     visitor.rootContext!.gas = gas.value
