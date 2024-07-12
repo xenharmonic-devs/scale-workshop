@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, reactive, ref } from 'vue'
+import { onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { Input, Output, WebMidi, type NoteMessageEvent, type MessageEvent } from 'webmidi'
 import MidiPiano from '@/components/MidiPiano.vue'
 import { useMidiStore } from '@/stores/midi'
@@ -142,6 +142,28 @@ onUnmounted(() => {
   stopHighlights.value()
   stopActivations.value()
 })
+
+function selectAllInputChannels() {
+  for (let i = 1; i <= 16; ++i) {
+    props.midiInputChannels.add(i)
+  }
+}
+
+function unselectAllInputChannels() {
+  props.midiInputChannels.clear()
+}
+
+watch(
+  () => midi.multichannelToEquave,
+  (newValue) => {
+    if (newValue) {
+      selectAllInputChannels()
+    } else {
+      unselectAllInputChannels()
+      props.midiInputChannels.add(1)
+    }
+  }
+)
 </script>
 
 <template>
@@ -175,6 +197,10 @@ onUnmounted(() => {
                 @input="toggleInputChannel"
               />
             </span>
+          </div>
+          <div class="btn-group">
+            <button @click="selectAllInputChannels">Select all</button>
+            <button @click="unselectAllInputChannels">Select none</button>
           </div>
           <div class="control checkbox-group">
             <div>
