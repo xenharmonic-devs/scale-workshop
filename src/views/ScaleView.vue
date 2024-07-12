@@ -38,7 +38,7 @@ onMounted(() => {
           placeholder="Untitled scale"
           v-model="scale.name"
           @focus="controls!.clearPaletteInfo"
-          @update="updateScale()"
+          @input="updateScale()"
         ></textarea>
         <ul class="btn-group">
           <NewScale ref="newScale" @done="controls!.focus()" @mouseenter="modifyScale!.blur()" />
