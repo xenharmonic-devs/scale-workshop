@@ -183,4 +183,10 @@ defineExpose({ focus, clearPaletteInfo })
   background: none;
   color: var(--color-text-mute);
 }
+
+p.error,
+p.warning {
+  max-height: 12em;
+  overflow-y: auto;
+}
 </style>

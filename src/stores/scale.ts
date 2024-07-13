@@ -47,6 +47,8 @@ import { midiKeyInfo } from 'xen-midi'
 import { undoHistory } from '@/undo'
 import { useHarmonicEntropyStore } from './harmonic-entropy'
 
+const MAX_ERROR_LENGTH = 10000
+
 // Colors from #1 to #12 inclusive.
 function defaultColors(base: number) {
   return [...Array(12).keys()].map((i) => MIDI_NOTE_COLORS[mmod(base + 1 + i, 12)])
@@ -345,7 +347,7 @@ export const useScaleStore = defineStore('scale', () => {
   function warn(this: ExpressionVisitor, ...args: any[]) {
     const s = repr.bind(this)
     const message = args.map((a) => (typeof a === 'string' ? a : s(a))).join(', ')
-    warning.value = message
+    warning.value = message.slice(0, MAX_ERROR_LENGTH)
   }
   warn.__doc__ = 'Issue a warning to the user and continue execution.'
   warn.__node__ = builtinNode(warn)
@@ -530,9 +532,9 @@ export const useScaleStore = defineStore('scale', () => {
       }
     } catch (e) {
       if (e instanceof Error) {
-        error.value = e.message
+        error.value = e.message.slice(0, MAX_ERROR_LENGTH)
       } else if (typeof e === 'string') {
-        error.value = e
+        error.value = e.slice(0, MAX_ERROR_LENGTH)
       }
     }
   }
