@@ -48,6 +48,7 @@ import { undoHistory } from '@/undo'
 import { useHarmonicEntropyStore } from './harmonic-entropy'
 
 const MAX_ERROR_LENGTH = 10000
+const EPSILON = 1e-6
 
 // Colors from #1 to #12 inclusive.
 function defaultColors(base: number) {
@@ -307,6 +308,19 @@ export const useScaleStore = defineStore('scale', () => {
       return baseMidiNote.value - baseInfo.sharpOf - 1
     }
     return baseMidiNote.value - baseInfo.whiteNumber
+  })
+
+  const nameOfEquave = computed(() => {
+    const ratio = scale.value.equaveRatio
+    // Biased compared to cents, but who cares.
+    if (Math.abs(ratio - 2) < EPSILON) {
+      return 'octave'
+    } else if (Math.abs(ratio - 3) < EPSILON) {
+      return 'tritave'
+    } else if (Math.abs(ratio - 5) < EPSILON) {
+      return 'pentave'
+    }
+    return 'equave'
   })
 
   // Sanity watchers
@@ -704,6 +718,7 @@ export const useScaleStore = defineStore('scale', () => {
     splitAccidentals,
     whiteIndices,
     whiteModeOffset,
+    nameOfEquave,
     // Methods
     rerollId,
     getUserScopeVisitor,

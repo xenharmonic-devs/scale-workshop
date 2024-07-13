@@ -139,7 +139,7 @@ defineExpose({ blur })
       <a href="#" @click="showMosModal = true"><li>Moment of symmetry scale</li></a>
       <a href="#" @click="showHistoricalModal = true"><li>Historical temperament</li></a>
       <a href="#" @click="showEulerGenusModal = true"><li>Euler-Fokker genus</li></a>
-      <a href="#" @click="showLatticeModal = true"><li>Parallelotope</li></a>
+      <a href="#" @click="showLatticeModal = true"><li>Parallelotope / Lattice</li></a>
       <a href="#" @click="showGeneratorSequenceModal = true"><li>Generator sequence</li></a>
       <a href="#" @click="showConcordanceShellModal = true"><li>Concordance shell</li></a>
       <li class="divider"></li>

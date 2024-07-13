@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import { useModalStore } from '@/stores/modal'
 import { useScaleStore } from '@/stores/scale'
@@ -9,20 +8,10 @@ defineProps<{
   show: boolean
 }>()
 
-const EPSILON = 1e-6
-
 const emit = defineEmits(['done', 'cancel'])
 
 const modal = useModalStore()
 const scale = useScaleStore()
-
-const equave = computed(() => {
-  // Biased compared to cents, but who cares.
-  if (Math.abs(scale.scale.equaveRatio - 2) < EPSILON) {
-    return 'octave'
-  }
-  return 'equave'
-})
 
 function modify(expand = true) {
   scale.sourceText += `\nrandomVariance(${centString(modal.varianceAmount)}, ${modal.varyEquave})\ncents(£, ${scale.centsFractionDigits})`
@@ -49,7 +38,7 @@ function modify(expand = true) {
         </div>
         <div class="control checkbox-container">
           <input id="vary-equave" type="checkbox" v-model="modal.varyEquave" />
-          <label for="vary-equave">Vary the {{ equave }}</label>
+          <label for="vary-equave">Vary the {{ scale.nameOfEquave }}</label>
         </div>
       </div>
     </template>

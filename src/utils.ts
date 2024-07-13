@@ -8,6 +8,13 @@ const TAU = 2 * Math.PI
 
 const TWELVE = evaluateExpression('12@', false) as Val
 
+export function capitalizeFirstLetter(str: string) {
+  if (!str.length) {
+    return str
+  }
+  return str[0].toUpperCase() + str.slice(1)
+}
+
 /**
  * Calculate the smallest power of two greater or equal to the input value.
  * @param x Integer to compare to.

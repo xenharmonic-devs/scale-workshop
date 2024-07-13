@@ -4,6 +4,7 @@ import { useScaleStore } from '@/stores/scale'
 import { useModalStore } from '@/stores/modal'
 import { useApproximateByRatiosStore } from '@/stores/approximate-by-ratios'
 import DropdownGroup from '@/components/DropdownGroup.vue'
+import { capitalizeFirstLetter } from '@/utils'
 
 const emit = defineEmits(['done', 'mouseenter'])
 
@@ -159,9 +160,11 @@ defineExpose({ blur })
     <ul>
       <a href="#" @click="showExpandModal = true"><li>Expand/simplify lines</li></a>
       <a href="#" @click="sort"><li>Sort ascending</li></a>
-      <a href="#" @click="reduce"><li>Reduce</li></a>
-      <a href="#" @click="retrovert"><li>Retrovert</li></a>
-      <a href="#" @click="clickRotate"><li>Rotate</li></a>
+      <a href="#" @click="reduce"
+        ><li>{{ capitalizeFirstLetter(scale.nameOfEquave) }} reduce</li></a
+      >
+      <a href="#" @click="retrovert"><li>Retrovert (negative harmony)</li></a>
+      <a href="#" @click="clickRotate"><li>Rotate mode</li></a>
       <a href="#" @click="showRepeatModal = true"><li>Repeat</li></a>
       <a href="#" @click="clickSubset"><li>Subset</li></a>
       <a href="#" @click="showStretchModal = true"><li>Stretch/compress</li></a>
