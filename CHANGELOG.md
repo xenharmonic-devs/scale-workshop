@@ -1,6 +1,7 @@
 # Change log
 
 ## 2.5.7
+ * Bug fix: Re-enable keyboard tab navigation and other QWERTY related actions [#756](https://github.com/xenharmonic-devs/scale-workshop/issues/756)
  * Typo fix: Round middle C to 262Hz in Scala export description [#752](https://github.com/xenharmonic-devs/scale-workshop/issues/752)
 ## 2.5.6
  * Bug fix: Fix a crash when "down" was non-zero in "Generate Rank-2" [#729](https://github.com/xenharmonic-devs/scale-workshop/issues/729)
