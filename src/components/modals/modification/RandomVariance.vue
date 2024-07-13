@@ -25,7 +25,7 @@ const equave = computed(() => {
 })
 
 function modify(expand = true) {
-  scale.sourceText += `\nrandomVariance(${centString(modal.varianceAmount)}, ${modal.varyEquave})\ninterval => cents(interval, ${scale.centsFractionDigits})`
+  scale.sourceText += `\nrandomVariance(${centString(modal.varianceAmount)}, ${modal.varyEquave})\ncents(£, ${scale.centsFractionDigits})`
   if (expand) {
     const { visitor, defaults } = scale.getUserScopeVisitor()
     scale.sourceText = visitor.expand(defaults)

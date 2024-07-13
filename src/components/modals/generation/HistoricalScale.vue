@@ -145,7 +145,7 @@ function generate(expand = true) {
     }
   }
   if (historical.format === 'cents') {
-    source += `\ni => cents(i, ${scale.centsFractionDigits})`
+    source += `\ncents(£, ${scale.centsFractionDigits})`
   }
   // Check if the scale can be centered around C
   if (
