@@ -7,6 +7,10 @@ import { Scale } from 'scale-workshop-core'
 import { useModalStore } from '@/stores/modal'
 import { setAndReportValidity } from '@/utils'
 
+defineProps<{
+  show: boolean
+}>()
+
 const emit = defineEmits(['update:scale', 'update:scaleName', 'cancel'])
 
 const modal = useModalStore()
@@ -41,7 +45,7 @@ function generate() {
 </script>
 
 <template>
-  <Modal @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate cross-polytope (hyperoctahedron)</h2>
     </template>

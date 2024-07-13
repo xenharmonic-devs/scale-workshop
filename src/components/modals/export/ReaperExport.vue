@@ -7,6 +7,7 @@ import type { Scale } from 'scale-workshop-core'
 import type { ExporterParams } from '@/exporters/base'
 
 const props = defineProps<{
+  show: boolean
   newline: string
   scaleName: string
   baseMidiNote: number
@@ -54,7 +55,7 @@ function doExport() {
 </script>
 
 <template>
-  <Modal @confirm="doExport" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="doExport" @cancel="$emit('cancel')">
     <template #header>
       <h2>Export Reaper note name map</h2>
     </template>

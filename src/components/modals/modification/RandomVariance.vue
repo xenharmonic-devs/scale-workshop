@@ -7,6 +7,7 @@ import { useModalStore } from '@/stores/modal'
 const EPSILON = 1e-6
 
 const props = defineProps<{
+  show: boolean
   scale: Scale
   centsFractionDigits: number
   decimalFractionDigits: number
@@ -35,7 +36,7 @@ function modify() {
 </script>
 
 <template>
-  <Modal @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="modify" @cancel="$emit('cancel')">
     <template #header>
       <h2>Random variance</h2>
     </template>

@@ -10,6 +10,7 @@ import { ExtendedMonzo, Interval, Scale } from 'scale-workshop-core'
 import { useRank2Store } from '@/stores/tempering'
 
 const props = defineProps<{
+  show: boolean
   centsFractionDigits: number
   scale: Scale
 }>()
@@ -176,7 +177,7 @@ function generate() {
 </script>
 
 <template>
-  <Modal extraStyle="width: 30rem" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" extraStyle="width: 30rem" @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate rank 2 temperament</h2>
     </template>

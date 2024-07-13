@@ -6,6 +6,7 @@ import { FIFTH, FIFTH_12TET } from '@/constants'
 import { useModalStore } from '@/stores/modal'
 
 const props = defineProps<{
+  show: boolean
   scale: Scale
   centsFractionDigits: number
   decimalFractionDigits: number
@@ -27,7 +28,7 @@ function modify() {
 </script>
 
 <template>
-  <Modal @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="modify" @cancel="$emit('cancel')">
     <template #header>
       <h2>Stretch/compress scale</h2>
     </template>

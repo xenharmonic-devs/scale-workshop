@@ -7,6 +7,7 @@ import type { Scale } from 'scale-workshop-core'
 import type { ExporterParams } from '@/exporters/base'
 
 const props = defineProps<{
+  show: boolean
   newline: string
   scaleName: string
   baseMidiNote: number
@@ -57,7 +58,7 @@ async function doExport() {
 </script>
 
 <template>
-  <Modal @cancel="$emit('cancel')">
+  <Modal :show="show" @cancel="$emit('cancel')">
     <template #header>
       <h2>Export Korg Sound Librarian scale</h2>
     </template>

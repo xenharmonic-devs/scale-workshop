@@ -6,6 +6,7 @@ import { computed } from 'vue'
 import { centsToValue } from 'xen-dev-utils'
 
 const props = defineProps<{
+  show: boolean
   scale: Scale
 }>()
 
@@ -27,7 +28,7 @@ function modify() {
 </script>
 
 <template>
-  <Modal @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="modify" @cancel="$emit('cancel')">
     <template #header>
       <h2>Approximate by harmonics</h2>
     </template>

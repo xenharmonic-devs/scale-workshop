@@ -4,6 +4,7 @@ import type { Scale } from 'scale-workshop-core'
 import { useModalStore } from '@/stores/modal'
 
 const props = defineProps<{
+  show: boolean
   scale: Scale
 }>()
 
@@ -17,7 +18,7 @@ function modify() {
 </script>
 
 <template>
-  <Modal @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="modify" @cancel="$emit('cancel')">
     <template #header>
       <h2>Approximate by subharmonics</h2>
     </template>

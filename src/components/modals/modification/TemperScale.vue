@@ -10,6 +10,7 @@ import { setAndReportValidity, splitText } from '@/utils'
 import { useTemperStore } from '@/stores/tempering'
 
 const props = defineProps<{
+  show: boolean
   scale: Scale
   centsFractionDigits: number
 }>()
@@ -138,7 +139,7 @@ function modify() {
 </script>
 
 <template>
-  <Modal @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="modify" @cancel="$emit('cancel')">
     <template #header>
       <h2>Temper scale</h2>
     </template>

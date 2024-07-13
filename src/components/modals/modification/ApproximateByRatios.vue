@@ -17,6 +17,7 @@ import { setAndReportValidity } from '@/utils'
 const MAX_LENGTH = 128
 
 const props = defineProps<{
+  show: boolean
   scale: Scale
 }>()
 
@@ -123,7 +124,7 @@ function modifyAndAdvance() {
 </script>
 
 <template>
-  <Modal @confirm="modifyAndAdvance" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="modifyAndAdvance" @cancel="$emit('cancel')">
     <template #header>
       <h2>Approximate by ratios</h2>
     </template>

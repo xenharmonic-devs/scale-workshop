@@ -1,6 +1,7 @@
 # Change log
 
 ## 2.5.7
+ * Bug fix: Re-enable modal auto focus when show [#773](https://github.com/xenharmonic-devs/scale-workshop/issues/773)
  * Bug fix: Re-enable keyboard tab navigation and other QWERTY related actions [#756](https://github.com/xenharmonic-devs/scale-workshop/issues/756)
  * Typo fix: Round middle C to 262Hz in Scala export description [#752](https://github.com/xenharmonic-devs/scale-workshop/issues/752)
 ## 2.5.6

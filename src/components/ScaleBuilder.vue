@@ -558,8 +558,10 @@ function confirmPreset() {
   />
 
   <Teleport to="body">
+    <!-- v-if is required for async loading. :show is required for auto-focus. -->
     <KorgExportModal
       v-if="showKorgExportModal"
+      :show="showKorgExportModal"
       @confirm="showKorgExportModal = false"
       @cancel="showKorgExportModal = false"
       :newline="state.newline"
@@ -571,6 +573,7 @@ function confirmPreset() {
 
     <ReaperExportModal
       v-if="showReaperExportModal"
+      :show="showReaperExportModal"
       @confirm="showReaperExportModal = false"
       @cancel="showReaperExportModal = false"
       :newline="state.newline"
@@ -582,6 +585,7 @@ function confirmPreset() {
 
     <MtsSysexExportModal
       v-if="showMtsSysexExportModal"
+      :show="showMtsSysexExportModal"
       @confirm="showMtsSysexExportModal = false"
       @cancel="showMtsSysexExportModal = false"
       :newline="state.newline"
@@ -593,6 +597,7 @@ function confirmPreset() {
 
     <RankTwoModal
       v-if="showRankTwoModal"
+      :show="showRankTwoModal"
       :centsFractionDigits="state.centsFractionDigits"
       :scale="state.scale"
       @update:scaleName="state.scaleName = $event"
@@ -603,6 +608,7 @@ function confirmPreset() {
 
     <HistoricalModal
       v-if="showHistoricalModal"
+      :show="showHistoricalModal"
       :centsFractionDigits="state.centsFractionDigits"
       :accidentalStyle="state.accidentalPreference"
       @update:scaleName="state.scaleName = $event"
@@ -616,6 +622,7 @@ function confirmPreset() {
     <ShareUrlModal
       ref="shareUrlModal"
       v-if="showShareUrlModal"
+      :show="showShareUrlModal"
       :scaleName="state.scaleName"
       :newline="state.newline"
       @confirm="showShareUrlModal = false"
@@ -624,6 +631,7 @@ function confirmPreset() {
 
     <EqualTemperamentModal
       v-if="showEqualTemperamentModal"
+      :show="showEqualTemperamentModal"
       :centsFractionDigits="state.centsFractionDigits"
       :decimalFractionDigits="state.decimalFractionDigits"
       @update:scaleName="state.scaleName = $event"
@@ -633,6 +641,7 @@ function confirmPreset() {
 
     <HarmonicSeriesModal
       v-if="showHarmonicSeriesModal"
+      :show="showHarmonicSeriesModal"
       @update:scaleName="state.scaleName = $event"
       @update:scale="updateScaleAndHideModals"
       @cancel="showHarmonicSeriesModal = false"
@@ -640,6 +649,7 @@ function confirmPreset() {
 
     <MosModal
       v-if="showMosModal"
+      :show="showMosModal"
       @update:scaleName="state.scaleName = $event"
       @update:scale="updateScaleAndHideModals"
       @update:keyColors="state.keyColors = $event"
@@ -648,6 +658,7 @@ function confirmPreset() {
 
     <SubharmonicSeriesModal
       v-if="showSubharmonicSeriesModal"
+      :show="showSubharmonicSeriesModal"
       @update:scaleName="state.scaleName = $event"
       @update:scale="updateScaleAndHideModals"
       @cancel="showSubharmonicSeriesModal = false"
@@ -655,6 +666,7 @@ function confirmPreset() {
 
     <EnumerateChordModal
       v-if="showEnumerateChordModal"
+      :show="showEnumerateChordModal"
       @update:scaleName="state.scaleName = $event"
       @update:scale="updateScaleAndHideModals"
       @cancel="showEnumerateChordModal = false"
@@ -662,6 +674,7 @@ function confirmPreset() {
 
     <CpsModal
       v-if="showCpsModal"
+      :show="showCpsModal"
       @update:scaleName="state.scaleName = $event"
       @update:scale="updateScaleAndHideModals"
       @cancel="showCpsModal = false"
@@ -669,6 +682,7 @@ function confirmPreset() {
 
     <EulerGenusModal
       v-if="showEulerGenusModal"
+      :show="showEulerGenusModal"
       @update:scaleName="state.scaleName = $event"
       @update:scale="updateScaleAndHideModals"
       @cancel="showEulerGenusModal = false"
@@ -676,6 +690,7 @@ function confirmPreset() {
 
     <DwarfModal
       v-if="showDwarfModal"
+      :show="showDwarfModal"
       @update:scaleName="state.scaleName = $event"
       @update:scale="updateScaleAndHideModals"
       @cancel="showDwarfModal = false"
@@ -683,12 +698,14 @@ function confirmPreset() {
 
     <CrossPolytopeModal
       v-if="showCrossPolytopeModal"
+      :show="showCrossPolytopeModal"
       @update:scaleName="state.scaleName = $event"
       @update:scale="updateScaleAndHideModals"
       @cancel="showCrossPolytopeModal = false"
     />
     <LatticeModal
       v-if="showLatticeModal"
+      :show="showLatticeModal"
       :centsFractionDigits="state.centsFractionDigits"
       @update:scaleName="state.scaleName = $event"
       @update:scale="updateScaleAndHideModals"
@@ -716,6 +733,7 @@ function confirmPreset() {
 
     <RotateModal
       v-if="showRotateModal"
+      :show="showRotateModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showRotateModal = false"
       :scale="state.scale"
@@ -724,6 +742,7 @@ function confirmPreset() {
     <SubsetModal
       ref="subsetModal"
       v-if="showSubsetModal"
+      :show="showSubsetModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showSubsetModal = false"
       :scale="state.scale"
@@ -731,6 +750,7 @@ function confirmPreset() {
 
     <StretchModal
       v-if="showStretchModal"
+      :show="showStretchModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showStretchModal = false"
       :scale="state.scale"
@@ -740,6 +760,7 @@ function confirmPreset() {
 
     <RandomVarianceModal
       v-if="showRandomVarianceModal"
+      :show="showRandomVarianceModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showRandomVarianceModal = false"
       :scale="state.scale"
@@ -749,6 +770,7 @@ function confirmPreset() {
 
     <ApproximateByRatiosModal
       v-if="showApproximateByRatiosModal"
+      :show="showApproximateByRatiosModal"
       @update:scale="state.scale = $event"
       @cancel="showApproximateByRatiosModal = false"
       :scale="state.scale"
@@ -756,6 +778,7 @@ function confirmPreset() {
 
     <ApproximateByHarmonicsModal
       v-if="showApproximateByHarmonicsModal"
+      :show="showApproximateByHarmonicsModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showApproximateByHarmonicsModal = false"
       :scale="state.scale"
@@ -763,6 +786,7 @@ function confirmPreset() {
 
     <ApproximateBySubharmonicsModal
       v-if="showApproximateBySubharmonicsModal"
+      :show="showApproximateBySubharmonicsModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showApproximateBySubharmonicsModal = false"
       :scale="state.scale"
@@ -770,6 +794,7 @@ function confirmPreset() {
 
     <EqualizeModal
       v-if="showEqualizeModal"
+      :show="showEqualizeModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showEqualizeModal = false"
       :scale="state.scale"
@@ -777,6 +802,7 @@ function confirmPreset() {
 
     <TemperModal
       v-if="showTemperModal"
+      :show="showTemperModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showTemperModal = false"
       :scale="state.scale"
@@ -785,6 +811,7 @@ function confirmPreset() {
 
     <OffsetModal
       v-if="showOffsetModal"
+      :show="showOffsetModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showOffsetModal = false"
       :scale="state.scale"
@@ -792,6 +819,7 @@ function confirmPreset() {
 
     <ConvertModal
       v-if="showConvertModal"
+      :show="showConvertModal"
       @update:scale="updateScaleAndHideModals"
       @cancel="showConvertModal = false"
       :scale="state.scale"

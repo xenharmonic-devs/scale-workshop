@@ -8,6 +8,7 @@ import { clamp } from 'xen-dev-utils'
 import type { ExporterParams } from '@/exporters/base'
 
 const props = defineProps<{
+  show: boolean
   newline: string
   scaleName: string
   baseMidiNote: number
@@ -68,7 +69,7 @@ function doExport() {
 </script>
 
 <template>
-  <Modal @confirm="doExport" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="doExport" @cancel="$emit('cancel')">
     <template #header>
       <h2>Export MTS Bulk Tuning Dump</h2>
     </template>

@@ -3,6 +3,7 @@ import { nextTick, ref } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 
 const props = defineProps<{
+  show: boolean
   scaleName: string
   newline: string
 }>()
@@ -63,7 +64,7 @@ function postOnFacebook() {
 </script>
 
 <template>
-  <Modal @confirm="copyToClipboard" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="copyToClipboard" @cancel="$emit('cancel')">
     <template #header>
       <h2>Share scale as URL</h2>
     </template>

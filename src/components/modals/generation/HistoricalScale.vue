@@ -10,6 +10,7 @@ import { spineLabel as spineLabel_, type AccidentalStyle } from '@/utils'
 import { useHistoricalStore } from '@/stores/historical'
 
 const props = defineProps<{
+  show: boolean
   centsFractionDigits: number
   accidentalStyle: AccidentalStyle
 }>()
@@ -195,7 +196,7 @@ function generate() {
 }
 </script>
 <template>
-  <Modal extraStyle="width: 25rem" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" extraStyle="width: 25rem" @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate historical temperament</h2>
     </template>

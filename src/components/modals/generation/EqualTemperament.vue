@@ -8,6 +8,7 @@ import { useModalStore } from '@/stores/modal'
 import { setAndReportValidity } from '@/utils'
 
 const props = defineProps<{
+  show: boolean
   centsFractionDigits: number
   decimalFractionDigits: number
 }>()
@@ -61,7 +62,7 @@ function generate() {
 </script>
 
 <template>
-  <Modal @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate equal temperament</h2>
     </template>

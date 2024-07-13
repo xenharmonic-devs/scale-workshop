@@ -6,6 +6,7 @@ import { useModalStore } from '@/stores/modal'
 import { THIRD } from '@/constants'
 
 const props = defineProps<{
+  show: boolean
   scale: Scale
 }>()
 
@@ -48,7 +49,7 @@ function modify() {
 </script>
 
 <template>
-  <Modal @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" @confirm="modify" @cancel="$emit('cancel')">
     <template #header>
       <h2>Merge an offset copy of the scale</h2>
     </template>
