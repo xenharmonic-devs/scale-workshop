@@ -28,7 +28,7 @@
   },
   "ragatodi": {
     "name": "Raga Todi",
-    "source": "rank2(3/2 white, 1, 5, 2/1 white)\n$[[2, 5]] *~= 135/128 black\n",
+    "source": "rank2(3/2 white, 1, 5)\n$[[2, 5]] *~= 135/128 black\n",
     "categories": ["traditional", "just intonation"]
   },
   "ragayaman": {
@@ -38,7 +38,7 @@
   },
   "22shruti": {
     "name": "22 Shruti",
-    "source": "rank2(3/2 white, 4, 0, 2/1 white)\nmergeOffset([10/9 yellow, 16/15 green, 256/243 white, 9/8 white], 'wrap')\n",
+    "source": "rank2(3/2 white, 4)\nmergeOffset([10/9 yellow, 16/15 green, 256/243 white, 9/8 white], 'wrap')\n",
     "categories": ["traditional", "just intonation"]
   },
   "hirajoshi": {
@@ -206,7 +206,7 @@
   },
   "13oneirotonic": {
     "name": "13edo oneirotonic (5L 3s)",
-    "source": "mos(5, 3)\n[white, black, white, white, black, white, black, white]",
+    "source": "mos(5, 3)\n[white, black, white, white, black, white, black, white]\n",
     "categories": ["MOS", "equal temperament"]
   },
   "15blackwood10": {
@@ -216,7 +216,7 @@
   },
   "16mavila7": {
     "name": "16edo mavila[7]",
-    "source": "rank2(3/2 white, 5, 1, 2/1 gray)\n16@",
+    "source": "rank2(3/2 white, 5, 1, 2/1 gray)\n16@\n",
     "categories": ["MOS", "equal temperament"]
   },
   "17superpyth12": {
@@ -228,7 +228,7 @@
   },
   "17rast": {
     "name": "17edo Rast",
-    "source": "defer 17@\nM2 white\nn3 gray\nP4 white\nP5 white\nM6 white\nn7 gray\nP8 white\nmap(str)\n",
+    "source": "defer 17@\nM2 white\nn3 gray\nP4 white\nP5 white\nM6 white\nn7 gray\nP8 white\nvstr($)\n",
     "categories": ["MOS", "equal temperament"]
   },
   "22porcupine8": {
@@ -243,12 +243,12 @@
   },
   "22pajara12": {
     "name": "22edo pajara[12]",
-    "source": "rank2(3/2 white, 10, 0, 1\\2 gray, 2)\n22@\n",
+    "source": "rank2(3/2 white, 10, 0, √2 gray, 2)\n22@\n",
     "categories": ["MOS", "equal temperament"]
   },
   "26lemba10": {
     "name": "26edo lemba[10]",
-    "source": "rank2(8/7 white, 4, 4, 7/5 gray, 2)\n26@",
+    "source": "rank2(8/7 white, 4, 4, 7/5 gray, 2)\n26@\n",
     "categories": ["MOS", "equal temperament"]
   },
   "26flattone12": {
@@ -270,7 +270,7 @@
   },
   "362barbados9": {
     "name": "362edo barbados[9]",
-    "source": "rank2(15/13 white, 4, 4, 2/1 gray)\n362@",
+    "source": "rank2(15/13 white, 4, 4, 2/1 gray)\n362@\n",
     "categories": ["MOS", "equal temperament"]
   },
   "bohlenpierceeq": {
@@ -300,12 +300,12 @@
   },
   "65cet": {
     "name": "65 cent Equal Temperament",
-    "source": "65.0 white",
+    "source": "65.0 white\n",
     "categories": ["non-octave", "equal temperament"]
   },
   "88cet": {
     "name": "88 cent Equal Temperament",
-    "source": "88.0 white",
+    "source": "88.0 white\n",
     "categories": ["non-octave", "equal temperament"]
   },
   "otonalstacks": {
@@ -316,13 +316,13 @@
   "blackdye": {
     "title": "Blackdye GO",
     "name": "Blackdye",
-    "source": "rank2(3/2 black, 4, 0, 2/1 black)\nmergeOffset(10/9 white)\nrotate(3)\n27@",
+    "source": "rank2(3/2 black, 4, 0, 2/1 black)\nmergeOffset(10/9 white)\nrotate(3)\n27@\n",
     "categories": ["GO", "MV4", "equal temperament"]
   },
   "diasem": {
     "title": "Diasem MV3 GO",
     "name": "Diasem",
-    "source": "gs([7/6 white, 8/7 white], 9, 2/1 gray)\n31@",
+    "source": "gs([7/6 white, 8/7 white], 9, 2/1 gray)\n31@\n",
     "categories": ["MV3", "GO", "equal temperament"],
     "baseMidiNote": 71,
     "baseFrequency": 493
@@ -330,7 +330,7 @@
   "zarlino": {
     "title": "Zarlino MV3 GO",
     "name": "Zarlino",
-    "source": "gs([5/4 white, 6/5 white], 7, 2/1 gray)\n29@",
+    "source": "gs([5/4 white, 6/5 white], 7, 2/1 gray)\n29@\n",
     "categories": ["MV3", "GO", "equal temperament"],
     "baseMidiNote": 65,
     "baseFrequency": 355
@@ -338,25 +338,25 @@
   "superzarlino": {
     "title": "Superzarlino MV3 GO",
     "name": "Superzarlino",
-    "source": "gs([5/4, 6/5], 17)\n[black, black, white, black, white, black, black, white, black, white, black, black, white, black, white, black, white]\n34@",
+    "source": "gs([5/4, 6/5], 17)\n[black, black, white, black, white, black, black, white, black, white, black, black, white, black, white, black, white]\n34@\n",
     "categories": ["MV3", "GO", "equal temperament"]
   },
   "marveldene": {
     "title": "Marveldene TE",
     "name": "The Marveldene, a 2.3.5.7 classic. Septimal Aeolian minor oriented.",
-    "source": "eulerGenus(675 white, 15, 2 gray)\nTE(225/224)\ncents(£, 3)",
+    "source": "eulerGenus(675 white, 15, 2 gray)\nTE(225/224)\ncents(£, 3)\n",
     "categories": ["TE", "rank 3"]
   },
   "meantone": {
     "title": "Meantone CTE",
     "name": "Meantone[12], TE optimized with a 2/1 constraint.",
-    "source": "A♮4 = 440Hz\nB♭4 black\nB♮4 white\nC♮5 white\nC♯5 black\nD♮5 white\nE♭5 black\nE♮5 white\nF♮5 white\nF♯5 black\nG♮5 white\nG♯5 black\nA♮5 white\nmap(i => str(i)[..1])\nCTE(81/80)\ncents(£, 3)",
+    "source": "A♮4 = 440Hz\nB♭4 black\nB♮4 white\nC♮5 white\nC♯5 black\nD♮5 white\nE♭5 black\nE♮5 white\nF♮5 white\nF♯5 black\nG♮5 white\nG♯5 black\nA♮5 white\nmap(i => str(i)[..1])\nCTE(81/80)\ncents(£, 3)\n",
     "categories": ["MOS", "CTE", "rank 2"]
   },
   "orgone": {
     "title": "Orgone POTE",
     "name": "Orgone[7], a 2.7.11 classic. POTE optimized.",
-    "source": "rank2(77/64 white, 3, 3, 2/1 gray)\nPOTE([11@2.7.11, 26@2.7.11])\ncents(£, 3)",
+    "source": "rank2(77/64 white, 3, 3, 2/1 gray)\nPOTE([11@2.7.11, 26@2.7.11])\ncents(£, 3)\n",
     "categories": ["MOS", "POTE", "rank 2"]
   }
 }
