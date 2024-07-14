@@ -4,7 +4,8 @@ import { UNIX_NEWLINE, WINDOWS_NEWLINE } from '../../constants'
 import { Scale } from '../../scale'
 import { Fraction } from 'xen-dev-utils'
 
-export function getTestData(appTitle: string) {
+export function getTestData(appTitle: string, raw = false) {
+  const sourceText = '100.\nC5_5\n4\\5\n5/3\n1,3591409142295225r\n3486784401/3276800000\n2/1'
   const absoluteC5 = new Interval(TimeMonzo.fromFractionalFrequency(528, 3), 'logarithmic', 0, {
     type: 'AbsoluteFJS',
     pitch: {
@@ -19,7 +20,16 @@ export function getTestData(appTitle: string) {
     subscripts: [[5, '']]
   })
   const visitor = getSourceVisitor()
+  // Prefix
   visitor.visit(parseAST('A4 = 440 Hz').body[0])
+  let rawIntervals: Interval[] | undefined
+  let unisonFrequency: TimeMonzo | undefined
+  if (raw) {
+    // Body
+    visitor.executeProgram(parseAST(sourceText))
+    rawIntervals = visitor.currentScale
+    unisonFrequency = visitor.rootContext!.unisonFrequency
+  }
   const ev = visitor.createExpressionVisitor()
   const relativeC5 = relative.bind(ev)(absoluteC5)
 
@@ -80,9 +90,11 @@ export function getTestData(appTitle: string) {
     appTitle,
     description: 'A scale for testing if the exporter works',
     midiOctaveOffset: 0,
-    sourceText: '100.\nC5_5\n4\\5\n5/3\n1,3591409142295225r\n3486784401/3276800000\n2/1',
+    sourceText,
     labels: ['100.', 'C5_5', '4\\5', '5/3', '1,3591409142295225r', '3486784401/3276800000', '2/1'],
-    date: new Date('2022-02-22T20:22Z')
+    date: new Date('2022-02-22T20:22Z'),
+    rawIntervals,
+    unisonFrequency
   }
   return params
 }

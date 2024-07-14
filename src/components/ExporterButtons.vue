@@ -125,6 +125,12 @@ function doExport(exporter: ExporterKey) {
       date: new Date()
     }
 
+    if (exporter === 'xendevs') {
+      const { rawIntervals, unisonFrequency } = scale.computeRawScale()
+      params.rawIntervals = rawIntervals
+      params.unisonFrequency = unisonFrequency
+    }
+
     exportFile(exporter, params)
   })
 }
@@ -259,6 +265,10 @@ function doExport(exporter: ExporterKey) {
   <a href="#" class="btn" @click="showMtsSysexExportModal = true">
     <p><strong>MTS Sysex Bulk Tuning Dump (.syx)</strong></p>
     <p>Binary data of a Bulk Tuning Dump SysEx message</p>
+  </a>
+  <a href="#" class="btn" @click="doExport('xendevs')">
+    <p><strong>SonicWeave Interchange (.swi)</strong></p>
+    <p>Simplified Scale Workshop 3 format</p>
   </a>
   <h3>Documentation</h3>
   <p>

@@ -8,6 +8,7 @@ import PureDataExporter from '@/exporters/pure-data'
 import SoniccoutureExporter from '@/exporters/soniccouture'
 import AbletonAsclExporter from '@/exporters/ableton'
 import MaxMSPExporter from '@/exporters/max-msp'
+import SonicWeaveInterchangeExporter from './xen-devs'
 
 const EXPORTERS = {
   scalascl: ScalaSclExporter,
@@ -21,7 +22,8 @@ const EXPORTERS = {
   ableton: AbletonAsclExporter,
   puredata: PureDataExporter,
   soniccouture: SoniccoutureExporter,
-  maxmsp: MaxMSPExporter
+  maxmsp: MaxMSPExporter,
+  xendevs: SonicWeaveInterchangeExporter
 }
 
 export type ExporterKey = keyof typeof EXPORTERS

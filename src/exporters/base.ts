@@ -1,5 +1,5 @@
 import type { Scale } from '@/scale'
-import type { Interval } from 'sonic-weave'
+import type { Interval, TimeMonzo } from 'sonic-weave'
 
 export type LineFormat = 'label' | 'cents' | 'frequency' | 'decimal' | 'degree'
 
@@ -23,6 +23,8 @@ export type ExporterParams = {
   integratePeriod?: boolean
   presetIndex?: number
   centsFractionDigits?: number
+  rawIntervals?: Interval[]
+  unisonFrequency?: TimeMonzo
 }
 
 export class BaseExporter {

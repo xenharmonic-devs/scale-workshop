@@ -692,6 +692,19 @@ export const useScaleStore = defineStore('scale', () => {
 
   const history = undoHistory(serialize, restore)
 
+  // Only one exporter makes use of this so we don't maintain it in active memory.
+  function computeRawScale() {
+    const globalVisitor = getGlobalScaleWorkshopVisitor()
+    const visitor = new StatementVisitor(globalVisitor)
+    visitor.isUserRoot = true
+    const ast = parseAST(sourceText.value)
+    visitor.executeProgram(ast)
+    return {
+      rawIntervals: visitor.currentScale,
+      unisonFrequency: visitor.rootContext!.unisonFrequency
+    }
+  }
+
   return {
     // Live state
     ...LIVE_STATE,
@@ -728,6 +741,7 @@ export const useScaleStore = defineStore('scale', () => {
     labelForIndex,
     toJSON,
     fromJSON,
+    computeRawScale,
     // Mini-stores
     history
   }
