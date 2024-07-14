@@ -52,6 +52,7 @@ const SubharmonicSeriesModal = defineAsyncComponent(
 const element = ref<typeof DropdownGroup | null>(null)
 const scalaFile = ref<HTMLInputElement | null>(null)
 const anamarkFile = ref<HTMLInputElement | null>(null)
+const xendevsFile = ref<HTMLInputElement | null>(null)
 
 const showConcordanceShellModal = ref(false)
 const showCpsModal = ref(false)
@@ -145,6 +146,7 @@ defineExpose({ blur })
       <li class="divider"></li>
       <a href="#" @click="scalaFile!.click()"><li>Import .scl</li></a>
       <a href="#" @click="anamarkFile!.click()"><li>Import .tun</li></a>
+      <a href="#" @click="xendevsFile!.click()"><li>Import .swi</li></a>
       <li class="divider"></li>
       <a href="#" @click="clearScale"><li>Clear scale</li></a>
       <a href="#" @click="showPresetModal = true"><li>Load preset scale</li></a>
@@ -165,6 +167,13 @@ defineExpose({ blur })
     accept=".tun"
     style="display: none"
     @change="doImport('anamark', $event)"
+  />
+  <input
+    type="file"
+    ref="xendevsFile"
+    accept=".swi"
+    style="display: none"
+    @change="doImport('xendevs', $event)"
   />
 
   <Teleport to="body">
