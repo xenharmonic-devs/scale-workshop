@@ -51,6 +51,9 @@ export const useStateStore = defineStore('state', () => {
   // The app doesn't fully work on Safari. Inform the user.
   const showSafariWarning = ref(storage.getItem('showSafariWarning') !== 'false')
 
+  // Debugging features.
+  const debug = ref(storage.getItem('debug') === 'true')
+
   /**
    * Convert live state to a format suitable for storing on the server.
    */
@@ -87,7 +90,8 @@ export const useStateStore = defineStore('state', () => {
     degreeUpCode,
     degreeDownCode,
     shareStatistics,
-    showSafariWarning
+    showSafariWarning,
+    debug
   })
   watch(
     colorScheme,
@@ -125,6 +129,7 @@ export const useStateStore = defineStore('state', () => {
     degreeDownCode,
     shareStatistics,
     showSafariWarning,
+    debug,
     // Methods
     toJSON,
     fromJSON

@@ -84,6 +84,14 @@ function uploadScale(retries = 1): Promise<string> {
 
 defineExpose({ uploadScale })
 
+function downloadDebugDump() {
+  const link = document.createElement('a')
+  link.download = sanitizeFilename(scale.scale.title) + '.json'
+  link.href = 'data:application/json,' + encodeURIComponent(uploadBody.value)
+  // Open save dialog
+  link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }))
+}
+
 function copyToClipboard() {
   if (API_URL) {
     uploadScale().then((url) => {
@@ -182,6 +190,10 @@ function doExport(exporter: ExporterKey) {
     <p class="warning">File export is known to be broken on Safari. Root cause unknown.</p>
     <button class="warning" @click="state.showSafariWarning = false">Dismiss</button>
   </div>
+  <a v-if="state.debug" href="#" class="btn debug" @click="downloadDebugDump"
+    ><p><strong>Debug dump (.json)</strong></p>
+    <p>Copy of the data sent to the server.</p></a
+  >
   <a href="#" class="btn" @click="doExport('anamarkv1')">
     <p><strong>AnaMark v1 tuning (.tun)</strong></p>
     <p>Tuning file for various synths</p>
@@ -275,5 +287,8 @@ function doExport(exporter: ExporterKey) {
 }
 button.warning {
   margin-bottom: 0.5em;
+}
+.btn.debug {
+  border: var(--color-dark-indicator) 1px dashed;
 }
 </style>

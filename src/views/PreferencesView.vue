@@ -50,6 +50,10 @@ const scale = useScaleStore()
             <label for="gas">Computational budget (gas)</label>
             <input id="gas" type="number" min="1" v-model="scale.gas" />
           </div>
+          <div class="control checkbox-container">
+            <input id="debug" type="checkbox" v-model="state.debug" />
+            <label for="debug" class="right-of-checkbox">Enable debugging features</label>
+          </div>
         </div>
       </div>
       <div class="column">
