@@ -3,7 +3,6 @@ import { ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import { useTemperStore } from '@/stores/tempering'
 import { useScaleStore } from '@/stores/scale'
-import { setAndReportValidity } from '@/utils'
 
 defineProps<{
   show: boolean
@@ -18,14 +17,6 @@ const valsInput = ref<HTMLInputElement | null>(null)
 const commasInput = ref<HTMLInputElement | null>(null)
 const subgroupInput = ref<HTMLInputElement | null>(null)
 
-watch(
-  () => temper.valsError,
-  (newValue) => setAndReportValidity(valsInput.value, newValue)
-)
-watch(
-  () => temper.commasError,
-  (newValue) => setAndReportValidity(commasInput.value, newValue)
-)
 watch(
   () => temper.edoAvailable,
   (newValue) => {

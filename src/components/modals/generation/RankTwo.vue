@@ -437,6 +437,7 @@ function generate(expand = true) {
 
 p.warning {
   height: 3em;
+  width: 29em;
   overflow-y: hidden;
 }
 </style>
