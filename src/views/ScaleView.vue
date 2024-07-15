@@ -9,7 +9,7 @@ import { useScaleStore } from '@/stores/scale'
 import { useStateStore } from '@/stores/state'
 import { debounce } from '@/utils'
 import { getSourceVisitor, setNumberOfComponents } from 'sonic-weave'
-import { onMounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 
 const scale = useScaleStore()
 const state = useStateStore()
@@ -25,6 +25,11 @@ onMounted(() => {
   // Initialize SonicWeave stdlib
   setNumberOfComponents(DEFAULT_NUMBER_OF_COMPONENTS)
   setTimeout(() => getSourceVisitor(), 1)
+})
+
+onUnmounted(() => {
+  // Prepare to include other state in the server payload
+  scale.rerollId()
 })
 </script>
 

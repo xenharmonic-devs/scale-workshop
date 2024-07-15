@@ -372,6 +372,7 @@ onMounted(async () => {
     // Scale Workshop 1 compatibility
     try {
       const scaleWorkshopOneData = new ScaleWorkshopOneData()
+      audio.initialize()
 
       scale.name = scaleWorkshopOneData.name
       scale.userBaseFrequency = scaleWorkshopOneData.freq
@@ -405,6 +406,7 @@ onMounted(async () => {
     // Scale Workshop 2 compatibility
     try {
       const decodedState = decodeQuery(query)
+      audio.initialize()
 
       let pianoMode: 'Asdf' | 'QweZxc' = 'Asdf'
       if (decodedState.pianoMode === 'QweZxc0' || decodedState.pianoMode === 'QweZxc1') {
