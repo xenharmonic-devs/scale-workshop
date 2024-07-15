@@ -675,6 +675,8 @@ export const useScaleStore = defineStore('scale', () => {
     }
     id.value = data['id']
     uploadedId.value = data['id']
+    history.pushState()
+    history.truncate()
   }
 
   function serialize() {

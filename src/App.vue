@@ -389,6 +389,7 @@ onMounted(async () => {
         annotateColors(sourceLines, colors.split(' '))
         scale.sourceText = sourceLines.join('\n')
         scale.computeScale()
+        scale.history.truncate()
       }
 
       audio.waveform = scaleWorkshopOneData.waveform || 'semisine'
@@ -460,6 +461,7 @@ onMounted(async () => {
       }
       scale.sourceText = sourceLines.join('\n')
       scale.computeScale()
+      scale.history.truncate()
 
       // Replace query with version 3.
       await router.push({ path: getPath(url), query: { version } })

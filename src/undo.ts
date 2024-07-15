@@ -13,7 +13,12 @@ export function undoHistory(serialize: Serializer, restore: Restorer, capacity =
     while (states.length > pointer.value + 1) {
       states.pop()
     }
-    states.push(serialize())
+    const state = serialize()
+    // Verify that actual change took place.
+    if (states.length && state === states[states.length - 1]) {
+      return
+    }
+    states.push(state)
     while (states.length > capacity) {
       states.shift()
     }
@@ -38,6 +43,16 @@ export function undoHistory(serialize: Serializer, restore: Restorer, capacity =
     restore(states[pointer.value])
   }
 
+  function truncate() {
+    const state = states.pop()
+    if (state === undefined) {
+      return
+    }
+    states.length = 0
+    states.push(state)
+    pointer.value = states.length - 1
+  }
+
   const undoDisabled = computed(() => pointer.value <= 0)
 
   const redoDisabled = computed(() => pointer.value >= states.length - 1)
@@ -48,6 +63,7 @@ export function undoHistory(serialize: Serializer, restore: Restorer, capacity =
     pushState,
     undo,
     redo,
+    truncate,
     undoDisabled,
     redoDisabled
   }
