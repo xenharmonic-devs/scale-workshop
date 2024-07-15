@@ -71,10 +71,17 @@ async function done() {
   await router.push('/')
 }
 
-const EASTER_EGG_SOURCE = `(* Create a fairly even lattice using the generators *)
-parallelotope([3, 5, 7], [1, 1, 1], [0, 0, 1], 1\\6)
-(* Temper out the Spoob comma *)
-PrimeMapping(1200.000, 1901.955, 2786.316, 3368.819, 4151.323)
+const EASTER_EGG_SOURCE = `(* Create a rank-4 temperament from the Spoob comma *)
+const spoob = CTE([1 0 -6 12 -6⟩)
+
+(* Obtain the period and generators *)
+const [period, ...generators] = mappingBasis(spoob)
+
+(* Create a fairly even lattice using the generators *)
+parallelotope(generators, [1, 1, 1], [0, 0, 1], period)
+
+(* Temper *)
+spoob
 `
 
 async function easterEgg() {
