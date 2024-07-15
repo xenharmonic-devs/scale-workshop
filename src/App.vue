@@ -446,7 +446,15 @@ onMounted(async () => {
 
       annotateColors(sourceLines, decodedState.keyColors)
       for (const [line, index] of invalidLines) {
-        sourceLines.splice(index, 0, '// ' + line)
+        if (!line.trim().length) {
+          sourceLines.splice(index, 0, '')
+        } else {
+          sourceLines.splice(
+            index,
+            0,
+            '(* ' + line.replaceAll('(*', '(\u2217').replaceAll('*)', '\u2217)') + ' *)'
+          )
+        }
       }
       scale.sourceText = sourceLines.join('\n')
       scale.computeScale()
