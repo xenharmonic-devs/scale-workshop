@@ -18,7 +18,6 @@ import {
   relative,
   Interval,
   TimeMonzo,
-  str,
   centsColor,
   factorColor,
   type SonicWeaveValue,
@@ -29,7 +28,8 @@ import {
   getGlobalVisitor,
   TimeReal,
   upcastBool,
-  unaryBroadcast
+  unaryBroadcast,
+  lstr
 } from 'sonic-weave'
 import {
   APP_TITLE,
@@ -47,6 +47,7 @@ import { midiKeyInfo } from 'xen-midi'
 import { undoHistory } from '@/undo'
 import { useHarmonicEntropyStore } from './harmonic-entropy'
 
+const AUTO_LABEL_MAX_LENGTH = 20
 const MAX_ERROR_LENGTH = 10000
 const EPSILON = 1e-6
 
@@ -317,6 +318,8 @@ export const useScaleStore = defineStore('scale', () => {
       return 'octave'
     } else if (Math.abs(ratio - 3) < EPSILON) {
       return 'tritave'
+    } else if (Math.abs(ratio - 4) < EPSILON) {
+      return 'tetrave'
     } else if (Math.abs(ratio - 5) < EPSILON) {
       return 'pentave'
     }
@@ -446,49 +449,32 @@ export const useScaleStore = defineStore('scale', () => {
         visitorBaseFrequency = visitor.rootContext!.unisonFrequency.valueOf()
       }
       if (ratios.length) {
-        const evStr = str.bind(ev)
+        const evLstr = lstr.bind(ev)
         // eslint-disable-next-line no-inner-declarations
         function autoLabel(interval: Interval) {
           if (interval.label.length) {
             return convertAccidentals(interval.label, accidentalPreference.value)
           }
-          const node = interval.node
-          if (node) {
-            if (
-              node.type === 'DecimalLiteral' &&
-              node.fractional.length > decimalFractionDigits.value
-            ) {
-              return decimalString(
-                interval.valueOf(),
-                decimalFractionDigits.value,
-                interval.value instanceof TimeReal
-              )
-            } else if (
-              node.type === 'CentsLiteral' &&
-              node.fractional.length > centsFractionDigits.value
-            ) {
-              return centString(
-                interval.totalCents(),
-                centsFractionDigits.value,
-                interval.value instanceof TimeReal
-              )
+          interval = interval.shallowClone()
+          interval.node = interval.realizeNode(ev.rootContext!)
+          if (
+            !interval.node &&
+            interval.value instanceof TimeReal &&
+            !interval.value.timeExponent
+          ) {
+            let result = ''
+            if (interval.domain === 'linear') {
+              result = decimalString(interval.valueOf(), decimalFractionDigits.value, true)
+            } else {
+              result = centString(interval.totalCents(), centsFractionDigits.value, true)
             }
-            return convertAccidentals(evStr(interval), accidentalPreference.value)
-          }
-          if (interval.domain === 'linear') {
-            if (interval.value.isFractional()) {
-              return evStr(interval)
+            if (result.length <= AUTO_LABEL_MAX_LENGTH) {
+              return result
             }
-            return decimalString(
-              interval.valueOf(),
-              decimalFractionDigits.value,
-              interval.value instanceof TimeReal
-            )
           }
-          return centString(
-            interval.totalCents(),
-            centsFractionDigits.value,
-            interval.value instanceof TimeReal
+          return convertAccidentals(
+            evLstr(interval, AUTO_LABEL_MAX_LENGTH),
+            accidentalPreference.value
           )
         }
         scale.value = new Scale(
