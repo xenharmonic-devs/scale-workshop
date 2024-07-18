@@ -378,7 +378,6 @@ export const useAudioStore = defineStore<'audio', AudioStore>('audio', () => {
     stackSize,
     spread,
     aperiodicWaveform,
-    audioDelay,
     synthType,
     pingPongDelayTime,
     pingPongFeedback,
@@ -416,6 +415,8 @@ export const useAudioStore = defineStore<'audio', AudioStore>('audio', () => {
 
     // Live state
     ...LIVE_STATE,
+    // Persistent state
+    audioDelay,
     // Other public state
     context,
     maxPolyphony,
