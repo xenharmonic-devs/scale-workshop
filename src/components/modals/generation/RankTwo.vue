@@ -120,12 +120,7 @@ function generate(expand = true) {
 </script>
 
 <template>
-  <Modal
-    :show="show"
-    extraStyle="min-width: 30rem;max-width: 31rem"
-    @confirm="generate"
-    @cancel="$emit('cancel')"
-  >
+  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate rank 2 temperament</h2>
     </template>
@@ -439,5 +434,13 @@ p.warning {
   height: 3em;
   width: 29em;
   overflow-y: hidden;
+}
+
+/* Content layout (medium) */
+@media screen and (min-width: 600px) {
+  .modal-mask :deep(.modal-container) {
+    min-width: 30rem;
+    max-width: 31rem;
+  }
 }
 </style>

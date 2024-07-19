@@ -6,10 +6,6 @@ const props = defineProps({
     default: true,
     type: Boolean
   },
-  extraStyle: {
-    default: '',
-    type: String
-  },
   right: {
     default: false,
     type: Boolean
@@ -80,7 +76,7 @@ watch(
   <Transition name="modal">
     <div v-if="show" :class="{ 'modal-mask': true, right }" @mousedown.self="$emit('cancel')">
       <div class="modal-wrapper">
-        <div class="modal-container" :style="extraStyle">
+        <div class="modal-container">
           <div class="modal-header">
             <slot name="header">default header</slot>
           </div>
