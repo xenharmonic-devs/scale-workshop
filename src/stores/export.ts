@@ -32,6 +32,12 @@ export const useExportStore = defineStore('export', () => {
   const integratePeriod = ref(false)
   const displayPeriod = ref(true)
 
+  // Scala .scl
+  const centsFractionDigits = ref(6)
+  const includeLabels = ref(false)
+  const commentLabels = ref(true)
+  const includeColors = ref(false)
+
   return {
     korgModel,
     useOctaveFormat,
@@ -41,6 +47,10 @@ export const useExportStore = defineStore('export', () => {
     baseDegree,
     centsRoot,
     integratePeriod,
-    displayPeriod
+    displayPeriod,
+    centsFractionDigits,
+    includeLabels,
+    commentLabels,
+    includeColors
   }
 })

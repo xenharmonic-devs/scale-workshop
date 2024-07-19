@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ScalaSclExporter } from '@/exporters/scala'
 import { sanitizeFilename } from '@/utils'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import type { ExporterParams } from '@/exporters/base'
 import type { Scale } from '@/scale'
 import type { Interval } from 'sonic-weave'
+import { useExportStore } from '@/stores/export'
 
 const props = defineProps<{
   show: boolean
@@ -18,24 +19,21 @@ const props = defineProps<{
   colors: string[]
 }>()
 
-const emit = defineEmits(['confirm', 'cancel'])
+const store = useExportStore()
 
-const centsFractionDigits = ref(6)
-const includeLabels = ref(false)
-const commentLabels = ref(true)
-const includeColors = ref(false)
+const emit = defineEmits(['confirm', 'cancel'])
 
 const exportLabels = computed(() => {
   const result: string[] = []
   for (let i = 0; i < props.labels.length; ++i) {
     let label = ''
-    if (includeLabels.value) {
+    if (store.includeLabels) {
       label += ' ' + props.labels[i]
     }
-    if (includeColors.value) {
+    if (store.includeColors) {
       label += ' ' + props.colors[i]
     }
-    if (label.length && commentLabels.value) {
+    if (label.length && store.commentLabels) {
       label = ' !' + label
     }
     result.push(label)
@@ -52,7 +50,7 @@ function doExport() {
     midiOctaveOffset: props.midiOctaveOffset,
     relativeIntervals: props.relativeIntervals,
     labels: exportLabels.value,
-    centsFractionDigits: centsFractionDigits.value
+    centsFractionDigits: store.centsFractionDigits
   }
 
   const exporter = new ScalaSclExporter(params)
@@ -70,27 +68,29 @@ function doExport() {
     <template #body>
       <div class="control-group">
         <div class="control checkbox-container">
-          <input type="checkbox" id="include-labels" v-model="includeLabels" />
+          <input type="checkbox" id="include-labels" v-model="store.includeLabels" />
           <label for="include-labels">Include labels</label>
         </div>
         <div class="control checkbox-container">
-          <input type="checkbox" id="include-colors" v-model="includeColors" />
+          <input type="checkbox" id="include-colors" v-model="store.includeColors" />
           <label for="include-colors">Include colors</label>
         </div>
         <div class="control checkbox-container">
           <input
             type="checkbox"
             id="comment-labels"
-            v-model="commentLabels"
-            :disabled="!includeLabels && !includeColors"
+            v-model="store.commentLabels"
+            :disabled="!store.includeLabels && !store.includeColors"
           />
-          <label for="comment-labels" :class="{ disabled: !includeLabels && !includeColors }"
+          <label
+            for="comment-labels"
+            :class="{ disabled: !store.includeLabels && !store.includeColors }"
             >Use comments ("!" before label)</label
           >
         </div>
         <div class="control">
           <label for="cents-digits">Cents precision</label>
-          <input type="number" id="cents-digits" v-model="centsFractionDigits" />
+          <input type="number" id="cents-digits" v-model="store.centsFractionDigits" />
         </div>
       </div>
     </template>
