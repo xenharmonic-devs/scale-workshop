@@ -2,8 +2,8 @@
 
 ![Scale Workshop screenshot](https://raw.githubusercontent.com/xenharmonic-devs/scale-workshop/main/src/assets/img/opengraph-image.png)
 
-## Beta Warning!
-This release is in beta. Not everything has been implemented and documentation has not been synchronized with the new features.
+## Warning: Unreleased version!
+This is a release candidate. Everything has been implemented to be on par with v2.5.7 but documentation has not been synchronized with the new features yet.
 
 Some of the new features are documented over at [sonic-weave](https://github.com/xenharmonic-devs/sonic-weave).
 
