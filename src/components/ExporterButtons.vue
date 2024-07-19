@@ -55,6 +55,8 @@ const uploadBody = computed(() => {
   })
 })
 
+const uploadedScaleUrl = computed(() => `${window.location.origin}/scale/${scale.uploadedId}`)
+
 function uploadScale(retries = 1): Promise<string> {
   const uploadId = scale.id
   if (scale.uploadedId === uploadId) {
@@ -142,6 +144,7 @@ function doExport(exporter: ExporterKey) {
       :show="showScalaExportModal"
       @confirm="showScalaExportModal = false"
       @cancel="showScalaExportModal = false"
+      :scaleUrl="uploadedScaleUrl"
       :newline="state.newline"
       :relativeIntervals="scale.relativeIntervals"
       :midiOctaveOffset="-1"
