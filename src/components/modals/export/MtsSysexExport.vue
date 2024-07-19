@@ -3,10 +3,10 @@ import MtsSysexExporter from '@/exporters/mts-sysex'
 import { sanitizeFilename } from '@/utils'
 import { ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
-import { clamp } from 'xen-dev-utils'
 import type { ExporterParams } from '@/exporters/base'
 import type { Scale } from '@/scale'
 import type { Interval } from 'sonic-weave'
+import { useExportStore } from '@/stores/export'
 
 const props = defineProps<{
   show: boolean
@@ -16,6 +16,8 @@ const props = defineProps<{
   scale: Scale
   labels: string[]
 }>()
+
+const store = useExportStore()
 
 const emit = defineEmits(['confirm', 'cancel'])
 
@@ -27,6 +29,7 @@ function clampName(name: string): string {
   return name.slice(0, 16)
 }
 
+// This state is intentionally not persisted
 const name = ref(clampName(props.scale.title))
 
 function nameInputCallback(nameInput: string): void {
@@ -39,18 +42,6 @@ watch(
   { immediate: true }
 )
 
-function formatPresetIndex(input: string): string {
-  const number = parseInt(input.replace(/\D/g, ''))
-  if (Number.isNaN(number)) return '0'
-  return String(clamp(0, 127, number))
-}
-
-const presetIndex = ref('0')
-
-function presetIndexInputCallback(indexInput: string): void {
-  presetIndex.value = formatPresetIndex(indexInput)
-}
-
 function doExport() {
   const params: ExporterParams = {
     newline: props.newline,
@@ -59,7 +50,7 @@ function doExport() {
     relativeIntervals: props.relativeIntervals,
     midiOctaveOffset: props.midiOctaveOffset,
     labels: props.labels,
-    presetIndex: parseInt(presetIndex.value)
+    presetIndex: store.presetIndex
   }
 
   const exporter = new MtsSysexExporter(params)
@@ -90,7 +81,7 @@ function doExport() {
           <label for="preset-index">
             Preset Index&nbsp;
             <span
-              @click="$event.preventDefault()"
+              @click.prevent
               class="info-question"
               title="Refer to your synth's manual for a valid range"
             >
@@ -99,9 +90,11 @@ function doExport() {
           <input
             class="half"
             id="preset-index"
-            type="text"
-            v-model="presetIndex"
-            @input="presetIndexInputCallback(presetIndex)"
+            type="number"
+            min="0"
+            max="127"
+            step="1"
+            v-model="store.presetIndex"
           />
         </div>
       </div>
