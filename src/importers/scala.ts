@@ -32,7 +32,11 @@ export class ScalaImporter extends TextImporter {
           sourceLines.push(parts[0])
         } else if (parts.length > 1) {
           // Unofficially labeled .scl is valid SonicWeave if quoted
-          sourceLines.push(parts[0] + ' ' + JSON.stringify(parts.slice(1).join('')))
+          let label = parts.slice(1).join(' ').trim()
+          if (label.startsWith('!')) {
+            label = label.slice(1).trim()
+          }
+          sourceLines.push(parts[0] + ' ' + JSON.stringify(label))
         }
       }
     }
