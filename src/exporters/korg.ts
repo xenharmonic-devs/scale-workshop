@@ -74,12 +74,12 @@ export function getKorgModelInfo(modelName: string) {
 }
 
 export class KorgExporter extends BaseExporter {
-  modelName: string
+  model: KorgModels
   useOctaveFormat: boolean
 
-  constructor(params: ExporterParams, modelName: string, useOctaveFormat: boolean) {
+  constructor(params: ExporterParams, model: KorgModels, useOctaveFormat: boolean) {
     super(params)
-    this.modelName = modelName
+    this.model = model
     this.useOctaveFormat = useOctaveFormat
 
     if (this.useOctaveFormat) {
@@ -174,9 +174,9 @@ export class KorgExporter extends BaseExporter {
     const binaryData = frequencyTableToBinaryData(frequencies)
 
     // prepare files for zipping
-    const format = getKorgModelInfo(this.modelName)
-    const tuningInfo = this.getTuningInfoXml(this.modelName, 'ScaleWorkshop', scale.title)
-    const fileInfo = this.getFileInfoXml(this.modelName)
+    const format = KORG_MODEL_INFO[this.model]
+    const tuningInfo = this.getTuningInfoXml(this.model.toString(), 'ScaleWorkshop', scale.title)
+    const fileInfo = this.getFileInfoXml(this.model.toString())
     const [fileNameHeader, fileType] = this.useOctaveFormat
       ? ['TunO_000.TunO_', format.octave]
       : ['TunS_000.TunS_', format.scale]
