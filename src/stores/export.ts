@@ -1,6 +1,7 @@
 import { ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { KorgModels } from '@/exporters/korg'
+import type { LineFormat } from '@/exporters/base'
 
 export const useExportStore = defineStore('export', () => {
   // Korg
@@ -23,9 +24,23 @@ export const useExportStore = defineStore('export', () => {
     }
   })
 
+  // Reaper
+  const format = ref<LineFormat>('label')
+  const basePeriod = ref(0)
+  const baseDegree = ref(0)
+  const centsRoot = ref(0)
+  const integratePeriod = ref(false)
+  const displayPeriod = ref(true)
+
   return {
     korgModel,
     useOctaveFormat,
-    presetIndex
+    presetIndex,
+    format,
+    basePeriod,
+    baseDegree,
+    centsRoot,
+    integratePeriod,
+    displayPeriod
   }
 })

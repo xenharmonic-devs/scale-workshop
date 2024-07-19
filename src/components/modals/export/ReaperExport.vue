@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import ReaperExporter from '@/exporters/reaper'
 import { sanitizeFilename } from '@/utils'
-import { ref } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import type { ExporterParams, LineFormat } from '@/exporters/base'
 import type { Scale } from '@/scale'
 import type { Interval } from 'sonic-weave'
+import { useExportStore } from '@/stores/export'
 
 const props = defineProps<{
   show: boolean
@@ -16,6 +16,8 @@ const props = defineProps<{
   labels: string[]
 }>()
 
+const store = useExportStore()
+
 const emit = defineEmits(['confirm', 'cancel'])
 
 const formats: [LineFormat, string][] = [
@@ -25,12 +27,6 @@ const formats: [LineFormat, string][] = [
   ['decimal', 'Decimal ratios'],
   ['degree', 'Scale degrees']
 ]
-const format = ref<LineFormat>('label')
-const basePeriod = ref(0)
-const baseDegree = ref(0)
-const centsRoot = ref(0)
-const integratePeriod = ref(false)
-const displayPeriod = ref(true)
 
 function doExport() {
   const params: ExporterParams = {
@@ -40,12 +36,12 @@ function doExport() {
     midiOctaveOffset: props.midiOctaveOffset,
     relativeIntervals: props.relativeIntervals,
     labels: props.labels,
-    format: format.value,
-    basePeriod: basePeriod.value,
-    baseDegree: baseDegree.value,
-    centsRoot: centsRoot.value,
-    integratePeriod: integratePeriod.value,
-    displayPeriod: displayPeriod.value
+    format: store.format,
+    basePeriod: store.basePeriod,
+    baseDegree: store.baseDegree,
+    centsRoot: store.centsRoot,
+    integratePeriod: store.integratePeriod,
+    displayPeriod: store.displayPeriod
   }
 
   const exporter = new ReaperExporter(params)
@@ -64,7 +60,7 @@ function doExport() {
       <div class="control-group">
         <div class="control">
           <label for="pitch-format">Pitch format</label>
-          <select id="pitch-format" v-model="format">
+          <select id="pitch-format" v-model="store.format">
             <option v-for="[value, name] of formats" :key="value" :value="value">
               {{ name }}
             </option>
@@ -72,24 +68,24 @@ function doExport() {
         </div>
         <label>Period options</label>
         <div class="control checkbox-container">
-          <input type="checkbox" id="display-period" v-model="displayPeriod" />
+          <input type="checkbox" id="display-period" v-model="store.displayPeriod" />
           <label for="display-period">Show period number</label>
         </div>
         <div class="control checkbox-container">
-          <input type="checkbox" id="integrate-period" v-model="integratePeriod" />
+          <input type="checkbox" id="integrate-period" v-model="store.integratePeriod" />
           <label for="integrate-period">Accumulate period in pitch</label>
         </div>
         <div class="control">
           <label for="base-period">Base period number</label>
-          <input type="number" id="base-period" v-model="basePeriod" />
+          <input type="number" id="base-period" v-model="store.basePeriod" />
         </div>
-        <div class="control" v-show="format === 'cents'">
+        <div class="control" v-show="store.format === 'cents'">
           <label for="cents-root">Base cents value</label>
-          <input type="number" id="cents-root" v-model="centsRoot" />
+          <input type="number" id="cents-root" v-model="store.centsRoot" />
         </div>
-        <div class="control" v-show="format === 'degree'">
+        <div class="control" v-show="store.format === 'degree'">
           <label for="base-degree">Base degree</label>
-          <input type="number" id="base-degree" v-model="baseDegree" />
+          <input type="number" id="base-degree" v-model="store.baseDegree" />
         </div>
       </div>
     </template>
