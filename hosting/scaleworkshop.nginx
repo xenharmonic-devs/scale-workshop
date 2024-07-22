@@ -6,6 +6,20 @@ server {
     add_header Access-Control-Allow-Origin *;
   }
 
+  location /api/scale {
+    proxy_set_header Host $host;
+    # Other headers omitted
+
+    proxy_pass http://127.0.0.1:17461/scale;
+  }
+
+  location /api/scale/(.*) {
+    proxy_set_header Host $host;
+    # Other headers omitted
+
+    proxy_pass http://127.0.0.1:17461/scale/$1;
+  }
+
   location / {
     root /var/www/scaleworkshop;
     index index.html;
