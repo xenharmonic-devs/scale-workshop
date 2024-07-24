@@ -1,11 +1,31 @@
 # Change log
 
-## 3.0.0-beta
+## 3.0.0
  * Feature: Core language switched to from [scale-workshop-core](https://github.com/xenharmonic-devs/scale-workshop-core) to [sonic-weave](https://github.com/xenharmonic-devs/sonic-weave)
+ * Feature: Custom interval labels e.g. `3/2 "my fifth"`
+ * Feature: CSS and RGB colors directly associated with intervals e.g. `400. yellow`
+ * Feature: Relative FJS notation e.g. `M3^5` for `5/4`
+ * Feature: Absolute FJS notation e.g. `G4` for `3/2` above middle C
+ * Feature: Absolute frequencies e.g. `432 Hz`
+ * Feature: Subgroup monzos e.g. `[-2 -1 1>@2.3.23` for `23/12`
+ * Feature: Frequency as a subgroup basis element e.g. `[1 8>@Hz.2` for `256 Hz`
+ * Feature: Full interval arithmetic e.g. `3/2 ^ 1/2` = `(3÷2) ^ (1÷2)` = `sqrt(3/2)` = `√3/2` = `n3`
+ * Feature: Domain-specific arithmetic e.g. `3/2 + 4/3` = `17/6`, but `P5 + P4` = `P8`
+ * Feature: Domain-independent arithmetic e.g. `3/2 ~* 4/3` = `2/1` and `P5 ~* P4` = `P8`
+ * Feature: Enumerated chord syntax e.g. `5:6:7:8:9:10`
+ * Feature: Vectorized operations e.g. `[4, 7, 12] \ 12`
+ * Feature: Code comments e.g. `(* Nestable (* OCaml *) style comments *)`
+ * Feature: Vals for equal tempering e.g. `<12 19 28]`, `17c@`, `17[^5]@`
+ * Feature: Ups and downs with tempering e.g. `vM3;P5;P8;22@` for `[7, 13, 22] \ 22`
+ * Feature: And much much more e.g. `sort(3^[-1..5] rdc 2);commaList(81/80)` for TE meantone[7]
  * Feature: Virtual piano now supports up to 4 layers of colors
+ * Feature: Import scale title from .scl files
+ * Feature: Aperiodic waveforms for metallic sounds
+ * Feature: Add a button to select all MIDI inputs [#271](https://github.com/xenharmonic-devs/scale-workshop/issues/271), [#650](https://github.com/xenharmonic-devs/scale-workshop/issues/650)
  * Feature: Character palette with tooltips for syntax beyond ASCII [#533](https://github.com/xenharmonic-devs/scale-workshop/issues/533)
  * Feature: Interval matrix simplified by default [#536](https://github.com/xenharmonic-devs/scale-workshop/issues/536)
  * Feature: Convert scale to enumeration [#538](https://github.com/xenharmonic-devs/scale-workshop/issues/538)
+ * Feature: Export interval labels and colors as comments in .scl files [#545](https://github.com/xenharmonic-devs/scale-workshop/issues/545)
  * Feature: More MOS coloring options [#554](https://github.com/xenharmonic-devs/scale-workshop/issues/554)
  * Feature: Variety and brightness signatures show in the interval matrix [#568](https://github.com/xenharmonic-devs/scale-workshop/issues/568)
  * Feature: Periodic equally tempered grids supported on the lattice tab
@@ -15,14 +35,16 @@
  * Feature: Tonnetz prime ellipse coordinates on the lattice tab [#588](https://github.com/xenharmonic-devs/scale-workshop/issues/588)
  * Feature: New `latticeView()` command for displaying the order of intervals (prior to sorting) [#597](https://github.com/xenharmonic-devs/scale-workshop/issues/597)
  * Feature: New "repeat" modifier [#406](https://github.com/xenharmonic-devs/scale-workshop/issues/406)
- * Feature: Implement multi-channel MIDI mode compatible with the Lumatone [#649](https://github.com/xenharmonic-devs/scale-workshop/pull/649)
  * Feature: Show labels, ratios, cents and frequencies on the tuning table [#534](https://github.com/xenharmonic-devs/scale-workshop/issues/534)
+ * Feature: Implement multi-channel MIDI mode compatible with the Lumatone [#649](https://github.com/xenharmonic-devs/scale-workshop/pull/649)
+ * Feature: Call the equave "octave", "tritave", "tetrave" or "pentave" when applicable [#694](https://github.com/xenharmonic-devs/scale-workshop/pull/694)
  * Feature: Full width view dedicated to the MOS pyramid [#700](https://github.com/xenharmonic-devs/scale-workshop/issues/700)
- * Feature: Import scale title from .scl files
- * Bug fix: Fix handling of trailing comments when importing .scl files [#706](https://github.com/xenharmonic-devs/scale-workshop/issues/706)
+ * Feature: Add harmonic entropy to the analysis tab and expose as a helper function [#726](https://github.com/xenharmonic-devs/scale-workshop/issues/726)
+ * Feature: Add equally tempered formatting as on option for the interval matrix [#740](https://github.com/xenharmonic-devs/scale-workshop/issues/740)
+ * Bug fix: Fix handling of trailing comments when importing .scl files [#706](https://github.com/xenharmonic-devs/scale-workshop/issues/706), [#787](https://github.com/xenharmonic-devs/scale-workshop/issues/787)
  * Bug fix: Extreme ratios now only break parts of the tuning table that do not have IEEE floating point representation and format better when non-finite [#631](https://github.com/xenharmonic-devs/scale-workshop/issues/631), [#632](https://github.com/xenharmonic-devs/scale-workshop/issues/632)
  * Style fix: Make checkbox and radio button labels more consistent [#644](https://github.com/xenharmonic-devs/scale-workshop/issues/644)
- * Beta cycle issues: [#643](https://github.com/xenharmonic-devs/scale-workshop/issues/643), [#640](https://github.com/xenharmonic-devs/scale-workshop/issues/640), [#577](https://github.com/xenharmonic-devs/scale-workshop/issues/577), [#513](https://github.com/xenharmonic-devs/scale-workshop/issues/513), [#658](https://github.com/xenharmonic-devs/scale-workshop/issues/658), [#664](https://github.com/xenharmonic-devs/scale-workshop/issues/664), [#666](https://github.com/xenharmonic-devs/scale-workshop/issues/666)
+ * Beta cycle issues: [#643](https://github.com/xenharmonic-devs/scale-workshop/issues/643), [#640](https://github.com/xenharmonic-devs/scale-workshop/issues/640), [#577](https://github.com/xenharmonic-devs/scale-workshop/issues/577), [#513](https://github.com/xenharmonic-devs/scale-workshop/issues/513), [#658](https://github.com/xenharmonic-devs/scale-workshop/issues/658), [#664](https://github.com/xenharmonic-devs/scale-workshop/issues/664), [#666](https://github.com/xenharmonic-devs/scale-workshop/issues/666), [#777](https://github.com/xenharmonic-devs/scale-workshop/issues/777), [#784](https://github.com/xenharmonic-devs/scale-workshop/issues/784) [#785](https://github.com/xenharmonic-devs/scale-workshop/issues/785), [#786](https://github.com/xenharmonic-devs/scale-workshop/issues/786)
  * Alpha cycle issues: [#574](https://github.com/xenharmonic-devs/scale-workshop/issues/574), [#579](https://github.com/xenharmonic-devs/scale-workshop/issues/579)
 
 ## 2.4.1
