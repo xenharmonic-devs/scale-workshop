@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useScaleStore } from '@/stores/scale'
-import { debounce } from '@/utils'
+import { debounce, midiNoteNumberToName } from '@/utils'
 import { ref } from 'vue'
 import ScaleRule from './ScaleRule.vue'
 import palette from '@/character-palette.json'
@@ -57,6 +57,9 @@ defineExpose({ focus, clearPaletteInfo })
         v-model="scale.baseMidiNote"
         @input="updateScale()"
       />
+      <span class="midi-name">{{
+        midiNoteNumberToName(scale.baseMidiNote, -1, scale.accidentalPreference)
+      }}</span>
     </div>
 
     <div class="control">
@@ -160,6 +163,11 @@ defineExpose({ focus, clearPaletteInfo })
 </template>
 
 <style scoped>
+.midi-name {
+  width: 1em;
+  margin-left: 0.4em;
+  margin-right: 0.4em;
+}
 .info {
   height: 3em;
   overflow-y: hidden;

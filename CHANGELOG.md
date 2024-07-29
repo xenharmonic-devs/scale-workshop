@@ -1,5 +1,8 @@
 # Change log
 
+## 3.0.1
+ * Regression: Show pitch associated with MIDI base index [#795](https://github.com/xenharmonic-devs/scale-workshop/issues/795)
+
 ## 3.0.0
  * Feature: Core language switched to from [scale-workshop-core](https://github.com/xenharmonic-devs/scale-workshop-core) to [sonic-weave](https://github.com/xenharmonic-devs/sonic-weave)
  * Feature: Custom interval labels e.g. `3/2 "my fifth"`
