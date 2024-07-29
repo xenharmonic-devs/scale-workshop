@@ -475,6 +475,28 @@ export function varietySignature(matrix: Interval[][]) {
   return result
 }
 
+export function marginVarietySignature(centsMatrix: number[][], margin: number) {
+  const result: number[] = []
+  if (!centsMatrix.length) {
+    return result
+  }
+  for (let i = 0; i < centsMatrix[0].length; ++i) {
+    let variety = 1
+    for (let j = 1; j < centsMatrix.length; ++j) {
+      variety++
+      const cents = centsMatrix[j][i]
+      for (let k = 0; k < j; ++k) {
+        if (Math.abs(centsMatrix[k][i] - cents) < margin) {
+          variety--
+          break
+        }
+      }
+    }
+    result.push(variety)
+  }
+  return result
+}
+
 export function brightnessSignature(centsMatrix: number[][]) {
   const totals = centsMatrix.map((row) => row.reduce((prev, cur) => prev + cur, 0))
   const minimum = Math.min(...totals)

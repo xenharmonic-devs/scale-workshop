@@ -4,6 +4,7 @@ import {
   constantStructureViolations,
   freeEquallyTemperedChord,
   intervalMatrix,
+  marginVarietySignature,
   marginViolations,
   rootedEquallyTemperedChord,
   varietySignature
@@ -31,6 +32,7 @@ const entropy = useHarmonicEntropyStore()
 const subtab = ref<'matrix' | 'wheels' | 'entropy'>('matrix')
 const cellFormat = ref<'best' | 'fraction' | 'cents' | 'et' | 'decimal'>('best')
 const simplifyTolerance = ref(3.5)
+const fractionMaxHeight = ref(26)
 const showOptions = ref(false)
 const trailLongevity = ref(70)
 const maxOtonalRoot = ref(16)
@@ -86,31 +88,34 @@ const etDenominator = computed(() => {
 // While interval.name suffices for the tuning table
 // we want more accurate results here.
 function formatMatrixCell(interval: Interval) {
+  const monzo = interval.value
   if (cellFormat.value === 'fraction') {
-    if (interval.value.isFractional()) {
-      const node = interval.value.asFractionLiteral()
+    if (
+      monzo.isFractional() &&
+      (!fractionMaxHeight.value || monzo.tenneyHeight() < fractionMaxHeight.value)
+    ) {
+      const node = monzo.asFractionLiteral()
       if (node) {
         return literalToString(node)
       }
     }
     try {
       return (
-        '~' +
-        new Fraction(interval.valueOf()).simplifyRelative(simplifyTolerance.value).toFraction()
+        '~' + new Fraction(monzo.valueOf()).simplifyRelative(simplifyTolerance.value).toFraction()
       )
     } catch {
       return '?'
     }
   }
   if (cellFormat.value === 'cents') {
-    return interval.totalCents(true).toFixed(1)
+    return monzo.totalCents(true).toFixed(1)
   }
   if (cellFormat.value === 'decimal') {
     // Consistent with tuning table localization.
-    return interval.valueOf().toFixed(3)
+    return monzo.valueOf().toFixed(3)
   }
   if (cellFormat.value === 'et') {
-    const fractionOfEquave = interval.value.log(scaleEquave.value)
+    const fractionOfEquave = monzo.log(scaleEquave.value)
     if (typeof fractionOfEquave === 'number') {
       return `~${Math.round(fractionOfEquave * 100)}%`
     }
@@ -139,12 +144,17 @@ const violations = computed(() => {
   const margin = state.constantStructureMargin
   if (margin) {
     return marginViolations(centsMatrix.value, margin)
-  } else {
-    return constantStructureViolations(matrix.value)
   }
+  return constantStructureViolations(matrix.value)
 })
 
-const variety = computed(() => varietySignature(matrix.value))
+const variety = computed(() => {
+  const margin = state.constantStructureMargin
+  if (margin) {
+    return marginVarietySignature(centsMatrix.value, margin)
+  }
+  return varietySignature(matrix.value)
+})
 
 const brightness = computed(() =>
   brightnessSignature(centsMatrix.value).map((b) => Math.round(100 * b))
@@ -409,6 +419,10 @@ const sSlider = computed({
           />
         </div>
         <div class="control">
+          <label for="fraction-max-height">Fraction maximum Tenney height in nats (0 = off)</label>
+          <input id="fraction-max-height" type="number" min="0" v-model="fractionMaxHeight" />
+        </div>
+        <div class="control">
           <label for="max-matrix-width">Maximum matrix width</label>
           <input
             id="max-matrix-width"
@@ -427,7 +441,7 @@ const sSlider = computed({
           <label for="calculate-violators">Show constant structure violations</label>
         </div>
         <div class="control">
-          <label for="cs-margin">Constant structure margin in cents</label>
+          <label for="cs-margin">Constant structure / variety margin in cents</label>
           <input id="cs-margin" type="number" min="0" v-model="state.constantStructureMargin" />
         </div>
         <div class="control checkbox-container">
