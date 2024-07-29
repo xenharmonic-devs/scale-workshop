@@ -1,6 +1,8 @@
 # Change log
 
 ## 3.0.1
+ * Feature: Apply CS margin to variety signature on Analysis tab [#796](https://github.com/xenharmonic-devs/scale-workshop/issues/796)
+ * Feature: Approximate Tenney-tall fractions on Analysis tab [#796](https://github.com/xenharmonic-devs/scale-workshop/issues/796)
  * Regression: Show pitch associated with MIDI base index [#795](https://github.com/xenharmonic-devs/scale-workshop/issues/795)
  * Bug fix: Use relative mossteps when J4 doesn't coincide with 1/1 [#794](https://github.com/xenharmonic-devs/scale-workshop/issues/794)
 
