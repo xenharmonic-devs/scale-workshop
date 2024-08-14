@@ -47,11 +47,17 @@ function generate(expand = true) {
       }
     } else {
       const ed = modal.divisions
-      const ji = modal.equave.toString()
       if (expand || !modal.simpleEd) {
-        source = modal.degrees.map((steps) => `${steps}\\${ed}<${ji}>`).join('\n')
+        try {
+          // Prefer restricted 7\13<3> form
+          const ji = modal.equave.toFraction().toFraction()
+          source = modal.degrees.map((steps) => `${steps}\\${ed}<${ji}>`).join('\n')
+        } catch {
+          // Fall back to generic 7\13 ed 1912.3456 form
+          source = modal.degrees.map((steps) => `${steps}\\${ed} ed ${modal.equave}`).join('\n')
+        }
       } else {
-        source = `tet(${ed}, ${ji})`
+        source = `tet(${ed}, ${modal.equave})`
       }
     }
     emit('update:source', source)
