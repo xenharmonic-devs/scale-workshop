@@ -1,5 +1,8 @@
 # Change log
 
+## 3.0.2
+ * Bug fix: Admit cents as the equave when generating equal temperaments [#803](https://github.com/xenharmonic-devs/scale-workshop/issues/803)
+
 ## 3.0.1
  * Feature: Apply CS margin to variety signature on Analysis tab [#796](https://github.com/xenharmonic-devs/scale-workshop/issues/796)
  * Feature: Approximate Tenney-tall fractions on Analysis tab [#796](https://github.com/xenharmonic-devs/scale-workshop/issues/796)

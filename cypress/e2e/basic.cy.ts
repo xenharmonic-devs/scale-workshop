@@ -52,4 +52,18 @@ describe("Scale generation/modification", () => {
     cy.get("button").contains("Done").click();
     cy.get("#scale-data").should("contain.value", "8/7");
   });
+
+  it("generates and displays 5 equal divisions of 1234.5 cents", () => {
+    cy.visit("/");
+
+    cy.get("a").contains("New scale").click();
+    cy.get("a").contains("Equal temperament").click();
+    cy.get("#equave").clear();
+    cy.get("#equave").type('1234.5');
+    cy.get("button").contains("OK").click();
+    cy.get("#scale-data").should("contain.value", "1\\5 ed 1234.5");
+
+    // This is how SonicWeave formats "3\5 ed 1234.5"
+    cy.get('.tuning-table').should("contain", "2469\\4000");
+  })
 });
