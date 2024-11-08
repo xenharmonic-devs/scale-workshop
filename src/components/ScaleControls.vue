@@ -5,6 +5,8 @@ import { ref } from 'vue'
 import ScaleRule from './ScaleRule.vue'
 import palette from '@/character-palette.json'
 
+const stepx = ref("1")
+
 const scale = useScaleStore()
 
 const updateScale = debounce(scale.computeScale)
@@ -53,13 +55,24 @@ defineExpose({ focus, clearPaletteInfo })
       <input
         id="base-midi-note"
         type="number"
-        step="1"
+        :step="stepx"
         v-model="scale.baseMidiNote"
         @input="updateScale()"
       />
       <span class="midi-name">{{
-        midiNoteNumberToName(scale.baseMidiNote, -1, scale.accidentalPreference)
-      }}</span>
+          midiNoteNumberToName(scale.baseMidiNote, -1, scale.accidentalPreference)
+        }}</span>
+
+      <span>
+        <label for="select-step">Step : </label>
+        <select id = "select-step" v-model="stepx">
+          <option value = "1">Semitone</option>
+          <option value = "2">Tone </option>
+          <option value = "12">Octave</option>
+        </select>
+
+      </span>
+
     </div>
 
     <div class="control">
@@ -165,8 +178,8 @@ defineExpose({ focus, clearPaletteInfo })
 <style scoped>
 .midi-name {
   width: 1em;
-  margin-left: 0.4em;
-  margin-right: 0.4em;
+  margin-left: 0.5em;
+  margin-right: 1em;
 }
 .info {
   height: 3em;

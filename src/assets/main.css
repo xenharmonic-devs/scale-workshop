@@ -126,7 +126,7 @@ ul.btn-group {
   display: flex;
   flex-flow: row wrap;
   align-items: stretch;
-  gap: 0.15rem;
+  gap: 0.15rem 0.15rem;
 }
 .control-group h2 {
   margin-bottom: unset;
