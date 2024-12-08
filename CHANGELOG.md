@@ -1,5 +1,8 @@
 # Change log
 
+## 3.0.3
+ * Maintenance: Update npm package dependencies
+
 ## 3.0.2
  * Bug fix: Admit cents as the equave when generating equal temperaments [#803](https://github.com/xenharmonic-devs/scale-workshop/issues/803)
 
