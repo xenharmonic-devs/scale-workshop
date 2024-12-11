@@ -21,7 +21,7 @@ const equalizedScaleData = computed(() => {
   const pitches = [...Array(scale.scale.size).keys()].map((i) =>
     valueToCents(Math.abs(scale.scale.getRatio(i + scale.scale.baseMidiNote)))
   )
-  const gridCents = valueToCents(scale.scale.equaveRatio) / modal.largeDivisions
+  const gridCents = valueToCents(scale.scale.equaveRatio) / modal.safeLargeDivisions
   if (modal.errorModel === 'rooted') {
     const error = misalignment(pitches, gridCents)
     return { error, degrees: [] }
@@ -31,7 +31,7 @@ const equalizedScaleData = computed(() => {
 
 function modify(expand = true) {
   if (modal.errorModel === 'rooted') {
-    scale.sourceText += `\nequalize(${modal.largeDivisions})`
+    scale.sourceText += `\nequalize(${modal.safeLargeDivisions})`
     if (expand) {
       const { visitor, defaults } = scale.getUserScopeVisitor()
       scale.sourceText = visitor.expand(defaults)
@@ -39,8 +39,8 @@ function modify(expand = true) {
   } else {
     const degrees = [...equalizedScaleData.value.degrees]
     degrees.shift()
-    degrees.push(modal.largeDivisions)
-    let postfix = `\\${modal.largeDivisions}`
+    degrees.push(modal.safeLargeDivisions)
+    let postfix = `\\${modal.safeLargeDivisions}`
     const equave = scale.relativeIntervals[scale.relativeIntervals.length - 1]
     if (equave.compare(OCTAVE)) {
       postfix += `ed ${linear(equave).toString()}`
