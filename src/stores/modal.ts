@@ -385,6 +385,16 @@ export const useModalStore = defineStore('modal', () => {
 
   // Equalize
   const largeDivisions = ref(22)
+  const safeLargeDivisions = computed(() => {
+    const value = largeDivisions.value
+    if (isNaN(value) || !isFinite(value)) {
+      return 1
+    }
+    if (value < 1) {
+      return 1
+    }
+    return Math.round(value)
+  })
 
   // Merge offset
   const overflowType = ref<'keep' | 'drop' | 'wrap'>('drop')
@@ -461,7 +471,7 @@ export const useModalStore = defineStore('modal', () => {
         vao(
           mediumInteger.value,
           largeInteger.value,
-          largeDivisions.value,
+          safeLargeDivisions.value,
           tolerance.value,
           equave.value.totalCents()
         )
@@ -470,7 +480,7 @@ export const useModalStore = defineStore('modal', () => {
     return freeVAOs(
       mediumInteger.value,
       largeInteger.value,
-      largeDivisions.value,
+      safeLargeDivisions.value,
       tolerance.value,
       equave.value.totalCents()
     )
@@ -595,6 +605,7 @@ export const useModalStore = defineStore('modal', () => {
 
     // Equalize
     largeDivisions,
+    safeLargeDivisions,
 
     // Merge offset
     offsets,

@@ -23,7 +23,7 @@ function generate(shell = true, expand = true) {
     collecting: for (let i = 0; i < selectedVao.degrees.length; ++i) {
       const harmonic = selectedVao.harmonics[i]
       const degree = selectedVao.degrees[i]
-      const reducedDegree = mmod(degree, modal.largeDivisions) || modal.largeDivisions
+      const reducedDegree = mmod(degree, modal.safeLargeDivisions) || modal.safeLargeDivisions
       for (let j = 0; j < data.length; ++j) {
         if (data[j][0] === reducedDegree) {
           data[j][1] += ' & ' + harmonic.toString()
@@ -33,10 +33,10 @@ function generate(shell = true, expand = true) {
       data.push([reducedDegree, harmonic.toString()])
     }
     data.sort((a, b) => a[0] - b[0])
-    if (!data.length || data[data.length - 1][0] !== modal.largeDivisions) {
-      data.push([modal.largeDivisions, ''])
+    if (!data.length || data[data.length - 1][0] !== modal.safeLargeDivisions) {
+      data.push([modal.safeLargeDivisions, ''])
     }
-    let postfix = `\\${modal.largeDivisions}`
+    let postfix = `\\${modal.safeLargeDivisions}`
     if (modal.equave.compare(OCTAVE)) {
       postfix += `ed ${linear(modal.equave).toString()}`
     }
