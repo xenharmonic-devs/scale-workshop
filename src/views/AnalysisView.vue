@@ -321,41 +321,45 @@ const sSlider = computed({
       <h2>Interval matrix (modes)</h2>
       <div class="control-group interval-matrix">
         <table @mouseleave="highlight()">
-          <tr>
-            <th></th>
-            <th v-for="i of Math.min(scale.scale.size, state.maxMatrixWidth)" :key="i">
-              {{ i - 1 + state.intervalMatrixIndexing }}
-            </th>
-            <th>({{ scale.scale.size + state.intervalMatrixIndexing }})</th>
-            <th class="brightness" v-if="state.calculateBrightness">Bright %</th>
-          </tr>
-          <tr v-for="(row, i) of matrixRows" :key="i">
-            <th :class="{ held: heldScaleDegrees.has(i) }">
-              <template v-if="cellFormat === 'best'">
-                {{ scale.labels[mmod(i - 1, scale.labels.length)] }}
-              </template>
-              <template v-else>
-                {{ formatMatrixCell(i ? scale.relativeIntervals[i - 1] : UNISON) }}
-              </template>
-            </th>
-            <td
-              v-for="(name, j) of row"
-              :key="j"
-              :class="{
-                violator: state.calculateConstantStructureViolations && violations[i][j],
-                highlight: (highlights[i] ?? [])[j]
-              }"
-              @mouseover="highlight(i, j)"
-            >
-              {{ name }}
-            </td>
-            <td class="brightness" v-if="state.calculateBrightness">{{ brightness[i] }}</td>
-          </tr>
-          <tr class="variety" v-if="state.calculateVariety">
-            <th>Var</th>
-            <td v-for="(v, i) of variety" :key="i">{{ v }}</td>
-            <td class="brightness" v-if="state.calculateBrightness"></td>
-          </tr>
+          <thead>
+            <tr>
+              <th></th>
+              <th v-for="i of Math.min(scale.scale.size, state.maxMatrixWidth)" :key="i">
+                {{ i - 1 + state.intervalMatrixIndexing }}
+              </th>
+              <th>({{ scale.scale.size + state.intervalMatrixIndexing }})</th>
+              <th class="brightness" v-if="state.calculateBrightness">Bright %</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(row, i) of matrixRows" :key="i">
+              <th :class="{ held: heldScaleDegrees.has(i) }">
+                <template v-if="cellFormat === 'best'">
+                  {{ scale.labels[mmod(i - 1, scale.labels.length)] }}
+                </template>
+                <template v-else>
+                  {{ formatMatrixCell(i ? scale.relativeIntervals[i - 1] : UNISON) }}
+                </template>
+              </th>
+              <td
+                v-for="(name, j) of row"
+                :key="j"
+                :class="{
+                  violator: state.calculateConstantStructureViolations && violations[i][j],
+                  highlight: (highlights[i] ?? [])[j]
+                }"
+                @mouseover="highlight(i, j)"
+              >
+                {{ name }}
+              </td>
+              <td class="brightness" v-if="state.calculateBrightness">{{ brightness[i] }}</td>
+            </tr>
+            <tr class="variety" v-if="state.calculateVariety">
+              <th>Var</th>
+              <td v-for="(v, i) of variety" :key="i">{{ v }}</td>
+              <td class="brightness" v-if="state.calculateBrightness"></td>
+            </tr>
+          </tbody>
         </table>
       </div>
       <div class="control-group">
@@ -606,16 +610,20 @@ const sSlider = computed({
       </div>
       <div class="entropy-intervals">
         <table>
-          <tr>
-            <th>Label</th>
-            <th>Cents</th>
-            <th>Entropy %</th>
-          </tr>
-          <tr v-for="(cents, i) of centss" :key="i">
-            <td>{{ labels[i] }}</td>
-            <td>{{ cents.toFixed(scale.centsFractionDigits) }}</td>
-            <td>{{ (100 * entropy.entropyPercentage(cents)).toFixed(3) }}</td>
-          </tr>
+          <thead>
+            <tr>
+              <th>Label</th>
+              <th>Cents</th>
+              <th>Entropy %</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(cents, i) of centss" :key="i">
+              <td>{{ labels[i] }}</td>
+              <td>{{ cents.toFixed(scale.centsFractionDigits) }}</td>
+              <td>{{ (100 * entropy.entropyPercentage(cents)).toFixed(3) }}</td>
+            </tr>
+          </tbody>
         </table>
       </div>
     </main>

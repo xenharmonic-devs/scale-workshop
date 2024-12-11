@@ -69,33 +69,35 @@ const isMousePressed = ref(false)
 
 <template>
   <table>
-    <tr v-for="[y, row] of virtualKeys" :key="y" :class="{ 'hidden-sm': y < 0 || y > 3 }">
-      <VirtualKeyboardKey
-        v-for="key of row"
-        :key="key.x"
-        :class="{
-          'hidden-sm': key.x > 8,
-          held: (heldNotes.get(key.index) || 0) > 0
-        }"
-        :index="key.index"
-        :color="key.color"
-        :isMousePressed="isMousePressed"
-        :noteOn="() => noteOn(key.index)"
-        @press="isMousePressed = true"
-        @unpress="isMousePressed = false"
-      >
-        <VirtualKeyInfo
-          :label="key.label"
-          :cents="key.cents"
-          :ratio="key.ratio"
-          :frequency="key.frequency"
-          :showLabel="props.showLabel"
-          :showCents="props.showCents"
-          :showRatio="props.showRatio"
-          :showFrequency="props.showFrequency"
-        />
-      </VirtualKeyboardKey>
-    </tr>
+    <tbody>
+      <tr v-for="[y, row] of virtualKeys" :key="y" :class="{ 'hidden-sm': y < 0 || y > 3 }">
+        <VirtualKeyboardKey
+          v-for="key of row"
+          :key="key.x"
+          :class="{
+            'hidden-sm': key.x > 8,
+            held: (heldNotes.get(key.index) || 0) > 0
+          }"
+          :index="key.index"
+          :color="key.color"
+          :isMousePressed="isMousePressed"
+          :noteOn="() => noteOn(key.index)"
+          @press="isMousePressed = true"
+          @unpress="isMousePressed = false"
+        >
+          <VirtualKeyInfo
+            :label="key.label"
+            :cents="key.cents"
+            :ratio="key.ratio"
+            :frequency="key.frequency"
+            :showLabel="props.showLabel"
+            :showCents="props.showCents"
+            :showRatio="props.showRatio"
+            :showFrequency="props.showFrequency"
+          />
+        </VirtualKeyboardKey>
+      </tr>
+    </tbody>
   </table>
 </template>
 
