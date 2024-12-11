@@ -1,5 +1,13 @@
 # Change log
 
+## 3.1.0
+  * Feature: Implement the missing size inequality operator `~<>` (i.e. the negation of `~=`)
+  * Feature: Accept lone vals for `commaBasis` and `mappingBasis`
+  * Feature: Admit containers as spread arguments
+  * Bug fix: Sanitize divisions input in equalize modal [#825](https://github.com/xenharmonic-devs/scale-workshop/issues/825)
+  * Bug fix: Fix domain error in `realizeWord` [#823](https://github.com/xenharmonic-devs/scale-workshop/issues/823)
+  * Bug fix: Fix typos in error messages
+
 ## 3.0.2
  * Bug fix: Admit cents as the equave when generating equal temperaments [#803](https://github.com/xenharmonic-devs/scale-workshop/issues/803)
  * Maintenance: Update npm package dependencies
