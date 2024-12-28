@@ -4,6 +4,8 @@ import { debounce, midiNoteNumberToName } from '@/utils'
 import { ref } from 'vue'
 import ScaleRule from './ScaleRule.vue'
 import palette from '@/character-palette.json'
+import { useStateStore } from '@/stores/state'
+const state = useStateStore()
 
 const stepx = ref("1")
 
@@ -62,15 +64,13 @@ defineExpose({ focus, clearPaletteInfo })
       <span class="midi-name">{{
           midiNoteNumberToName(scale.baseMidiNote, -1, scale.accidentalPreference)
         }}</span>
-
-      <span>
+      <span v-if="state.step">
         <label for="select-step">Step : </label>
         <select id = "select-step" v-model="stepx">
           <option value = "1">Semitone</option>
           <option value = "2">Tone </option>
           <option value = "12">Octave</option>
         </select>
-
       </span>
 
     </div>

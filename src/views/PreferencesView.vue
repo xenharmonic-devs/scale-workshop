@@ -54,6 +54,10 @@ const scale = useScaleStore()
             <input id="debug" type="checkbox" v-model="state.debug" />
             <label for="debug" class="right-of-checkbox">Enable debugging features</label>
           </div>
+          <div class="control checkbox-container">
+            <input id="custom-step" type="checkbox" v-model="state.step" />
+            <label for="custom-step" class="right-of-checkbox">Enable Custom Step Increment</label>
+          </div>
         </div>
       </div>
       <div class="column">
