@@ -7,7 +7,7 @@ import palette from '@/character-palette.json'
 import { useStateStore } from '@/stores/state'
 const state = useStateStore()
 
-const stepx = ref("1")
+const transposeStep = ref('1')
 
 const scale = useScaleStore()
 
@@ -57,21 +57,23 @@ defineExpose({ focus, clearPaletteInfo })
       <input
         id="base-midi-note"
         type="number"
-        :step="stepx"
+        :step="transposeStep"
         v-model="scale.baseMidiNote"
         @input="updateScale()"
       />
       <span class="midi-name">{{
           midiNoteNumberToName(scale.baseMidiNote, -1, scale.accidentalPreference)
         }}</span>
-      <span v-if="state.step">
-        <label for="select-step">Step : </label>
-        <select id = "select-step" v-model="stepx">
-          <option value = "1">Semitone</option>
-          <option value = "2">Tone </option>
-          <option value = "12">Octave</option>
-        </select>
+      <span v-if="state.transposeByOctave">
+        <label for="step-toggle">Transpose </label>
+        <button
+          id="step-toggle"
+          @click="transposeStep = transposeStep === '12' ? '1' : '12'"
+        >
+          {{ transposeStep === '12' ? 'Octave' : 'Semitone' }}
+        </button>
       </span>
+
 
     </div>
 

@@ -55,8 +55,8 @@ const scale = useScaleStore()
             <label for="debug" class="right-of-checkbox">Enable debugging features</label>
           </div>
           <div class="control checkbox-container">
-            <input id="custom-step" type="checkbox" v-model="state.step" />
-            <label for="custom-step" class="right-of-checkbox">Enable Custom Step Increment</label>
+            <input id="custom-transpose" type="checkbox" v-model="state.transposeByOctave" />
+            <label for="custom-transpose" class="right-of-checkbox">Enable Transpose by Octave Toggle</label>
           </div>
         </div>
       </div>
