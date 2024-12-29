@@ -4,6 +4,10 @@ import { debounce, midiNoteNumberToName } from '@/utils'
 import { ref } from 'vue'
 import ScaleRule from './ScaleRule.vue'
 import palette from '@/character-palette.json'
+import { useStateStore } from '@/stores/state'
+const state = useStateStore()
+
+const transposeStep = ref('1')
 
 const scale = useScaleStore()
 
@@ -53,13 +57,24 @@ defineExpose({ focus, clearPaletteInfo })
       <input
         id="base-midi-note"
         type="number"
-        step="1"
+        :step="transposeStep"
         v-model="scale.baseMidiNote"
         @input="updateScale()"
       />
       <span class="midi-name">{{
-        midiNoteNumberToName(scale.baseMidiNote, -1, scale.accidentalPreference)
-      }}</span>
+          midiNoteNumberToName(scale.baseMidiNote, -1, scale.accidentalPreference)
+        }}</span>
+      <span v-if="state.transposeByOctave">
+        <label for="step-toggle">Transpose </label>
+        <button
+          id="step-toggle"
+          @click="transposeStep = transposeStep === '12' ? '1' : '12'"
+        >
+          {{ transposeStep === '12' ? 'Octave' : 'Semitone' }}
+        </button>
+      </span>
+
+
     </div>
 
     <div class="control">
@@ -165,8 +180,8 @@ defineExpose({ focus, clearPaletteInfo })
 <style scoped>
 .midi-name {
   width: 1em;
-  margin-left: 0.4em;
-  margin-right: 0.4em;
+  margin-left: 0.5em;
+  margin-right: 1em;
 }
 .info {
   height: 3em;

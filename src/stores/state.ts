@@ -54,6 +54,8 @@ export const useStateStore = defineStore('state', () => {
   // Debugging features.
   const debug = ref(storage.getItem('debug') === 'true')
 
+  const transposeByOctave = ref(storage.getItem('transposeByOctave') === 'true')
+
   /**
    * Convert live state to a format suitable for storing on the server.
    */
@@ -91,7 +93,8 @@ export const useStateStore = defineStore('state', () => {
     degreeDownCode,
     shareStatistics,
     showSafariWarning,
-    debug
+    debug,
+    transposeByOctave
   })
   watch(
     colorScheme,
@@ -130,6 +133,7 @@ export const useStateStore = defineStore('state', () => {
     shareStatistics,
     showSafariWarning,
     debug,
+    transposeByOctave,
     // Methods
     toJSON,
     fromJSON
