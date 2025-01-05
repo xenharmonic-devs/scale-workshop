@@ -9,6 +9,9 @@ import { useRank2Store } from '@/stores/tempering'
 import { Interval, intervalValueAs } from 'sonic-weave'
 import { useScaleStore } from '@/stores/scale'
 import { mmod } from 'xen-dev-utils'
+import type { MosInfo } from 'moment-of-symmetry'
+
+const EPSILON = 1e-12
 
 const scale = useScaleStore()
 const rank2 = useRank2Store()
@@ -76,6 +79,44 @@ function updateCircleGenerator(value: number) {
   rank2.generator = parseCents(value, scale.centsFractionDigits)
   rank2.generatorString = rank2.generator.toString()
   rank2.generatorFineCents = '0'
+}
+
+function chromaAndHardness(size: number) {
+  const g = rank2.generatorPerPeriod
+  const scalePerPeriod = [...Array(size).keys()].map((i) => mmod(i * g, 1))
+  scalePerPeriod.sort((a, b) => a - b)
+  scalePerPeriod.push(1)
+  let L = scalePerPeriod[1]
+  let s = scalePerPeriod[1]
+  for (let i = 0; i < size; ++i) {
+    const other = scalePerPeriod[i + 1] - scalePerPeriod[i]
+    // Epsilon works around floating point noise
+    if (other + EPSILON < s) {
+      s = other
+      break
+    } else if (other - EPSILON > L) {
+      L = other
+      break
+    }
+  }
+  const p = rank2.period.totalCents()
+  if (!p) {
+    return {
+      chroma: 0,
+      hardness: L / s
+    }
+  }
+  L *= p
+  s *= p
+  return {
+    chroma: L - s,
+    hardness: L / s
+  }
+}
+
+function setPreview(mosInfo: MosInfo) {
+  const { chroma, hardness } = chromaAndHardness(mosInfo.size)
+  rank2.previewMosPattern = `${mosInfo.mosPattern}, L/s: ${hardness.toFixed(2)}, L-s: ${chroma.toFixed(1)}¢`
 }
 
 function generate(expand = true) {
@@ -376,7 +417,7 @@ function generate(expand = true) {
           <button
             v-for="(mosInfo, i) of rank2.mosPatterns"
             :key="i"
-            @mouseenter="rank2.previewMosPattern = mosInfo.mosPattern"
+            @mouseenter="setPreview(mosInfo)"
             @mouseleave="rank2.previewMosPattern = ''"
             @click="selectMosSize(mosInfo.size)"
           >
