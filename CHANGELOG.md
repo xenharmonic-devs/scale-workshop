@@ -2,6 +2,7 @@
 
 ## 3.2.0 (unreleased)
   * Feature: Display hardness and chroma alongside the MOS pattern in Rank 2 modal [#379](https://github.com/xenharmonic-devs/scale-workshop/issues/379)
+  * Feature: Add a button for calculating more MOS sizes in Rank 2 modal [#832](https://github.com/xenharmonic-devs/scale-workshop/issues/832)
 
 ## 3.1.0
   * Feature: Implement the missing size inequality operator `~<>` (i.e. the negation of `~=`)

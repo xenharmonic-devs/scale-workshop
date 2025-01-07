@@ -423,6 +423,7 @@ function generate(expand = true) {
           >
             {{ mosInfo.size }}
           </button>
+          <button @click="rank2.mosPatternAmount += 1">More ({{ rank2.morePatterns }}+)</button>
         </div>
       </div>
     </template>
