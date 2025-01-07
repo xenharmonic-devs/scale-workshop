@@ -122,8 +122,8 @@ function makeState<T>(defaultMethod: T, rank2 = false) {
 }
 
 export const useRank2Store = defineStore('rank2', () => {
-  const MAX_SIZE = 128
-  const MAX_LENGTH = 12
+  const MAX_SIZE_UNIT = 100
+  const MAX_LENGTH_UNIT = 10
 
   // === Component state ===
   const state = makeState<'generator' | 'vals' | 'commas' | 'circle'>('generator', true)
@@ -139,6 +139,8 @@ export const useRank2Store = defineStore('rank2', () => {
   // method: "circle"
   const periodStretch = ref('0')
   const generatorFineCents = ref('0')
+  // MOS pattern buttons / more
+  const mosPatternAmount = ref(1)
   // Footer preview
   const previewMosPattern = ref('')
   // State for key colors
@@ -165,26 +167,39 @@ export const useRank2Store = defineStore('rank2', () => {
   )
 
   const [mosPatterns, mosPatternsError] = computedAndError(() => {
+    const m = mosPatternAmount.value
+    const maxSize = m * MAX_SIZE_UNIT
+    const maxLength = m * MAX_LENGTH_UNIT
     if (method.value === 'generator') {
       // Don't show error in the default configuration
       if (!generatorString.value.length) {
         return []
       }
-      return getMosPatterns(generatorPerPeriod.value, safeNumPeriods.value, MAX_SIZE, MAX_LENGTH)
+      return getMosPatterns(generatorPerPeriod.value, safeNumPeriods.value, maxSize, maxLength)
     } else if (method.value === 'vals') {
       // TODO: Interactivity guards using MAX_INTERACTIVE_SUBGROUP_SIZE.
       const temp = state.valsTemperament.value
       const [period, gen] = temp.generators
-      return getMosPatterns(gen / period, temp.numberOfPeriods, MAX_SIZE, MAX_LENGTH)
+      return getMosPatterns(gen / period, temp.numberOfPeriods, maxSize, maxLength)
     } else if (method.value === 'commas') {
       // TODO: Interactivity guards using MAX_INTERACTIVE_SUBGROUP_SIZE.
       const temp = state.commasTemperament.value
       const [period, gen] = temp.generators
-      return getMosPatterns(gen / period, temp.numberOfPeriods, MAX_SIZE, MAX_LENGTH)
+      return getMosPatterns(gen / period, temp.numberOfPeriods, maxSize, maxLength)
     } else {
       return []
     }
   }, [])
+
+  const morePatterns = computed(() => {
+    const m = mosPatternAmount.value
+    const maxSize = m * MAX_SIZE_UNIT
+    const maxLength = m * MAX_LENGTH_UNIT
+    if (mosPatterns.value.length >= maxLength) {
+      return mosPatterns.value[mosPatterns.value.length - 1].size + 1
+    }
+    return maxSize + 1
+  })
 
   const error = computed(() => mosPatternsError.value || state.error.value)
 
@@ -245,6 +260,10 @@ export const useRank2Store = defineStore('rank2', () => {
     up.value = Math.min(up.value, newValue)
   })
 
+  watch([generatorPerPeriod, numPeriods, state.valsTemperament, state.commasTemperament], () => {
+    mosPatternAmount.value = 1
+  })
+
   return {
     ...state,
     error,
@@ -258,6 +277,7 @@ export const useRank2Store = defineStore('rank2', () => {
     safeNumPeriods,
     periodStretch,
     generatorFineCents,
+    mosPatternAmount,
     previewMosPattern,
     colorMethod,
     colorAccidentals,
@@ -267,6 +287,7 @@ export const useRank2Store = defineStore('rank2', () => {
     opposite,
     mosPatterns,
     mosPatternsError,
+    morePatterns,
     circlePeriodCents,
     circleGeneratorCents,
     generatorsPerPeriod,
