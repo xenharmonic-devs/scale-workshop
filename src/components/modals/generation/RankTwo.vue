@@ -62,9 +62,10 @@ function selectMosSize(mosSize: number) {
   rank2.size = mosSize
   if (rank2.method === 'vals' || rank2.method === 'commas') {
     let [period, generator] = rank2.temperament.generators
+    period = Math.abs(period)
     generator = mmod(generator, period)
 
-    rank2.numPeriods = rank2.temperament.numberOfPeriods
+    rank2.numPeriods = Math.abs(rank2.temperament.numberOfPeriods)
     rank2.method = 'generator'
 
     rank2.period = parseCents(period, scale.centsFractionDigits)
