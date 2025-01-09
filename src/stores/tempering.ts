@@ -180,12 +180,12 @@ export const useRank2Store = defineStore('rank2', () => {
       // TODO: Interactivity guards using MAX_INTERACTIVE_SUBGROUP_SIZE.
       const temp = state.valsTemperament.value
       const [period, gen] = temp.generators
-      return getMosPatterns(gen / period, temp.numberOfPeriods, maxSize, maxLength)
+      return getMosPatterns(gen / period, Math.abs(temp.numberOfPeriods), maxSize, maxLength)
     } else if (method.value === 'commas') {
       // TODO: Interactivity guards using MAX_INTERACTIVE_SUBGROUP_SIZE.
       const temp = state.commasTemperament.value
       const [period, gen] = temp.generators
-      return getMosPatterns(gen / period, temp.numberOfPeriods, maxSize, maxLength)
+      return getMosPatterns(gen / period, Math.abs(temp.numberOfPeriods), maxSize, maxLength)
     } else {
       return []
     }
