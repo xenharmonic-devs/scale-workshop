@@ -307,7 +307,23 @@ watch(
               </option>
             </select>
           </div>
-          <div class="control channels-wrapper">
+          <div class="control radio-group">
+            <label>Output mode</label>
+            <span>
+              <input
+                type="radio"
+                id="output-pitch-bend"
+                value="pitchBend"
+                v-model="midi.outputMode"
+              />
+              <label for="output-pitch-bend">12-TET w/ multichannel pitch bend</label>
+            </span>
+            <span>
+              <input type="radio" id="output-linear" value="linear" v-model="midi.outputMode" />
+              <label for="output-linear">Linear (use "#" column)</label>
+            </span>
+          </div>
+          <div class="control channels-wrapper" v-if="midi.outputMode === 'pitchBend'">
             <label>Output channels</label>
             <span v-for="channel in 16" :key="channel">
               <label>{{ channel }}</label>
@@ -318,6 +334,10 @@ watch(
                 @input="toggleOutputChannel"
               />
             </span>
+          </div>
+          <div class="control" v-else>
+            <label>Output channel</label>
+            <input type="number" step="1" min="1" max="16" v-model="midi.outputChannel" />
           </div>
         </div>
       </div>
