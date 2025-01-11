@@ -4,7 +4,7 @@ import { RouterLink, RouterView, useRouter } from 'vue-router'
 import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
 import { ScaleWorkshopOneData } from '@/scale-workshop-one'
 import type { Input, Output } from 'webmidi'
-import { MidiIn, midiKeyInfo, MidiOut } from 'xen-midi'
+import { MidiIn, midiKeyInfo, MidiOut, type NoteOff } from 'xen-midi'
 import { Keyboard, type CoordinateKeyboardEvent, COORDS_BY_CODE } from 'isomorphic-qwerty'
 import { decodeQuery } from '@/url-encode'
 import { annotateColors } from '@/utils'
@@ -47,12 +47,22 @@ function tuningTableKeyOff(index: number) {
 
 const midiOut = computed(() => new MidiOut(midi.output as Output, midi.outputChannels))
 
-function sendNoteOn(frequency: number, rawAttack: number) {
+function sendNoteOn(index: number, frequency: number, rawAttack: number) {
   frequency = clamp(-24000, 24000, frequency)
   if (isNaN(frequency)) {
     frequency = 0
   }
-  const midiOff = midiOut.value.sendNoteOn(frequency, rawAttack)
+  let midiOff: NoteOff = () => {}
+  if (midi.outputMode === 'pitchBend') {
+    midiOff = midiOut.value.sendNoteOn(frequency, rawAttack)
+  } else if (midi.output !== null) {
+    midi.output.sendNoteOn(index, { channels: midi.outputChannel, rawAttack })
+    midiOff = (rawRelease?: number, time?: DOMHighResTimeStamp) => {
+      if (midi.output !== null) {
+        midi.output.sendNoteOff(index, { channels: midi.outputChannel, rawRelease, time })
+      }
+    }
+  }
 
   if (audio.synth === null || audio.virtualSynth === null) {
     return midiOff
@@ -152,7 +162,7 @@ function midiNoteOn(index: number, rawAttack?: number, channel?: number) {
     return (rawRelease?: number) => {}
   }
 
-  const noteOff = sendNoteOn(frequency, rawAttack)
+  const noteOff = sendNoteOn(index, frequency, rawAttack)
   return (rawRelease?: number) => {
     if (rawRelease === undefined) {
       rawRelease = 80
@@ -192,15 +202,20 @@ watch(
     if (newValue !== null) {
       midiIn.listen(newValue as Input)
 
-      // Pass everything else through and distrubute among the channels
+      // Pass everything else through and distribute among the channels
       ;(newValue as Input).addListener('midimessage', (event) => {
         if (!RESERVED_MESSAGES.includes(event.message.type) && midi.output !== null) {
           if (event.message.isChannelMessage) {
             if (midiInputChannels.has(event.message.channel)) {
               const status = event.message.statusByte & 0b11110000
-              for (const channel of midi.outputChannels) {
-                const data = [...event.message.data]
-                data[0] = status | (channel - 1)
+              const data = [...event.message.data]
+              if (midi.outputMode === 'pitchBend') {
+                for (const channel of midi.outputChannels) {
+                  data[0] = status | (channel - 1)
+                  midi.output.send(data)
+                }
+              } else {
+                data[0] = status | (midi.outputChannel - 1)
                 midi.output.send(data)
               }
             }
@@ -216,7 +231,7 @@ watch(
 // === Virtual and typing keyboard ===
 function keyboardNoteOn(index: number) {
   tuningTableKeyOn(index)
-  const noteOff = sendNoteOn(scale.getFrequency(index), 80)
+  const noteOff = sendNoteOn(index, scale.getFrequency(index), 80)
   function keyOff() {
     tuningTableKeyOff(index)
     return noteOff(80)
@@ -492,7 +507,7 @@ function panic() {
   midiIn.deactivate()
   if (midi.output !== null) {
     midi.output.sendAllNotesOff({
-      channels: [...midi.outputChannels]
+      channels: midi.outputMode === 'pitchBend' ? [...midi.outputChannels] : [midi.outputChannel]
     })
   }
   if (audio.synth !== null) {

@@ -3,6 +3,7 @@
 ## 3.2.0 (unreleased)
   * Feature: Display hardness and chroma alongside the MOS pattern in Rank 2 modal [#379](https://github.com/xenharmonic-devs/scale-workshop/issues/379)
   * Feature: Add a button for calculating more MOS sizes in Rank 2 modal [#832](https://github.com/xenharmonic-devs/scale-workshop/issues/832)
+  * Feature: Linear MIDI output mode (uses the numbers in the "#" column and assumes you tune the target device yourself) [#834](https://github.com/xenharmonic-devs/scale-workshop/issues/834)
   * Bug fix: Fix a crash in Rank 2 caused by temperaments with a negative number of periods per equave [#837](https://github.com/xenharmonic-devs/scale-workshop/issues/837)
 
 ## 3.1.0
