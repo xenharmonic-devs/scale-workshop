@@ -446,7 +446,13 @@ const sSlider = computed({
         </div>
         <div class="control">
           <label for="cs-margin">Constant structure / variety margin in cents</label>
-          <input id="cs-margin" type="number" min="0" v-model="state.constantStructureMargin" />
+          <input
+            id="cs-margin"
+            type="number"
+            min="0"
+            step="any"
+            v-model="state.constantStructureMargin"
+          />
         </div>
         <div class="control checkbox-container">
           <input id="calculate-variety" type="checkbox" v-model="state.calculateVariety" />
