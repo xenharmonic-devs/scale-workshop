@@ -26,6 +26,8 @@ function scaleGet(monzos: TimeMonzo[], index: number) {
   return monzos[mmod(index, monzos.length)].mul(equave.pow(numEquaves))
 }
 
+export const MAX_EQUAL_TEMPERAMENT_SIZE = 1024
+
 export const useModalStore = defineStore('modal', () => {
   // Generic
   const equaveString = ref('2/1')
@@ -57,7 +59,9 @@ export const useModalStore = defineStore('modal', () => {
   const singleStepOnly = computed(
     () => divisions.value !== Math.round(divisions.value) || divisions.value < 1
   )
-  const safeScaleSize = computed(() => Math.round(clamp(1, 1024, divisions.value)))
+  const safeScaleSize = computed(() =>
+    Math.round(clamp(1, MAX_EQUAL_TEMPERAMENT_SIZE, divisions.value))
+  )
   const jumps = computed(() => splitText(jumpsString.value).map((token) => parseInt(token, 10)))
   const degrees = computed(() => splitText(degreesString.value).map((token) => parseInt(token, 10)))
 

@@ -3,7 +3,7 @@ import { OCTAVE } from '@/constants'
 import { ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
-import { useModalStore } from '@/stores/modal'
+import { MAX_EQUAL_TEMPERAMENT_SIZE, useModalStore } from '@/stores/modal'
 import { setAndReportValidity } from '@/utils'
 import { useScaleStore } from '@/stores/scale'
 
@@ -110,6 +110,12 @@ function generate(expand = true) {
             :defaultValue="OCTAVE"
           />
         </div>
+      </div>
+      <div class="warning">
+        <p v-if="modal.singleStepOnly">Warning: Scale will be converted to a single step.</p>
+        <p v-else-if="modal.divisions !== modal.safeScaleSize">
+          Warning: Scale will be capped at {{ MAX_EQUAL_TEMPERAMENT_SIZE }} notes.
+        </p>
       </div>
     </template>
     <template #footer>
