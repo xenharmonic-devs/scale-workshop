@@ -7,11 +7,11 @@ import { computed, type ComputedRef } from 'vue'
 
 import TIMBRES from '@/timbres.json'
 
-type Spectrum = number[]; // Just its partials
+type Spectrum = number[];
 
 type Timbres = {
   plainSpectra: { [key: string]: Spectrum }
-  // Allows migration from other data using additional keys and timbre data types
+  // TODO: Migrate inharmonic metallic and some other timbral data
 }
 
 function getPlainSpectrum(id: string): Spectrum {
@@ -406,7 +406,7 @@ function initializeAperiodic(audioContext: BaseAudioContext) {
   })
 
   APERIODIC_WAVES['piano'] = computed(() => {
-    const freqs = [
+    const spectrum = [
       0.998711340392508, 1.0012886596074921, 2.000000001915048, 3.0077319605175252,
       4.024484537329971, 4.028350517109971, 5.052835053482418, 6.0953608281898495,
       6.100515466619817, 7.149484540322233, 7.158505158532202, 8.221649488874554, 9.326030932401801,
@@ -422,18 +422,18 @@ function initializeAperiodic(audioContext: BaseAudioContext) {
       0.0024893662658642206, 0.0012043792096897129, 0.0014228119365412375
     ].map((a) => a * 0.38)
 
-    return new AperiodicWave(audioContext, freqs, amps, maxNumberOfVoices, tolerance)
+    return new AperiodicWave(audioContext, spectrum, amps, maxNumberOfVoices, tolerance)
   })
 
   getPlainSpectraWaveformNames().forEach((id) => {
     APERIODIC_WAVES[id] = computed(() => {
-      const freqs = getPlainSpectrum(id)
-      const nsm1 = [...freqs.keys()]
-      const preamps = nsm1.map((nm1) => (nm1 + 1) ** -1.5)
+      const spectrum = getPlainSpectrum(id)
+      const indices = [...spectrum.keys()]
+      const preamps = indices.map((nm1) => (nm1 + 1) ** -1.5)
       // 0.730783 is based on the code above for 128 amplitudes: they summed to that
-      const amp_correction = 0.730783 / sum(preamps)
-      const amps = preamps.map((a) => a * amp_correction)
-      return new AperiodicWave(audioContext, freqs, amps, maxNumberOfVoices, tolerance)
+      const amplitudeCorrection = 0.730783 / sum(preamps)
+      const amps = preamps.map((a) => a * amplitudeCorrection)
+      return new AperiodicWave(audioContext, spectrum, amps, maxNumberOfVoices, tolerance)
     })
   })
 }
