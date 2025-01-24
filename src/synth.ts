@@ -7,20 +7,19 @@ import { computed, type ComputedRef } from 'vue'
 
 import TIMBRES from '@/timbres.json'
 
-type InharmonicSimpleTimbre = number[]; // Just its partials
+type Spectrum = number[]; // Just its partials
 
 type Timbres = {
-  inharmonicSimple: { [key: string]: InharmonicSimpleTimbre }
+  plainSpectra: { [key: string]: Spectrum }
   // Allows migration from other data using additional keys and timbre data types
 }
 
-function getInharmonicSimple(id: string): InharmonicSimpleTimbre {
-  const result: any = (TIMBRES as unknown as Timbres).inharmonicSimple[id]
-  return result
+function getPlainSpectrum(id: string): Spectrum {
+  return (TIMBRES as unknown as Timbres).plainSpectra[id]
 }
 
-function getInharmonicSimpleWaveformNames(): string[] {
-  return Object.keys((TIMBRES as unknown as Timbres).inharmonicSimple)
+function getPlainSpectraWaveformNames(): string[] {
+  return Object.keys((TIMBRES as unknown as Timbres).plainSpectra)
 }
 
 export const BASIC_WAVEFORMS = ['sine', 'square', 'sawtooth', 'triangle']
@@ -62,7 +61,7 @@ export const APERIODIC_WAVEFORMS = [
   'silver',
   'platinum',
   '12-TET'
-].concat(getInharmonicSimpleWaveformNames())
+].concat(getPlainSpectraWaveformNames())
 export const APERIODIC_WAVES: Record<string, ComputedRef<AperiodicWave>> = {}
 
 export function initializePeriodic(audioContext: BaseAudioContext) {
@@ -426,9 +425,9 @@ function initializeAperiodic(audioContext: BaseAudioContext) {
     return new AperiodicWave(audioContext, freqs, amps, maxNumberOfVoices, tolerance)
   })
 
-  getInharmonicSimpleWaveformNames().forEach((id) => {
+  getPlainSpectraWaveformNames().forEach((id) => {
     APERIODIC_WAVES[id] = computed(() => {
-      const freqs = getInharmonicSimple(id)
+      const freqs = getPlainSpectrum(id)
       const nsm1 = [...freqs.keys()]
       const preamps = nsm1.map((nm1) => (nm1 + 1) ** -1.5)
       // 0.730783 is based on the code above for 128 amplitudes: they summed to that
