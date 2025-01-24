@@ -1,9 +1,27 @@
 // Classic variants are from Scale Workshop 2, they're softer on SW3.
 
 import { AperiodicWave } from 'sw-synth'
-import { centsToValue, valueToCents } from 'xen-dev-utils'
+import { centsToValue, sum, valueToCents } from 'xen-dev-utils'
 import { ceilPow2 } from './utils'
 import { computed, type ComputedRef } from 'vue'
+
+import TIMBRES from '@/timbres.json'
+
+type InharmonicSimpleTimbre = number[]; // Just its partials
+
+type Timbres = {
+  inharmonicSimple: { [key: string]: InharmonicSimpleTimbre }
+  // Allows migration from other data using additional keys and timbre data types
+}
+
+function getInharmonicSimple(id: string): InharmonicSimpleTimbre {
+  const result: any = (TIMBRES as unknown as Timbres).inharmonicSimple[id]
+  return result
+}
+
+function getInharmonicSimpleWaveformNames(): string[] {
+  return Object.keys((TIMBRES as unknown as Timbres).inharmonicSimple)
+}
 
 export const BASIC_WAVEFORMS = ['sine', 'square', 'sawtooth', 'triangle']
 export const CUSTOM_WAVEFORMS = [
@@ -44,7 +62,7 @@ export const APERIODIC_WAVEFORMS = [
   'silver',
   'platinum',
   '12-TET'
-]
+].concat(getInharmonicSimpleWaveformNames())
 export const APERIODIC_WAVES: Record<string, ComputedRef<AperiodicWave>> = {}
 
 export function initializePeriodic(audioContext: BaseAudioContext) {
@@ -406,6 +424,18 @@ function initializeAperiodic(audioContext: BaseAudioContext) {
     ].map((a) => a * 0.38)
 
     return new AperiodicWave(audioContext, freqs, amps, maxNumberOfVoices, tolerance)
+  })
+
+  getInharmonicSimpleWaveformNames().forEach((id) => {
+    APERIODIC_WAVES[id] = computed(() => {
+      const freqs = getInharmonicSimple(id)
+      const nsm1 = [...freqs.keys()]
+      const preamps = nsm1.map((nm1) => (nm1 + 1) ** -1.5)
+      // 0.730783 is based on the code above for 128 amplitudes: they summed to that
+      const amp_correction = 0.730783 / sum(preamps)
+      const amps = preamps.map((a) => a * amp_correction)
+      return new AperiodicWave(audioContext, freqs, amps, maxNumberOfVoices, tolerance)
+    })
   })
 }
 
