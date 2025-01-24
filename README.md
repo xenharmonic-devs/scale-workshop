@@ -229,6 +229,12 @@ npm run dev
 npm run build
 ```
 
+### Just Type-Check
+
+```sh
+npm run type-check
+```
+
 ### Run Unit Tests with [Vitest](https://vitest.dev/)
 
 ```sh
@@ -255,6 +261,12 @@ npm run test:e2e
 
 ```sh
 npm run lint
+```
+
+### Format the code
+
+```sh
+npm run format
 ```
 
 ### Run the backend server
