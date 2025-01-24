@@ -7,6 +7,7 @@
   * Feature: Linear MIDI output mode (uses the numbers in the "#" column and assumes you tune the target device yourself) [#834](https://github.com/xenharmonic-devs/scale-workshop/issues/834)
   * Feature: Display a warning when the user tries to create a scale larger than 1024 notes in *New scale -> Equal temperament* [#402](https://github.com/xenharmonic-devs/scale-workshop/issues/402)
   * Bug fix: Fix a crash in Rank 2 caused by temperaments with a negative number of periods per equave [#837](https://github.com/xenharmonic-devs/scale-workshop/issues/837)
+  * Feature: Add several L-system inharmonic timbres related to golden ratio, silver ratio, plastic number and supergolden ratio [#845](https://github.com/xenharmonic-devs/scale-workshop/issues/845)
 
 ## 3.1.0
   * Feature: Implement the missing size inequality operator `~<>` (i.e. the negation of `~=`)
