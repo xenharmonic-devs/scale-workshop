@@ -56,7 +56,7 @@ const tagline = computed(() => TAGLINES[Math.floor(Math.random() * TAGLINES.leng
         Inthar - <i>developer</i> <br />
         Wilckerson Ganda - <i>developer</i> <br />
         Marc Sabat - <i>developer / notation-hardware advisor</i> <br />
-        Arsenii 0.5° - <i>developer</i> <br />
+        Arsenii 0.5° - <i>developer / aperiodic consult</i> <br />
         Kraig Grady - <i>lattice advisor</i> <br />
         Abnormality - <i>quality assurance</i> <br />
         Kite Giedraitis - <i>notation advisor</i> <br />
