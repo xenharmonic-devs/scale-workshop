@@ -51,6 +51,7 @@ export const PERIODIC_WAVES: Record<string, ComputedRef<PeriodicWave>> = {}
 
 export const APERIODIC_WAVEFORMS = [
   'jegogan',
+  'harmonium',
   'jublag',
   'ugal',
   'gender',
@@ -365,6 +366,20 @@ function initializeAperiodic(audioContext: BaseAudioContext) {
     const amplitudes = [0.6, 1, 0.45, 0.3, 0.15, 0.2, 0.07, 0.08, 0.05, 0.1, 0.1].map(
       (a) => 0.45 * a
     )
+
+    return new AperiodicWave(audioContext, spectrum, amplitudes, maxNumberOfVoices, tolerance)
+  })
+
+  APERIODIC_WAVES['harmonium'] = computed(() => {
+    const spectrum = [1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 32]
+      const baseAmplitudes = [0.02818, 0.03162, 0.01122, 0.02239, 0.01, 0.05623, 0.00447, 0.01, 0.01995, 0.01995, 0.01585, 0.01995, 0.01259, 0.01122, 0.00794, 0.00891, 0.00355, 0.00631, 0.00355]
+
+    const modulationDepth = 0.5
+    const modulationFrequency = 2 // Hz
+
+    const amplitudes = baseAmplitudes.map((amp, index) => {
+      return amp + modulationDepth * Math.sin(Date.now() / 1000 * modulationFrequency + index)
+    })
 
     return new AperiodicWave(audioContext, spectrum, amplitudes, maxNumberOfVoices, tolerance)
   })
