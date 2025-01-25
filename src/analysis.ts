@@ -20,7 +20,7 @@ function otonalCorrection(ratios: number[]) {
 }
 
 // Calculate the best multiplier for a set of ratios that
-// miminizes the perceived motion of an otonal chord wheel.
+// minimizes the perceived motion of an otonal chord wheel.
 function otonalMultiplier(ratios: number[], maxMultiplier = 16) {
   let leastError = Infinity
   let result = 1
@@ -69,7 +69,7 @@ function utonalCorrection(ratios: number[]) {
 }
 
 // Calculate the best divisor for a set of ratios that
-// miminizes the perceived motion of an utonal chord wheel.
+// minimizes the perceived motion of an utonal chord wheel.
 export function utonalDivisor(ratios: number[], maxDivisor = 23) {
   let leastError = Infinity
   let result = 1

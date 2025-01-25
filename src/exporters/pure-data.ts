@@ -1,7 +1,11 @@
-import { BaseExporter } from '@/exporters/base'
+import { BaseExporter, type ExporterParams } from '@/exporters/base'
 
 export default class PureDataExporter extends BaseExporter {
   static tuningMaxSize = 128
+
+  constructor(params: ExporterParams) {
+    super(params)
+  }
 
   // assemble the text file contents
   getFileContents() {

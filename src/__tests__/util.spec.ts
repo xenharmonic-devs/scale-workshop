@@ -41,7 +41,7 @@ describe('Exponential formatter', () => {
 })
 
 describe('Hertz formatter', () => {
-  it('leaves resonable frequencies as is', () => {
+  it('leaves reasonable frequencies as is', () => {
     expect(formatHertz(12.345)).toBe('12.345Hz')
     expect(formatHertz(21234.567)).toBe('21234.567Hz')
   })
@@ -83,7 +83,7 @@ describe('Auto key color algorithm', () => {
     )
   })
 
-  it('produces something resonable with 17 notes', () => {
+  it('produces something reasonable with 17 notes', () => {
     const colors = autoKeyColors(17)
     expect(colors.join(' ')).toBe(
       'white white black white white white black white white black white white white black white white black'

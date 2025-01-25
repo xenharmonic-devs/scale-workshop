@@ -104,7 +104,7 @@ export const useScaleStore = defineStore('scale', () => {
   // The user can either set the base frequency or have it be automatically calculated.
   // baseFrequencyDisplay reflects the initial value passed to the SonicWeave runtime.
   // However the runtime may assign a different unison frequency and that's what ends up in scale.value.baseFrequency.
-  // Threrefore stores.scale.scale.baseFrequency is the source of truth, while stores.scale.baseFrequencyDisplay is the v-model.
+  // Therefore stores.scale.scale.baseFrequency is the source of truth, while stores.scale.baseFrequencyDisplay is the v-model.
   const userBaseFrequency = ref(261.63)
   const autoFrequency = ref(true)
   const baseFrequencyDisplay = computed({
@@ -698,7 +698,7 @@ export const useScaleStore = defineStore('scale', () => {
     ...LIVE_STATE,
     id,
     uploadedId,
-    // Presistent state
+    // Persistent state
     centsFractionDigits,
     decimalFractionDigits,
     accidentalPreference,

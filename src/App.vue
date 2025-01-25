@@ -376,7 +376,7 @@ onMounted(async () => {
   const url = new URL(window.location.href)
   const query = url.searchParams
 
-  // This is overriden when scale data is evaluated, but some corner cases need to be covered.
+  // This is overridden when scale data is evaluated, but some corner cases need to be covered.
   setNumberOfComponents(DEFAULT_NUMBER_OF_COMPONENTS)
 
   // Special handling for the empty app state so that

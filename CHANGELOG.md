@@ -120,7 +120,7 @@
  * Improvement: Improve loading times with asynchronous components [#520](https://github.com/xenharmonic-devs/scale-workshop/issues/520)
  * Bug fix: Fix tempering in exotic subgroups [#518](https://github.com/xenharmonic-devs/scale-workshop/issues/518)
  * Bug fix: Close Korg export modal when pressing escape [#524](https://github.com/xenharmonic-devs/scale-workshop/issues/524)
- * Refactoring: Split isomorhic QWERTY to s re-usable package [#336](https://github.com/xenharmonic-devs/scale-workshop/issues/336)
+ * Refactoring: Split isomorphic QWERTY into a re-usable package [#336](https://github.com/xenharmonic-devs/scale-workshop/issues/336)
 
 ## 2.3.2
  * Bug fix: Make copy & paste possible outside of scale data [#515](https://github.com/xenharmonic-devs/scale-workshop/issues/515)
@@ -153,7 +153,7 @@
  * Feature: Light-weight algorithms for tempering in extremely large just intonation subgroups
  * Feature: Visualize how the various MIDI mappings assign scale degrees
  * Feature: Implement visual MIDI channel indicators
- * Feature: Interprete non-integer equal temperaments as cET
+ * Feature: Interpret non-integer equal temperaments as cET
  * Feature: Implement basic reverb using a ping-pong delay
  * Feature: Implement new metric prefixes from quecto to quetta
  * Standardization: Rename reference pitch to A4
@@ -190,7 +190,7 @@
 * Feature: Rank-2 scales can now be manipulated interactively by clicking on the period circle in a new tab inside the modal for *New scale → Rank-2 temperament*
 * Refactoring: Core functionality now at [scale-workshop-core](https://github.com/xenharmonic-devs/scale-workshop-core) for better reusability
 * Refactoring: Utility packages [xen-dev-utils](https://www.npmjs.com/package/xen-dev-utils), [moment-of-symmetry](https://www.npmjs.com/package/moment-of-symmetry) and [temperaments](https://www.npmjs.com/package/temperaments) are now sourced from npm.
-* Bug fix: Decimal dots in the interval matrix is now consistent with the tunng table
+* Bug fix: Decimal dots in the interval matrix is now consistent with the tuning table
 * Bug fix: Touching the screen in piano layout played multiple notes in unison
 * Bug fix: Typing out text in some of the scale creation modals made sound
 * Bug fix: Disable browser specific features like quick find on Firefox

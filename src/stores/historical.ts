@@ -360,7 +360,7 @@ export const useHistoricalStore = defineStore('historical', () => {
     }
   }
 
-  // Record order is supposed to be quaranteed since ES2015, but that doesn't seem to be the case...
+  // Record order is supposed to be guaranteed since ES2015, but that doesn't seem to be the case...
   const presetKeys: string[] = [...Object.keys(presets)]
 
   // Sort by wideness of the generator
@@ -421,10 +421,10 @@ export const useHistoricalStore = defineStore('historical', () => {
     down.value = preset.down
     wellCommaString.value = preset.comma
     wellComma.value = parseInterval(preset.comma)
-    const fracs = preset.commaFractions.split(',')
+    const fractions = preset.commaFractions.split(',')
     wellCommaFractionStrings.clear()
-    for (let i = 0; i < fracs.length; ++i) {
-      wellCommaFractionStrings.set(i - preset.down, fracs[i])
+    for (let i = 0; i < fractions.length; ++i) {
+      wellCommaFractionStrings.set(i - preset.down, fractions[i])
     }
   }
 
