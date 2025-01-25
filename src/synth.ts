@@ -7,7 +7,7 @@ import { computed, type ComputedRef } from 'vue'
 
 import TIMBRES from '@/timbres.json'
 
-type Spectrum = number[];
+type Spectrum = number[]
 
 type Timbres = {
   plainSpectra: { [key: string]: Spectrum }
@@ -429,7 +429,7 @@ function initializeAperiodic(audioContext: BaseAudioContext) {
     APERIODIC_WAVES[id] = computed(() => {
       const spectrum = getPlainSpectrum(id)
       const indices = [...spectrum.keys()]
-      const preamps = indices.map((nm1) => (nm1 + 1) ** -1.5)
+      const preamps = indices.map((n) => (n + 1) ** -1.5)
       // 0.730783 is based on the code above for 128 amplitudes: they summed to that
       const amplitudeCorrection = 0.730783 / sum(preamps)
       const amps = preamps.map((a) => a * amplitudeCorrection)
