@@ -82,7 +82,7 @@ const tagline = computed(() => TAGLINES[Math.floor(Math.random() * TAGLINES.leng
     <hr />
     <div id="about">
       <h2>About Scale Workshop</h2>
-      <p>Scale Workshop is MIT licensensed open source.</p>
+      <p>Scale Workshop is MIT licensed open source.</p>
       <p>
         Feel free to check out the
         <a href="https://github.com/xenharmonic-devs/scale-workshop">source code on GitHub</a>. You

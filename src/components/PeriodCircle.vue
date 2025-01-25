@@ -112,7 +112,7 @@ const mosLabel = computed(() => {
     const n = props.numPeriods
     return `${n * countL}L ${n * countM}M ${n * countS}s`
   }
-  // There are degenerate edgecases with step variety = 2. Show nothing to avoid implying MOS.
+  // There are degenerate edge-cases with step variety = 2. Show nothing to avoid implying MOS.
   return ''
 })
 
@@ -250,7 +250,7 @@ function onWindowMouseUp(event: MouseEvent) {
 // Notes on touch handling:
 // * Touch start must not preventDefault to allow scrolling with two fingers.
 // * Touch move must preventDefault to prevent scrolling with one finger.
-// * The behaviour is a bit sporadic when two-finger scrolling is released and only one finger remains on the svg element.
+// * The behavior is a bit sporadic when two-finger scrolling is released and only one finger remains on the svg element.
 
 function handleTouch(touch: Touch) {
   const svg = container.value!

@@ -1,7 +1,7 @@
 {
   "pelog": {
     "title": "Pelog",
-    "name": "Normalised Pelog, Kunst, 1949. Average of 39 Javanese gamelans",
+    "name": "Normalized Pelog, Kunst, 1949. Average of 39 Javanese gamelans",
     "source": "120. white\n270. white\n540. white\n670. white\n785. white\n950. white\n1215. gray\n",
     "categories": ["traditional"]
   },
@@ -49,7 +49,7 @@
   },
   "hirajoshi-ji": {
     "title": "Hirajoshi just",
-    "name": "Japanese pentatonic koto scale, theoretical. Helmholz/Ellis p.519, nr.110",
+    "name": "Japanese pentatonic koto scale, theoretical. Helmholtz/Ellis p.519, nr.110",
     "source": "9/8 white\neulerGenus(15 white, 5, 2/1 gray)\n",
     "categories": ["traditional", "just intonation"]
   },
@@ -309,7 +309,7 @@
     "categories": ["non-octave", "equal temperament"]
   },
   "otonalstacks": {
-    "name": "Sevish stacked otonal framents",
+    "name": "Sevish stacked otonal fragments",
     "source": "unstack(24 white:27:30:32:36)\nunstack(24 lightblue:27:28:32:36)\nunstack(24 palegoldenrod:27:30:32:36)\nstack()\n",
     "categories": ["non-octave", "just intonation"]
   },

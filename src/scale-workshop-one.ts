@@ -83,7 +83,7 @@ export class ScaleWorkshopOneData {
     this.vertical = searchParams.getNumber('vert', 5)
     this.horizontal = searchParams.getNumber('horiz', 1)
 
-    // get key colours
+    // get key colors
     this.colors = searchParams.get('colors')
 
     // get synth options

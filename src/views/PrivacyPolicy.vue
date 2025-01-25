@@ -10,7 +10,7 @@
     </p>
     <p>
       We use your data to provide and improve the Service. By using the Service, you agree to the
-      collection and use of informationin accordance with this policy. Unless otherwise defined in
+      collection and use of information accordance with this policy. Unless otherwise defined in
       this Privacy Policy,terms used in this Privacy Policy have the same meanings as in our
       <RouterLink to="/terms-of-service">Terms of Service</RouterLink>.
     </p>

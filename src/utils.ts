@@ -288,7 +288,7 @@ export function formatCents(x: number, fractionDigits = 3) {
 
 /**
  * Fill in the gaps of a parent scale (in white) with accidentals (in black).
- * @param generatorPerPeriod Generator sizre divided by period size (in pitch space).
+ * @param generatorPerPeriod Generator size divided by period size (in pitch space).
  * @param size Size of the parent scale.
  * @param down Number of generators to go down from 1/1.
  * @returns Array of key colors.
@@ -546,7 +546,7 @@ export function encodeUrlSafe64(n: number) {
  * @returns Random identifiers with a low chance of collision
  */
 export function randomId() {
-  // Coarce timestamp for indexing in ~30 year cycles
+  // Coarse timestamp for indexing in ~30 year cycles
   const msSince1970 = new Date().valueOf()
   const hour = Math.floor(msSince1970 / (1000 * 60 * 60))
   const hourLow = hour & 63

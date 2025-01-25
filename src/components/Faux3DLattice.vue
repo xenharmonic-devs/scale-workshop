@@ -28,10 +28,10 @@ const viewBox = reactive([-1, -1, 2, 2])
 const lattice = computed(() => {
   const result = spanLattice3D(props.monzos, store.latticeOptions3D)
   // Center everything so that the vanishing point is at the center of the view box
-  const inorm = 1 / result.vertices.length
-  const avgX = result.vertices.reduce((s, v) => s + v.x, 0) * inorm
-  const avgY = result.vertices.reduce((s, v) => s + v.y, 0) * inorm
-  const avgZ = result.vertices.reduce((s, v) => s + v.z, 0) * inorm
+  const inverseNorm = 1 / result.vertices.length
+  const avgX = result.vertices.reduce((s, v) => s + v.x, 0) * inverseNorm
+  const avgY = result.vertices.reduce((s, v) => s + v.y, 0) * inverseNorm
+  const avgZ = result.vertices.reduce((s, v) => s + v.z, 0) * inverseNorm
   result.vertices = result.vertices.map((v) => ({
     ...v,
     x: v.x - avgX,

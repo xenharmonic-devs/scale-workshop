@@ -69,7 +69,7 @@ const router = createRouter({
     },
     {
       path: '/prefs',
-      name: 'preferencess',
+      name: 'preferences',
       component: () => import('../views/PreferencesView.vue')
     },
     {

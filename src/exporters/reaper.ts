@@ -1,10 +1,14 @@
-import { BaseExporter } from '@/exporters/base'
+import { BaseExporter, type ExporterParams } from '@/exporters/base'
 import { Interval, TimeReal, intervalValueAs } from 'sonic-weave'
 import { mmod, valueToCents } from 'xen-dev-utils'
 
 export default class ReaperExporter extends BaseExporter {
   static tuningMaxSize = 128
   static fractionDigits = 3
+
+  constructor(params: ExporterParams) {
+    super(params)
+  }
 
   getFileContentsAndSuffix() {
     const digits = ReaperExporter.fractionDigits

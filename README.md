@@ -275,7 +275,7 @@ See [sw-server](https://github.com/xenharmonic-devs/sw-server) for the backend c
 
 ## License
 
-MIT, see [LICENCE](LICENSE) for details.
+MIT, see [LICENSE](LICENSE) for details.
 
 ## Related projects
 

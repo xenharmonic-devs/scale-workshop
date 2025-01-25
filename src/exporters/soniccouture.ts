@@ -1,8 +1,12 @@
-import { BaseExporter } from '@/exporters/base'
+import { BaseExporter, type ExporterParams } from '@/exporters/base'
 import { ftom } from 'xen-dev-utils'
 
 export default class SoniccoutureExporter extends BaseExporter {
   static tuningMaxSize = 128
+
+  constructor(params: ExporterParams) {
+    super(params)
+  }
 
   // assemble the nka contents
   getFileContents() {

@@ -13,7 +13,7 @@ const LEFT_SQUARE_BRACKET = 'Q'
 const PLUS = 'P'
 const ESCAPE = 'E'
 
-// Color shorhands
+// Color shorthands
 const BLACK = '-'
 const WHITE = '~'
 const SEPARATOR = '_'
@@ -99,7 +99,7 @@ function encodeLine(scaleLine: string) {
     .replace(/>/g, RIGHT_ANGLE_BRACKET)
     .replace(/\[/g, LEFT_SQUARE_BRACKET)
     .replace(/\+/g, PLUS)
-  let lastNondigit = ''
+  let lastNonDigit = ''
   let result = ''
   let currentNumber = ''
 
@@ -107,13 +107,13 @@ function encodeLine(scaleLine: string) {
     if (isDigit(character)) {
       currentNumber += character
     } else {
-      result += encodeDigits(currentNumber, !'.,'.includes(lastNondigit))
+      result += encodeDigits(currentNumber, !'.,'.includes(lastNonDigit))
       currentNumber = ''
-      lastNondigit = character
+      lastNonDigit = character
       result += escapeCharacter(character)
     }
   })
-  return result + encodeDigits(currentNumber, !'.,'.includes(lastNondigit))
+  return result + encodeDigits(currentNumber, !'.,'.includes(lastNonDigit))
 }
 
 function decodeLine(encoded: string) {

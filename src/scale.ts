@@ -11,7 +11,7 @@ export class Scale {
    * Construct a new musical scale.
    * @param intervalRatios Intervals of the scale excluding 1/1, ending with the interval of equivalence.
    * @param baseFrequency Base frequency of 1/1.
-   * @param baseMidiNote MIDI note corresponfing to base frequency
+   * @param baseMidiNote MIDI note corresponding to base frequency
    */
   constructor(
     intervalRatios: number[],
