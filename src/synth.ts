@@ -8,10 +8,11 @@ import { computed, type ComputedRef } from 'vue'
 import TIMBRES from '@/timbres.json'
 
 type Spectrum = number[]
+type Timbre = { spectrum: Spectrum; amplitudes: number[]; source?: string }
 
 type Timbres = {
   plainSpectra: { [key: string]: Spectrum }
-  // TODO: Migrate inharmonic metallic and some other timbral data
+  timbres: { [key: string]: Timbre }
 }
 
 function getPlainSpectrum(id: string): Spectrum {
@@ -19,7 +20,15 @@ function getPlainSpectrum(id: string): Spectrum {
 }
 
 function getPlainSpectraWaveformNames(): string[] {
-  return Object.keys((TIMBRES as unknown as Timbres).plainSpectra)
+  return Object.keys((TIMBRES as unknown as Timbres).plainSpectra).sort()
+}
+
+function getTimbre(id: string): Timbre {
+  return (TIMBRES as unknown as Timbres).timbres[id]
+}
+
+function getTimbreWaveformNames(): string[] {
+  return Object.keys((TIMBRES as unknown as Timbres).timbres).sort()
 }
 
 export const BASIC_WAVEFORMS = ['sine', 'square', 'sawtooth', 'triangle']
@@ -49,6 +58,7 @@ export const CUSTOM_WAVEFORMS = [
 export const WAVEFORMS = BASIC_WAVEFORMS.concat(CUSTOM_WAVEFORMS)
 export const PERIODIC_WAVES: Record<string, ComputedRef<PeriodicWave>> = {}
 
+// Some of these have entries in timbres.json, but we preserve the old UI order.
 export const APERIODIC_WAVEFORMS = [
   'jegogan',
   'jublag',
@@ -332,55 +342,6 @@ function initializeAperiodic(audioContext: BaseAudioContext) {
     return new AperiodicWave(audioContext, spectrum, amplitudes, maxNumberOfVoices, tolerance)
   })
 
-  // https://pubs.aip.org/asa/jasa/article/127/5/EL197/783208/Vibrational-characteristics-of-Balinese-gamelan
-  APERIODIC_WAVES['jublag'] = computed(() => {
-    // Spectrum is from literature
-    const spectrum = [1, 2.77, 5.18, 5.33]
-    // Made up stuff to round it off
-    spectrum.push(9.1, 18.9, 23)
-    // Add shimmer
-    spectrum[0] = 1.01
-    spectrum.unshift(1 / spectrum[0])
-    spectrum.push(2.76)
-
-    // Amplitudes are made up
-    const amplitudes = [1, 0.5, 0.5, 0.3, 0.2, 0.15, 0.1, 0.09, 0.2].map((a) => 0.45 * a)
-
-    return new AperiodicWave(audioContext, spectrum, amplitudes, maxNumberOfVoices, tolerance)
-  })
-
-  // https://pubs.aip.org/asa/jasa/article/127/5/EL197/783208/Vibrational-characteristics-of-Balinese-gamelan
-  APERIODIC_WAVES['ugal'] = computed(() => {
-    // Spectrum is from literature
-    const spectrum = [1, 2.61, 4.8, 4.94, 6.32]
-    // Made up stuff to round it off
-    spectrum.push(9.9, 17, 24.1)
-    // Add shimmer
-    spectrum[0] = 1.008
-    spectrum.unshift(1 / spectrum[0])
-    spectrum.push(2.605)
-    spectrum.push(4.81)
-
-    // Amplitudes are made up
-    const amplitudes = [0.6, 1, 0.45, 0.3, 0.15, 0.2, 0.07, 0.08, 0.05, 0.1, 0.1].map(
-      (a) => 0.45 * a
-    )
-
-    return new AperiodicWave(audioContext, spectrum, amplitudes, maxNumberOfVoices, tolerance)
-  })
-
-  // https://pubs.aip.org/asa/jasa/article/127/5/EL197/783208/Vibrational-characteristics-of-Balinese-gamelan
-  APERIODIC_WAVES['jegogan'] = computed(() => {
-    // Spectrum is from literature
-    const spectrum = [
-      1, 2.8, 5.5, 9, 16.7, 17.8, 20.5, 22.9, 24.9, 27, 28.1, 29.2, 29.5, 30, 31.8, 33.3, 36, 36.9,
-      40.6, 41.4
-    ]
-    // Amplitudes are made up
-    const amplitudes = spectrum.map((i) => (0.7 * (Math.cos(0.3 * i * i) + 1.6)) / (i ** 1.4 + 1.6))
-    return new AperiodicWave(audioContext, spectrum, amplitudes, maxNumberOfVoices, tolerance)
-  })
-
   APERIODIC_WAVES['12-TET'] = computed(() => {
     const twelveSpectrumCents: number[] = []
     const twelveAmplitudes: number[] = []
@@ -405,26 +366,6 @@ function initializeAperiodic(audioContext: BaseAudioContext) {
     )
   })
 
-  APERIODIC_WAVES['piano'] = computed(() => {
-    const spectrum = [
-      0.998711340392508, 1.0012886596074921, 2.000000001915048, 3.0077319605175252,
-      4.024484537329971, 4.028350517109971, 5.052835053482418, 6.0953608281898495,
-      6.100515466619817, 7.149484540322233, 7.158505158532202, 8.221649488874554, 9.326030932401801,
-      9.3298969121818, 9.33891753039177, 10.449742272914, 10.457474232474, 10.466494850683969,
-      11.597938150756168
-    ]
-
-    const amps = [
-      0.9123120265773679, 0.7281477301038842, 0.5078045641543809, 0.8061314224800064,
-      0.3177244232370868, 0.15135058363038334, 0.12440135191000032, 0.045007651288955175,
-      0.050804443667738106, 0.029671376885221354, 0.023841125287306208, 0.01853341284211317,
-      0.02380292893502422, 0.024761095205029133, 0.020866326567241505, 0.0017670624571622458,
-      0.0024893662658642206, 0.0012043792096897129, 0.0014228119365412375
-    ].map((a) => a * 0.38)
-
-    return new AperiodicWave(audioContext, spectrum, amps, maxNumberOfVoices, tolerance)
-  })
-
   getPlainSpectraWaveformNames().forEach((id) => {
     APERIODIC_WAVES[id] = computed(() => {
       const spectrum = getPlainSpectrum(id)
@@ -434,6 +375,13 @@ function initializeAperiodic(audioContext: BaseAudioContext) {
       const amplitudeCorrection = 0.730783 / sum(preamps)
       const amps = preamps.map((a) => a * amplitudeCorrection)
       return new AperiodicWave(audioContext, spectrum, amps, maxNumberOfVoices, tolerance)
+    })
+  })
+
+  getTimbreWaveformNames().forEach((id) => {
+    APERIODIC_WAVES[id] = computed(() => {
+      const { spectrum, amplitudes } = getTimbre(id)
+      return new AperiodicWave(audioContext, spectrum, amplitudes, maxNumberOfVoices, tolerance)
     })
   })
 }
