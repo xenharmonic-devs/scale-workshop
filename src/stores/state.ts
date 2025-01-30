@@ -1,9 +1,20 @@
-import { reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { UNIX_NEWLINE } from '@/constants'
 import { syncValues } from '@/utils'
 
+//--legacy 
+import { Scale, parseLine } from 'scale-workshop-core'
+import { DEFAULT_NUMBER_OF_COMPONENTS, NUMBER_OF_NOTES } from '@/constants'
+
+
 export const useStateStore = defineStore('state', () => {
+  // Nonpersistent state of the application
+  const scaleSymbols = ref<string[]>([])
+  const scoreChord = ref<string[]>([])
+  const scale = reactive(Scale.fromIntervalArray([parseLine('1/1', DEFAULT_NUMBER_OF_COMPONENTS)]))
+  const baseMidiNote = ref(69)
+
   // Mapping from MIDI index to number of interfaces currently pressing the key down
   const heldNotes = reactive(new Map<number, number>())
   const typingActive = ref(true)
@@ -20,6 +31,7 @@ export const useStateStore = defineStore('state', () => {
     (storedScheme ?? mediaScheme) === 'dark' ? 'dark' : 'light'
   )
   const showVirtualQwerty = ref(storage.getItem('showVirtualQwerty') === 'true')
+  const showMusicalScore = ref(storage.getItem('showMusicalScore') === 'true')
   const showMosTab = ref(storage.getItem('showMosTab') === 'true')
   const showKeyboardLabel = ref(storage.getItem('showKeyboardLabel') !== 'false')
   const showKeyboardCents = ref(storage.getItem('showKeyboardCents') !== 'false')
@@ -69,6 +81,63 @@ export const useStateStore = defineStore('state', () => {
     latticeType.value = data.latticeType
   }
 
+
+  // === Computed state === (legacy)
+  const frequencies = computed(() =>
+    scale.getFrequencyRange(-baseMidiNote.value, NUMBER_OF_NOTES - baseMidiNote.value)
+  )
+
+  // For Score symbols
+  const symbolTable = computed(()=>{
+    const table: string[] = []
+    for(let i=0; i < frequencies.value.length; i++){
+      const index = i - baseMidiNote.value
+      let symbIndex = index % scaleSymbols.value.length
+      let ottava = 5
+      if(index < 0){
+        let negativeIndex = scaleSymbols.value.length + index;
+        ottava -= 1
+        while(negativeIndex < 0){
+          negativeIndex += scaleSymbols.value.length 
+          ottava -= 1
+        }
+        symbIndex = (negativeIndex) % scaleSymbols.value.length
+      }
+      table[i] =  scaleSymbols.value[symbIndex] + (scaleSymbols.value[symbIndex] ? ottavaCheck(scaleSymbols.value[symbIndex], scaleSymbols.value.length, ottava, index) : '')
+    }
+    return table
+  })
+
+  function ottavaCheck(symbol: string, length: number, ottava: number, index: number){
+    if(ottava >= 5){
+      const ottavaIncrease = Math.floor(index/length)
+      ottava += ottavaIncrease
+    }
+    if(symbol.toUpperCase().startsWith('A') || symbol.toUpperCase().startsWith('B')){
+      //We are asuming that A natural (ottava 4) is the first note on the scale, so octave changes will not be applied to A flat or A half-flat
+      if(!symbol.toUpperCase().startsWith('AB') && !symbol.toUpperCase().startsWith('AD')){
+        ottava -= 1
+      }
+    }
+    return ottava
+  }
+
+
+
+  // === State updates === 
+  function updateSymbols(symbols: string[]) {
+    scaleSymbols.value = symbols
+  }
+
+  const scaleSymbolsWrapper = computed({
+    get() {
+      return scaleSymbols.value
+    },
+    set: updateSymbols
+  })
+
+
+
   // Local storage watchers
   syncValues({
     newline,
@@ -102,15 +171,23 @@ export const useStateStore = defineStore('state', () => {
     { immediate: true }
   )
 
+  watch(showMusicalScore, (newValue) =>
+    window.localStorage.setItem('showMusicalScore', newValue.toString())
+  )
+
   return {
     // Live state
     heldNotes,
     typingActive,
     latticeType,
+    scaleSymbolsRaw: scaleSymbols,
+    scaleSymbols: scaleSymbolsWrapper,
+    scoreChord: scoreChord,
     // Persistent state
     newline,
     colorScheme,
     showVirtualQwerty,
+    showMusicalScore,
     showMosTab,
     showKeyboardLabel,
     showKeyboardCents,
@@ -130,6 +207,8 @@ export const useStateStore = defineStore('state', () => {
     shareStatistics,
     showSafariWarning,
     debug,
+    // Computed state
+    symbolTable,
     // Methods
     toJSON,
     fromJSON
