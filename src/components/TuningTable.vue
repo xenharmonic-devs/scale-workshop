@@ -11,6 +11,7 @@ const props = defineProps<{
   baseMidiNote: number
   labels: string[] // Labels from #1 to the equave
   colors: string[] // Colors from #1 to the equave
+  symbolTable: string[]
 }>()
 
 const rows = computed(() => {
@@ -27,6 +28,7 @@ const rows = computed(() => {
       cents,
       ratio: ratio,
       label: props.labels[mmod(index - 1, props.labels.length)],
+      //symbol: props.symbolTable[i],
       color: props.colors[mmod(index - 1, props.colors.length)],
       isRoot: index === 0,
       equave: mmod(index, props.labels.length) === 0
@@ -45,6 +47,7 @@ const rows = computed(() => {
         <th>Cents</th>
         <th>Ratio</th>
         <th>Label</th>
+        <th>Symbol</th>
       </tr>
     </thead>
     <tbody>

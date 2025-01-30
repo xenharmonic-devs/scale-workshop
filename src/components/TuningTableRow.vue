@@ -8,6 +8,7 @@ const props = defineProps<{
   cents: number
   ratio: number
   label: string
+  symbol: string
   color: string
   active: boolean
   isRoot: boolean
@@ -33,6 +34,7 @@ onMounted(() => {
     <td>{{ formatExponential(cents) }}</td>
     <td>{{ formatExponential(ratio) }}</td>
     <td>{{ label }}</td>
+    <td>{{ symbol }}</td>
   </tr>
 </template>
 
