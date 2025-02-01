@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch} from 'vue';
+import { watch } from 'vue';
 import { useStateStore } from '@/stores/state'
 import Vex from 'vexflow';
 
