@@ -4,6 +4,15 @@ import VirtualKeyboardKey from '@/components/VirtualKeyboardKey.vue'
 import VirtualKeyInfo from '@/components/VirtualKeyInfo.vue'
 import type { Scale } from '@/scale'
 
+
+//added by kFXs
+import ScoreView from '@/components/ScoreView.vue'
+import { useStateStore } from '@/stores/state'
+
+const state = useStateStore()
+
+
+
 type NoteOff = () => void
 type NoteOnCallback = (index: number) => NoteOff
 type ColorMap = (index: number) => string
@@ -66,8 +75,11 @@ const virtualKeys = computed(() => {
 
 const isMousePressed = ref(false)
 </script>
-
 <template>
+
+  <!---added by kFXs-->
+  <ScoreView v-show="state.showMusicalScore" />
+  
   <table>
     <tbody>
       <tr v-for="[y, row] of virtualKeys" :key="y" :class="{ 'hidden-sm': y < 0 || y > 3 }">

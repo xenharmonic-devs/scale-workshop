@@ -3,9 +3,6 @@ import { watch } from 'vue';
 import { useStateStore } from '@/stores/state'
 import Vex from 'vexflow';
 
-// 31 EDO test url
-// http://127.0.0.1:5173/scaleworkshop-dev/?n=31%20equal%20divisions%20of%202%2F1&sy=An_AM_AS_Bb_Bd_Bn_BM_Cd_Cn_CM_CS_Db_Dd_Dn_DM_DS_Eb_Ed_En_EM_Fd_Fn_FM_FS_Gb_Gd_Gn_GM_GS_Ab_Ad&l=1Bv_2Bv_3Bv_4Bv_5Bv_6Bv_7Bv_8Bv_9Bv_aBv_bBv_cBv_dBv_eBv_fBv_gBv_hBv_iBv_jBv_kBv_lBv_mBv_nBv_oBv_pBv_qBv_rBv_sBv_tBv_uBv_vBv&version=2.3.6
-
 
 const state = useStateStore()
 const { Factory, BarlineType } = Vex.Flow;

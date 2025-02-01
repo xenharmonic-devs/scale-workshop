@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useScaleStore } from '@/stores/scale'
 import { debounce, midiNoteNumberToName } from '@/utils'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import ScaleRule from './ScaleRule.vue'
 import palette from '@/character-palette.json'
+
+import { useStateStore } from '@/stores/state'
 
 const scale = useScaleStore()
 
@@ -12,6 +14,21 @@ const updateScale = debounce(scale.computeScale)
 const sourceEditor = ref<HTMLTextAreaElement | null>(null)
 
 const paletteInfo = ref('')
+
+
+const state = useStateStore()
+
+//----kFXs
+const joinedSymbols = computed({
+  get() {
+    return state.scaleSymbols.join('\n')
+  },
+  set: debounce((newValue: string) => { 
+    state.scaleSymbols = newValue.split('\n')
+  })
+})
+
+
 
 function updatePaletteInfo(event: Event) {
   const character = (event.target as HTMLButtonElement).textContent!
@@ -123,6 +140,19 @@ defineExpose({ focus, clearPaletteInfo })
     </div>
     <p class="info" v-html="paletteInfo"></p>
   </div>
+
+
+
+  <!-- added by kFXs (proof of concept) -->
+  <div class="control-group">
+    <h2>Scale Symbols</h2>
+    <div class="control">
+      <textarea id="scale-symbols"  rows="12" v-model="joinedSymbols"></textarea>
+    </div>
+  </div>
+
+
+
   <div class="control-group">
     <div class="control radio-group">
       <label>Automatic Colors</label>

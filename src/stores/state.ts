@@ -3,17 +3,23 @@ import { defineStore } from 'pinia'
 import { UNIX_NEWLINE } from '@/constants'
 import { syncValues } from '@/utils'
 
-//--legacy 
+//--legacy --- added by kFXs
 import { Scale, parseLine } from 'scale-workshop-core'
 import { DEFAULT_NUMBER_OF_COMPONENTS, NUMBER_OF_NOTES } from '@/constants'
 
 
 export const useStateStore = defineStore('state', () => {
   // Nonpersistent state of the application
-  const scaleSymbols = ref<string[]>([])
-  const scoreChord = ref<string[]>([])
   const scale = reactive(Scale.fromIntervalArray([parseLine('1/1', DEFAULT_NUMBER_OF_COMPONENTS)]))
   const baseMidiNote = ref(69)
+  
+
+  //added by kFXs
+  const scaleSymbols = ref<string[]>([])
+  const scoreChord = ref<string[]>([])
+
+
+  
 
   // Mapping from MIDI index to number of interfaces currently pressing the key down
   const heldNotes = reactive(new Map<number, number>())
@@ -70,7 +76,15 @@ export const useStateStore = defineStore('state', () => {
    * Convert live state to a format suitable for storing on the server.
    */
   function toJSON() {
-    return { latticeType: latticeType.value }
+    return { 
+      latticeType: latticeType.value, 
+      
+      //added by kFXs
+      scaleSymbols: scaleSymbols.value,
+      symbolTable: symbolTable.value, 
+      showMusicalScore: showMusicalScore.value,
+      scoreChord: scoreChord.value
+    }
   }
 
   /**
@@ -82,18 +96,23 @@ export const useStateStore = defineStore('state', () => {
   }
 
 
-  // === Computed state === (legacy)
+  // === Computed state === (legacy) added by kFXs
   const frequencies = computed(() =>
     scale.getFrequencyRange(-baseMidiNote.value, NUMBER_OF_NOTES - baseMidiNote.value)
   )
 
   // For Score symbols
   const symbolTable = computed(()=>{
-    const table: string[] = []
+    const table: string[] = [] 
+    if(scaleSymbols.value.length == 0) return table
+    
     for(let i=0; i < frequencies.value.length; i++){
       const index = i - baseMidiNote.value
+
+      
       let symbIndex = index % scaleSymbols.value.length
       let ottava = 5
+
       if(index < 0){
         let negativeIndex = scaleSymbols.value.length + index;
         ottava -= 1
@@ -105,6 +124,7 @@ export const useStateStore = defineStore('state', () => {
       }
       table[i] =  scaleSymbols.value[symbIndex] + (scaleSymbols.value[symbIndex] ? ottavaCheck(scaleSymbols.value[symbIndex], scaleSymbols.value.length, ottava, index) : '')
     }
+
     return table
   })
 
@@ -124,7 +144,8 @@ export const useStateStore = defineStore('state', () => {
 
 
 
-  // === State updates === 
+
+  // === State updates ===  ------- Added by kFXs
   function updateSymbols(symbols: string[]) {
     scaleSymbols.value = symbols
   }
@@ -135,6 +156,7 @@ export const useStateStore = defineStore('state', () => {
     },
     set: updateSymbols
   })
+
 
 
 
@@ -171,6 +193,7 @@ export const useStateStore = defineStore('state', () => {
     { immediate: true }
   )
 
+  //added by kFXs
   watch(showMusicalScore, (newValue) =>
     window.localStorage.setItem('showMusicalScore', newValue.toString())
   )
@@ -180,14 +203,26 @@ export const useStateStore = defineStore('state', () => {
     heldNotes,
     typingActive,
     latticeType,
+
+
+    //Added by kFXs
     scaleSymbolsRaw: scaleSymbols,
     scaleSymbols: scaleSymbolsWrapper,
     scoreChord: scoreChord,
+
+
+
     // Persistent state
     newline,
     colorScheme,
     showVirtualQwerty,
+
+
+    //added by kFXs
     showMusicalScore,
+    
+    
+    
     showMosTab,
     showKeyboardLabel,
     showKeyboardCents,
@@ -207,8 +242,12 @@ export const useStateStore = defineStore('state', () => {
     shareStatistics,
     showSafariWarning,
     debug,
+
+
     // Computed state
     symbolTable,
+
+
     // Methods
     toJSON,
     fromJSON

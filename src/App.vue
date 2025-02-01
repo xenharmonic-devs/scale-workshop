@@ -228,12 +228,32 @@ watch(
   }
 )
 
+
+// === Score Chords functions === added by kFXs
+function pushSymbolToChord(index: number){
+  state.scoreChord.push(state.symbolTable[index])
+}
+
+function pullSymbolfromChord(index: number){
+  const item = state.scoreChord.indexOf(state.symbolTable[index])
+  state.scoreChord.splice(item, 1)
+}
+
+
 // === Virtual and typing keyboard ===
 function keyboardNoteOn(index: number) {
   tuningTableKeyOn(index)
+
+  // added by kFXs
+  pushSymbolToChord(index)
+
   const noteOff = sendNoteOn(index, scale.getFrequency(index), 80)
   function keyOff() {
     tuningTableKeyOff(index)
+
+    // added by kFXs
+    pullSymbolfromChord(index)
+
     return noteOff(80)
   }
   return keyOff

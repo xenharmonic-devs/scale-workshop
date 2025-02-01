@@ -60,6 +60,7 @@ onUnmounted(() => {
           :baseMidiNote="scale.scale.baseMidiNote"
           :colors="scale.colors"
           :labels="scale.labels"
+          :symbolTable="state.symbolTable"          
         />
       </div>
       <div class="column exporters" @mouseenter="exporterButtons!.uploadScale()">
