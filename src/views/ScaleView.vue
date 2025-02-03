@@ -43,8 +43,6 @@ onUnmounted(() => {
     <!---added by kFXs-->
     <ScoreView v-show="state.showMusicalScore" />
 
-
-
   <main>
     <div class="columns-container">
       <div class="column scale-builder">
@@ -71,7 +69,10 @@ onUnmounted(() => {
           :baseMidiNote="scale.scale.baseMidiNote"
           :colors="scale.colors"
           :labels="scale.labels"
-          :symbolTable="state.symbolTable"          
+
+          :symbolTable="state.symbolTable"
+          
+          :notationList="scale.notationList"
         />
       </div>
       <div class="column exporters" @mouseenter="exporterButtons!.uploadScale()">

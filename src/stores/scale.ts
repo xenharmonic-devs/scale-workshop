@@ -65,6 +65,23 @@ function defaultLabels(base: number, accidentalStyle: AccidentalStyle) {
   return result.map((n) => n.replace('#', '♯'))
 }
 
+
+
+
+
+//-----added by kFXs
+// Notation List from #1 to #12 inclusive.
+function defaultNotationList(base: number) {
+  const result = [...Array(12).keys()].map((i) => MIDI_NOTE_NAMES[mmod(base + 1 + i, 12)])
+  return result
+}
+
+
+
+
+
+
+
 function harmonicEntropy(this: ExpressionVisitor, interval: SonicWeaveValue): SonicWeaveValue {
   if (typeof interval === 'boolean' || interval instanceof Interval) {
     const hes = useHarmonicEntropyStore()
@@ -124,6 +141,14 @@ export const useScaleStore = defineStore('scale', () => {
   const latticeEquave = ref<Interval | undefined>(undefined)
   const colors = ref(defaultColors(baseMidiNote.value))
   const labels = ref(defaultLabels(baseMidiNote.value, accidentalPreference.value))
+  
+
+
+  //added by kFXs -----
+  const notationList = ref(defaultNotationList(baseMidiNote.value))
+  
+
+  
   const error = ref('')
   const warning = ref('')
 
@@ -561,6 +586,9 @@ export const useScaleStore = defineStore('scale', () => {
     latticeEquave,
     colors,
     labels,
+
+    notationList, //added by kFXs
+
     error,
     warning,
     isomorphicVertical,
