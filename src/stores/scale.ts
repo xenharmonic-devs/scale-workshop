@@ -70,8 +70,8 @@ function defaultLabels(base: number, accidentalStyle: AccidentalStyle) {
 
 
 //-----added by kFXs
-// Notation List from #1 to #12 inclusive.
-function defaultNotationList(base: number) {
+// Symbols from #1 to #12 inclusive.
+function defaultSymbols(base: number) {
   const result = [...Array(12).keys()].map((i) => MIDI_NOTE_NAMES[mmod(base + 1 + i, 12)])
   return result
 }
@@ -145,7 +145,7 @@ export const useScaleStore = defineStore('scale', () => {
 
 
   //added by kFXs -----
-  const notationList = ref(defaultNotationList(baseMidiNote.value))
+  const symbols = ref(defaultSymbols(baseMidiNote.value))
   
 
   
@@ -460,7 +460,7 @@ export const useScaleStore = defineStore('scale', () => {
           break
         }
       }
-
+      
       const intervals = visitor.currentScale
       const ev = visitor.createExpressionVisitor()
       const rel = relative.bind(ev)
@@ -587,7 +587,7 @@ export const useScaleStore = defineStore('scale', () => {
     colors,
     labels,
 
-    notationList, //added by kFXs
+    symbols, //added by kFXs
 
     error,
     warning,
