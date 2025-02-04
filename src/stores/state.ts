@@ -109,7 +109,7 @@ export const useStateStore = defineStore('state', () => {
 
 
 
-  //------------------- added by kFXs
+  //------------------- added by kFXs  (esto ya me lo puedo llevar del aire) !!!!!!!!
 
   // === Computed state === (legacy) 
   const frequencies = computed(() =>
@@ -157,9 +157,13 @@ export const useStateStore = defineStore('state', () => {
     return ottava
   }
 
-  //-----------------------------------
+  //----------------------------------- (esto ya me lo puedo llevar del aire) !!!!!!!!
 
 
+
+
+
+  
 
   //------------ Added by kFXs
 
@@ -272,7 +276,7 @@ export const useStateStore = defineStore('state', () => {
 
 
 
-    
+
     //----------added by kFXs
     // Computed state
     symbolTable,

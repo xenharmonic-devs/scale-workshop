@@ -5,7 +5,6 @@ import { computed, ref } from 'vue'
 import ScaleRule from './ScaleRule.vue'
 import palette from '@/character-palette.json'
 
-import { useStateStore } from '@/stores/state'
 
 const scale = useScaleStore()
 
@@ -16,9 +15,16 @@ const sourceEditor = ref<HTMLTextAreaElement | null>(null)
 const paletteInfo = ref('')
 
 
+
+
+
+
+//---------added by kFXs (esto ya me lo puedo llevar del aire) !!!!!!
+
+import { useStateStore } from '@/stores/state'
+
 const state = useStateStore()
 
-//---------added by kFXs (esto casi que se puede ir del aire)
 const joinedSymbols = computed({
   get() {
     return state.scaleSymbols.join('\n')
@@ -28,7 +34,9 @@ const joinedSymbols = computed({
   })
 })
 
-//--------------------
+//-------------------- (esto ya me lo puedo llevar del aire) !!!!!!
+
+
 
 
 

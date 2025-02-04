@@ -71,14 +71,11 @@ function defaultLabels(base: number, accidentalStyle: AccidentalStyle) {
 
 //----------- added by kFXs
 
-
 // Notes from #1 to #12 inclusive.
 function defaultNoteNames(base: number) {
   const result = [...Array(12).keys()].map((i) => MIDI_NOTE_NAMES[mmod(base + i, 12)])
   return result
 }
-
-
 
 // Score symbols in the MIDI range
 function getSymbols(noteNames: string[], frequencies: number[], baseMidiNote: number) {
@@ -87,7 +84,6 @@ function getSymbols(noteNames: string[], frequencies: number[], baseMidiNote: nu
   
   for(let i = 0; i < frequencies.length; i++){
     const index = i - baseMidiNote
-
     let symbIndex = index % noteNames.length
     let ottava = 4
 
@@ -100,13 +96,10 @@ function getSymbols(noteNames: string[], frequencies: number[], baseMidiNote: nu
       }
       symbIndex = (negativeIndex) % noteNames.length
     }
-
     symbolTable[i] =  noteNames[symbIndex] + (noteNames[symbIndex] ? ottavaCheck(noteNames[symbIndex], noteNames.length, ottava, index) : '')
   }
-
   return symbolTable
 }
-
 
 
 function ottavaCheck(symbol: string, length: number, ottava: number, index: number){
@@ -114,16 +107,19 @@ function ottavaCheck(symbol: string, length: number, ottava: number, index: numb
     const ottavaIncrease = Math.floor(index/length)
     ottava += ottavaIncrease
   }
-
   //NOTE: we are asumming that C natural is the first note on scale
   //this is not the best approach since the user can choose to start the scale in any note
   //in general, the whole octave calculation needs to be refactor
 
+  //correct the octave discrepancy
+  if(symbol.toUpperCase().startsWith('C')){
+    //octave correction will be applied to C flat or C half-flat
+    if(symbol.toUpperCase().startsWith('CB') || symbol.toUpperCase().startsWith('CD')){
+      ottava += 1
+    }
+  }
   return ottava
 }
-
-
-
 
 //-------------------------------------
 
@@ -195,13 +191,9 @@ export const useScaleStore = defineStore('scale', () => {
   //--------- added by kFXs 
 
   const noteNames = ref(defaultNoteNames(baseMidiNote.value))
- 
   
-
-
   //-------------------
   
-
 
 
   const error = ref('')
@@ -246,14 +238,10 @@ export const useScaleStore = defineStore('scale', () => {
 
   //------added by kFXs
 
+  const userNotation = ref('') //---proof of concept
 
-   //function getSymbols(noteNames: string[], frequencies: number[], baseMidiNote: number)
-
-  const userNotation = ref('')
+  //function getSymbols(noteNames: string[], frequencies: number[], baseMidiNote: number)
   const symbols = ref(getSymbols(noteNames.value, frequencies.value, baseMidiNote.value))
-
-
-
 
   //------------------
 
@@ -517,10 +505,12 @@ export const useScaleStore = defineStore('scale', () => {
 
   function computeScale(pushUndo = true) {
 
+
+
     //------- added by kFXs (proof of concept)
 
 
-    noteNames.value = userNotation.value.split('\n')
+    noteNames.value = userNotation.value.split('\n') // proof of concept
 
     symbols.value = getSymbols(noteNames.value, frequencies.value, baseMidiNote.value)
 
