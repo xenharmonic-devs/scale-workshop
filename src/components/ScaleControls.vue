@@ -18,7 +18,7 @@ const paletteInfo = ref('')
 
 const state = useStateStore()
 
-//----kFXs
+//---------added by kFXs (esto casi que se puede ir del aire)
 const joinedSymbols = computed({
   get() {
     return state.scaleSymbols.join('\n')
@@ -27,6 +27,9 @@ const joinedSymbols = computed({
     state.scaleSymbols = newValue.split('\n')
   })
 })
+
+//--------------------
+
 
 
 
@@ -143,13 +146,21 @@ defineExpose({ focus, clearPaletteInfo })
 
 
 
-  <!-- added by kFXs (proof of concept) -->
+  <!----------- added by kFXs (proof of concept) ------->
+
   <div class="control-group">
     <h2>Scale Symbols</h2>
     <div class="control">
-      <textarea id="scale-symbols"  rows="12" v-model="joinedSymbols"></textarea>
+      <textarea 
+        id="scale-symbols"  
+        rows="12" 
+        v-model="scale.userNotation"
+        @input="updateScale()"
+      ></textarea>
     </div>
   </div>
+
+  <!------------------------>
 
 
 

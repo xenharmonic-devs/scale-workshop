@@ -3,9 +3,15 @@ import { defineStore } from 'pinia'
 import { UNIX_NEWLINE } from '@/constants'
 import { syncValues } from '@/utils'
 
+
+
 //--legacy --- added by kFXs
 import { Scale, parseLine } from 'scale-workshop-core'
+//-----???? (check later, not sure now if the following line was added by be XD )
 import { DEFAULT_NUMBER_OF_COMPONENTS, NUMBER_OF_NOTES } from '@/constants'
+//--------------------
+
+
 
 
 export const useStateStore = defineStore('state', () => {
@@ -14,10 +20,10 @@ export const useStateStore = defineStore('state', () => {
   const baseMidiNote = ref(69)
   
 
-  //added by kFXs
+  //------------added by kFXs
   const scaleSymbols = ref<string[]>([])
   const scoreChord = ref<string[]>([])
-
+  //-------------------
 
   
 
@@ -79,11 +85,17 @@ export const useStateStore = defineStore('state', () => {
     return { 
       latticeType: latticeType.value, 
       
-      //added by kFXs
+
+      //-------added by kFXs
       scaleSymbols: scaleSymbols.value,
-      symbolTable: symbolTable.value, 
+      symbolTable: symbolTable.value,
+      
+      
       showMusicalScore: showMusicalScore.value,
       scoreChord: scoreChord.value
+      //-------------------
+
+
     }
   }
 
@@ -96,7 +108,10 @@ export const useStateStore = defineStore('state', () => {
   }
 
 
-  // === Computed state === (legacy) added by kFXs
+
+  //------------------- added by kFXs
+
+  // === Computed state === (legacy) 
   const frequencies = computed(() =>
     scale.getFrequencyRange(-baseMidiNote.value, NUMBER_OF_NOTES - baseMidiNote.value)
   )
@@ -142,10 +157,13 @@ export const useStateStore = defineStore('state', () => {
     return ottava
   }
 
+  //-----------------------------------
 
 
 
-  // === State updates ===  ------- Added by kFXs
+  //------------ Added by kFXs
+
+  // === State updates ===  
   function updateSymbols(symbols: string[]) {
     scaleSymbols.value = symbols
   }
@@ -156,6 +174,8 @@ export const useStateStore = defineStore('state', () => {
     },
     set: updateSymbols
   })
+
+  //--------------------
 
 
 
@@ -193,10 +213,16 @@ export const useStateStore = defineStore('state', () => {
     { immediate: true }
   )
 
-  //added by kFXs
+
+  //---------added by kFXs
+
   watch(showMusicalScore, (newValue) =>
     window.localStorage.setItem('showMusicalScore', newValue.toString())
   )
+
+  //-----------
+
+
 
   return {
     // Live state
@@ -205,10 +231,11 @@ export const useStateStore = defineStore('state', () => {
     latticeType,
 
 
-    //Added by kFXs
+    //-------Added by kFXs
     scaleSymbolsRaw: scaleSymbols,
     scaleSymbols: scaleSymbolsWrapper,
     scoreChord: scoreChord,
+    //---------
 
 
 
@@ -218,9 +245,9 @@ export const useStateStore = defineStore('state', () => {
     showVirtualQwerty,
 
 
-    //added by kFXs
+    //------added by kFXs
     showMusicalScore,
-    
+    //---------------
     
     
     showMosTab,
@@ -244,8 +271,13 @@ export const useStateStore = defineStore('state', () => {
     debug,
 
 
+
+    
+    //----------added by kFXs
     // Computed state
     symbolTable,
+    //-----------------------
+
 
 
     // Methods

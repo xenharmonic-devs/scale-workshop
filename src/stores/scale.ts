@@ -243,12 +243,13 @@ export const useScaleStore = defineStore('scale', () => {
 
 
 
-  
+
   //------added by kFXs
 
 
    //function getSymbols(noteNames: string[], frequencies: number[], baseMidiNote: number)
 
+  const userNotation = ref('')
   const symbols = ref(getSymbols(noteNames.value, frequencies.value, baseMidiNote.value))
 
 
@@ -515,6 +516,18 @@ export const useScaleStore = defineStore('scale', () => {
   }
 
   function computeScale(pushUndo = true) {
+
+    //------- added by kFXs (proof of concept)
+
+
+    noteNames.value = userNotation.value.split('\n')
+
+    symbols.value = getSymbols(noteNames.value, frequencies.value, baseMidiNote.value)
+
+
+    //---------------------
+
+
     try {
       error.value = ''
       warning.value = ''
@@ -662,6 +675,7 @@ export const useScaleStore = defineStore('scale', () => {
 
     //---- added by kFXs
 
+    userNotation, //----(proof of concept)
 
     noteNames,
     symbols,
