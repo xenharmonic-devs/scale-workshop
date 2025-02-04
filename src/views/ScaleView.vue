@@ -43,6 +43,13 @@ onUnmounted(() => {
     <!---added by kFXs-->
     <ScoreView v-show="state.showMusicalScore" />
 
+    mirando scale.noteNames:
+
+    {{scale.noteNames}}
+
+    <br>
+
+
     mirando scale.symbols:
 
     {{scale.symbols}}
@@ -84,7 +91,7 @@ onUnmounted(() => {
 
           :symbolTable="state.symbolTable"
           
-          :notationList="scale.symbols"
+          :symbols="scale.symbols"
         />
       </div>
       <div class="column exporters" @mouseenter="exporterButtons!.uploadScale()">

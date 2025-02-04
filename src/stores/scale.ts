@@ -69,15 +69,63 @@ function defaultLabels(base: number, accidentalStyle: AccidentalStyle) {
 
 
 
-//-----added by kFXs
-// Symbols from #1 to #12 inclusive.
-function defaultSymbols(base: number) {
-  const result = [...Array(12).keys()].map((i) => MIDI_NOTE_NAMES[mmod(base + 1 + i, 12)])
+//----------- added by kFXs
+
+
+// Notes from #1 to #12 inclusive.
+function defaultNoteNames(base: number) {
+  const result = [...Array(12).keys()].map((i) => MIDI_NOTE_NAMES[mmod(base + i, 12)])
   return result
 }
 
 
 
+// Score symbols in the MIDI range
+function getSymbols(noteNames: string[], frequencies: number[], baseMidiNote: number) {
+  const symbolTable: string[] = [] 
+  if(noteNames.length == 0) return symbolTable
+  
+  for(let i = 0; i < frequencies.length; i++){
+    const index = i - baseMidiNote
+
+    let symbIndex = index % noteNames.length
+    let ottava = 4
+
+    if(index < 0){
+      let negativeIndex = noteNames.length + index;
+      ottava -= 1
+      while(negativeIndex < 0){
+        negativeIndex += noteNames.length 
+        ottava -= 1
+      }
+      symbIndex = (negativeIndex) % noteNames.length
+    }
+
+    symbolTable[i] =  noteNames[symbIndex] + (noteNames[symbIndex] ? ottavaCheck(noteNames[symbIndex], noteNames.length, ottava, index) : '')
+  }
+
+  return symbolTable
+}
+
+
+
+function ottavaCheck(symbol: string, length: number, ottava: number, index: number){
+  if(ottava >= 4){
+    const ottavaIncrease = Math.floor(index/length)
+    ottava += ottavaIncrease
+  }
+
+  //NOTE: we are asumming that C natural is the first note on scale
+  //this is not the best approach since the user can choose to start the scale in any note
+  //in general, the whole octave calculation needs to be refactor
+
+  return ottava
+}
+
+
+
+
+//-------------------------------------
 
 
 
@@ -144,11 +192,18 @@ export const useScaleStore = defineStore('scale', () => {
   
 
 
-  //added by kFXs -----
-  const symbols = ref(defaultSymbols(baseMidiNote.value))
+  //--------- added by kFXs 
+
+  const noteNames = ref(defaultNoteNames(baseMidiNote.value))
+ 
   
 
+
+  //-------------------
   
+
+
+
   const error = ref('')
   const warning = ref('')
 
@@ -185,6 +240,23 @@ export const useScaleStore = defineStore('scale', () => {
 
   const frequencies = computed(() => scale.value.getFrequencyRange(0, NUMBER_OF_NOTES))
   const centss = computed(() => scale.value.getCentsRange(0, NUMBER_OF_NOTES))
+
+
+
+  
+  //------added by kFXs
+
+
+   //function getSymbols(noteNames: string[], frequencies: number[], baseMidiNote: number)
+
+  const symbols = ref(getSymbols(noteNames.value, frequencies.value, baseMidiNote.value))
+
+
+
+
+  //------------------
+
+
 
   const latticePermutation = computed(() => {
     const intervals = relativeIntervals.value
@@ -587,8 +659,15 @@ export const useScaleStore = defineStore('scale', () => {
     colors,
     labels,
 
-    symbols, //added by kFXs
 
+    //---- added by kFXs
+
+
+    noteNames,
+    symbols,
+
+    //-------    
+    
     error,
     warning,
     isomorphicVertical,
