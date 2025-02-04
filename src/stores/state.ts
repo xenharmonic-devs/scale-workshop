@@ -1,27 +1,15 @@
-import { computed, reactive, ref, watch } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { UNIX_NEWLINE } from '@/constants'
 import { syncValues } from '@/utils'
 
 
 
-//--legacy --- added by kFXs
-import { Scale, parseLine } from 'scale-workshop-core'
-//-----???? (check later, not sure now if the following line was added by be XD )
-import { DEFAULT_NUMBER_OF_COMPONENTS, NUMBER_OF_NOTES } from '@/constants'
-//--------------------
-
-
-
-
 export const useStateStore = defineStore('state', () => {
-  // Nonpersistent state of the application
-  const scale = reactive(Scale.fromIntervalArray([parseLine('1/1', DEFAULT_NUMBER_OF_COMPONENTS)]))
-  const baseMidiNote = ref(69)
-  
+    
 
   //------------added by kFXs
-  const scaleSymbols = ref<string[]>([])
+  // Nonpersistent state of the application
   const scoreChord = ref<string[]>([])
   //-------------------
 
@@ -85,16 +73,10 @@ export const useStateStore = defineStore('state', () => {
     return { 
       latticeType: latticeType.value, 
       
-
       //-------added by kFXs
-      scaleSymbols: scaleSymbols.value,
-      symbolTable: symbolTable.value,
-      
-      
       showMusicalScore: showMusicalScore.value,
       scoreChord: scoreChord.value
       //-------------------
-
 
     }
   }
@@ -106,82 +88,6 @@ export const useStateStore = defineStore('state', () => {
   function fromJSON(data: any) {
     latticeType.value = data.latticeType
   }
-
-
-
-  //------------------- added by kFXs  (esto ya me lo puedo llevar del aire) !!!!!!!!
-
-  // === Computed state === (legacy) 
-  const frequencies = computed(() =>
-    scale.getFrequencyRange(-baseMidiNote.value, NUMBER_OF_NOTES - baseMidiNote.value)
-  )
-
-  // For Score symbols
-  const symbolTable = computed(()=>{
-    const table: string[] = [] 
-    if(scaleSymbols.value.length == 0) return table
-    
-    for(let i=0; i < frequencies.value.length; i++){
-      const index = i - baseMidiNote.value
-
-      
-      let symbIndex = index % scaleSymbols.value.length
-      let ottava = 5
-
-      if(index < 0){
-        let negativeIndex = scaleSymbols.value.length + index;
-        ottava -= 1
-        while(negativeIndex < 0){
-          negativeIndex += scaleSymbols.value.length 
-          ottava -= 1
-        }
-        symbIndex = (negativeIndex) % scaleSymbols.value.length
-      }
-      table[i] =  scaleSymbols.value[symbIndex] + (scaleSymbols.value[symbIndex] ? ottavaCheck(scaleSymbols.value[symbIndex], scaleSymbols.value.length, ottava, index) : '')
-    }
-
-    return table
-  })
-
-  function ottavaCheck(symbol: string, length: number, ottava: number, index: number){
-    if(ottava >= 5){
-      const ottavaIncrease = Math.floor(index/length)
-      ottava += ottavaIncrease
-    }
-    if(symbol.toUpperCase().startsWith('A') || symbol.toUpperCase().startsWith('B')){
-      //We are asuming that A natural (ottava 4) is the first note on the scale, so octave changes will not be applied to A flat or A half-flat
-      if(!symbol.toUpperCase().startsWith('AB') && !symbol.toUpperCase().startsWith('AD')){
-        ottava -= 1
-      }
-    }
-    return ottava
-  }
-
-  //----------------------------------- (esto ya me lo puedo llevar del aire) !!!!!!!!
-
-
-
-
-
-  
-
-  //------------ Added by kFXs
-
-  // === State updates ===  
-  function updateSymbols(symbols: string[]) {
-    scaleSymbols.value = symbols
-  }
-
-  const scaleSymbolsWrapper = computed({
-    get() {
-      return scaleSymbols.value
-    },
-    set: updateSymbols
-  })
-
-  //--------------------
-
-
 
 
   // Local storage watchers
@@ -218,15 +124,15 @@ export const useStateStore = defineStore('state', () => {
   )
 
 
-  //---------added by kFXs
 
+  //---------added by kFXs
   watch(showMusicalScore, (newValue) =>
     window.localStorage.setItem('showMusicalScore', newValue.toString())
   )
-
   //-----------
 
 
+  
 
   return {
     // Live state
@@ -236,11 +142,8 @@ export const useStateStore = defineStore('state', () => {
 
 
     //-------Added by kFXs
-    scaleSymbolsRaw: scaleSymbols,
-    scaleSymbols: scaleSymbolsWrapper,
     scoreChord: scoreChord,
     //---------
-
 
 
     // Persistent state
@@ -249,10 +152,12 @@ export const useStateStore = defineStore('state', () => {
     showVirtualQwerty,
 
 
+
     //------added by kFXs
     showMusicalScore,
     //---------------
     
+
     
     showMosTab,
     showKeyboardLabel,
@@ -273,17 +178,6 @@ export const useStateStore = defineStore('state', () => {
     shareStatistics,
     showSafariWarning,
     debug,
-
-
-
-
-    //----------added by kFXs
-    // Computed state
-    symbolTable,
-    //-----------------------
-
-
-
     // Methods
     toJSON,
     fromJSON

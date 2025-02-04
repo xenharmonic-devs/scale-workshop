@@ -40,28 +40,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <!---added by kFXs-->
+    <!---added by kFXs------------->
     <ScoreView v-show="state.showMusicalScore" />
-
-
-
-    mirando scale.userNotation:
-    {{scale.userNotation}}
-    <br>
-
-    mirando scale.noteNames:
-    {{scale.noteNames}}
-    <br>
-
-
-    mirando scale.symbols:
-    {{scale.symbols}}
-    <br>
-
-    mirando scale.labels:
-    {{scale.labels}}
-
-
+    <!------------------------------->
 
   <main>
     <div class="columns-container">

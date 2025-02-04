@@ -79,6 +79,7 @@ const isMousePressed = ref(false)
 
   <!---added by kFXs-->
   <ScoreView v-show="state.showMusicalScore" />
+  <!-------------------------->
   
   <table>
     <tbody>

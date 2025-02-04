@@ -22,7 +22,6 @@
     "moment-of-symmetry": "^0.8.4",
     "pinia": "^2.3.0",
     "qs": "^6.13.1",
-    "scale-workshop-core": "github:xenharmonic-devs/scale-workshop-core#v0.1.2",
     "sonic-weave": "^0.11.0",
     "sw-synth": "^0.1.2",
     "values.js": "^2.1.1",

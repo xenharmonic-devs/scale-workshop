@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useScaleStore } from '@/stores/scale'
 import { debounce, midiNoteNumberToName } from '@/utils'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import ScaleRule from './ScaleRule.vue'
 import palette from '@/character-palette.json'
 
@@ -13,31 +13,6 @@ const updateScale = debounce(scale.computeScale)
 const sourceEditor = ref<HTMLTextAreaElement | null>(null)
 
 const paletteInfo = ref('')
-
-
-
-
-
-
-//---------added by kFXs (esto ya me lo puedo llevar del aire) !!!!!!
-
-import { useStateStore } from '@/stores/state'
-
-const state = useStateStore()
-
-const joinedSymbols = computed({
-  get() {
-    return state.scaleSymbols.join('\n')
-  },
-  set: debounce((newValue: string) => { 
-    state.scaleSymbols = newValue.split('\n')
-  })
-})
-
-//-------------------- (esto ya me lo puedo llevar del aire) !!!!!!
-
-
-
 
 
 
