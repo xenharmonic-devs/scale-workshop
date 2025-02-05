@@ -89,21 +89,21 @@ function changeNameForLaSi(noteName: string){
 }
 
 // Get all the notation with octaves in the whole midi range
-function getSymbols(noteNames: string[], baseMidiNote: number) {
+function getSymbols(noteNames: string[], baseMidiNote: number, ottava: number) {
   const midiRange = 127
   const symbolTable: string[] = []
   if(noteNames.length == 0) return symbolTable
-  
-  let ottava
+
+  let octave
   if(noteNames.length == 1){
-    ottava = 0
+    octave = 4 + ottava
   } else{
-    ottava = 4 - Math.floor(baseMidiNote / noteNames.length)
+    octave = 4 - Math.round(baseMidiNote / noteNames.length) + ottava
   }
 
   for(let i = 0; i <= midiRange; i++ ){
     const index = ((i - baseMidiNote) % noteNames.length + noteNames.length) % noteNames.length
-    symbolTable[i] = noteNames[index] + ottava
+    symbolTable[i] = noteNames[index] + octave
     
     //checking the octave
     let currentNoteName = noteNames[index][0].toUpperCase()
@@ -111,7 +111,7 @@ function getSymbols(noteNames: string[], baseMidiNote: number) {
     currentNoteName = changeNameForLaSi(currentNoteName)
     nextNoteName = changeNameForLaSi(nextNoteName)
     if(nextNoteName.charCodeAt(0) < currentNoteName.charCodeAt(0)){
-      ottava++
+      octave++
     }
   }
   return symbolTable
@@ -192,8 +192,9 @@ export const useScaleStore = defineStore('scale', () => {
 
   const userNotation = ref('') //---proof of concept
 
+  const ottava = ref(0)
   const noteNames = ref(defaultNoteNames(baseMidiNote.value))
-  const symbols = ref(getSymbols(noteNames.value, baseMidiNote.value))
+  const symbols = ref(getSymbols(noteNames.value, baseMidiNote.value, ottava.value))
   
 
   //-------------------
@@ -502,7 +503,7 @@ export const useScaleStore = defineStore('scale', () => {
 
     noteNames.value = userNotation.value.split('\n') // proof of concept
 
-    symbols.value = getSymbols(noteNames.value, baseMidiNote.value)
+    symbols.value = getSymbols(noteNames.value, baseMidiNote.value, ottava.value)
 
 
     //---------------------
@@ -659,6 +660,7 @@ export const useScaleStore = defineStore('scale', () => {
 
     noteNames,
     symbols,
+    ottava,
 
     //-------    
     

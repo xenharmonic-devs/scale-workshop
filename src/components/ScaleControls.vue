@@ -39,6 +39,24 @@ function insertFromPalette(event: Event) {
   updateScale()
 }
 
+
+function increaseOttava(event: Event) {
+  if(scale.ottava < 3){
+    scale.ottava ++
+  }
+  updateScale()
+}
+
+function dereaseOttava(event: Event) {
+  if(scale.ottava > -3){
+    scale.ottava --
+  }
+  updateScale()
+}
+
+
+
+
 function focus() {
   if (!sourceEditor.value) {
     return
@@ -127,10 +145,8 @@ defineExpose({ focus, clearPaletteInfo })
     <p class="info" v-html="paletteInfo"></p>
   </div>
 
-
-
+  
   <!----------- added by kFXs (proof of concept) ------->
-
   <div class="control-group">
     <h2>Scale Symbols</h2>
     <div class="control">
@@ -141,11 +157,22 @@ defineExpose({ focus, clearPaletteInfo })
         @input="updateScale()"
       ></textarea>
     </div>
+    <div class="ottava">
+      <span class="ottava-label">Ottava:</span>
+      <button 
+        class="ottava-btn"
+        @click="dereaseOttava"
+      >bassa</button>
+      <span class="ottava-value">{{  
+        scale.ottava > 0 ? `+${ scale.ottava }` : scale.ottava 
+      }}</span>
+      <button 
+        class="ottava-btn"
+        @click="increaseOttava"
+      >alta</button>
+    </div>
   </div>
-
   <!------------------------>
-
-
 
   <div class="control-group">
     <div class="control radio-group">
@@ -221,4 +248,23 @@ p.warning {
   max-height: 12em;
   overflow-y: auto;
 }
+
+.ottava-label {
+  color: var(--color-accent-mute); 
+}
+.ottava-value {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 3px;
+  background-color: var(--color-text-mute);
+}
+.ottava-btn {
+  padding-top: 0px;
+  padding-bottom: 1px;
+  margin-left: 8px;
+  margin-right: 8px;
+}
+
 </style>
