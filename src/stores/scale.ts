@@ -190,11 +190,13 @@ export const useScaleStore = defineStore('scale', () => {
 
   //--------- added by kFXs 
 
-  const userNotation = ref('') //---proof of concept
+ 
 
   const ottava = ref(0)
   const noteNames = ref(defaultNoteNames(baseMidiNote.value))
   const symbols = ref(getSymbols(noteNames.value, baseMidiNote.value, ottava.value))
+
+  const userNotation = ref(noteNames.value.join("\n")) //---proof of concept
   
 
   //-------------------
@@ -501,8 +503,9 @@ export const useScaleStore = defineStore('scale', () => {
     //------- added by kFXs (proof of concept)
 
 
+  
     noteNames.value = userNotation.value.split('\n') // proof of concept
-
+    
     symbols.value = getSymbols(noteNames.value, baseMidiNote.value, ottava.value)
 
 

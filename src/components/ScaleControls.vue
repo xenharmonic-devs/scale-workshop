@@ -16,6 +16,21 @@ const paletteInfo = ref('')
 
 
 
+function increaseOttava() {
+  if(scale.ottava < 3){
+    scale.ottava ++
+  }
+  updateScale()
+}
+
+function dereaseOttava() {
+  if(scale.ottava > -3){
+    scale.ottava --
+  }
+  updateScale()
+}
+
+
 function updatePaletteInfo(event: Event) {
   const character = (event.target as HTMLButtonElement).textContent!
   paletteInfo.value = (palette as Record<string, string>)[character] ?? ''
@@ -38,22 +53,6 @@ function insertFromPalette(event: Event) {
     scale.sourceText.substring(end, scale.sourceText.length)
   updateScale()
 }
-
-
-function increaseOttava(event: Event) {
-  if(scale.ottava < 3){
-    scale.ottava ++
-  }
-  updateScale()
-}
-
-function dereaseOttava(event: Event) {
-  if(scale.ottava > -3){
-    scale.ottava --
-  }
-  updateScale()
-}
-
 
 
 
@@ -145,7 +144,7 @@ defineExpose({ focus, clearPaletteInfo })
     <p class="info" v-html="paletteInfo"></p>
   </div>
 
-  
+
   <!----------- added by kFXs (proof of concept) ------->
   <div class="control-group">
     <h2>Scale Symbols</h2>
@@ -173,6 +172,7 @@ defineExpose({ focus, clearPaletteInfo })
     </div>
   </div>
   <!------------------------>
+
 
   <div class="control-group">
     <div class="control radio-group">
