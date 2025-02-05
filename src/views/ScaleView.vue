@@ -12,11 +12,6 @@ import { getSourceVisitor, setNumberOfComponents } from 'sonic-weave'
 import { onMounted, onUnmounted, ref } from 'vue'
 
 
-//added by kFXs
-import ScoreView from '@/components/ScoreView.vue'
-
-
-
 const scale = useScaleStore()
 const state = useStateStore()
 
@@ -40,10 +35,6 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <!---added by kFXs------------->
-    <ScoreView v-show="state.showMusicalScore" />
-    <!------------------------------->
-
   <main>
     <div class="columns-container">
       <div class="column scale-builder">
@@ -69,10 +60,7 @@ onUnmounted(() => {
           :baseFrequency="scale.scale.baseFrequency"
           :baseMidiNote="scale.scale.baseMidiNote"
           :colors="scale.colors"
-          :labels="scale.labels"
-
-          :symbolTable="state.symbolTable"
-          
+          :labels="scale.labels"          
           :symbols="scale.symbols"
         />
       </div>

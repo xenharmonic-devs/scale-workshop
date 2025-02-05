@@ -17,6 +17,8 @@ import { useHarmonicEntropyStore } from '@/stores/harmonic-entropy'
 import { clamp, mmod } from 'xen-dev-utils'
 import { parseScaleWorkshop2Line, setNumberOfComponents } from 'sonic-weave'
 
+import ScoreView from '@/components/ScoreView.vue'
+
 // === Pinia-managed state ===
 const state = useStateStore()
 const scale = useScaleStore()
@@ -573,6 +575,7 @@ function panic() {
       </ul>
     </div>
   </nav>
+  <ScoreView v-show="state.showMusicalScore" />
   <RouterView
     :noteOn="keyboardNoteOn"
     :midiInputChannels="midiInputChannels"
