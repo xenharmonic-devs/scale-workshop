@@ -77,51 +77,51 @@ function defaultNoteNames(base: number) {
   return result
 }
 
-// Score symbols in the MIDI range
-function getSymbols(noteNames: string[], frequencies: number[], baseMidiNote: number) {
-  const symbolTable: string[] = [] 
+// We are changing the name of notes A and B in order to have a risen ASCII value in the scale [Ex: C-D-E-F-G-L(a)-S(i) ]; not too orthodox, but usefull for comparison
+function changeNameForLaSi(noteName: string){
+  if(noteName == 'A'){
+    return 'L' // la 
+  }
+  if(noteName == 'B'){
+    return 'S' // si
+  }
+  return noteName
+}
+
+// Get all the notation with octaves in the whole midi range
+function getSymbols(noteNames: string[], baseMidiNote: number) {
+  const midiRange = 127
+  const symbolTable: string[] = []
   if(noteNames.length == 0) return symbolTable
   
-  for(let i = 0; i < frequencies.length; i++){
-    const index = i - baseMidiNote
-    let symbIndex = index % noteNames.length
-    let ottava = 4
+  let ottava
+  if(noteNames.length == 1){
+    ottava = 0
+  } else{
+    ottava = 4 - Math.floor(baseMidiNote / noteNames.length)
+  }
 
-    if(index < 0){
-      let negativeIndex = noteNames.length + index;
-      ottava -= 1
-      while(negativeIndex < 0){
-        negativeIndex += noteNames.length 
-        ottava -= 1
-      }
-      symbIndex = (negativeIndex) % noteNames.length
+  for(let i = 0; i <= midiRange; i++ ){
+    const index = ((i - baseMidiNote) % noteNames.length + noteNames.length) % noteNames.length
+    symbolTable[i] = noteNames[index] + ottava
+    
+    //checking the octave
+    let currentNoteName = noteNames[index][0].toUpperCase()
+    let nextNoteName = (index + 1 < noteNames.length) ? noteNames[index + 1][0].toUpperCase() : noteNames[0][0].toUpperCase()
+    currentNoteName = changeNameForLaSi(currentNoteName)
+    nextNoteName = changeNameForLaSi(nextNoteName)
+    if(nextNoteName.charCodeAt(0) < currentNoteName.charCodeAt(0)){
+      ottava++
     }
-    symbolTable[i] =  noteNames[symbIndex] + (noteNames[symbIndex] ? ottavaCheck(noteNames[symbIndex], noteNames.length, ottava, index) : '')
   }
   return symbolTable
 }
 
 
-function ottavaCheck(symbol: string, length: number, ottava: number, index: number){
-  if(ottava >= 4){
-    const ottavaIncrease = Math.floor(index/length)
-    ottava += ottavaIncrease
-  }
-  //NOTE: we are asumming that C natural is the first note on scale
-  //this is not the best approach since the user can choose to start the scale in any note
-  //in general, the whole octave calculation needs to be refactor
-
-  //correct the octave discrepancy
-  if(symbol.toUpperCase().startsWith('C')){
-    //octave correction will be applied to C flat or C half-flat
-    if(symbol.toUpperCase().startsWith('CB') || symbol.toUpperCase().startsWith('CD')){
-      ottava += 1
-    }
-  }
-  return ottava
-}
 
 //-------------------------------------
+
+
 
 
 
@@ -190,8 +190,12 @@ export const useScaleStore = defineStore('scale', () => {
 
   //--------- added by kFXs 
 
+  const userNotation = ref('') //---proof of concept
+
   const noteNames = ref(defaultNoteNames(baseMidiNote.value))
+  const symbols = ref(getSymbols(noteNames.value, baseMidiNote.value))
   
+
   //-------------------
   
 
@@ -232,20 +236,6 @@ export const useScaleStore = defineStore('scale', () => {
 
   const frequencies = computed(() => scale.value.getFrequencyRange(0, NUMBER_OF_NOTES))
   const centss = computed(() => scale.value.getCentsRange(0, NUMBER_OF_NOTES))
-
-
-
-
-  //------added by kFXs
-
-  const userNotation = ref('') //---proof of concept
-
-  //function getSymbols(noteNames: string[], frequencies: number[], baseMidiNote: number)
-  const symbols = ref(getSymbols(noteNames.value, frequencies.value, baseMidiNote.value))
-
-  //------------------
-
-
 
   const latticePermutation = computed(() => {
     const intervals = relativeIntervals.value
@@ -512,7 +502,7 @@ export const useScaleStore = defineStore('scale', () => {
 
     noteNames.value = userNotation.value.split('\n') // proof of concept
 
-    symbols.value = getSymbols(noteNames.value, frequencies.value, baseMidiNote.value)
+    symbols.value = getSymbols(noteNames.value, baseMidiNote.value)
 
 
     //---------------------
