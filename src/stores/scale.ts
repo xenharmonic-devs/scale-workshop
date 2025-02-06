@@ -117,6 +117,10 @@ function getSymbols(noteNames: string[], baseMidiNote: number, ottava: number) {
   return symbolTable
 }
 
+function clearEmptyLabels(labels: string[]){
+
+  return labels.filter((label: string) => label !== "")
+}
 
 
 //-------------------------------------
@@ -501,13 +505,11 @@ export const useScaleStore = defineStore('scale', () => {
 
 
     //------- added by kFXs (proof of concept)
-
-
   
     noteNames.value = userNotation.value.split('\n') // proof of concept
-    
-    symbols.value = getSymbols(noteNames.value, baseMidiNote.value, ottava.value)
+    noteNames.value = clearEmptyLabels(noteNames.value)
 
+    symbols.value = getSymbols(noteNames.value, baseMidiNote.value, ottava.value)
 
     //---------------------
 
