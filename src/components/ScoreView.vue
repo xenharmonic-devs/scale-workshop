@@ -60,7 +60,7 @@ function refreshScore(chordArray: string[]){
                 ],
             }).addClef('treble').setEndBarType(BarlineType.DOUBLE);
         }
-        
+
         if(chordStringBass){
             system.addStave({
                 voices: [
@@ -73,7 +73,7 @@ function refreshScore(chordArray: string[]){
     } 
     catch(error){ 
         const chordView = document.getElementById('chordView')
-        chordView.innerHTML = '<div class="error-msg">Oops!<br/><br/>The given symbol might not be a valid Vexflow label.</div>';
+        chordView.innerHTML = '<div class="error-msg"><i>Oops!</i><br/>The given symbol might not be a valid <i>Vexflow</i> label.</div>';
     }
 };
 
@@ -110,7 +110,7 @@ svg{
 }
 
 .error-msg{
-    color: rgb(192, 14, 14);
+    color: rgb(102, 6, 104);
     background-color: gainsboro;
     width: 160px;
     height: 160px;
@@ -118,8 +118,9 @@ svg{
     border: 2px solid lightslategray;
     border-radius: 15px;
     padding: 15px;
+    padding-top: 30px;
     text-align: center;
-    line-height: 1;
+    line-height: 1.3;
 }
 
 </style>
