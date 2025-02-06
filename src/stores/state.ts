@@ -6,14 +6,8 @@ import { syncValues } from '@/utils'
 
 
 export const useStateStore = defineStore('state', () => {
-    
-
-  //------------added by kFXs
   // Nonpersistent state of the application
   const scoreChord = ref<string[]>([])
-  //-------------------
-
-  
 
   // Mapping from MIDI index to number of interfaces currently pressing the key down
   const heldNotes = reactive(new Map<number, number>())
@@ -72,12 +66,8 @@ export const useStateStore = defineStore('state', () => {
   function toJSON() {
     return { 
       latticeType: latticeType.value, 
-      
-      //-------added by kFXs
       showMusicalScore: showMusicalScore.value,
       scoreChord: scoreChord.value
-      //-------------------
-
     }
   }
 
@@ -124,41 +114,22 @@ export const useStateStore = defineStore('state', () => {
   )
 
 
-
-  //---------added by kFXs
   watch(showMusicalScore, (newValue) =>
     window.localStorage.setItem('showMusicalScore', newValue.toString())
   )
-  //-----------
 
-
-  
 
   return {
     // Live state
     heldNotes,
     typingActive,
     latticeType,
-
-
-    //-------Added by kFXs
     scoreChord: scoreChord,
-    //---------
-
-
     // Persistent state
     newline,
     colorScheme,
     showVirtualQwerty,
-
-
-
-    //------added by kFXs
     showMusicalScore,
-    //---------------
-    
-
-    
     showMosTab,
     showKeyboardLabel,
     showKeyboardCents,

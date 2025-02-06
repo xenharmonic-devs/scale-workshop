@@ -231,7 +231,7 @@ watch(
 )
 
 
-// === Score Chords functions === added by kFXs
+// === Score Chords functions === 
 function pushSymbolToChord(index: number){
   state.scoreChord.push(scale.symbols[index])
 }
@@ -246,18 +246,15 @@ function pullSymbolfromChord(index: number){
 function keyboardNoteOn(index: number) {
   tuningTableKeyOn(index)
 
-  //------ added by kFXs
   pushSymbolToChord(index)
-  //-----------
+ 
 
   const noteOff = sendNoteOn(index, scale.getFrequency(index), 80)
   function keyOff() {
     tuningTableKeyOff(index)
 
-    //------ added by kFXs
     pullSymbolfromChord(index)
-    //-----------
-
+  
     return noteOff(80)
   }
   return keyOff

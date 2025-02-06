@@ -145,8 +145,6 @@ defineExpose({ focus, clearPaletteInfo })
     <p class="info" v-html="paletteInfo"></p>
   </div>
 
-
-  <!----------- added by kFXs (proof of concept) ------->
   <div class="control-group">
     <h2>
       <span class="scale-symbols-header">Scale Symbols</span>
@@ -178,8 +176,6 @@ defineExpose({ focus, clearPaletteInfo })
       >alta</button>
     </div>
   </div>
-  <!------------------------>
-
 
   <div class="control-group">
     <div class="control radio-group">

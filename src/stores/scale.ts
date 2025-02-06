@@ -67,10 +67,6 @@ function defaultLabels(base: number, accidentalStyle: AccidentalStyle) {
 
 
 
-
-
-//----------- added by kFXs
-
 // Notes from #1 to #12 inclusive.
 function defaultNoteNames(base: number) {
   const result = [...Array(12).keys()].map((i) => MIDI_NOTE_NAMES[mmod(base + i, 12)])
@@ -190,22 +186,10 @@ export const useScaleStore = defineStore('scale', () => {
   const colors = ref(defaultColors(baseMidiNote.value))
   const labels = ref(defaultLabels(baseMidiNote.value, accidentalPreference.value))
   
-
-
-  //--------- added by kFXs 
-
- 
-
   const ottava = ref(0)
   const noteNames = ref(defaultNoteNames(baseMidiNote.value))
   const symbols = ref(getSymbols(noteNames.value, baseMidiNote.value, ottava.value))
-
   const userNotation = ref(noteNames.value.join("\n")) //---proof of concept
-  
-
-  //-------------------
-  
-
 
   const error = ref('')
   const warning = ref('')
@@ -501,18 +485,9 @@ export const useScaleStore = defineStore('scale', () => {
   }
 
   function computeScale(pushUndo = true) {
-
-
-
-    //------- added by kFXs (proof of concept)
-  
     noteNames.value = userNotation.value.split('\n') // proof of concept
     noteNames.value = clearEmptyLabels(noteNames.value)
-
     symbols.value = getSymbols(noteNames.value, baseMidiNote.value, ottava.value)
-
-    //---------------------
-
 
     try {
       error.value = ''
@@ -657,18 +632,10 @@ export const useScaleStore = defineStore('scale', () => {
     latticeEquave,
     colors,
     labels,
-
-
-    //---- added by kFXs
-
     userNotation, //----(proof of concept)
-
     noteNames,
     symbols,
     ottava,
-
-    //-------    
-    
     error,
     warning,
     isomorphicVertical,
