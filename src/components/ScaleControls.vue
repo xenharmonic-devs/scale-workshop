@@ -55,8 +55,6 @@ function insertFromPalette(event: Event) {
   updateScale()
 }
 
-
-
 function focus() {
   if (!sourceEditor.value) {
     return

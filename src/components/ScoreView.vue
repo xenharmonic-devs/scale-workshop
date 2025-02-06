@@ -49,8 +49,6 @@ function refreshScore(chordArray: string[]){
     
     // We just skipp if there is no notation   
     if(!chordStringTreble && !chordStringBass) return
-  
-
     
     try{
         if(chordStringTreble){

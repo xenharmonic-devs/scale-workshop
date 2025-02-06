@@ -65,8 +65,6 @@ function defaultLabels(base: number, accidentalStyle: AccidentalStyle) {
   return result.map((n) => n.replace('#', '♯'))
 }
 
-
-
 // Notes from #1 to #12 inclusive.
 function defaultNoteNames(base: number) {
   const result = [...Array(12).keys()].map((i) => MIDI_NOTE_NAMES[mmod(base + i, 12)])
@@ -117,14 +115,6 @@ function clearEmptyLabels(labels: string[]){
 
   return labels.filter((label: string) => label !== "")
 }
-
-
-//-------------------------------------
-
-
-
-
-
 
 function harmonicEntropy(this: ExpressionVisitor, interval: SonicWeaveValue): SonicWeaveValue {
   if (typeof interval === 'boolean' || interval instanceof Interval) {

@@ -4,7 +4,6 @@ import VirtualKeyboardKey from '@/components/VirtualKeyboardKey.vue'
 import VirtualKeyInfo from '@/components/VirtualKeyInfo.vue'
 import type { Scale } from '@/scale'
 
-
 type NoteOff = () => void
 type NoteOnCallback = (index: number) => NoteOff
 type ColorMap = (index: number) => string
