@@ -232,12 +232,12 @@ watch(
 
 // === Score Chords functions ===
 function pushSymbolToChord(index: number) {
-  state.scoreChord.push(scale.symbols[index])
+  state.scoreChord.add(scale.symbols[index])
 }
 
 function pullSymbolfromChord(index: number) {
-  const item = state.scoreChord.indexOf(scale.symbols[index])
-  state.scoreChord.splice(item, 1)
+  const item = scale.symbols[index]
+  state.scoreChord.delete(item)
 }
 
 // === Virtual and typing keyboard ===

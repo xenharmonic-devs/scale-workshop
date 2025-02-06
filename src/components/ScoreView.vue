@@ -69,12 +69,11 @@ function refreshScore(chordArray: string[]) {
     vf.draw()
   } catch (error) {
     const chordView = document.getElementById('chordView')
-    chordView.innerHTML =
-      '<div class="error-msg"><i>Oops!</i><br/>The given symbol might not be a valid <i>Vexflow</i> label.</div>'
+    chordView.innerHTML = '<div class="error-msg"><i>Oops!</i><br/>The given symbol might not be a valid <i>Vexflow</i> label.</div>'
   }
 }
 
-watch(state.scoreChord, (newValue) => {
+watch( () => Array.from(state.scoreChord), (newValue) => {
   const chordView = document.getElementById('chordView')
   chordView.innerHTML = ''
 
