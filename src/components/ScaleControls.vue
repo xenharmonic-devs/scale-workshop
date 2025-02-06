@@ -7,14 +7,16 @@ import palette from '@/character-palette.json'
 
 
 const scale = useScaleStore()
-
 const updateScale = debounce(scale.computeScale)
 
 const sourceEditor = ref<HTMLTextAreaElement | null>(null)
-
 const paletteInfo = ref('')
 
 
+function clearUserNotation(){
+  scale.userNotation = ''
+  updateScale()
+}
 
 function increaseOttava() {
   if(scale.ottava < 3){
@@ -29,7 +31,6 @@ function dereaseOttava() {
   }
   updateScale()
 }
-
 
 function updatePaletteInfo(event: Event) {
   const character = (event.target as HTMLButtonElement).textContent!
@@ -147,7 +148,13 @@ defineExpose({ focus, clearPaletteInfo })
 
   <!----------- added by kFXs (proof of concept) ------->
   <div class="control-group">
-    <h2>Scale Symbols</h2>
+    <h2>
+      <span class="scale-symbols-header">Scale Symbols</span>
+      <button
+        class="clear-symbols-btn"
+        @click="clearUserNotation"
+      >clear</button>
+    </h2> 
     <div class="control">
       <textarea 
         id="scale-symbols"  
@@ -266,5 +273,15 @@ p.warning {
   margin-left: 8px;
   margin-right: 8px;
 }
-
+.clear-symbols-btn{
+  background: none;
+  border: none;
+  text-decoration: underline;
+  margin-left: 5px;
+  padding: 5px;
+}
+.clear-symbols-btn:hover{
+  background: var(--color-accent);
+  text-decoration: none;
+}
 </style>
