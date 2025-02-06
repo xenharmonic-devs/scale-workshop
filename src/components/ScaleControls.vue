@@ -5,29 +5,27 @@ import { ref } from 'vue'
 import ScaleRule from './ScaleRule.vue'
 import palette from '@/character-palette.json'
 
-
 const scale = useScaleStore()
 const updateScale = debounce(scale.computeScale)
 
 const sourceEditor = ref<HTMLTextAreaElement | null>(null)
 const paletteInfo = ref('')
 
-
-function clearUserNotation(){
+function clearUserNotation() {
   scale.userNotation = ''
   updateScale()
 }
 
 function increaseOttava() {
-  if(scale.ottava < 3){
-    scale.ottava ++
+  if (scale.ottava < 3) {
+    scale.ottava++
   }
   updateScale()
 }
 
 function dereaseOttava() {
-  if(scale.ottava > -3){
-    scale.ottava --
+  if (scale.ottava > -3) {
+    scale.ottava--
   }
   updateScale()
 }
@@ -146,32 +144,21 @@ defineExpose({ focus, clearPaletteInfo })
   <div class="control-group">
     <h2>
       <span class="scale-symbols-header">Scale Symbols</span>
-      <button
-        class="clear-symbols-btn"
-        @click="clearUserNotation"
-      >clear</button>
-    </h2> 
+      <button class="clear-symbols-btn" @click="clearUserNotation">clear</button>
+    </h2>
     <div class="control">
-      <textarea 
-        id="scale-symbols"  
-        rows="12" 
+      <textarea
+        id="scale-symbols"
+        rows="12"
         v-model="scale.userNotation"
         @input="updateScale()"
       ></textarea>
     </div>
     <div class="ottava">
       <span class="ottava-label">Ottava:</span>
-      <button 
-        class="ottava-btn"
-        @click="dereaseOttava"
-      >bassa</button>
-      <span class="ottava-value">{{  
-        scale.ottava > 0 ? `+${ scale.ottava }` : scale.ottava 
-      }}</span>
-      <button 
-        class="ottava-btn"
-        @click="increaseOttava"
-      >alta</button>
+      <button class="ottava-btn" @click="dereaseOttava">bassa</button>
+      <span class="ottava-value">{{ scale.ottava > 0 ? `+${scale.ottava}` : scale.ottava }}</span>
+      <button class="ottava-btn" @click="increaseOttava">alta</button>
     </div>
   </div>
 
@@ -251,7 +238,7 @@ p.warning {
 }
 
 .ottava-label {
-  color: var(--color-accent-mute); 
+  color: var(--color-accent-mute);
 }
 .ottava-value {
   padding-top: 2px;
@@ -267,14 +254,14 @@ p.warning {
   margin-left: 8px;
   margin-right: 8px;
 }
-.clear-symbols-btn{
+.clear-symbols-btn {
   background: none;
   border: none;
   text-decoration: underline;
   margin-left: 5px;
   padding: 5px;
 }
-.clear-symbols-btn:hover{
+.clear-symbols-btn:hover {
   background: var(--color-accent);
   text-decoration: none;
 }

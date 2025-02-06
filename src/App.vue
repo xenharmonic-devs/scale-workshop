@@ -230,31 +230,28 @@ watch(
   }
 )
 
-
-// === Score Chords functions === 
-function pushSymbolToChord(index: number){
+// === Score Chords functions ===
+function pushSymbolToChord(index: number) {
   state.scoreChord.push(scale.symbols[index])
 }
 
-function pullSymbolfromChord(index: number){
+function pullSymbolfromChord(index: number) {
   const item = state.scoreChord.indexOf(scale.symbols[index])
   state.scoreChord.splice(item, 1)
 }
-
 
 // === Virtual and typing keyboard ===
 function keyboardNoteOn(index: number) {
   tuningTableKeyOn(index)
 
   pushSymbolToChord(index)
- 
 
   const noteOff = sendNoteOn(index, scale.getFrequency(index), 80)
   function keyOff() {
     tuningTableKeyOff(index)
 
     pullSymbolfromChord(index)
-  
+
     return noteOff(80)
   }
   return keyOff

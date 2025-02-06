@@ -11,7 +11,6 @@ import { debounce } from '@/utils'
 import { getSourceVisitor, setNumberOfComponents } from 'sonic-weave'
 import { onMounted, onUnmounted, ref } from 'vue'
 
-
 const scale = useScaleStore()
 const state = useStateStore()
 
@@ -60,7 +59,7 @@ onUnmounted(() => {
           :baseFrequency="scale.scale.baseFrequency"
           :baseMidiNote="scale.scale.baseMidiNote"
           :colors="scale.colors"
-          :labels="scale.labels"          
+          :labels="scale.labels"
           :symbols="scale.symbols"
         />
       </div>

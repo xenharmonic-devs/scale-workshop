@@ -72,11 +72,11 @@ function defaultNoteNames(base: number) {
 }
 
 // We are changing the name of notes A and B in order to have a risen ASCII value in the scale [Ex: C-D-E-F-G-L(a)-S(i) ]; not too orthodox, but usefull for comparison
-function changeNameForLaSi(noteName: string){
-  if(noteName == 'A'){
-    return 'L' // la 
+function changeNameForLaSi(noteName: string) {
+  if (noteName == 'A') {
+    return 'L' // la
   }
-  if(noteName == 'B'){
+  if (noteName == 'B') {
     return 'S' // si
   }
   return noteName
@@ -86,34 +86,36 @@ function changeNameForLaSi(noteName: string){
 function getSymbols(noteNames: string[], baseMidiNote: number, ottava: number) {
   const midiRange = 127
   const symbolTable: string[] = []
-  if(noteNames.length == 0) return symbolTable
+  if (noteNames.length == 0) return symbolTable
 
   let octave
-  if(noteNames.length == 1){
+  if (noteNames.length == 1) {
     octave = 4 + ottava
-  } else{
+  } else {
     octave = 4 - Math.round(baseMidiNote / noteNames.length) + ottava
   }
 
-  for(let i = 0; i <= midiRange; i++ ){
-    const index = ((i - baseMidiNote) % noteNames.length + noteNames.length) % noteNames.length
+  for (let i = 0; i <= midiRange; i++) {
+    const index = (((i - baseMidiNote) % noteNames.length) + noteNames.length) % noteNames.length
     symbolTable[i] = noteNames[index] + octave
-    
+
     //checking the octave
     let currentNoteName = noteNames[index][0].toUpperCase()
-    let nextNoteName = (index + 1 < noteNames.length) ? noteNames[index + 1][0].toUpperCase() : noteNames[0][0].toUpperCase()
+    let nextNoteName =
+      index + 1 < noteNames.length
+        ? noteNames[index + 1][0].toUpperCase()
+        : noteNames[0][0].toUpperCase()
     currentNoteName = changeNameForLaSi(currentNoteName)
     nextNoteName = changeNameForLaSi(nextNoteName)
-    if(nextNoteName.charCodeAt(0) < currentNoteName.charCodeAt(0)){
+    if (nextNoteName.charCodeAt(0) < currentNoteName.charCodeAt(0)) {
       octave++
     }
   }
   return symbolTable
 }
 
-function clearEmptyLabels(labels: string[]){
-
-  return labels.filter((label: string) => label !== "")
+function clearEmptyLabels(labels: string[]) {
+  return labels.filter((label: string) => label !== '')
 }
 
 function harmonicEntropy(this: ExpressionVisitor, interval: SonicWeaveValue): SonicWeaveValue {
@@ -175,11 +177,11 @@ export const useScaleStore = defineStore('scale', () => {
   const latticeEquave = ref<Interval | undefined>(undefined)
   const colors = ref(defaultColors(baseMidiNote.value))
   const labels = ref(defaultLabels(baseMidiNote.value, accidentalPreference.value))
-  
+
   const ottava = ref(0)
   const noteNames = ref(defaultNoteNames(baseMidiNote.value))
   const symbols = ref(getSymbols(noteNames.value, baseMidiNote.value, ottava.value))
-  const userNotation = ref(noteNames.value.join("\n")) //---proof of concept
+  const userNotation = ref(noteNames.value.join('\n')) //---proof of concept
 
   const error = ref('')
   const warning = ref('')
@@ -496,7 +498,7 @@ export const useScaleStore = defineStore('scale', () => {
           break
         }
       }
-      
+
       const intervals = visitor.currentScale
       const ev = visitor.createExpressionVisitor()
       const rel = relative.bind(ev)

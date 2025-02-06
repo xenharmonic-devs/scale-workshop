@@ -3,8 +3,6 @@ import { defineStore } from 'pinia'
 import { UNIX_NEWLINE } from '@/constants'
 import { syncValues } from '@/utils'
 
-
-
 export const useStateStore = defineStore('state', () => {
   // Nonpersistent state of the application
   const scoreChord = ref<string[]>([])
@@ -64,8 +62,8 @@ export const useStateStore = defineStore('state', () => {
    * Convert live state to a format suitable for storing on the server.
    */
   function toJSON() {
-    return { 
-      latticeType: latticeType.value, 
+    return {
+      latticeType: latticeType.value,
       showMusicalScore: showMusicalScore.value,
       scoreChord: scoreChord.value
     }
@@ -78,7 +76,6 @@ export const useStateStore = defineStore('state', () => {
   function fromJSON(data: any) {
     latticeType.value = data.latticeType
   }
-
 
   // Local storage watchers
   syncValues({
@@ -113,11 +110,9 @@ export const useStateStore = defineStore('state', () => {
     { immediate: true }
   )
 
-
   watch(showMusicalScore, (newValue) =>
     window.localStorage.setItem('showMusicalScore', newValue.toString())
   )
-
 
   return {
     // Live state
