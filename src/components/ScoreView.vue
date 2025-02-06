@@ -38,7 +38,7 @@ function refreshScore(chordArray: string[]) {
   let chordArrayBass = []
   for (const item of chordArray) {
     if (isTrebleClef(item)) chordArrayTreble.push(item)
-    if (isBassClef(item)) chordArrayBass.push(item)
+    else chordArrayBass.push(item)
   }
 
   const score = vf.EasyScore()
