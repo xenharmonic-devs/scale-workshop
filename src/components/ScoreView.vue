@@ -10,14 +10,14 @@ function isTrebleClef(chord: string | undefined) {
   if (!chord) return false
 
   const number = Number(chord.charAt(chord.length - 1))
-  return (number >= 4)
+  return number >= 4
 }
 
 function isBassClef(chord: string | undefined) {
   if (!chord) return false
 
   const number = Number(chord.charAt(chord.length - 1))
-  return (number < 4)
+  return number < 4
 }
 
 function chordArray2chordString(chordArray: string[]) {
@@ -69,20 +69,24 @@ function refreshScore(chordArray: string[]) {
     vf.draw()
   } catch (error) {
     const chordView = document.getElementById('chordView')
-    chordView.innerHTML = '<div class="error-msg"><i>Oops!</i><br/>The given symbol might not be a valid <i>Vexflow</i> label.</div>'
+    chordView.innerHTML =
+      '<div class="error-msg"><i>Oops!</i><br/>The given symbol might not be a valid <i>Vexflow</i> label.</div>'
   }
 }
 
-watch( () => Array.from(state.scoreChord), (newValue) => {
-  const chordView = document.getElementById('chordView')
-  chordView.innerHTML = ''
+watch(
+  () => Array.from(state.scoreChord),
+  (newValue) => {
+    const chordView = document.getElementById('chordView')
+    chordView.innerHTML = ''
 
-  if (!newValue[0]) return
+    if (!newValue[0]) return
 
-  if (newValue.length > 0) {
-    refreshScore(newValue)
+    if (newValue.length > 0) {
+      refreshScore(newValue)
+    }
   }
-})
+)
 </script>
 
 <template>

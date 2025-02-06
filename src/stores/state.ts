@@ -64,7 +64,7 @@ export const useStateStore = defineStore('state', () => {
   function toJSON() {
     return {
       latticeType: latticeType.value,
-      showMusicalScore: showMusicalScore.value,
+      showMusicalScore: showMusicalScore.value
     }
   }
 
