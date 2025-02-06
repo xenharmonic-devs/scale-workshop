@@ -28,7 +28,7 @@ const rows = computed(() => {
       cents,
       ratio: ratio,
       label: props.labels[mmod(index - 1, props.labels.length)],
-      symbol: props.symbols[i],
+      symbol: props.symbols[i] || '',
       color: props.colors[mmod(index - 1, props.colors.length)],
       isRoot: index === 0,
       equave: mmod(index, props.labels.length) === 0
