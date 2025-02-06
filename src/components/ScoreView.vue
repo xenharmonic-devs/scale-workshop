@@ -10,16 +10,14 @@ function isTrebleClef(chord: string | undefined) {
   if (!chord) return false
 
   const number = Number(chord.charAt(chord.length - 1))
-  if (number >= 4) return true
-  return false
+  return (number >= 4)
 }
 
 function isBassClef(chord: string | undefined) {
   if (!chord) return false
 
   const number = Number(chord.charAt(chord.length - 1))
-  if (number < 4) return true
-  return false
+  return (number < 4)
 }
 
 function chordArray2chordString(chordArray: string[]) {
