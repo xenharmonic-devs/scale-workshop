@@ -64,7 +64,8 @@ const tagline = computed(() => TAGLINES[Math.floor(Math.random() * TAGLINES.leng
         Richie Greene - <i>quality assurance</i> <br />
         Akselai - <i>quality assurance</i> <br />
         <span class="spoob">Spoob<img src="@/assets/img/spoob.png" /></span> -
-        <i>emotional support</i>
+        <i>emotional support</i><br />
+        Kiko Faxas - <i>developer</i><br />
       </p>
     </div>
     <hr />
