@@ -2,6 +2,9 @@
 import { computed } from 'vue'
 import TuningTableRow from '@/components/TuningTableRow.vue'
 import { mmod } from 'xen-dev-utils'
+import { useStateStore } from '@/stores/state'
+
+const state = useStateStore()
 
 const props = defineProps<{
   baseFrequency: number
@@ -47,7 +50,7 @@ const rows = computed(() => {
         <th>Cents</th>
         <th>Ratio</th>
         <th>Label</th>
-        <th>Symbol</th>
+        <th :class="{ hidden: !state.showMusicalScore }">Symbol</th>
       </tr>
     </thead>
     <tbody>
@@ -72,5 +75,8 @@ table th {
 }
 table table tr:nth-of-type(2n) {
   background-color: var(--color-background-soft);
+}
+.hidden {
+  display: none;
 }
 </style>
