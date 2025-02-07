@@ -95,6 +95,7 @@ watch(
   z-index: 1;
   right: 6px;
   top: 10px;
+  pointer-events: none;
 }
 svg {
   background-color: gainsboro;
