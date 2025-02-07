@@ -6,18 +6,14 @@ import Vex from 'vexflow'
 const state = useStateStore()
 const { Factory, BarlineType } = Vex.Flow
 
+function getChordOctave(chord: string) {
+  return parseInt(chord.match(/\d+$/)?.[0] || '', 10)
+}
+
 function isTrebleClef(chord: string | undefined) {
   if (!chord) return false
 
-  const number = Number(chord.charAt(chord.length - 1))
-  return number >= 4
-}
-
-function isBassClef(chord: string | undefined) {
-  if (!chord) return false
-
-  const number = Number(chord.charAt(chord.length - 1))
-  return number < 4
+  return getChordOctave(chord) >= 4
 }
 
 function chordArray2chordString(chordArray: string[]) {
