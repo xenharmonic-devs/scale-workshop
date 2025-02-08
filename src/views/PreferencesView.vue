@@ -48,7 +48,7 @@ const scale = useScaleStore()
           </div>
           <div class="control checkbox-container">
             <input id="show-score" type="checkbox" v-model="state.showMusicalScore" />
-            <label for="show-Score">Show Musical Score</label>
+            <label for="show-Score">Show staff notation widget</label>
           </div>
           <div class="control">
             <label for="gas">Computational budget (gas)</label>
