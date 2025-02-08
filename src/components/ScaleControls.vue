@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { useScaleStore } from '@/stores/scale'
+import { useStateStore } from '@/stores/state'
 import { debounce, midiNoteNumberToName } from '@/utils'
 import { ref } from 'vue'
 import ScaleRule from './ScaleRule.vue'
 import palette from '@/character-palette.json'
 
+const state = useStateStore()
 const scale = useScaleStore()
 const updateScale = debounce(scale.computeScale)
 
@@ -141,7 +143,7 @@ defineExpose({ focus, clearPaletteInfo })
     <p class="info" v-html="paletteInfo"></p>
   </div>
 
-  <div class="control-group">
+  <div :class="['control-group', state.showMusicalScore ? 'visible' : 'hidden']"  >
     <h2>
       <span class="scale-symbols-header">Scale Symbols</span>
       <button class="clear-symbols-btn" @click="clearUserNotation">clear</button>
@@ -264,5 +266,8 @@ p.warning {
 .clear-symbols-btn:hover {
   background: var(--color-accent);
   text-decoration: none;
+}
+.hidden {
+  display: none;
 }
 </style>
