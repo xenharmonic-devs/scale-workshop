@@ -18,18 +18,46 @@ function clearUserNotation() {
   updateScale()
 }
 
+function updateScoreChordOctave(step: number) {
+  console.log('--------------------')
+  console.log(state.scoreChord)
+  console.log('--------------------')
+
+  const newScoreChord: string[] = []
+
+  state.scoreChord.forEach((note) => {
+    const noteMatch = note.match(/^(\D+)(\d+)$/)
+
+    if (noteMatch) {
+      const newOctave =
+        parseInt(noteMatch[2], 10) + step >= 0 ? parseInt(noteMatch[2], 10) + step : 0
+
+      const newNote = noteMatch[1] + newOctave.toString()
+      newScoreChord.push(newNote)
+    }
+  })
+
+  state.scoreChord.clear()
+
+  newScoreChord.forEach((item) => state.scoreChord.add(item))
+}
+
 function increaseOttava() {
   if (scale.ottava < 3) {
     scale.ottava++
+
+    updateScale()
+    updateScoreChordOctave(1)
   }
-  updateScale()
 }
 
 function dereaseOttava() {
   if (scale.ottava > -3) {
     scale.ottava--
+
+    updateScale()
+    updateScoreChordOctave(-1)
   }
-  updateScale()
 }
 
 function updatePaletteInfo(event: Event) {
