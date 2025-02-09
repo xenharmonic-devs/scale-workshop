@@ -6,7 +6,6 @@ import Vex from 'vexflow'
 const state = useStateStore()
 const { Factory, BarlineType } = Vex.Flow
 
-
 function getOctave(note: string) {
   return parseInt(note.match(/\d+$/)?.[0] || '', 10)
 }
