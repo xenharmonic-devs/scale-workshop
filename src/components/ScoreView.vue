@@ -6,57 +6,58 @@ import Vex from 'vexflow'
 const state = useStateStore()
 const { Factory, BarlineType } = Vex.Flow
 
-function getChordOctave(chord: string) {
-  return parseInt(chord.match(/\d+$/)?.[0] || '', 10)
+
+function getChordOctave(note: string) {
+  return parseInt(note.match(/\d+$/)?.[0] || '', 10)
 }
 
-function isTrebleClef(chord: string | undefined) {
-  if (!chord) return false
+function isTrebleClef(note: string | undefined) {
+  if (!note) return false
 
-  return getChordOctave(chord) >= 4
+  return getChordOctave(note) >= 4
 }
 
-function chordArray2chordString(chordArray: string[]) {
-  if (chordArray.length > 1) return '(' + chordArray.join(' ') + ')/w'
-  if (chordArray.length == 1) return chordArray[0] + '/w'
+function convertChordToString(chord: string[]) {
+  if (chord.length > 1) return '(' + chord.join(' ') + ')/w'
+  if (chord.length == 1) return chord[0] + '/w'
   return ''
 }
 
-function refreshScore(chordArray: string[]) {
+function refreshScore(chord: string[]) {
   const vf = new Factory({
     renderer: { elementId: 'chordView', width: 160, height: 160 }
   })
   vf.context.scale(0.75, 0.75)
 
-  let chordArrayTreble = []
-  let chordArrayBass = []
-  for (const item of chordArray) {
-    if (isTrebleClef(item)) chordArrayTreble.push(item)
-    else chordArrayBass.push(item)
+  let trebleChord = []
+  let bassChord = []
+  for (const note of chord) {
+    if (isTrebleClef(note)) trebleChord.push(note)
+    else bassChord.push(note)
   }
 
   const score = vf.EasyScore()
   const system = vf.System({ width: 160, spaceBetweenStaves: 8.5 })
-  const chordStringTreble = chordArray2chordString(chordArrayTreble)
-  const chordStringBass = chordArray2chordString(chordArrayBass)
+  const trebleTextChord = convertChordToString(trebleChord)
+  const bassTextChord = convertChordToString(bassChord)
 
   // We just skipp if there is no notation
-  if (!chordStringTreble && !chordStringBass) return
+  if (!trebleTextChord && !bassTextChord) return
 
   try {
-    if (chordStringTreble) {
+    if (trebleTextChord) {
       system
         .addStave({
-          voices: [score.voice(score.notes(chordStringTreble))]
+          voices: [score.voice(score.notes(trebleTextChord))]
         })
         .addClef('treble')
         .setEndBarType(BarlineType.DOUBLE)
     }
 
-    if (chordStringBass) {
+    if (bassTextChord) {
       system
         .addStave({
-          voices: [score.voice(score.notes(chordStringBass, { clef: 'bass' }))]
+          voices: [score.voice(score.notes(bassTextChord, { clef: 'bass' }))]
         })
         .addClef('bass')
         .setEndBarType(BarlineType.DOUBLE)
