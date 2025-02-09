@@ -7,14 +7,14 @@ const state = useStateStore()
 const { Factory, BarlineType } = Vex.Flow
 
 
-function getChordOctave(note: string) {
+function getOctave(note: string) {
   return parseInt(note.match(/\d+$/)?.[0] || '', 10)
 }
 
 function isTrebleClef(note: string | undefined) {
   if (!note) return false
 
-  return getChordOctave(note) >= 4
+  return getOctave(note) >= 4
 }
 
 function convertChordToString(chord: string[]) {
