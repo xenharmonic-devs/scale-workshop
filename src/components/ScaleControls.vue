@@ -19,10 +19,6 @@ function clearUserNotation() {
 }
 
 function updateScoreChordOctave(step: number) {
-  console.log('--------------------')
-  console.log(state.scoreChord)
-  console.log('--------------------')
-
   const newScoreChord: string[] = []
 
   state.scoreChord.forEach((note) => {
