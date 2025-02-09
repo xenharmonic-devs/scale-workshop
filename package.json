@@ -25,6 +25,7 @@
     "sonic-weave": "^0.11.0",
     "sw-synth": "^0.1.2",
     "values.js": "^2.1.1",
+    "vexflow": "^4.2.5",
     "vue": "^3.3.4",
     "vue-router": "^4.5.0",
     "webmidi": "^3.1.12",

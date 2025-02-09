@@ -2,6 +2,9 @@
 import { computed } from 'vue'
 import TuningTableRow from '@/components/TuningTableRow.vue'
 import { mmod } from 'xen-dev-utils'
+import { useStateStore } from '@/stores/state'
+
+const state = useStateStore()
 
 const props = defineProps<{
   baseFrequency: number
@@ -11,6 +14,7 @@ const props = defineProps<{
   baseMidiNote: number
   labels: string[] // Labels from #1 to the equave
   colors: string[] // Colors from #1 to the equave
+  symbols: string[]
 }>()
 
 const rows = computed(() => {
@@ -27,6 +31,7 @@ const rows = computed(() => {
       cents,
       ratio: ratio,
       label: props.labels[mmod(index - 1, props.labels.length)],
+      symbol: props.symbols[i] || '',
       color: props.colors[mmod(index - 1, props.colors.length)],
       isRoot: index === 0,
       equave: mmod(index, props.labels.length) === 0
@@ -45,6 +50,7 @@ const rows = computed(() => {
         <th>Cents</th>
         <th>Ratio</th>
         <th>Label</th>
+        <th :class="{ hidden: !state.showMusicalScore }">Symbol</th>
       </tr>
     </thead>
     <tbody>
@@ -69,5 +75,8 @@ table th {
 }
 table table tr:nth-of-type(2n) {
   background-color: var(--color-background-soft);
+}
+.hidden {
+  display: none;
 }
 </style>

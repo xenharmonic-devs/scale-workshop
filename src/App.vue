@@ -17,6 +17,8 @@ import { useHarmonicEntropyStore } from '@/stores/harmonic-entropy'
 import { clamp, mmod } from 'xen-dev-utils'
 import { parseScaleWorkshop2Line, setNumberOfComponents } from 'sonic-weave'
 
+import ScoreView from '@/components/ScoreView.vue'
+
 // === Pinia-managed state ===
 const state = useStateStore()
 const scale = useScaleStore()
@@ -228,12 +230,28 @@ watch(
   }
 )
 
+// === Score Chords functions ===
+function pushSymbolToChord(index: number) {
+  state.scoreChord.add(scale.symbols[index])
+}
+
+function pullSymbolfromChord(index: number) {
+  const item = scale.symbols[index]
+  state.scoreChord.delete(item)
+}
+
 // === Virtual and typing keyboard ===
 function keyboardNoteOn(index: number) {
   tuningTableKeyOn(index)
+
+  pushSymbolToChord(index)
+
   const noteOff = sendNoteOn(index, scale.getFrequency(index), 80)
   function keyOff() {
     tuningTableKeyOff(index)
+
+    pullSymbolfromChord(index)
+
     return noteOff(80)
   }
   return keyOff
@@ -551,6 +569,7 @@ function panic() {
       </ul>
     </div>
   </nav>
+  <ScoreView v-show="state.showMusicalScore" />
   <RouterView
     :noteOn="keyboardNoteOn"
     :midiInputChannels="midiInputChannels"

@@ -4,6 +4,9 @@ import { UNIX_NEWLINE } from '@/constants'
 import { syncValues } from '@/utils'
 
 export const useStateStore = defineStore('state', () => {
+  // Nonpersistent state of the application
+  const scoreChord = reactive(new Set<string>())
+
   // Mapping from MIDI index to number of interfaces currently pressing the key down
   const heldNotes = reactive(new Map<number, number>())
   const typingActive = ref(true)
@@ -20,6 +23,7 @@ export const useStateStore = defineStore('state', () => {
     (storedScheme ?? mediaScheme) === 'dark' ? 'dark' : 'light'
   )
   const showVirtualQwerty = ref(storage.getItem('showVirtualQwerty') === 'true')
+  const showMusicalScore = ref(storage.getItem('showMusicalScore') === 'true')
   const showMosTab = ref(storage.getItem('showMosTab') === 'true')
   const showKeyboardLabel = ref(storage.getItem('showKeyboardLabel') !== 'false')
   const showKeyboardCents = ref(storage.getItem('showKeyboardCents') !== 'false')
@@ -58,7 +62,10 @@ export const useStateStore = defineStore('state', () => {
    * Convert live state to a format suitable for storing on the server.
    */
   function toJSON() {
-    return { latticeType: latticeType.value }
+    return {
+      latticeType: latticeType.value,
+      showMusicalScore: showMusicalScore.value
+    }
   }
 
   /**
@@ -102,15 +109,21 @@ export const useStateStore = defineStore('state', () => {
     { immediate: true }
   )
 
+  watch(showMusicalScore, (newValue) =>
+    window.localStorage.setItem('showMusicalScore', newValue.toString())
+  )
+
   return {
     // Live state
     heldNotes,
     typingActive,
     latticeType,
+    scoreChord,
     // Persistent state
     newline,
     colorScheme,
     showVirtualQwerty,
+    showMusicalScore,
     showMosTab,
     showKeyboardLabel,
     showKeyboardCents,
