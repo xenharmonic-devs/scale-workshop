@@ -199,10 +199,6 @@ The app is built using [Vue](https://vuejs.org/). This information should help g
 
 [VSCodium](https://vscodium.com/) with the above extensions from [OpenVSX Registry](https://open-vsx.org/).
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
 ## Project Setup
 
 Install project.
