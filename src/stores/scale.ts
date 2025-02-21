@@ -84,8 +84,8 @@ function changeNameForLaSi(noteName: string) {
 
 // Get all the notation with octaves in the whole midi range
 function getSymbols(noteNames: string[], baseMidiNote: number, ottava: number) {
-  const midiRange = 127
   const symbolTable: string[] = []
+
   if (noteNames.length == 0) return symbolTable
 
   let octave
@@ -95,7 +95,7 @@ function getSymbols(noteNames: string[], baseMidiNote: number, ottava: number) {
     octave = 4 - Math.round(baseMidiNote / noteNames.length) + ottava
   }
 
-  for (let i = 0; i <= midiRange; i++) {
+  for (let i = 0; i < NUMBER_OF_NOTES; i++) {
     const index = (((i - baseMidiNote) % noteNames.length) + noteNames.length) % noteNames.length
     symbolTable[i] = noteNames[index] + octave
 
