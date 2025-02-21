@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { useScaleStore } from '@/stores/scale'
+import { useScaleStore, defaultLabels } from '@/stores/scale'
 import { useStateStore } from '@/stores/state'
 import { debounce, midiNoteNumberToName } from '@/utils'
 import { ref } from 'vue'
 import ScaleRule from './ScaleRule.vue'
 import palette from '@/character-palette.json'
-
-import { defaultLabels } from '@/stores/scale'
 
 const state = useStateStore()
 const scale = useScaleStore()
@@ -302,9 +300,6 @@ p.warning {
   background: var(--color-accent);
   text-decoration: none;
 }
-
-
-
 
 .clear-symbols-btn {
   background: none;
