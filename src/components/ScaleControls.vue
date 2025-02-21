@@ -167,7 +167,7 @@ defineExpose({ focus, clearPaletteInfo })
     <p class="info" v-html="paletteInfo"></p>
   </div>
 
-  <div :class="['control-group', state.showMusicalScore ? 'visible' : 'hidden']">
+  <div class="control-group" v-show="state.showMusicalScore">
     <h2>
       <span class="scale-symbols-header">Scale Symbols</span>
       <button class="clear-symbols-btn" @click="clearUserNotation">clear</button>
@@ -291,8 +291,5 @@ p.warning {
 .clear-symbols-btn:hover {
   background: var(--color-accent);
   text-decoration: none;
-}
-.hidden {
-  display: none;
 }
 </style>

@@ -50,7 +50,7 @@ const rows = computed(() => {
         <th>Cents</th>
         <th>Ratio</th>
         <th>Label</th>
-        <th :class="{ hidden: !state.showMusicalScore }">Symbol</th>
+        <th v-show="state.showMusicalScore">Symbol</th>
       </tr>
     </thead>
     <tbody>
@@ -75,8 +75,5 @@ table th {
 }
 table table tr:nth-of-type(2n) {
   background-color: var(--color-background-soft);
-}
-.hidden {
-  display: none;
 }
 </style>

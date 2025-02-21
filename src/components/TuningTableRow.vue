@@ -37,7 +37,7 @@ onMounted(() => {
     <td>{{ formatExponential(cents) }}</td>
     <td>{{ formatExponential(ratio) }}</td>
     <td>{{ label }}</td>
-    <td :class="{ hidden: !state.showMusicalScore }">{{ symbol }}</td>
+    <td v-show="state.showMusicalScore">{{ symbol }}</td>
   </tr>
 </template>
 
@@ -54,8 +54,5 @@ tr.active {
 }
 .key-color {
   border-bottom: 1px solid var(--color-background-mute);
-}
-.hidden {
-  display: none;
 }
 </style>
