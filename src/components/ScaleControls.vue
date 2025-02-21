@@ -21,8 +21,8 @@ function clearUserNotation() {
 }
 
 function restoreChromaticScale() {
-  const noteNames = defaultLabels(scale.baseMidiNote - 1, scale.accidentalPreference)
-  
+  const noteNames = defaultLabels(scale.baseMidiNote - 1, 'ASCII')
+
   scale.userNotation = noteNames.join('\n')
   updateScale()
 }
@@ -179,7 +179,7 @@ defineExpose({ focus, clearPaletteInfo })
   <div class="control-group" v-show="state.showMusicalScore">
     <h2>
       <span class="scale-symbols-header">Scale Symbols</span>
-      <button class="clear-symbols-btn" @click="restoreChromaticScale">default</button>
+      <button class="default-symbols-btn" @click="restoreChromaticScale">default</button>
       <button class="clear-symbols-btn" @click="clearUserNotation">clear</button>
     </h2>
     <div class="control">
@@ -291,12 +291,27 @@ p.warning {
   margin-right: 0.5rem;
 }
 
+.default-symbols-btn {
+  background: none;
+  border: none;
+  text-decoration: underline;
+  margin-left: 0.9375rem;
+  padding: 0.31em;
+}
+.default-symbols-btn:hover {
+  background: var(--color-accent);
+  text-decoration: none;
+}
+
+
+
+
 .clear-symbols-btn {
   background: none;
   border: none;
   text-decoration: underline;
-  margin-left: 5px;
-  padding: 5px;
+  margin-left: 1.25rem;
+  padding: 0.31em;
 }
 .clear-symbols-btn:hover {
   background: var(--color-accent);
