@@ -6,6 +6,8 @@ import { ref } from 'vue'
 import ScaleRule from './ScaleRule.vue'
 import palette from '@/character-palette.json'
 
+import { defaultLabels } from '@/stores/scale'
+
 const state = useStateStore()
 const scale = useScaleStore()
 const updateScale = debounce(scale.computeScale)
@@ -15,6 +17,13 @@ const paletteInfo = ref('')
 
 function clearUserNotation() {
   scale.userNotation = ''
+  updateScale()
+}
+
+function restoreChromaticScale() {
+  const noteNames = defaultLabels(scale.baseMidiNote - 1, scale.accidentalPreference)
+  
+  scale.userNotation = noteNames.join('\n')
   updateScale()
 }
 
@@ -170,6 +179,7 @@ defineExpose({ focus, clearPaletteInfo })
   <div class="control-group" v-show="state.showMusicalScore">
     <h2>
       <span class="scale-symbols-header">Scale Symbols</span>
+      <button class="clear-symbols-btn" @click="restoreChromaticScale">default</button>
       <button class="clear-symbols-btn" @click="clearUserNotation">clear</button>
     </h2>
     <div class="control">

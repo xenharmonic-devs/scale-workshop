@@ -57,7 +57,7 @@ function defaultColors(base: number) {
 }
 
 // Labels from #1 to #12 inclusive.
-function defaultLabels(base: number, accidentalStyle: AccidentalStyle) {
+export function defaultLabels(base: number, accidentalStyle: AccidentalStyle) {
   const result = [...Array(12).keys()].map((i) => MIDI_NOTE_NAMES[mmod(base + 1 + i, 12)])
   if (accidentalStyle === 'ASCII') {
     return result
