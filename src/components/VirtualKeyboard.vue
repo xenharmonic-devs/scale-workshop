@@ -66,6 +66,7 @@ const virtualKeys = computed(() => {
 
 const isMousePressed = ref(false)
 </script>
+
 <template>
   <table>
     <tbody>
