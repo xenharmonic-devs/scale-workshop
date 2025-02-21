@@ -267,19 +267,20 @@ p.warning {
   color: var(--color-accent-mute);
 }
 .ottava-value {
-  padding-top: 2px;
-  padding-bottom: 2px;
-  padding-left: 8px;
-  padding-right: 8px;
-  border-radius: 3px;
+  padding-top: 0.125em;
+  padding-bottom: 0.125em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  border-radius: 0.19rem;
   background-color: var(--color-text-mute);
 }
 .ottava-btn {
-  padding-top: 0px;
-  padding-bottom: 1px;
-  margin-left: 8px;
-  margin-right: 8px;
+  padding-top: 0;
+  padding-bottom: 0.06rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 }
+
 .clear-symbols-btn {
   background: none;
   border: none;
