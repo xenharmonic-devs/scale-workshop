@@ -83,6 +83,22 @@ watch(
     }
   }
 )
+
+watch(
+  () => state.isNoteOnMidiRange,
+  (newValue) => {
+    const chordView = document.getElementById('chordView')
+
+    if (!newValue) {
+      chordView.innerHTML =
+        '<div class="error-msg"><i>Oops!</i><br/>The given note is beyond MIDI range.</div>'
+    } else {
+      chordView.innerHTML = ''
+
+      refreshScore(Array.from(state.scoreChord))
+    }
+  }
+)
 </script>
 
 <template>

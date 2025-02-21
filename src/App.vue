@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, reactive, watch } from 'vue'
 import { RouterLink, RouterView, useRouter } from 'vue-router'
-import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
+import { DEFAULT_NUMBER_OF_COMPONENTS, NUMBER_OF_NOTES } from '@/constants'
 import { ScaleWorkshopOneData } from '@/scale-workshop-one'
 import type { Input, Output } from 'webmidi'
 import { MidiIn, midiKeyInfo, MidiOut, type NoteOff } from 'xen-midi'
@@ -240,14 +240,28 @@ function pullSymbolfromChord(index: number) {
   state.scoreChord.delete(item)
 }
 
+const outOfMidiRangeIndexes: Set<number> = new Set()
+
 // === Virtual and typing keyboard ===
 function keyboardNoteOn(index: number) {
   tuningTableKeyOn(index)
 
-  pushSymbolToChord(index)
+  if (index >= NUMBER_OF_NOTES) {
+    state.isNoteOnMidiRange = false
+    outOfMidiRangeIndexes.add(index)
+  } else {
+    pushSymbolToChord(index)
+  }
 
   const noteOff = sendNoteOn(index, scale.getFrequency(index), 80)
   function keyOff() {
+    if (index >= NUMBER_OF_NOTES) {
+      outOfMidiRangeIndexes.delete(index)
+    }
+    if (outOfMidiRangeIndexes.size === 0) {
+      state.isNoteOnMidiRange = true
+    }
+
     tuningTableKeyOff(index)
 
     pullSymbolfromChord(index)

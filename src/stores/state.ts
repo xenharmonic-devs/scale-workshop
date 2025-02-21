@@ -6,6 +6,7 @@ import { syncValues } from '@/utils'
 export const useStateStore = defineStore('state', () => {
   // Nonpersistent state of the application
   const scoreChord = reactive(new Set<string>())
+  const isNoteOnMidiRange = ref(true)
 
   // Mapping from MIDI index to number of interfaces currently pressing the key down
   const heldNotes = reactive(new Map<number, number>())
@@ -119,6 +120,7 @@ export const useStateStore = defineStore('state', () => {
     typingActive,
     latticeType,
     scoreChord,
+    isNoteOnMidiRange,
     // Persistent state
     newline,
     colorScheme,
