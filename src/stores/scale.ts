@@ -178,6 +178,7 @@ export const useScaleStore = defineStore('scale', () => {
   const colors = ref(defaultColors(baseMidiNote.value))
   const labels = ref(defaultLabels(baseMidiNote.value, accidentalPreference.value))
 
+  const swScaleVersion = ref(import.meta.env.PACKAGE_VERSION)
   const ottava = ref(0)
   const noteNames = ref(defaultNoteNames(baseMidiNote.value))
   const symbols = ref(getSymbols(noteNames.value, baseMidiNote.value, ottava.value))
@@ -638,11 +639,13 @@ export const useScaleStore = defineStore('scale', () => {
     highAccidentalColor,
 
 
-    //------new version scale 
+    //------new version scale
+    swScaleVersion, 
     userNotation, //----(proof of concept)
     noteNames,
     symbols,
-    ottava
+    ottava,
+    
 
 
   }
