@@ -11,7 +11,7 @@
 - Bug fix: Fix a crash in Rank 2 caused by temperaments with a negative number of periods per equave [#837](https://github.com/xenharmonic-devs/scale-workshop/issues/837)
 - Bug fix: Use maximum real precision when more than 12 fraction digits are used for cents [#843](https://github.com/xenharmonic-devs/scale-workshop/issues/843)
 
-## 3.1.1 (unreleased)
+## 3.1.0-notation-preview (unreleased)
 
 - Feature: Adds a staff notation widget on every tab of the application [#852](https://github.com/xenharmonic-devs/scale-workshop/issues/852)
 
