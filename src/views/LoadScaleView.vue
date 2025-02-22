@@ -53,24 +53,23 @@ onMounted(async () => {
 
           const scaleData = payload.scale
           //First we check if scale version is before 3.1.0-notation-preview
-          if(!('swScaleVersion'	in scaleData)){
+          if (!('swScaleVersion' in scaleData)) {
             //And we add the missing fields to the scale
-            scaleData.swScaleVersion = "0.0.0"
-            scaleData.userNotation = ""
+            scaleData.swScaleVersion = '0.0.0'
+            scaleData.userNotation = ''
             scaleData.noteNames = []
             scaleData.symbols = []
             scaleData.ottava = 0
           }
           scale.fromJSON(scaleData)
 
-
           if ('state' in payload) {
             const stateData = payload.state
             // We also add missing field to state if the version of the scale is before 3.1.0-notation-preview
-            if(!('showMusicalScore'	in stateData)){
-              stateData.showMusicalScore = false  
+            if (!('showMusicalScore' in stateData)) {
+              stateData.showMusicalScore = false
             }
-            
+
             state.fromJSON(stateData)
           }
 

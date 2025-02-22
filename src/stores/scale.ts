@@ -637,22 +637,12 @@ export const useScaleStore = defineStore('scale', () => {
     lowAccidentalColor,
     middleAccidentalColor,
     highAccidentalColor,
-
-
-    //------new version scale
-    swScaleVersion, 
-    userNotation, //----(proof of concept)
+    swScaleVersion,
+    userNotation,
     noteNames,
     symbols,
-    ottava,
-    
-
-
+    ottava
   }
-
-
-
-
 
   let skipNextRerollWatch = false
   watch(Object.values(LIVE_STATE), () => {
