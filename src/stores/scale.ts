@@ -624,10 +624,6 @@ export const useScaleStore = defineStore('scale', () => {
     latticeEquave,
     colors,
     labels,
-    userNotation, //----(proof of concept)
-    noteNames,
-    symbols,
-    ottava,
     error,
     warning,
     isomorphicVertical,
@@ -639,8 +635,21 @@ export const useScaleStore = defineStore('scale', () => {
     accidentalColor,
     lowAccidentalColor,
     middleAccidentalColor,
-    highAccidentalColor
+    highAccidentalColor,
+
+
+    //------new version scale 
+    userNotation, //----(proof of concept)
+    noteNames,
+    symbols,
+    ottava
+
+
   }
+
+
+
+
 
   let skipNextRerollWatch = false
   watch(Object.values(LIVE_STATE), () => {
