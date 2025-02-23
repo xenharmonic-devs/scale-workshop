@@ -638,8 +638,8 @@ export const useScaleStore = defineStore('scale', () => {
     middleAccidentalColor,
     highAccidentalColor,
     swScaleVersion,
-    userNotation,
     noteNames,
+    userNotation,
     symbols,
     ottava
   }
