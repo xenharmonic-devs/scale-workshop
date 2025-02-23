@@ -56,8 +56,8 @@ onMounted(async () => {
           if (!('swScaleVersion' in scaleData)) {
             //And we add the missing fields to the scale
             scaleData.swScaleVersion = '0.0.0'
-            scaleData.userNotation = ''
             scaleData.noteNames = []
+            scaleData.userNotation = ''
             scaleData.symbols = []
             scaleData.ottava = 0
           }
