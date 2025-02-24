@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, reactive, watch } from 'vue'
 import { RouterLink, RouterView, useRouter } from 'vue-router'
-import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
+import { DEFAULT_NUMBER_OF_COMPONENTS, NUMBER_OF_NOTES } from '@/constants'
 import { ScaleWorkshopOneData } from '@/scale-workshop-one'
 import type { Input, Output } from 'webmidi'
 import { MidiIn, midiKeyInfo, MidiOut, type NoteOff } from 'xen-midi'
@@ -16,6 +16,8 @@ import { useScaleStore } from './stores/scale'
 import { useHarmonicEntropyStore } from '@/stores/harmonic-entropy'
 import { clamp, mmod } from 'xen-dev-utils'
 import { parseScaleWorkshop2Line, setNumberOfComponents } from 'sonic-weave'
+
+import ScoreView from '@/components/ScoreView.vue'
 
 // === Pinia-managed state ===
 const state = useStateStore()
@@ -228,12 +230,41 @@ watch(
   }
 )
 
+// === Score Chords functions ===
+function pushIndexToChord(index: number) {
+  state.scoreChordIndexes.add(index)
+}
+
+function pullIndexfromChord(index: number) {
+  state.scoreChordIndexes.delete(index)
+}
+
+const outOfMidiRangeIndexes: Set<number> = new Set()
+
 // === Virtual and typing keyboard ===
 function keyboardNoteOn(index: number) {
   tuningTableKeyOn(index)
+
+  if (index >= NUMBER_OF_NOTES) {
+    state.isNoteOnMidiRange = false
+    outOfMidiRangeIndexes.add(index)
+  } else {
+    pushIndexToChord(index)
+  }
+
   const noteOff = sendNoteOn(index, scale.getFrequency(index), 80)
   function keyOff() {
+    if (index >= NUMBER_OF_NOTES) {
+      outOfMidiRangeIndexes.delete(index)
+    }
+    if (outOfMidiRangeIndexes.size === 0) {
+      state.isNoteOnMidiRange = true
+    }
+
     tuningTableKeyOff(index)
+
+    pullIndexfromChord(index)
+
     return noteOff(80)
   }
   return keyOff
@@ -551,6 +582,7 @@ function panic() {
       </ul>
     </div>
   </nav>
+  <ScoreView v-show="state.showMusicalScore" />
   <RouterView
     :noteOn="keyboardNoteOn"
     :midiInputChannels="midiInputChannels"

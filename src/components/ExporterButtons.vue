@@ -10,6 +10,7 @@ import { useScaleStore } from '@/stores/scale'
 import { useStateStore } from '@/stores/state'
 import { makeEnvelope, sanitizeFilename } from '@/utils'
 import { computed, defineAsyncComponent, ref } from 'vue'
+import { version } from '../../package.json'
 
 const ScalaExportModal = defineAsyncComponent(
   () => import('@/components/modals/export/ScalaExport.vue')
@@ -44,6 +45,7 @@ const uploadBody = computed(() => {
   return JSON.stringify({
     id: scale.id,
     payload: {
+      swScaleVersion: version,
       scale: scale.toJSON(),
       audio: audio.toJSON(),
       state: state.toJSON(),

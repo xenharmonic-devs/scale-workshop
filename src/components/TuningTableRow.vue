@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { formatHertz, formatExponential } from '@/utils'
 import { onMounted, ref } from 'vue'
+import { useStateStore } from '@/stores/state'
+
+const state = useStateStore()
 
 const props = defineProps<{
   index: number
@@ -8,6 +11,7 @@ const props = defineProps<{
   cents: number
   ratio: number
   label: string
+  symbol: string
   color: string
   active: boolean
   isRoot: boolean
@@ -33,6 +37,7 @@ onMounted(() => {
     <td>{{ formatExponential(cents) }}</td>
     <td>{{ formatExponential(ratio) }}</td>
     <td>{{ label }}</td>
+    <td v-show="state.showMusicalScore">{{ symbol }}</td>
   </tr>
 </template>
 

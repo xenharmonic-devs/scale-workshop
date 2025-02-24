@@ -1,9 +1,21 @@
-import { reactive, ref, watch } from 'vue'
+import { reactive, ref, watch, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { UNIX_NEWLINE } from '@/constants'
 import { syncValues } from '@/utils'
+import { useScaleStore } from './scale'
 
 export const useStateStore = defineStore('state', () => {
+  const scale = useScaleStore()
+
+  const scoreChordIndexes = reactive(new Set<number>())
+
+  const scoreChord = computed(
+    () => new Set(Array.from(scoreChordIndexes).map((index) => scale.symbols[index]))
+  )
+
+  // Nonpersistent state of the application
+  const isNoteOnMidiRange = ref(true)
+
   // Mapping from MIDI index to number of interfaces currently pressing the key down
   const heldNotes = reactive(new Map<number, number>())
   const typingActive = ref(true)
@@ -20,6 +32,7 @@ export const useStateStore = defineStore('state', () => {
     (storedScheme ?? mediaScheme) === 'dark' ? 'dark' : 'light'
   )
   const showVirtualQwerty = ref(storage.getItem('showVirtualQwerty') === 'true')
+  const showMusicalScore = ref(storage.getItem('showMusicalScore') === 'true')
   const showMosTab = ref(storage.getItem('showMosTab') === 'true')
   const showKeyboardLabel = ref(storage.getItem('showKeyboardLabel') !== 'false')
   const showKeyboardCents = ref(storage.getItem('showKeyboardCents') !== 'false')
@@ -58,7 +71,10 @@ export const useStateStore = defineStore('state', () => {
    * Convert live state to a format suitable for storing on the server.
    */
   function toJSON() {
-    return { latticeType: latticeType.value }
+    return {
+      latticeType: latticeType.value,
+      showMusicalScore: showMusicalScore.value
+    }
   }
 
   /**
@@ -102,15 +118,23 @@ export const useStateStore = defineStore('state', () => {
     { immediate: true }
   )
 
+  watch(showMusicalScore, (newValue) =>
+    window.localStorage.setItem('showMusicalScore', newValue.toString())
+  )
+
   return {
     // Live state
     heldNotes,
     typingActive,
     latticeType,
+    scoreChordIndexes,
+    scoreChord,
+    isNoteOnMidiRange,
     // Persistent state
     newline,
     colorScheme,
     showVirtualQwerty,
+    showMusicalScore,
     showMosTab,
     showKeyboardLabel,
     showKeyboardCents,

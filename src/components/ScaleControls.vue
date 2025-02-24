@@ -1,17 +1,67 @@
 <script setup lang="ts">
-import { useScaleStore } from '@/stores/scale'
+import { useScaleStore, defaultLabels } from '@/stores/scale'
+import { useStateStore } from '@/stores/state'
 import { debounce, midiNoteNumberToName } from '@/utils'
 import { ref } from 'vue'
 import ScaleRule from './ScaleRule.vue'
 import palette from '@/character-palette.json'
 
+const state = useStateStore()
 const scale = useScaleStore()
-
 const updateScale = debounce(scale.computeScale)
 
 const sourceEditor = ref<HTMLTextAreaElement | null>(null)
-
 const paletteInfo = ref('')
+
+function clearUserNotation() {
+  scale.userNotation = ''
+  updateScale()
+}
+
+function restoreChromaticScale() {
+  const noteNames = defaultLabels(scale.baseMidiNote - 1, 'ASCII')
+
+  scale.userNotation = noteNames.join('\n')
+  updateScale()
+}
+
+function updateScoreChordOctave(step: number) {
+  const newScoreChord: string[] = []
+
+  state.scoreChord.forEach((note) => {
+    const noteMatch = note.match(/^(\D+)(\d+)$/)
+
+    if (noteMatch) {
+      const newOctave =
+        parseInt(noteMatch[2], 10) + step >= 0 ? parseInt(noteMatch[2], 10) + step : 0
+
+      const newNote = noteMatch[1] + newOctave.toString()
+      newScoreChord.push(newNote)
+    }
+  })
+
+  state.scoreChord.clear()
+
+  newScoreChord.forEach((item) => state.scoreChord.add(item))
+}
+
+function increaseOttava() {
+  if (scale.ottava < 3) {
+    scale.ottava++
+
+    updateScale()
+    updateScoreChordOctave(1)
+  }
+}
+
+function dereaseOttava() {
+  if (scale.ottava > -3) {
+    scale.ottava--
+
+    updateScale()
+    updateScoreChordOctave(-1)
+  }
+}
 
 function updatePaletteInfo(event: Event) {
   const character = (event.target as HTMLButtonElement).textContent!
@@ -123,6 +173,29 @@ defineExpose({ focus, clearPaletteInfo })
     </div>
     <p class="info" v-html="paletteInfo"></p>
   </div>
+
+  <div class="control-group" v-show="state.showMusicalScore">
+    <h2>
+      <span class="scale-symbols-header">Scale Symbols</span>
+      <button class="default-symbols-btn" @click="restoreChromaticScale">default</button>
+      <button class="clear-symbols-btn" @click="clearUserNotation">clear</button>
+    </h2>
+    <div class="control">
+      <textarea
+        id="scale-symbols"
+        rows="12"
+        v-model="scale.userNotation"
+        @input="updateScale()"
+      ></textarea>
+    </div>
+    <div class="ottava">
+      <span class="ottava-label">Ottava:</span>
+      <button class="ottava-btn" @click="dereaseOttava">bassa</button>
+      <span class="ottava-value">{{ scale.ottava > 0 ? `+${scale.ottava}` : scale.ottava }}</span>
+      <button class="ottava-btn" @click="increaseOttava">alta</button>
+    </div>
+  </div>
+
   <div class="control-group">
     <div class="control radio-group">
       <label>Automatic Colors</label>
@@ -196,5 +269,47 @@ p.error,
 p.warning {
   max-height: 12em;
   overflow-y: auto;
+}
+
+.ottava-label {
+  color: var(--color-accent-mute);
+}
+.ottava-value {
+  padding-top: 0.125em;
+  padding-bottom: 0.125em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  border-radius: 0.19rem;
+  background-color: var(--color-text-mute);
+}
+.ottava-btn {
+  padding-top: 0;
+  padding-bottom: 0.06rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.default-symbols-btn {
+  background: none;
+  border: none;
+  text-decoration: underline;
+  margin-left: 0.9375rem;
+  padding: 0.31em;
+}
+.default-symbols-btn:hover {
+  background: var(--color-accent);
+  text-decoration: none;
+}
+
+.clear-symbols-btn {
+  background: none;
+  border: none;
+  text-decoration: underline;
+  margin-left: 1.25rem;
+  padding: 0.31em;
+}
+.clear-symbols-btn:hover {
+  background: var(--color-accent);
+  text-decoration: none;
 }
 </style>

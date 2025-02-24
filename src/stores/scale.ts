@@ -57,12 +57,65 @@ function defaultColors(base: number) {
 }
 
 // Labels from #1 to #12 inclusive.
-function defaultLabels(base: number, accidentalStyle: AccidentalStyle) {
+export function defaultLabels(base: number, accidentalStyle: AccidentalStyle) {
   const result = [...Array(12).keys()].map((i) => MIDI_NOTE_NAMES[mmod(base + 1 + i, 12)])
   if (accidentalStyle === 'ASCII') {
     return result
   }
   return result.map((n) => n.replace('#', '♯'))
+}
+
+// Notes from #1 to #12 inclusive.
+function defaultNoteNames(base: number) {
+  const result = [...Array(12).keys()].map((i) => MIDI_NOTE_NAMES[mmod(base + i, 12)])
+  return result
+}
+
+// We are changing the name of notes A and B in order to have a risen ASCII value in the scale [Ex: C-D-E-F-G-L(a)-S(i) ]; not too orthodox, but usefull for comparison
+function changeNameForLaSi(noteName: string) {
+  if (noteName == 'A') {
+    return 'L' // la
+  }
+  if (noteName == 'B') {
+    return 'S' // si
+  }
+  return noteName
+}
+
+// Get all the notation with octaves in the whole midi range
+function getSymbols(noteNames: string[], baseMidiNote: number, ottava: number) {
+  const symbolTable: string[] = []
+
+  if (noteNames.length == 0) return symbolTable
+
+  let octave
+  if (noteNames.length == 1) {
+    octave = 4 + ottava
+  } else {
+    octave = 4 - Math.round(baseMidiNote / noteNames.length) + ottava
+  }
+
+  for (let i = 0; i < NUMBER_OF_NOTES; i++) {
+    const index = (((i - baseMidiNote) % noteNames.length) + noteNames.length) % noteNames.length
+    symbolTable[i] = noteNames[index] + octave
+
+    //checking the octave
+    let currentNoteName = noteNames[index][0].toUpperCase()
+    let nextNoteName =
+      index + 1 < noteNames.length
+        ? noteNames[index + 1][0].toUpperCase()
+        : noteNames[0][0].toUpperCase()
+    currentNoteName = changeNameForLaSi(currentNoteName)
+    nextNoteName = changeNameForLaSi(nextNoteName)
+    if (nextNoteName.charCodeAt(0) < currentNoteName.charCodeAt(0)) {
+      octave++
+    }
+  }
+  return symbolTable
+}
+
+function clearEmptyLabels(labels: string[]) {
+  return labels.filter((label: string) => label !== '')
 }
 
 function harmonicEntropy(this: ExpressionVisitor, interval: SonicWeaveValue): SonicWeaveValue {
@@ -124,6 +177,13 @@ export const useScaleStore = defineStore('scale', () => {
   const latticeEquave = ref<Interval | undefined>(undefined)
   const colors = ref(defaultColors(baseMidiNote.value))
   const labels = ref(defaultLabels(baseMidiNote.value, accidentalPreference.value))
+
+  // Notation widget
+  const ottava = ref(0)
+  const noteNames = ref(defaultNoteNames(baseMidiNote.value))
+  const symbols = ref(getSymbols(noteNames.value, baseMidiNote.value, ottava.value))
+  const userNotation = ref(noteNames.value.join('\n'))
+
   const error = ref('')
   const warning = ref('')
 
@@ -418,6 +478,10 @@ export const useScaleStore = defineStore('scale', () => {
   }
 
   function computeScale(pushUndo = true) {
+    noteNames.value = userNotation.value.split('\n') // proof of concept
+    noteNames.value = clearEmptyLabels(noteNames.value)
+    symbols.value = getSymbols(noteNames.value, baseMidiNote.value, ottava.value)
+
     try {
       error.value = ''
       warning.value = ''
@@ -572,7 +636,11 @@ export const useScaleStore = defineStore('scale', () => {
     accidentalColor,
     lowAccidentalColor,
     middleAccidentalColor,
-    highAccidentalColor
+    highAccidentalColor,
+    noteNames, //--Version for notation widget
+    userNotation,
+    symbols,
+    ottava
   }
 
   let skipNextRerollWatch = false
