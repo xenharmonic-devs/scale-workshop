@@ -8,7 +8,8 @@ import {
   randomId,
   centString,
   decimalString,
-  convertAccidentals
+  convertAccidentals,
+  makeEnvelope
 } from '@/utils'
 import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
@@ -178,11 +179,12 @@ export const useScaleStore = defineStore('scale', () => {
   const colors = ref(defaultColors(baseMidiNote.value))
   const labels = ref(defaultLabels(baseMidiNote.value, accidentalPreference.value))
 
-  const swScaleVersion = ref(import.meta.env.PACKAGE_VERSION)
+  // Notation widget
+  const swScaleVersion = ref(makeEnvelope().version)
   const ottava = ref(0)
   const noteNames = ref(defaultNoteNames(baseMidiNote.value))
   const symbols = ref(getSymbols(noteNames.value, baseMidiNote.value, ottava.value))
-  const userNotation = ref(noteNames.value.join('\n')) //---proof of concept
+  const userNotation = ref(noteNames.value.join('\n'))
 
   const error = ref('')
   const warning = ref('')
