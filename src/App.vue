@@ -239,7 +239,6 @@ function pullIndexfromChord(index: number) {
   state.scoreChordIndexes.delete(index)
 }
 
-
 const outOfMidiRangeIndexes: Set<number> = new Set()
 
 // === Virtual and typing keyboard ===

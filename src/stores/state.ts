@@ -4,16 +4,15 @@ import { UNIX_NEWLINE } from '@/constants'
 import { syncValues } from '@/utils'
 import { useScaleStore } from './scale'
 
-
 export const useStateStore = defineStore('state', () => {
   const scale = useScaleStore()
 
   const scoreChordIndexes = reactive(new Set<number>())
 
-  const scoreChord = computed(() => 
-    new Set(Array.from(scoreChordIndexes).map(index => scale.symbols[index]))
+  const scoreChord = computed(
+    () => new Set(Array.from(scoreChordIndexes).map((index) => scale.symbols[index]))
   )
-  
+
   // Nonpersistent state of the application
   const isNoteOnMidiRange = ref(true)
 
