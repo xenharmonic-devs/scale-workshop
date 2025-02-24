@@ -8,8 +8,7 @@ import {
   randomId,
   centString,
   decimalString,
-  convertAccidentals,
-  makeEnvelope
+  convertAccidentals
 } from '@/utils'
 import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
