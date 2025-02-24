@@ -1,11 +1,20 @@
-import { reactive, ref, watch } from 'vue'
+import { reactive, ref, watch, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { UNIX_NEWLINE } from '@/constants'
 import { syncValues } from '@/utils'
+import { useScaleStore } from './scale'
+
 
 export const useStateStore = defineStore('state', () => {
+  const scale = useScaleStore()
+
+  const scoreChordIndexes = reactive(new Set<number>())
+
+  const scoreChord = computed(() => 
+    new Set(Array.from(scoreChordIndexes).map(index => scale.symbols[index]))
+  )
+  
   // Nonpersistent state of the application
-  const scoreChord = reactive(new Set<string>())
   const isNoteOnMidiRange = ref(true)
 
   // Mapping from MIDI index to number of interfaces currently pressing the key down
@@ -119,6 +128,7 @@ export const useStateStore = defineStore('state', () => {
     heldNotes,
     typingActive,
     latticeType,
+    scoreChordIndexes,
     scoreChord,
     isNoteOnMidiRange,
     // Persistent state

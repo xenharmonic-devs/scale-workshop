@@ -639,7 +639,7 @@ export const useScaleStore = defineStore('scale', () => {
     lowAccidentalColor,
     middleAccidentalColor,
     highAccidentalColor,
-    swScaleVersion,
+    swScaleVersion, //--Version for notation widget
     noteNames,
     userNotation,
     symbols,

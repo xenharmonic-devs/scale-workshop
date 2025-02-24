@@ -231,14 +231,14 @@ watch(
 )
 
 // === Score Chords functions ===
-function pushSymbolToChord(index: number) {
-  state.scoreChord.add(scale.symbols[index])
+function pushIndexToChord(index: number) {
+  state.scoreChordIndexes.add(index)
 }
 
-function pullSymbolfromChord(index: number) {
-  const item = scale.symbols[index]
-  state.scoreChord.delete(item)
+function pullIndexfromChord(index: number) {
+  state.scoreChordIndexes.delete(index)
 }
+
 
 const outOfMidiRangeIndexes: Set<number> = new Set()
 
@@ -250,7 +250,7 @@ function keyboardNoteOn(index: number) {
     state.isNoteOnMidiRange = false
     outOfMidiRangeIndexes.add(index)
   } else {
-    pushSymbolToChord(index)
+    pushIndexToChord(index)
   }
 
   const noteOff = sendNoteOn(index, scale.getFrequency(index), 80)
@@ -264,7 +264,7 @@ function keyboardNoteOn(index: number) {
 
     tuningTableKeyOff(index)
 
-    pullSymbolfromChord(index)
+    pullIndexfromChord(index)
 
     return noteOff(80)
   }
