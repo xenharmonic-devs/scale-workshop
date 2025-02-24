@@ -53,9 +53,8 @@ onMounted(async () => {
 
           const scaleData = payload.scale
           //First we check if scale version is before 3.1.0-notation-preview
-          if (!('swScaleVersion' in scaleData)) {
+          if (!('swScaleVersion' in payload)) {
             //And we add the missing fields to the scale
-            scaleData.swScaleVersion = '0.0.0'
             scaleData.noteNames = []
             scaleData.userNotation = ''
             scaleData.symbols = []

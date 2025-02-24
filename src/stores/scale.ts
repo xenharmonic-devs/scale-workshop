@@ -180,7 +180,6 @@ export const useScaleStore = defineStore('scale', () => {
   const labels = ref(defaultLabels(baseMidiNote.value, accidentalPreference.value))
 
   // Notation widget
-  const swScaleVersion = ref(makeEnvelope().version)
   const ottava = ref(0)
   const noteNames = ref(defaultNoteNames(baseMidiNote.value))
   const symbols = ref(getSymbols(noteNames.value, baseMidiNote.value, ottava.value))
@@ -639,8 +638,7 @@ export const useScaleStore = defineStore('scale', () => {
     lowAccidentalColor,
     middleAccidentalColor,
     highAccidentalColor,
-    swScaleVersion, //--Version for notation widget
-    noteNames,
+    noteNames, //--Version for notation widget
     userNotation,
     symbols,
     ottava
