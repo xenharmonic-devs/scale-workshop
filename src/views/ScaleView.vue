@@ -59,7 +59,7 @@ onUnmounted(() => {
           :baseFrequency="scale.scale.baseFrequency"
           :baseMidiNote="scale.scale.baseMidiNote"
           :colors="scale.colors"
-          :labels="scale.labels"
+          :labelForIndex="scale.labelForIndex"
         />
       </div>
       <div class="column exporters" @mouseenter="exporterButtons!.uploadScale()">

@@ -1,8 +1,7 @@
 import { computed, watch, type ComputedRef, type Ref } from 'vue'
 import { gcd, mmod } from 'xen-dev-utils'
-import { evaluateExpression, getSourceVisitor, Interval, parseAST, repr, Val } from 'sonic-weave'
+import { evaluateExpression, getSourceVisitor, Interval, parseAST, repr, RootContext, Val } from 'sonic-weave'
 import { version } from '../package.json'
-import { Scale } from './scale'
 
 const TAU = 2 * Math.PI
 
@@ -109,8 +108,7 @@ export function arrayToString(values: Interval[] | number[] | string[]) {
   if (typeof values[0] === 'string') {
     return `[${values.map((v) => JSON.stringify(v)).join(', ')}]`
   }
-  const visitor = getSourceVisitor().createExpressionVisitor()
-  return repr.bind(visitor)(values as Interval[])
+  return repr.bind(new RootContext())(values as Interval[])
 }
 
 export function debounce(func: (...args: any[]) => void, timeout = 300) {
@@ -603,7 +601,7 @@ export function makeEnvelope(shareStatistics = false) {
 }
 
 export function unpackPayload(body: string, id: string) {
-  const data = JSON.parse(body, (key, value) => Interval.reviver(key, Scale.reviver(key, value)))
+  const data = JSON.parse(body, (key, value) => Interval.reviver(key, RootContext.reviver(key, value)))
   data.scale.id = id
   return data
 }

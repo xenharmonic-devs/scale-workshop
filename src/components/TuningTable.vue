@@ -9,7 +9,7 @@ const props = defineProps<{
   centss: number[] // All 128 cents values
   heldNotes: Map<number, number>
   baseMidiNote: number
-  labels: string[] // Labels from #1 to the equave
+  labelForIndex: (i: number) => string
   colors: string[] // Colors from #1 to the equave
 }>()
 
@@ -26,10 +26,10 @@ const rows = computed(() => {
       frequency,
       cents,
       ratio: ratio,
-      label: props.labels[mmod(index - 1, props.labels.length)],
+      label: props.labelForIndex(i),
       color: props.colors[mmod(index - 1, props.colors.length)],
       isRoot: index === 0,
-      equave: mmod(index, props.labels.length) === 0
+      equave: mmod(index, props.colors.length) === 0
     }
   })
 })

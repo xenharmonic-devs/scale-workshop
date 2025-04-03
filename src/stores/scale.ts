@@ -11,7 +11,7 @@ import {
   convertAccidentals
 } from '@/utils'
 import { defineStore } from 'pinia'
-import { computed, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { Fraction, mmod, mtof } from 'xen-dev-utils'
 import {
   parseAST,
@@ -29,8 +29,11 @@ import {
   TimeReal,
   upcastBool,
   unaryBroadcast,
-  lstr
+  lstr,
+  RootContext,
+  intervalValueAs
 } from 'sonic-weave'
+import { version } from '../../package.json'
 import {
   APP_TITLE,
   DEFAULT_NUMBER_OF_COMPONENTS,
@@ -38,8 +41,7 @@ import {
   MAX_NUMBER_OF_SHARED_INTERVALS,
   MIDI_NOTE_COLORS,
   MIDI_NOTE_NAMES,
-  NUMBER_OF_NOTES,
-  TET12
+  NUMBER_OF_NOTES
 } from '@/constants'
 import { pianoMap } from 'isomorphic-qwerty'
 import { computeWhiteIndices } from '@/midi'
@@ -68,7 +70,7 @@ function defaultLabels(base: number, accidentalStyle: AccidentalStyle) {
 function harmonicEntropy(this: ExpressionVisitor, interval: SonicWeaveValue): SonicWeaveValue {
   if (typeof interval === 'boolean' || interval instanceof Interval) {
     const hes = useHarmonicEntropyStore()
-    const he = hes.entropyPercentage(relative.bind(this)(upcastBool(interval)).totalCents())
+    const he = hes.entropyPercentage(relative.bind(this.rootContext)(upcastBool(interval)).totalCents())
     return Interval.fromValue(he)
   }
   const h = harmonicEntropy.bind(this)
@@ -115,15 +117,23 @@ export const useScaleStore = defineStore('scale', () => {
       userBaseFrequency.value = value
     }
   })
-  // XXX: baseFrequencyDisplay is merely used for convenience here. This is the last time there's a direct connection.
-  const scale = ref(new Scale(TET12, baseFrequencyDisplay.value, baseMidiNote.value, name.value))
+  // == Label mode ==
+  // * periodic: Classic behavior where labels are repeated like colors are.
+  // * computed: Labels are computed by adding equaves to the original intervals as appropriate.
+  // * EasyScore: Compute VexFlow compatible source code for staff notation. (yet to be implemented)
+  const labelMode = ref<'periodic' | 'computed' | 'EasyScore'>('computed')  // TODO: add UI components
+  const simplifyLabels = ref(true)
+  const labelCache = reactive(new Map<number, string>())
+
+  // Maintaining and serializing the root context allows us to manipulate the scale intervals without expensive re-evaluation of the source text.
+  const context = ref(new RootContext())
+  // Evaluating the source text results in an array of Interval instances. Empty array triggers 12-TET defaults.
+  const intervals = ref<Interval[]>([])
+
   const autoColors = ref<'silver' | 'cents' | 'factors'>('silver')
   const sourceText = ref('')
-  const relativeIntervals = ref(INTERVALS_12TET)
   const latticeIntervals = ref(INTERVALS_12TET)
   const latticeEquave = ref<Interval | undefined>(undefined)
-  const colors = ref(defaultColors(baseMidiNote.value))
-  const labels = ref(defaultLabels(baseMidiNote.value, accidentalPreference.value))
   const error = ref('')
   const warning = ref('')
 
@@ -158,8 +168,94 @@ export const useScaleStore = defineStore('scale', () => {
     return `${base}${rootPitch} = baseFrequency = 1/1`
   })
 
+  const relativeIntervals = computed(() => {
+    if (!intervals.value.length) {
+      return INTERVALS_12TET
+    }
+    // XXX: VSCode has some serious issues with Vue's TypeScript here
+    const rel = relative.bind(context.value as RootContext)
+    return intervals.value.map((i) => rel(i))
+  })
+
+  const scale = computed(() => {
+    let visitorBaseFrequency = mtof(baseMidiNote.value)
+    if (context.value.unisonFrequency) {
+      visitorBaseFrequency = context.value.unisonFrequency.valueOf()
+    }
+    const ratios = relativeIntervals.value.map((i) => i.value.valueOf())
+    return new Scale(
+      ratios,
+      visitorBaseFrequency,
+      baseMidiNote.value,
+      context.value.title || name.value
+    )
+  })
+
   const frequencies = computed(() => scale.value.getFrequencyRange(0, NUMBER_OF_NOTES))
   const centss = computed(() => scale.value.getCentsRange(0, NUMBER_OF_NOTES))
+
+  const colors = computed(() => {
+    const ctx = context.value as RootContext
+    const ints = intervals.value
+    if (autoColors.value === 'silver') {
+      if (!ints.length) {
+        return defaultColors(baseMidiNote.value)
+      }
+      return ints.map(
+        (interval, i) =>
+          interval.color?.value ?? (i === intervals.value.length - 1 ? 'gray' : 'silver')
+      )
+    } else if (autoColors.value === 'cents') {
+      if (!ints.length) {
+        return relativeIntervals.value.map((interval) => centsColor.bind(ctx)(interval).value)
+      }
+      return intervals.value.map(
+        (interval) => interval.color?.value ?? centsColor.bind(ctx)(interval).value
+      )
+    } else {
+      if (!ints.length) {
+        // XXX: This is just black, but whatever.
+        return relativeIntervals.value.map((interval) => factorColor.bind(ctx)(interval).value)
+      }
+      return intervals.value.map(
+        (interval) => interval.color?.value ?? factorColor.bind(ctx)(interval).value
+      )
+    }
+  })
+
+  function autoLabel(interval: Interval) {
+    if (interval.label.length) {
+      return convertAccidentals(interval.label, accidentalPreference.value)
+    }
+    interval = interval.shallowClone()
+    interval.node = interval.realizeNode(context.value as RootContext)
+    if (
+      !interval.node &&
+      interval.value instanceof TimeReal &&
+      !interval.value.timeExponent
+    ) {
+      let result = ''
+      if (interval.domain === 'linear') {
+        result = decimalString(interval.valueOf(), decimalFractionDigits.value, true)
+      } else {
+        result = centString(interval.totalCents(), centsFractionDigits.value, true)
+      }
+      if (result.length <= AUTO_LABEL_MAX_LENGTH) {
+        return result
+      }
+    }
+    return convertAccidentals(
+      lstr.bind(context.value as RootContext)(interval, AUTO_LABEL_MAX_LENGTH),
+      accidentalPreference.value
+    )
+  }
+
+  const labels = computed(() => {
+    if (!intervals.value.length) {
+      return defaultLabels(baseMidiNote.value, accidentalPreference.value)
+    }
+    return intervals.value.map(autoLabel)
+  })
 
   const latticePermutation = computed(() => {
     const intervals = relativeIntervals.value
@@ -202,7 +298,26 @@ export const useScaleStore = defineStore('scale', () => {
    * @param index MIDI index
    */
   function labelForIndex(index: number) {
-    return labels.value[mmod(index - baseMidiNote.value - 1, labels.value.length)]
+    if (labelMode.value === 'periodic' || !intervals.value.length) {
+      return labels.value[mmod(index - baseMidiNote.value - 1, labels.value.length)]
+    } else if (labelMode.value === 'computed') {
+      if (labelCache.has(index)) {
+        return labelCache.get(index)!
+      }
+      const len = intervals.value.length
+      let idx = index - baseMidiNote.value - 1
+      const numEquaves = Math.floor(idx / len)
+      idx -= numEquaves * len
+      const equave = relative.bind(context.value as RootContext)(intervals.value[len - 1]).value
+      const interval = intervals.value[idx]
+      const monzo = interval.value.mul(equave.pow(numEquaves))
+      const node = intervalValueAs(monzo, interval.node, simplifyLabels.value)
+      const label = autoLabel(new Interval(monzo, interval.domain, interval.steps, node, interval))
+      labelCache.set(index, label)
+      return label
+    } else {
+      throw new Error('Unimplemented label mode')
+    }
   }
 
   // QWERTY mapping is coupled to key colors
@@ -352,7 +467,7 @@ export const useScaleStore = defineStore('scale', () => {
       // XXX: Abuses the fact that SonicWeave tracking ids are positive.
       scale[i].trackingIds.add(-i)
     }
-    const rel = relative.bind(this)
+    const rel = relative.bind(this.rootContext)
     latticeIntervals.value = scale.map((i) => rel(i))
 
     latticeEquave.value = equave
@@ -362,7 +477,7 @@ export const useScaleStore = defineStore('scale', () => {
   latticeView.__node__ = builtinNode(latticeView)
 
   function warn(this: ExpressionVisitor, ...args: any[]) {
-    const s = repr.bind(this)
+    const s = repr.bind(this.rootContext)
     const message = args.map((a) => (typeof a === 'string' ? a : s(a))).join(', ')
     warning.value = message.slice(0, MAX_ERROR_LENGTH)
   }
@@ -419,6 +534,7 @@ export const useScaleStore = defineStore('scale', () => {
 
   function computeScale(pushUndo = true) {
     try {
+      labelCache.clear()
       error.value = ''
       warning.value = ''
       latticeIntervals.value = []
@@ -436,85 +552,15 @@ export const useScaleStore = defineStore('scale', () => {
         }
       }
 
-      const intervals = visitor.currentScale
-      const ev = visitor.createExpressionVisitor()
-      const rel = relative.bind(ev)
-      relativeIntervals.value = intervals.map((i) => rel(i))
+      intervals.value = visitor.currentScale
+      if (!visitor.rootContext) {
+        throw new Error('Missing root context')
+      }
+      context.value = visitor.rootContext
       if (!latticeIntervals.value.length) {
         latticeIntervals.value = relativeIntervals.value
       }
-      const ratios = relativeIntervals.value.map((i) => i.value.valueOf())
-      let visitorBaseFrequency = mtof(baseMidiNote.value)
-      if (visitor.rootContext!.unisonFrequency) {
-        visitorBaseFrequency = visitor.rootContext!.unisonFrequency.valueOf()
-      }
-      if (ratios.length) {
-        const evLstr = lstr.bind(ev)
-        // eslint-disable-next-line no-inner-declarations
-        function autoLabel(interval: Interval) {
-          if (interval.label.length) {
-            return convertAccidentals(interval.label, accidentalPreference.value)
-          }
-          interval = interval.shallowClone()
-          interval.node = interval.realizeNode(ev.rootContext!)
-          if (
-            !interval.node &&
-            interval.value instanceof TimeReal &&
-            !interval.value.timeExponent
-          ) {
-            let result = ''
-            if (interval.domain === 'linear') {
-              result = decimalString(interval.valueOf(), decimalFractionDigits.value, true)
-            } else {
-              result = centString(interval.totalCents(), centsFractionDigits.value, true)
-            }
-            if (result.length <= AUTO_LABEL_MAX_LENGTH) {
-              return result
-            }
-          }
-          return convertAccidentals(
-            evLstr(interval, AUTO_LABEL_MAX_LENGTH),
-            accidentalPreference.value
-          )
-        }
-        scale.value = new Scale(
-          ratios,
-          visitorBaseFrequency,
-          baseMidiNote.value,
-          ev.rootContext!.title || name.value
-        )
-        if (autoColors.value === 'silver') {
-          colors.value = intervals.map(
-            (interval, i) =>
-              interval.color?.value ?? (i === intervals.length - 1 ? 'gray' : 'silver')
-          )
-        } else if (autoColors.value === 'cents') {
-          colors.value = intervals.map(
-            (interval) => interval.color?.value ?? centsColor.bind(ev)(interval).value
-          )
-        } else {
-          colors.value = intervals.map(
-            (interval) => interval.color?.value ?? factorColor.bind(ev)(interval).value
-          )
-        }
-        labels.value = intervals.map(autoLabel)
-      } else {
-        relativeIntervals.value = INTERVALS_12TET
-        latticeIntervals.value = INTERVALS_12TET
-        scale.value = new Scale(TET12, visitorBaseFrequency, baseMidiNote.value, name.value)
-        if (autoColors.value === 'silver') {
-          colors.value = defaultColors(baseMidiNote.value)
-        } else if (autoColors.value === 'cents') {
-          colors.value = INTERVALS_12TET.map(
-            (interval) => interval.color?.value ?? centsColor.bind(ev)(interval).value
-          )
-        } else {
-          // XXX: This is just black, but whatever.
-          colors.value = INTERVALS_12TET.map(
-            (interval) => interval.color?.value ?? factorColor.bind(ev)(interval).value
-          )
-        }
-        labels.value = defaultLabels(baseMidiNote.value, accidentalPreference.value)
+      if (!intervals.value.length) {
         if (!warning.value) {
           warning.value = 'Empty scale defaults to 12-tone equal temperament.'
         }
@@ -549,18 +595,16 @@ export const useScaleStore = defineStore('scale', () => {
   }
 
   const LIVE_STATE = {
+    context: (context as any),  // XXX: VSCode chokes on the actual type
+    intervals,
     name,
     baseMidiNote,
     userBaseFrequency,
     autoFrequency,
     autoColors,
     sourceText,
-    scale,
-    relativeIntervals,
     latticeIntervals,
     latticeEquave,
-    colors,
-    labels,
     error,
     warning,
     isomorphicVertical,
@@ -590,44 +634,25 @@ export const useScaleStore = defineStore('scale', () => {
    * Convert live state to a format suitable for storing on the server.
    */
   function toJSON() {
-    let slicedScale = scale.value
-    let slicedIntervals = relativeIntervals.value
-    let slicedColors = colors.value
-    let slicedLabels = labels.value
-    if (slicedScale.intervalRatios.length > MAX_NUMBER_OF_SHARED_INTERVALS) {
-      slicedScale = slicedScale.clone()
+    let slicedIntervals = intervals.value
+    if (slicedIntervals.length > MAX_NUMBER_OF_SHARED_INTERVALS) {
       slicedIntervals = [...slicedIntervals]
-      slicedColors = [...slicedColors]
-      slicedLabels = [...slicedLabels]
-      const equave = slicedScale.intervalRatios.pop()!
       const equaveInterval = slicedIntervals.pop()!
-      const equaveColor = slicedColors.pop()!
-      const equaveLabel = slicedLabels.pop()!
-      slicedScale.intervalRatios = slicedScale.intervalRatios.slice(
-        0,
-        MAX_NUMBER_OF_SHARED_INTERVALS - 1
-      )
-      slicedScale.intervalRatios.push(equave)
       slicedIntervals = slicedIntervals.slice(0, MAX_NUMBER_OF_SHARED_INTERVALS - 1)
       slicedIntervals.push(equaveInterval)
-      slicedColors = slicedColors.slice(0, MAX_NUMBER_OF_SHARED_INTERVALS - 1)
-      slicedColors.push(equaveColor)
-      slicedLabels = slicedLabels.slice(0, MAX_NUMBER_OF_SHARED_INTERVALS - 1)
-      slicedLabels.push(equaveLabel)
     }
     const result: any = {
-      scale: slicedScale.toJSON(),
-      relativeIntervals: slicedIntervals.map((i) => i.toJSON()),
-      colors: slicedColors,
-      labels: slicedLabels
+      intervals: slicedIntervals.map((i) => i.toJSON()),
+      version,  // Version tag is new with dynamic labels
     }
-    if (result.colors.length) {
-      result.colors[result.colors.length - 1] = colors.value[colors.value.length - 1]
+    let latticeUntouched = true
+    for (let i = 0; i < relativeIntervals.value.length; ++i) {
+      if (!latticeIntervals.value[i].strictEquals(relativeIntervals.value[i])) {
+        latticeUntouched = false
+        break
+      }
     }
-    if (result.labels.length) {
-      result.labels[result.labels.length - 1] = labels.value[labels.value.length - 1]
-    }
-    if (relativeIntervals.value === latticeIntervals.value) {
+    if (latticeUntouched) {
       result.latticeIntervals = null
     } else {
       if (latticeIntervals.value.length <= MAX_NUMBER_OF_SHARED_INTERVALS) {
@@ -648,15 +673,37 @@ export const useScaleStore = defineStore('scale', () => {
 
   /**
    * Apply revived state to current state.
-   * @param data JSON revived through {@link Scale.reviver} and {@link Interval.reviver}.
+   * @param data JSON revived through {@link RootContext.reviver} and {@link Interval.reviver}.
    */
   function fromJSON(data: any) {
     skipNextRerollWatch = true
-    for (const key in LIVE_STATE) {
-      if (key === 'latticeIntervals' && !data[key]) {
-        latticeIntervals.value = data['relativeIntervals']
-      } else {
-        LIVE_STATE[key as keyof typeof LIVE_STATE].value = data[key]
+    if (data.version) {
+      // Context available
+      for (const key in LIVE_STATE) {
+        if (key === 'latticeIntervals' && !data[key]) {
+          latticeIntervals.value = data['intervals'].map(relative.bind(data['context']))
+        } else {
+          LIVE_STATE[key as keyof typeof LIVE_STATE].value = data[key]
+        }
+      }
+    } else {
+      // Context not available. Do a "best effort" recovery without re-evaluation.
+      // XXX: The need for this branch could be eliminated with a data migration on the server.
+      for (const key in LIVE_STATE) {
+        if (key === 'context') {
+          context.value = new RootContext()
+          continue
+        } else if (key === 'intervals') {
+          // TODO: Trigger recomputation if labelMode is changed
+          intervals.value = data['relativeIntervals']
+          continue
+        }
+
+        if (key === 'latticeIntervals' && !data[key]) {
+          latticeIntervals.value = data['relativeIntervals']
+        } else {
+          LIVE_STATE[key as keyof typeof LIVE_STATE].value = data[key]
+        }
       }
     }
     id.value = data['id']
@@ -672,7 +719,7 @@ export const useScaleStore = defineStore('scale', () => {
 
   function restore(body: string) {
     // We could restore the whole state using something like this:
-    // const data = JSON.parse(body, (key, value) => Interval.reviver(key, Scale.reviver(key, value)))
+    // const data = JSON.parse(body, (key, value) => Interval.reviver(key, RootContext.reviver(key, value)))
 
     sourceText.value = body
     computeScale(false)
@@ -708,6 +755,10 @@ export const useScaleStore = defineStore('scale', () => {
     // With setters
     baseFrequencyDisplay,
     // Get only
+    relativeIntervals,
+    scale,
+    colors,
+    labels,
     sourcePrefix,
     latticePermutation,
     inverseLatticePermutation,
@@ -731,6 +782,8 @@ export const useScaleStore = defineStore('scale', () => {
     fromJSON,
     computeRawScale,
     // Mini-stores
-    history
+    history,
+    // Internals (don't access)
+    labelCache
   }
 })
