@@ -82,6 +82,14 @@ export const useAudioStore = defineStore<'audio', AudioStore>('audio', () => {
   const stackSize = ref(3)
   const spread = ref(2.5)
   const aperiodicWaveform = ref(DEFAULT_APERIODIC)
+  const HARMONIUM_ENVELOPE = {
+    attack: 0.02,
+    decay: 1.25,
+    sustain: 0.97,
+    release: 0.16
+  }
+  let savedEnvelope: { attack: number; decay: number; sustain: number; release: number } | null = null
+
   // Fix Firefox issues with audioContext.currentTime being in the past using a delay.
   // This is a locally stored user preference, but shown on the Synth tab.
   const audioDelay = ref(0.001)
@@ -300,9 +308,29 @@ export const useAudioStore = defineStore<'audio', AudioStore>('audio', () => {
     }
   })
 
-  watch(aperiodicWaveform, (newValue) => {
+  watch(aperiodicWaveform, (newValue, oldValue) => {
     if (APERIODIC_WAVEFORMS.includes(newValue)) {
       aperiodicVoiceParams.aperiodicWave = APERIODIC_WAVES[newValue].value
+    }
+    if (newValue === 'harmonium') {
+      if (!savedEnvelope) {
+        savedEnvelope = {
+          attack: attackTime.value,
+          decay: decayTime.value,
+          sustain: sustainLevel.value,
+          release: releaseTime.value
+        }
+      }
+      attackTime.value = HARMONIUM_ENVELOPE.attack
+      decayTime.value = HARMONIUM_ENVELOPE.decay
+      sustainLevel.value = HARMONIUM_ENVELOPE.sustain
+      releaseTime.value = HARMONIUM_ENVELOPE.release
+    } else if (oldValue === 'harmonium' && savedEnvelope) {
+      attackTime.value = savedEnvelope.attack
+      decayTime.value = savedEnvelope.decay
+      sustainLevel.value = savedEnvelope.sustain
+      releaseTime.value = savedEnvelope.release
+      savedEnvelope = null
     }
   })
 

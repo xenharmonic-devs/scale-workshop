@@ -64,6 +64,7 @@ export const APERIODIC_WAVEFORMS = [
   'jublag',
   'ugal',
   'gender',
+  'harmonium',
   'piano',
   'tin',
   'bronze',
@@ -129,6 +130,37 @@ export function initializePeriodic(audioContext: BaseAudioContext) {
       semisineCosineComponents[n] = 1 / (1 - 4 * n * n)
     }
     return audioContext.createPeriodicWave(semisineCosineComponents, semisineSineComponents)
+  })
+
+  // Reed-inspired waveform approximating a small harmonium stop
+  PERIODIC_WAVES.harmonium = computed(() => {
+    const real = new Float32Array(32)
+    const harmonicGains = [
+      0,
+      1.2,
+      0.75,
+      0.45,
+      0.35,
+      0.22,
+      0.16,
+      0.12,
+      0.1,
+      0.08,
+      0.065,
+      0.05,
+      0.04,
+      0.032,
+      0.026,
+      0.02
+    ]
+
+    for (let n = 1; n < harmonicGains.length; ++n) {
+      // Add gentle nasal emphasis on odd harmonics
+      const nasalBoost = n % 2 ? 1.1 : 1
+      real[n] = harmonicGains[n] * nasalBoost
+    }
+
+    return audioContext.createPeriodicWave(real, new Float32Array(real.length))
   })
 
   const zeros = new Float32Array(101)
@@ -340,6 +372,55 @@ function initializeAperiodic(audioContext: BaseAudioContext) {
     }
 
     return new AperiodicWave(audioContext, spectrum, amplitudes, maxNumberOfVoices, tolerance)
+  })
+
+  APERIODIC_WAVES['harmonium'] = computed(() => {
+    const harmonics = 60
+    const dutyCycle = 0.43
+    const targetFundamentalHz = 330
+    const soloDetuneHz = 0.18
+    const nearDetuneHz = 0.55
+    const wideDetuneHz = 1.1
+    const shimmerOffsets = [
+      0,
+      soloDetuneHz,
+      -soloDetuneHz,
+      nearDetuneHz,
+      -nearDetuneHz,
+      wideDetuneHz,
+      -wideDetuneHz
+    ]
+  const shimmerWeights = [1, 0.3, 0.3, 0.7, 0.7, 0.4, 0.4]
+    const spectrum: number[] = []
+    const amplitudes: number[] = []
+
+    for (let n = 1; n <= harmonics; ++n) {
+      const pwm = Math.abs((2 / (n * Math.PI)) * Math.sin(n * Math.PI * dutyCycle))
+  const lowpass = Math.exp(-Math.max(0, n - 3) / 28)
+      const brightnessTrim = 1 / (1 + 0.009 * n ** 1.32)
+      const oddBias = n % 2 ? 1.15 : 0.9
+      const fundamentalBoost = n === 1 ? 3.4 : n === 2 ? 1.8 : n === 3 ? 1.4 : 1
+      const baseAmplitude = pwm * lowpass * brightnessTrim * oddBias * fundamentalBoost
+
+      shimmerOffsets.forEach((offsetHz, i) => {
+        const ratio = n * (1 + offsetHz / (targetFundamentalHz * n))
+        spectrum.push(ratio)
+        amplitudes.push(baseAmplitude * shimmerWeights[i])
+      })
+
+      if (n <= 8) {
+        shimmerOffsets.forEach((offsetHz, i) => {
+          const ratio = 2 * n * (1 + offsetHz / (targetFundamentalHz * 2 * n))
+          spectrum.push(ratio)
+          amplitudes.push(baseAmplitude * 0.18 * shimmerWeights[i])
+        })
+      }
+    }
+
+    const normalization = 1.35 / sum(amplitudes)
+    const normalizedAmplitudes = amplitudes.map((a) => a * normalization)
+
+    return new AperiodicWave(audioContext, spectrum, normalizedAmplitudes, maxNumberOfVoices, tolerance)
   })
 
   APERIODIC_WAVES['12-TET'] = computed(() => {
