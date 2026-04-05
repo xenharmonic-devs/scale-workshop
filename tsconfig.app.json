@@ -13,6 +13,8 @@
     "src/**/__tests__/*"
   ],
   "compilerOptions": {
+    "composite": true,
+    "baseUrl": ".",
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "noUncheckedIndexedAccess": false,
     "strictBindCallApply": false,
@@ -20,7 +22,6 @@
       "@/*": [
         "./src/*"
       ]
-    },
-    "incremental": true
+    }
   }
 }

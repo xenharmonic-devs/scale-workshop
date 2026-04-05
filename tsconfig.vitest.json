@@ -6,12 +6,12 @@
   ],
   "exclude": [],
   "compilerOptions": {
+    "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.vitest.tsbuildinfo",
     "lib": ["ES2021", "DOM", "DOM.Iterable"],
     "types": [
       "node",
       "jsdom"
-    ],
-    "incremental": true
+    ]
   }
 }

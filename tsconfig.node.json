@@ -8,6 +8,7 @@
     "eslint.config.*"
   ],
   "compilerOptions": {
+    "composite": true,
     "noEmit": true,
     "target": "ES2022",
     "lib": ["ES2023"],
@@ -16,7 +17,6 @@
     "moduleResolution": "Bundler",
     "types": [
       "node"
-    ],
-    "incremental": true
+    ]
   }
 }
