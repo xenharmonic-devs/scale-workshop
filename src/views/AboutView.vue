@@ -34,6 +34,7 @@ const tagline = computed(() => TAGLINES[Math.floor(Math.random() * TAGLINES.leng
           class="btn"
           href="https://github.com/xenharmonic-devs/scale-workshop/wiki"
           target="_blank"
+          rel="noopener noreferrer"
           >User guide</a
         >
         <a class="btn" href="https://discord.gg/9nFzvpHJWn">Discord</a>

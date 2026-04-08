@@ -39,6 +39,7 @@ onUnmounted(() => {
       <div class="column scale-builder">
         <textarea
           id="scale-name"
+          aria-label="Scale name"
           rows="1"
           placeholder="Untitled scale"
           v-model="scale.name"

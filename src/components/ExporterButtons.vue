@@ -190,7 +190,7 @@ function doExport(exporter: ExporterKey) {
     />
   </Teleport>
   <h2>Export current settings</h2>
-  <a href="#" :class="{ btn: true, disabled: !API_URL }" @click="copyToClipboard">
+  <a href="#" :class="{ btn: true, disabled: !API_URL }" @click.prevent="copyToClipboard">
     <p><strong>Share scale</strong></p>
     <p>{{ exportTextClipboard }}</p>
   </a>
@@ -199,77 +199,77 @@ function doExport(exporter: ExporterKey) {
     <p class="warning">File export is known to be broken on Safari. Root cause unknown.</p>
     <button class="warning" @click="state.showSafariWarning = false">Dismiss</button>
   </div>
-  <a v-if="state.debug" href="#" class="btn debug" @click="downloadDebugDump"
+  <a v-if="state.debug" href="#" class="btn debug" @click.prevent="downloadDebugDump"
     ><p><strong>Debug dump (.json)</strong></p>
     <p>Copy of the data sent to the server.</p></a
   >
-  <a href="#" class="btn" @click="doExport('anamarkv1')">
+  <a href="#" class="btn" @click.prevent="doExport('anamarkv1')">
     <p><strong>AnaMark v1 tuning (.tun)</strong></p>
     <p>Tuning file for various synths</p>
   </a>
-  <a href="#" class="btn" @click="doExport('anamarkv2')">
+  <a href="#" class="btn" @click.prevent="doExport('anamarkv2')">
     <p><strong>AnaMark v2 tuning (.tun)</strong></p>
     <p>Tuning file for various synths</p>
   </a>
-  <a href="#" class="btn" @click="showScalaExportModal = true">
+  <a href="#" class="btn" @click.prevent="showScalaExportModal = true">
     <p><strong>Scala scale (.scl)</strong></p>
     <p>
       Scale file for various synths.<br />If you use this file without an accompanying .kbm file,
       most synths will assume your scale starts on C ≈ 262Hz
     </p>
   </a>
-  <a href="#" class="btn" @click="doExport('scalakbm')">
+  <a href="#" class="btn" @click.prevent="doExport('scalakbm')">
     <p><strong>Scala keyboard mapping (.kbm)</strong></p>
     <p>Maps an accompanying .scl file to start on a specific MIDI note and frequency</p>
   </a>
-  <a href="#" class="btn" @click="doExport('ableton')">
+  <a href="#" class="btn" @click.prevent="doExport('ableton')">
     <p><strong>Ableton scale (.ascl)</strong></p>
     <p>Scale file for Ableton Live 12</p>
   </a>
-  <a href="#" class="btn" @click="doExport('maxmsp')">
+  <a href="#" class="btn" @click.prevent="doExport('maxmsp')">
     <p><strong>Max/MSP coll tuning (.txt)</strong></p>
     <p>List of frequencies (Hz) in a text file to load into a Max/MSP coll object</p>
   </a>
-  <a href="#" class="btn" @click="doExport('puredata')">
+  <a href="#" class="btn" @click.prevent="doExport('puredata')">
     <p><strong>PureData text tuning (.txt)</strong></p>
     <p>List of frequencies (Hz) in a text file to load into a PureData text object</p>
   </a>
-  <a href="#" class="btn" @click="doExport('kontakt')">
+  <a href="#" class="btn" @click.prevent="doExport('kontakt')">
     <p><strong>Kontakt tuning script (.txt)</strong></p>
     <p>
       Tuning script for Native Instruments Kontakt. Some instrument libraries allow this custom
       script
     </p>
   </a>
-  <a href="#" class="btn" @click="doExport('soniccouture')">
+  <a href="#" class="btn" @click.prevent="doExport('soniccouture')">
     <p><strong>Soniccouture tuning file (.nka)</strong></p>
     <p>For Soniccouture sample libraries</p>
   </a>
-  <a href="#" class="btn" @click="doExport('harmor')">
+  <a href="#" class="btn" @click.prevent="doExport('harmor')">
     <p><strong>Harmor pitch map (.fnv)</strong></p>
     <p>Envelope state file for the pitch envelope in Image-Line Harmor</p>
   </a>
-  <a href="#" class="btn" @click="doExport('sytrus')">
+  <a href="#" class="btn" @click.prevent="doExport('sytrus')">
     <p><strong>Sytrus pitch map (.fnv)</strong></p>
     <p>Envelope state file for the pitch envelope in Image-Line Sytrus</p>
   </a>
-  <a href="#" class="btn" @click="showKorgExportModal = true">
+  <a href="#" class="btn" @click.prevent="showKorgExportModal = true">
     <p><strong>Korg Sound Librarian scale (.mnlgtuns + others)</strong></p>
     <p>Tuning formats for use with Monologue, Minilogue, Minilogue XD, and Prologue synthesizers</p>
   </a>
-  <a href="#" class="btn" @click="doExport('deflemask')">
+  <a href="#" class="btn" @click.prevent="doExport('deflemask')">
     <p><strong>Deflemask reference (.txt)</strong></p>
     <p>List of 'fine tune' values for Deflemask</p>
   </a>
-  <a href="#" class="btn" @click="showReaperExportModal = true">
+  <a href="#" class="btn" @click.prevent="showReaperExportModal = true">
     <p><strong>Reaper note name map (.txt)</strong></p>
     <p>Displays custom note names on Reaper's piano roll</p>
   </a>
-  <a href="#" class="btn" @click="showMtsSysexExportModal = true">
+  <a href="#" class="btn" @click.prevent="showMtsSysexExportModal = true">
     <p><strong>MTS Sysex Bulk Tuning Dump (.syx)</strong></p>
     <p>Binary data of a Bulk Tuning Dump SysEx message</p>
   </a>
-  <a href="#" class="btn" @click="doExport('xendevs')">
+  <a href="#" class="btn" @click.prevent="doExport('xendevs')">
     <p><strong>SonicWeave Interchange (.swi)</strong></p>
     <p>Simplified Scale Workshop 3 format</p>
   </a>
@@ -279,12 +279,16 @@ function doExport(exporter: ExporterKey) {
     <a
       href="https://github.com/xenharmonic-devs/sonic-weave?tab=readme-ov-file#sonic-weave"
       target="_blank"
-      >here</a
+      rel="noopener noreferrer"
+      >in the SonicWeave documentation</a
     >.
   </p>
   <p>
     Remember to check out the
-    <a href="https://github.com/xenharmonic-devs/sonic-weave/tree/main/examples" target="_blank"
+    <a
+      href="https://github.com/xenharmonic-devs/sonic-weave/tree/main/examples"
+      target="_blank"
+      rel="noopener noreferrer"
       >examples</a
     >
     too.

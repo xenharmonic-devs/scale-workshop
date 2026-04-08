@@ -88,18 +88,22 @@ defineExpose({ focus, clearPaletteInfo })
       <span class="scale-data-header">Scale data</span>
       <button
         class="undo"
+        aria-label="Undo latest scale data edit"
         :disabled="scale.history.undoDisabled"
         @click="scale.history.undo"
       ></button>
       <button
         class="redo"
+        aria-label="Redo latest scale data edit"
         :disabled="scale.history.redoDisabled"
         @click="scale.history.redo"
       ></button>
     </h2>
     <div class="control">
+      <label class="sr-only" for="scale-data">Scale data editor</label>
       <textarea
         id="scale-data"
+        aria-label="Scale data editor"
         ref="sourceEditor"
         rows="20"
         v-model="scale.sourceText"

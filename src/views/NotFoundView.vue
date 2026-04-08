@@ -27,7 +27,13 @@ async function openTheGates(source: string) {
       <h2>Not found</h2>
       <p>
         We couldn't find what you were looking for, but
-        <a id="octaplex" href="#" @click="ritualInProgress = true">here's an octaplex</a>.
+        <a
+          id="octaplex"
+          href="#"
+          aria-label="Open the octaplex generator"
+          @click.prevent="ritualInProgress = true"
+          >here's an octaplex generator</a
+        >.
       </p>
     </div>
     <Teleport to="body">
