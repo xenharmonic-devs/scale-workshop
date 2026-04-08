@@ -3,7 +3,7 @@ import EntropyWorker from '@/harmonic-entropy-worker?worker'
 import { computed, reactive, ref, watch } from 'vue'
 import { debounce } from '@/utils'
 import { defineStore } from 'pinia'
-import { type HarmonicEntropyOptions } from 'harmonic-entropy'
+import { EntropyCalculator, type HarmonicEntropyOptions } from 'harmonic-entropy'
 
 // The app freezes if we try to recalculate entropy in the main thread.
 let worker: Worker | undefined
@@ -28,23 +28,32 @@ export const useHarmonicEntropyStore = defineStore('harmonic-entropy', () => {
   const N = ref(10000)
   const a = ref(1)
   const s = ref(0.01)
+  const isFetching = ref(false)
 
   const minY = computed(() => Math.min(...table.map((xy) => xy[1])))
   const maxY = computed(() => Math.max(...table.map((xy) => xy[1])))
+  let fallbackEntropy: EntropyCalculator | undefined
+  let fallbackMinY = 0
+  let fallbackMaxY = 1
 
   async function fetchTable(force = false) {
     if (table.length && !force) {
       return
     }
-    const response = await fetch(HE_DATA_URL)
-    const buffer = await response.arrayBuffer()
-    const tableY = Array.from(new Float32Array(buffer))
+    isFetching.value = true
+    try {
+      const response = await fetch(HE_DATA_URL)
+      const buffer = await response.arrayBuffer()
+      const tableY = Array.from(new Float32Array(buffer))
 
-    table.length = 0
+      table.length = 0
 
-    let i = 0
-    for (let x = 0; x <= MAX_CENTS; x += RES) {
-      table.push([x, tableY[i++]])
+      let i = 0
+      for (let x = 0; x <= MAX_CENTS; x += RES) {
+        table.push([x, tableY[i++]])
+      }
+    } finally {
+      isFetching.value = false
     }
   }
 
@@ -63,7 +72,17 @@ export const useHarmonicEntropyStore = defineStore('harmonic-entropy', () => {
   // Pinia fails to serialize EntropyCalculator so we recreate its functionality here.
   function entropyPercentage(cents: number) {
     if (!table.length) {
-      return 0
+      if (!isFetching.value) {
+        void fetchTable()
+      }
+      if (fallbackEntropy === undefined) {
+        fallbackEntropy = new EntropyCalculator(options.value)
+        fallbackMinY = Math.min(...fallbackEntropy.table.map((xy) => xy[1]))
+        fallbackMaxY = Math.max(...fallbackEntropy.table.map((xy) => xy[1]))
+      }
+      cents = Math.min(MAX_CENTS, Math.abs(cents))
+      const y = fallbackEntropy.ofCents(cents)
+      return (y - fallbackMinY) / (fallbackMaxY - fallbackMinY)
     }
     cents = Math.abs(cents)
     if (cents >= MAX_CENTS) {
@@ -115,5 +134,5 @@ export const useHarmonicEntropyStore = defineStore('harmonic-entropy', () => {
     series: SERIES,
     normalize: NORMALIZE
   }))
-  return { table, N, a, s, minY, maxY, options, fetchTable, entropyPercentage }
+  return { table, N, a, s, isFetching, minY, maxY, options, fetchTable, entropyPercentage }
 })

@@ -65,9 +65,14 @@ function defaultLabels(base: number, accidentalStyle: AccidentalStyle) {
   return result.map((n) => n.replace('#', '♯'))
 }
 
+let _warn: ((msg: string) => void) | null = null
+
 function harmonicEntropy(this: ExpressionVisitor, interval: SonicWeaveValue): SonicWeaveValue {
   if (typeof interval === 'boolean' || interval instanceof Interval) {
     const hes = useHarmonicEntropyStore()
+    if (_warn && (!hes.table.length || hes.isFetching)) {
+      _warn.bind(this)('The harmonic entropy cache is loading. Rerun for more accurate results.')
+    }
     const he = hes.entropyPercentage(relative.bind(this)(upcastBool(interval)).totalCents())
     return Interval.fromValue(he)
   }
@@ -368,6 +373,8 @@ export const useScaleStore = defineStore('scale', () => {
   }
   warn.__doc__ = 'Issue a warning to the user and continue execution.'
   warn.__node__ = builtinNode(warn)
+
+  _warn = warn
 
   // Local helpers
   function getGlobalScaleWorkshopVisitor() {

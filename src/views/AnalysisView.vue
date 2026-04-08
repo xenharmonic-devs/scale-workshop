@@ -12,7 +12,7 @@ import {
 import ChordWheel from '@/components/ChordWheel.vue'
 import HarmonicEntropyPlot from '@/components/HarmonicEntropyPlot.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useAudioStore } from '@/stores/audio'
 import { useStateStore } from '@/stores/state'
 import { literalToString, type Interval } from 'sonic-weave'
@@ -292,6 +292,12 @@ const frequencyDeviationSlider = computed({
     if (!isNaN(newValue)) {
       entropy.s = newValue
     }
+  }
+})
+
+watch(subtab, (newValue) => {
+  if (newValue === 'entropy') {
+    void entropy.fetchTable()
   }
 })
 </script>
@@ -582,7 +588,13 @@ const frequencyDeviationSlider = computed({
     </main>
     <main v-if="subtab === 'entropy'">
       <div class="entropy-plot">
-        <HarmonicEntropyPlot :centsValues="centsValues" :labels="labels" :colors="colors" />
+        <HarmonicEntropyPlot
+          v-if="entropy.table.length"
+          :centsValues="centsValues"
+          :labels="labels"
+          :colors="colors"
+        />
+        <p v-else-if="entropy.isFetching">Loading harmonic entropy table…</p>
       </div>
       <div class="control-group">
         <div class="control">

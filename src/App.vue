@@ -12,7 +12,6 @@ import { useAudioStore } from '@/stores/audio'
 import { useStateStore } from './stores/state'
 import { useMidiStore } from './stores/midi'
 import { useScaleStore } from './stores/scale'
-import { useHarmonicEntropyStore } from '@/stores/harmonic-entropy'
 import { clamp, mmod } from 'xen-dev-utils'
 import { parseScaleWorkshop2Line, setNumberOfComponents } from 'sonic-weave'
 
@@ -21,7 +20,6 @@ const state = useStateStore()
 const scale = useScaleStore()
 const midi = useMidiStore()
 const audio = useAudioStore()
-const entropy = useHarmonicEntropyStore()
 
 // == URL path handling ==
 /**
@@ -487,7 +485,6 @@ onMounted(async () => {
       console.error(`Error parsing version ${query.get('version')} URL`, error)
     }
   }
-  await entropy.fetchTable()
 })
 
 onUnmounted(() => {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useHarmonicEntropyStore } from '@/stores/harmonic-entropy'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 const props = defineProps<{
   labels: string[]
@@ -9,6 +9,10 @@ const props = defineProps<{
 }>()
 
 const entropy = useHarmonicEntropyStore()
+
+onMounted(() => {
+  void entropy.fetchTable()
+})
 
 const boxWidth = 10
 const boxHeight = 1
