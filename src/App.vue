@@ -2,7 +2,6 @@
 import { computed, onMounted, onUnmounted, reactive, watch } from 'vue'
 import { RouterLink, RouterView, useRouter } from 'vue-router'
 import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
-import { ScaleWorkshopOneData } from '@/scale-workshop-one'
 import type { Input, Output } from 'webmidi'
 import { MidiIn, midiKeyInfo, MidiOut, type NoteOff } from 'xen-midi'
 import { Keyboard, type CoordinateKeyboardEvent, COORDS_BY_CODE } from 'isomorphic-qwerty'
@@ -362,6 +361,11 @@ function typingKeydown(event: CoordinateKeyboardEvent) {
   return keyboardNoteOn(index)
 }
 
+async function loadSw1FromQuery() {
+  const { ScaleWorkshopOneData } = await import('@/scale-workshop-one')
+  return new ScaleWorkshopOneData()
+}
+
 // === Lifecycle ===
 onMounted(async () => {
   window.addEventListener('keyup', windowKeyup)
@@ -385,7 +389,7 @@ onMounted(async () => {
   } else if (!query.has('version')) {
     // Scale Workshop 1 compatibility
     try {
-      const scaleWorkshopOneData = new ScaleWorkshopOneData()
+      const scaleWorkshopOneData = await loadSw1FromQuery()
       audio.initialize()
 
       scale.name = scaleWorkshopOneData.name
