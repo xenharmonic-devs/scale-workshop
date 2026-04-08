@@ -1,23 +1,71 @@
 <script setup lang="ts">
-import NewScale from '@/components/NewScale.vue'
-import ModifyScale from '@/components/ModifyScale.vue'
 import ScaleControls from '@/components/ScaleControls.vue'
 import TuningTable from '@/components/TuningTable.vue'
-import ExporterButtons from '@/components/ExporterButtons.vue'
 import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
 import { useScaleStore } from '@/stores/scale'
 import { useStateStore } from '@/stores/state'
 import { debounce } from '@/utils'
 import { getSourceVisitor, setNumberOfComponents } from 'sonic-weave'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { defineAsyncComponent, defineComponent, h, onMounted, onUnmounted, ref } from 'vue'
 
 const scale = useScaleStore()
 const state = useStateStore()
 
 const controls = ref<typeof ScaleControls | null>(null)
-const newScale = ref<typeof NewScale | null>(null)
-const modifyScale = ref<typeof ModifyScale | null>(null)
-const exporterButtons = ref<typeof ExporterButtons | null>(null)
+const newScale = ref<{ blur?: () => void } | null>(null)
+const modifyScale = ref<{ blur?: () => void } | null>(null)
+const exporterButtons = ref<{ uploadScale?: () => void } | null>(null)
+const isAuxiliaryPanelsRequested = ref(false)
+
+const NewScaleButtonSkeleton = defineComponent({
+  setup() {
+    return () =>
+      h('li', { class: 'skeleton-btn', 'aria-hidden': 'true' }, [
+        h('span', { class: 'skeleton-btn-text' }, 'New scale ▼'),
+      ])
+  },
+})
+
+const ModifyScaleButtonSkeleton = defineComponent({
+  setup() {
+    return () =>
+      h('li', { class: 'skeleton-btn', 'aria-hidden': 'true' }, [
+        h('span', { class: 'skeleton-btn-text' }, 'Modify scale ▼'),
+      ])
+  },
+})
+
+const ExporterSkeleton = defineComponent({
+  setup() {
+    return () =>
+      h('div', { class: 'exporter-skeleton', 'aria-hidden': 'true' }, [
+        h('div', { class: 'skeleton-row' }),
+        h('div', { class: 'skeleton-row' }),
+        h('div', { class: 'skeleton-row' }),
+      ])
+  },
+})
+
+const NewScaleAsync = defineAsyncComponent({
+  loader: () => import('@/components/NewScale.vue'),
+  loadingComponent: NewScaleButtonSkeleton,
+  delay: 0,
+  suspensible: false,
+})
+
+const ModifyScaleAsync = defineAsyncComponent({
+  loader: () => import('@/components/ModifyScale.vue'),
+  loadingComponent: ModifyScaleButtonSkeleton,
+  delay: 0,
+  suspensible: false,
+})
+
+const ExporterButtonsAsync = defineAsyncComponent({
+  loader: () => import('@/components/ExporterButtons.vue'),
+  loadingComponent: ExporterSkeleton,
+  delay: 0,
+  suspensible: false,
+})
 
 const updateScale = debounce(scale.computeScale)
 
@@ -25,6 +73,16 @@ onMounted(() => {
   // Initialize SonicWeave stdlib
   setNumberOfComponents(DEFAULT_NUMBER_OF_COMPONENTS)
   setTimeout(() => getSourceVisitor(), 1)
+
+  const loadAuxiliaryPanels = () => {
+    isAuxiliaryPanelsRequested.value = true
+  }
+
+  if ('requestIdleCallback' in window) {
+    window.requestIdleCallback(loadAuxiliaryPanels, { timeout: 400 })
+  } else {
+    setTimeout(loadAuxiliaryPanels, 100)
+  }
 })
 
 onUnmounted(() => {
@@ -46,8 +104,16 @@ onUnmounted(() => {
           @input="updateScale()"
         ></textarea>
         <ul class="btn-group">
-          <NewScale ref="newScale" @done="controls!.focus()" @mouseenter="modifyScale!.blur()" />
-          <ModifyScale ref="modifyScale" @done="controls!.focus()" @mouseenter="newScale!.blur()" />
+          <template v-if="isAuxiliaryPanelsRequested">
+            <NewScaleAsync ref="newScale" @done="controls!.focus()" @mouseenter="modifyScale?.blur?.()" />
+            <ModifyScaleAsync ref="modifyScale" @done="controls!.focus()" @mouseenter="newScale?.blur?.()" />
+          </template>
+          <template v-else>
+            <li class="skeleton-btn" aria-hidden="true"><span class="skeleton-btn-text">New scale ▼</span></li>
+            <li class="skeleton-btn" aria-hidden="true">
+              <span class="skeleton-btn-text">Modify scale ▼</span>
+            </li>
+          </template>
         </ul>
         <ScaleControls ref="controls" />
       </div>
@@ -62,8 +128,8 @@ onUnmounted(() => {
           :labels="scale.labels"
         />
       </div>
-      <div class="column exporters" @mouseenter="exporterButtons!.uploadScale()">
-        <ExporterButtons ref="exporterButtons" />
+      <div class="column exporters" @mouseenter="exporterButtons?.uploadScale?.()">
+        <ExporterButtonsAsync ref="exporterButtons" />
       </div>
     </div>
   </main>
@@ -144,5 +210,32 @@ select optgroup + optgroup {
 
 .real-valued:invalid {
   background-color: var(--color-background);
+}
+
+.skeleton-btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.9rem;
+  border-radius: 3px;
+  border: var(--color-accent-text-btn) 1px solid;
+  background-color: var(--color-accent-background);
+  padding: 0.25rem 0.5rem;
+  list-style: none;
+  color: var(--color-accent-mute);
+}
+
+.skeleton-btn-text {
+  opacity: 0.8;
+}
+
+.exporter-skeleton {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.skeleton-row {
+  height: 2rem;
+  border-radius: 4px;
+  background-color: var(--color-border);
 }
 </style>
