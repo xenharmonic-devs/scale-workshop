@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 import App from '@/App.vue'
 import router from '@/router'
 import { API_URL } from './constants'
+import { randomUuidCompat } from './platform-compat'
 
 if (import.meta.env.DEV) {
   if (API_URL) {
@@ -26,7 +27,7 @@ if (import.meta.env.DEV) {
 }
 
 if (!localStorage.getItem('uuid')) {
-  localStorage.setItem('uuid', crypto.randomUUID())
+  localStorage.setItem('uuid', randomUuidCompat())
 }
 
 const app = createApp(App)

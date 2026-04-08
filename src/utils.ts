@@ -4,6 +4,7 @@ import { gcd, mmod } from 'xen-dev-utils'
 import { evaluateExpression, getSourceVisitor, Interval, parseAST, repr, Val } from 'sonic-weave'
 import { version } from '../package.json'
 import { Scale } from './scale'
+import { getRandomValuesCompat } from './platform-compat'
 
 const TAU = 2 * Math.PI
 
@@ -559,7 +560,7 @@ export function randomId() {
   // Random segment to avoid collisions within one hour
   // Chance of collision assuming 1000 identifiers per hour ~ 0.047 %
   const r = new Uint32Array(1)
-  crypto.getRandomValues(r)
+  getRandomValuesCompat(r)
   for (let i = 0; i < 6; ++i) {
     ns.push(r[0] & 63)
     r[0] >>>= 5

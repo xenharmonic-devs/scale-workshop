@@ -14,6 +14,7 @@ const midi = useMidiStore()
 
 const inputs = reactive<Input[]>([])
 const outputs = reactive<Output[]>([])
+const midiError = ref('')
 const inputHighlights = reactive<Set<number>>(new Set())
 const stopHighlights = ref<() => void>(() => {})
 
@@ -114,7 +115,19 @@ const toggleOutputChannel = (event: Event) =>
   toggleChannel(event, midi.outputChannels, 'update:midiOutputChannels')
 
 onMounted(async () => {
-  await WebMidi.enable()
+  if (!('requestMIDIAccess' in navigator)) {
+    midiError.value = window.isSecureContext
+      ? 'This browser does not support Web MIDI.'
+      : 'Web MIDI requires HTTPS or localhost. Local plain HTTP blocks navigator.requestMIDIAccess.'
+    return
+  }
+
+  try {
+    await WebMidi.enable()
+  } catch (error) {
+    midiError.value = `Failed to initialize Web MIDI: ${String(error)}`
+    return
+  }
   refreshMidi()
 
   const existingOnStateChange = WebMidi.interface.onstatechange
@@ -168,6 +181,7 @@ watch(
 
 <template>
   <main>
+    <p v-if="midiError" class="midi-error">{{ midiError }}</p>
     <div class="columns-container">
       <div class="column midi-controls">
         <h2>MIDI Input</h2>
@@ -405,5 +419,13 @@ div.multichannel-input-container {
 }
 div.piano-container {
   height: 50%;
+}
+
+p.midi-error {
+  background-color: color-mix(in srgb, var(--color-background-soft), tomato 12%);
+  border: 1px solid color-mix(in srgb, tomato, var(--color-border) 40%);
+  border-radius: 0.5rem;
+  margin: 1rem;
+  padding: 0.75rem;
 }
 </style>
