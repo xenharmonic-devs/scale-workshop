@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, reactive, watch } from 'vue'
-import { RouterLink, RouterView, useRouter } from 'vue-router'
+import { RouterLink, RouterView, useRouter, useRoute } from 'vue-router'
 import { DEFAULT_NUMBER_OF_COMPONENTS, LEFT_MOUSE_BTN } from '@/constants'
 import type { Input, Output } from 'webmidi'
 import { MidiIn, midiKeyInfo, MidiOut, type NoteOff } from 'xen-midi'
@@ -14,6 +14,7 @@ import { useMidiStore } from './stores/midi'
 import { useScaleStore } from './stores/scale'
 import { clamp, mmod } from 'xen-dev-utils'
 import { parseScaleWorkshop2Line, setNumberOfComponents } from 'sonic-weave'
+import ScaleView from '@/views/ScaleView.vue'
 
 // === Pinia-managed state ===
 const state = useStateStore()
@@ -29,6 +30,7 @@ function getPath(url: URL) {
   return url.pathname.slice(import.meta.env.BASE_URL.length)
 }
 
+const route = useRoute()
 const router = useRouter()
 
 // === Tuning table highlighting ===
@@ -578,7 +580,13 @@ function panic() {
     :midiInputChannels="midiInputChannels"
     :typingKeyboard="typingKeyboard"
     @panic="panic"
-  />
+    v-slot="{ Component }"
+  >
+    <KeepAlive v-show="route.name === 'scale'">
+      <Component :is="ScaleView" />
+    </KeepAlive>
+    <Component v-if="route.name !== 'scale'" :is="Component" />
+  </RouterView>
   <footer id="app-footer">
     <RouterLink to="/privacy-policy">Privacy policy</RouterLink>,
     <RouterLink to="/terms-of-service">Terms of service</RouterLink>
