@@ -27,6 +27,9 @@ const MtsSysexExportModal = defineAsyncComponent(
 const ReaperExportModal = defineAsyncComponent(
   () => import('@/components/modals/export/ReaperExport.vue')
 )
+const KontaktExportModal = defineAsyncComponent(
+  () => import('@/components/modals/export/KontaktExport.vue')
+)
 
 const state = useStateStore()
 const scale = useScaleStore()
@@ -42,6 +45,7 @@ const showScalaExportModal = ref(false)
 const showKorgExportModal = ref(false)
 const showMtsSysexExportModal = ref(false)
 const showReaperExportModal = ref(false)
+const showKontaktExportModal = ref(false)
 
 const uploadBody = computed(() => {
   return JSON.stringify({
@@ -191,6 +195,17 @@ function doExport(exporter: ExporterKey) {
       :scale="scale.scale"
       :labels="scale.labels"
     />
+
+    <KontaktExportModal
+      v-if="showKontaktExportModal"
+      :show="showKontaktExportModal"
+      @confirm="showKontaktExportModal = false"
+      @cancel="showKontaktExportModal = false"
+      :newline="state.newline"
+      :midiOctaveOffset="-1"
+      :scale="scale.scale"
+      :scaleUrl="uploadedScaleUrl"
+    />
   </Teleport>
   <h2>Export current settings</h2>
   <a href="#" :class="{ btn: true, disabled: !API_URL }" @click.prevent="copyToClipboard">
@@ -232,7 +247,7 @@ function doExport(exporter: ExporterKey) {
     <p><strong>PureData text tuning (.txt)</strong></p>
     <p>List of frequencies (Hz) in a text file to load into a PureData text object</p>
   </a>
-  <a href="#" class="btn" @click.prevent="doExport('kontakt')">
+  <a href="#" class="btn" @click.prevent="showKontaktExportModal = true">
     <p><strong>Kontakt tuning script (.txt)</strong></p>
     <p>
       Tuning script for Native Instruments Kontakt. Some instrument libraries allow this custom

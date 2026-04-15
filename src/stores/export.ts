@@ -41,6 +41,8 @@ export const useExportStore = defineStore('export', () => {
   const commentLabels = ref(true)
   const includeColors = ref(false)
 
+  const remapKontaktSamples = ref(true)
+
   return {
     korgModel,
     useOctaveFormat,
@@ -54,6 +56,7 @@ export const useExportStore = defineStore('export', () => {
     centsFractionDigits,
     includeLabels,
     commentLabels,
-    includeColors
+    includeColors,
+    remapKontaktSamples
   }
 })

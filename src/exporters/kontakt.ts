@@ -11,15 +11,17 @@ export default class KontaktExporter extends BaseExporter {
 
   constructor(params: ExporterParams) {
     super(params)
-    if (params.sourceText === undefined) {
-      throw new Error('Missing text lines')
-    }
     this.appTitle = params.appTitle || APP_TITLE
+  }
+
+  validateParams() {
+    // No need to validate relativeIntervals.
   }
 
   getFileContents() {
     const newline = this.params.newline
     const baseMidiNote = this.params.scale.baseMidiNote
+    const remapSamples = this.params.remapKontaktSamples ?? true
 
     // assemble the kontakt script contents
     let file = '{**************************************' + newline
@@ -44,7 +46,11 @@ export default class KontaktExporter extends BaseExporter {
     file += 'declare $key' + newline + newline
 
     for (let i = 0; i < KontaktExporter.tuningMaxSize; i++) {
-      const [noteNumber, cents] = ftom(this.params.scale.getFrequency(i))
+      let [noteNumber, cents] = ftom(this.params.scale.getFrequency(i))
+      if (!remapSamples) {
+        cents += (noteNumber - i) * 100
+        noteNumber = i
+      }
 
       // if we're out of range of the default Kontakt tuning, leave note as default tuning
       if (noteNumber < 0 || noteNumber >= KontaktExporter.tuningMaxSize) {
@@ -52,7 +58,7 @@ export default class KontaktExporter extends BaseExporter {
         file += '%tune[' + i + '] := 0' + newline
       }
 
-      // success, we're in range of another note, so we'll change the tuning +/- 50c
+      // success, we're in range of another note, so we'll change the tuning +/- 50c (or by a lot if not remapping)
       else {
         file += '%keynum[' + i + '] := ' + noteNumber + newline
         file += '%tune[' + i + '] := ' + (cents * 1000).toFixed() + newline
