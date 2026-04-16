@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import TuningTableRow from '@/components/TuningTableRow.vue'
 import { mmod } from 'xen-dev-utils/fraction'
 
@@ -33,6 +33,33 @@ const rows = computed(() => {
     }
   })
 })
+
+const tableRows = ref<(typeof TuningTableRow)[] | null>(null)
+
+function centerRootRow() {
+  if (!tableRows.value) {
+    return
+  }
+  for (const row of tableRows.value) {
+    if (row.isRoot) {
+      row.scrollIntoView()
+    }
+  }
+}
+
+function scheduleRootRowCentering() {
+  nextTick(() => {
+    requestAnimationFrame(centerRootRow)
+  })
+}
+
+onMounted(scheduleRootRowCentering)
+
+watch(() => props.baseMidiNote, scheduleRootRowCentering)
+
+defineExpose({
+  centerRootRow: scheduleRootRowCentering
+})
 </script>
 
 <template>
@@ -48,7 +75,7 @@ const rows = computed(() => {
       </tr>
     </thead>
     <tbody>
-      <TuningTableRow v-for="row of rows" :key="row.index" v-bind="row" />
+      <TuningTableRow v-for="row of rows" :key="row.index" v-bind="row" ref="tableRows" />
     </tbody>
   </table>
 </template>

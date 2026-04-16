@@ -10,12 +10,18 @@ import { useScaleStore } from '@/stores/scale'
 import { useStateStore } from '@/stores/state'
 import { debounce } from '@/utils'
 import { getSourceVisitor } from 'sonic-weave/parser'
-import { defineAsyncComponent, defineComponent, h, onMounted, onUnmounted, ref } from 'vue'
+import { defineAsyncComponent, defineComponent, h, onMounted, onUnmounted, ref, watch } from 'vue'
+
+// The prop lets the router trigger auto-scrolling
+const props = defineProps<{
+  shown?: boolean
+}>()
 
 const scale = useScaleStore()
 const state = useStateStore()
 
 const controls = ref<typeof ScaleControls | null>(null)
+const tuningTable = ref<typeof TuningTable | null>(null)
 const newScale = ref<{ blur?: () => void } | null>(null)
 const modifyScale = ref<{ blur?: () => void } | null>(null)
 const exporterButtons = ref<{ uploadScale?: () => void } | null>(null)
@@ -72,6 +78,15 @@ const ExporterButtonsAsync = defineAsyncComponent({
 })
 
 const updateScale = debounce(scale.computeScale)
+
+watch(
+  () => props.shown,
+  (shown) => {
+    if (shown) {
+      tuningTable.value?.centerRootRow()
+    }
+  }
+)
 
 onMounted(() => {
   // Initialize SonicWeave stdlib
@@ -134,6 +149,7 @@ onUnmounted(() => {
       </div>
       <div class="column tuning-table">
         <TuningTable
+          ref="tuningTable"
           :heldNotes="state.heldNotes"
           :frequencies="scale.frequencies"
           :centsValues="scale.centsValues"

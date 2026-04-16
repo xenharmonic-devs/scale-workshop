@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { formatHertz, formatExponential } from '@/utils'
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 
 const props = defineProps<{
   index: number
@@ -10,19 +10,21 @@ const props = defineProps<{
   label: string
   color: string
   active: boolean
-  isRoot: boolean
   equave: boolean
+  isRoot: boolean
 }>()
 
 const element = ref<HTMLTableRowElement | null>(null)
 
-onMounted(() => {
+function scrollIntoView() {
   const isMediumOrLarger = window.matchMedia('screen and (min-width: 600px)').matches
 
-  if (props.isRoot && isMediumOrLarger) {
-    element.value!.scrollIntoView({ block: 'center' })
+  if (isMediumOrLarger && element.value) {
+    element.value.scrollIntoView({ block: 'center' })
   }
-})
+}
+
+defineExpose({ scrollIntoView, isRoot: props.isRoot })
 </script>
 
 <template>
