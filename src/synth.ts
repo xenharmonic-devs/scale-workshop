@@ -55,6 +55,7 @@ export const CUSTOM_WAVEFORMS = [
   'glass',
   'boethius',
   'gold',
+  'parabolic',
   'rich-classic',
   'slender-classic',
   'didacus-classic',
@@ -149,6 +150,16 @@ export function initializePeriodic(audioContext: BaseAudioContext) {
       semisineCosineComponents[n] = 1 / (1 - 4 * n * n)
     }
     return audioContext.createPeriodicWave(semisineCosineComponents, semisineSineComponents)
+  })
+
+  // DC-blocked parabolic wave
+  PERIODIC_WAVES.parabolic = computed(() => {
+    const parabolicSineComponents = new Float32Array(64)
+    const parabolicCosineComponents = new Float32Array(64)
+    for (let n = 1; n < 64; ++n) {
+      parabolicCosineComponents[n] = 1 / (n * n)
+    }
+    return audioContext.createPeriodicWave(parabolicCosineComponents, parabolicSineComponents)
   })
 
   const zeros = new Float32Array(101)
