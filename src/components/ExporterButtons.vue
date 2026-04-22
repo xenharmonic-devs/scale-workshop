@@ -5,15 +5,12 @@
 import { API_URL, APP_TITLE } from '@/constants'
 import { exportFile, type ExporterKey } from '@/exporters'
 import type { ExporterParams } from '@/exporters/base'
-import { useAudioStore } from '@/stores/audio'
-import { useCyclesStore } from '@/stores/edo-cycles'
-import { useGridStore } from '@/stores/grid'
-import { useJiLatticeStore } from '@/stores/ji-lattice'
 import { useScaleStore } from '@/stores/scale'
 import { useStateStore } from '@/stores/state'
 import { useSessionIdStore } from '@/stores/session-id'
-import { makeEnvelope, sanitizeFilename } from '@/utils'
+import { useScaleUpload } from '@/upload-scale'
 import { computed, defineAsyncComponent, ref } from 'vue'
+import { sanitizeFilename } from '@/utils'
 
 const ScalaExportModal = defineAsyncComponent(
   () => import('@/components/modals/export/ScalaExport.vue')
@@ -35,10 +32,6 @@ const KontaktExportModal = defineAsyncComponent(
 const sessionId = useSessionIdStore()
 const state = useStateStore()
 const scale = useScaleStore()
-const audio = useAudioStore()
-const jiLattice = useJiLatticeStore()
-const grid = useGridStore()
-const cycles = useCyclesStore()
 
 const exportTextClipboard = ref(
   API_URL ? "Copy this scale's unique URL to clipboard" : '[URL sharing disabled]'
@@ -49,51 +42,9 @@ const showMtsSysexExportModal = ref(false)
 const showReaperExportModal = ref(false)
 const showKontaktExportModal = ref(false)
 
-const uploadBody = computed(() => {
-  return JSON.stringify({
-    id: sessionId.id,
-    payload: {
-      scale: scale.toJSON(),
-      audio: audio.toJSON(),
-      state: state.toJSON(),
-      'ji-lattice': jiLattice.toJSON(),
-      grid: grid.toJSON(),
-      'edo-cycles': cycles.toJSON()
-    },
-    envelope: makeEnvelope(state.shareStatistics)
-  })
-})
-
 const uploadedScaleUrl = computed(() => `${window.location.origin}/scale/${sessionId.uploadedId}`)
 
-function uploadScale(retries = 1): Promise<string> {
-  const uploadId = sessionId.id
-  if (sessionId.uploadedId === uploadId) {
-    return Promise.resolve(`${window.location.origin}/scale/${uploadId}`)
-  }
-  return new Promise((resolve) => {
-    if (!API_URL) {
-      return resolve(window.location.origin)
-    }
-    fetch(new URL('scale', API_URL), { method: 'POST', body: uploadBody.value })
-      .then((res) => {
-        // Id collision: Retry
-        if (res.status === 409 && retries > 0) {
-          sessionId.rerollId()
-          return uploadScale(retries - 1).then(resolve)
-        }
-        if (res.ok) {
-          sessionId.uploadedId = uploadId
-          return resolve(`${window.location.origin}/scale/${uploadId}`)
-        } else {
-          return resolve(window.location.origin)
-        }
-      })
-      .catch(() => resolve(window.location.origin))
-  })
-}
-
-defineExpose({ uploadScale })
+const { uploadBody, uploadScale } = useScaleUpload()
 
 function downloadDebugDump() {
   const link = document.createElement('a')

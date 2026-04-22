@@ -8,6 +8,8 @@ import { MidiIn, midiKeyInfo, MidiOut, type NoteOff } from 'xen-midi'
 import { Keyboard, type CoordinateKeyboardEvent, COORDS_BY_CODE } from 'isomorphic-qwerty'
 import { decodeQuery } from '@/url-encode'
 import { annotateColors, axisOffset } from '@/utils'
+import { getSessionId } from '@/stores/session-id'
+import { useScaleUpload } from '@/upload-scale'
 import { version } from '../package.json'
 import { useAudioStore } from '@/stores/audio'
 import { useStateStore } from './stores/state'
@@ -32,6 +34,7 @@ function getPath(url: URL) {
 
 const route = useRoute()
 const router = useRouter()
+const { uploadScale } = useScaleUpload()
 const TAB_TITLE = 'Scale Workshop 3'
 const documentTitle = computed(() => {
   const scaleTitle = scale.scale.title.trim()
@@ -358,12 +361,16 @@ function releaseActiveNotes() {
 }
 
 function windowBlur() {
+  void uploadScale()
   if (state.releaseOnBlur) {
     releaseActiveNotes()
   }
 }
 
 function documentVisibilitychange() {
+  if (document.visibilityState !== 'visible') {
+    void uploadScale()
+  }
   if (state.releaseOnBlur && document.visibilityState !== 'visible') {
     releaseActiveNotes()
   }
@@ -433,6 +440,17 @@ onMounted(async () => {
 
   const url = new URL(window.location.href)
   const query = url.searchParams
+
+  // Resume a pre-existing SW3 session
+  const id = getSessionId()
+  if (id !== null) {
+    await router.push({
+      name: 'load-scale',
+      params: { id },
+      query: { ...route.query, next: getPath(url) }
+    })
+    return
+  }
 
   // Special handling for the empty app state so that
   // the browser's back button can undo to the clean state.

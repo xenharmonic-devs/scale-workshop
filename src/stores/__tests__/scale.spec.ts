@@ -1,6 +1,7 @@
 import { describe, beforeEach, it, expect } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useScaleStore } from '../scale'
+import { useSessionIdStore } from '../session-id'
 import { Scale } from '../../scale'
 import { Interval } from 'sonic-weave/interval'
 
@@ -13,6 +14,10 @@ describe('Scale store', () => {
     // so it's automatically picked up by any useStore() call
     // without having to pass it to it: `useStore(pinia)`
     setActivePinia(createPinia())
+
+    // De-couple router
+    const sessionId = useSessionIdStore()
+    sessionId.loading = true
   })
 
   it('serializes 5edo', () => {

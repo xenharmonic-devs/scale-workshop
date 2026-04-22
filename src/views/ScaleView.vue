@@ -9,6 +9,7 @@ import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
 import { useScaleStore } from '@/stores/scale'
 import { useStateStore } from '@/stores/state'
 import { debounce } from '@/utils'
+import { useScaleUpload } from '@/upload-scale'
 import { getSourceVisitor } from 'sonic-weave/parser'
 import { defineAsyncComponent, defineComponent, h, onMounted, ref, watch } from 'vue'
 
@@ -26,6 +27,8 @@ const newScale = ref<{ blur?: () => void } | null>(null)
 const modifyScale = ref<{ blur?: () => void } | null>(null)
 const exporterButtons = ref<{ uploadScale?: () => void } | null>(null)
 const isAuxiliaryPanelsRequested = ref(false)
+
+const { uploadScale } = useScaleUpload()
 
 const NewScaleButtonSkeleton = defineComponent({
   setup() {
@@ -154,7 +157,7 @@ onMounted(() => {
           :labels="scale.labels"
         />
       </div>
-      <div class="column exporters" @mouseenter="exporterButtons?.uploadScale?.()">
+      <div class="column exporters" @mouseenter="() => uploadScale()">
         <ExporterButtonsAsync ref="exporterButtons" />
       </div>
     </div>

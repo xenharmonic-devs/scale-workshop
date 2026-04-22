@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { API_URL, IS_SAFARI } from '@/constants'
+import { API_URL, IS_SAFARI, DUMMY_ID } from '@/constants'
 import { useAudioStore } from '@/stores/audio'
 import { useCyclesStore } from '@/stores/edo-cycles'
 import { useGridStore } from '@/stores/grid'
 import { useJiLatticeStore } from '@/stores/ji-lattice'
 import { useScaleStore } from '@/stores/scale'
 import { useStateStore } from '@/stores/state'
-import { useSessionIdStore } from '@/stores/session-id'
+import { useSessionIdStore, makeSessionHash } from '@/stores/session-id'
 import { isRandomId, unpackPayload } from '@/utils'
+import { version } from '../../package.json'
 import { onMounted, ref, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -29,8 +30,8 @@ onMounted(async () => {
   // Versions < 3.0.0-beta.38 used them. This replacing can be removed at the end of the beta cycle.
   const id = (route.params.id as string).replaceAll('~', '_')
 
-  if (id === '000000000') {
-    await router.push('/')
+  if (id === DUMMY_ID) {
+    await router.push({ path: '/', query: { version } })
     return
   }
 
@@ -65,11 +66,14 @@ onMounted(async () => {
           if ('edo-cycles' in payload) {
             cycles.fromJSON(payload['edo-cycles'])
           }
+          sessionId.loading = true
           nextTick(() => {
             sessionId.id = id
             sessionId.uploadedId = id
+            sessionId.loading = false
           })
-          await router.push('/')
+          const path = '/' + (route.query['next'] ?? '')
+          await router.push({ path, query: { version }, hash: makeSessionHash(id) })
         } else {
           text.value = 'Received empty response from the server.'
         }
@@ -78,7 +82,8 @@ onMounted(async () => {
       } else {
         text.value = 'Internal server error.'
       }
-    } catch {
+    } catch (e) {
+      console.warn(e)
       text.value = 'Failed to connect to server.'
     }
   }

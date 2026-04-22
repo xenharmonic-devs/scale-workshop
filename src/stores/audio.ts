@@ -394,8 +394,14 @@ export const useAudioStore = defineStore<'audio', AudioStore>('audio', () => {
   type LiveStateKey = keyof LiveState
   type LiveStatePayload = { [K in LiveStateKey]?: LiveState[K]['value'] }
 
+  // The first trigger happens due to user input, which shouldn't be tracked.
+  let firstUpdate = true
   watch(Object.values(LIVE_STATE), () => {
-    invalidateUploadedId()
+    if (firstUpdate) {
+      firstUpdate = false
+    } else {
+      invalidateUploadedId()
+    }
   })
 
   /**

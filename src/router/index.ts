@@ -118,13 +118,27 @@ function hasQueryParams(route: RouteLocationNormalized) {
   return !!Object.keys(route.query).length
 }
 
+/**
+ * Returns wheter a route has any hash parameters.
+ */
+function hasHash(route: RouteLocationNormalized) {
+  return !!route.hash.length
+}
+
 router.beforeEach((to, from) => {
-  if (to.name == null) {
+  if (to.name == null || to.name === 'load-scale' || from.name === 'load-scale') {
     return
   }
 
-  if (!hasQueryParams(to) && hasQueryParams(from)) {
-    return { name: to.name, query: from.query }
+  const shouldCarryQuery = !hasQueryParams(to) && hasQueryParams(from)
+  const shouldCarryHash = !hasHash(to) && hasHash(from)
+
+  if (shouldCarryQuery || shouldCarryHash) {
+    return {
+      path: to.path,
+      query: shouldCarryQuery ? from.query : to.query,
+      hash: shouldCarryHash ? from.hash : to.hash
+    }
   }
 })
 

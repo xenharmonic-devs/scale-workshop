@@ -115,3 +115,5 @@ export const CS_VAL = new TimeMonzo(new Fraction(0), [])
 for (let i = 0; i < DEFAULT_NUMBER_OF_COMPONENTS; ++i) {
   CS_VAL.primeExponents.push(new Fraction(Math.round((PRIME_CENTS[i] / 1200.0) * CS_EDO)))
 }
+
+export const DUMMY_ID = '000000000'
