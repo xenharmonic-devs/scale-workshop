@@ -13,15 +13,23 @@ const modal = useModalStore()
 
 function generate(expand = true) {
   try {
-    let source = modal.chordIntervals.map((i) => i.toString()).join(':')
+    const chordParts = modal.chordIntervals.map((i) => i.toString())
+    let source = chordParts.join(':')
     const equalDivisions = Math.max(1, Math.round(modal.equalDivisions))
-    let name = `Chord ${modal.chord}`
+    let chordTitle = modal.chord
     if (modal.retrovertChord) {
-      source = `retrovert(${source})`
+      if (chordParts.length === 1) {
+        source = `retrovert(${source})`
+      } else {
+        const retrovertChord = [...chordParts].reverse().join(':')
+        source = `/${retrovertChord}`
+        chordTitle = `/${retrovertChord}`
+      }
     }
+    let name = `Chord ${chordTitle}`
     if (equalDivisions !== 1) {
       source += `\ninterpolate(${equalDivisions})`
-      name = `Chord ${equalDivisions}ED(${modal.chord})`
+      name = `Chord ${equalDivisions}ED(${chordTitle})`
     }
     emit('update:scaleName', name)
     if (expand) {
