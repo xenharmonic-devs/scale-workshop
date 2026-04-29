@@ -1,9 +1,10 @@
 import { mmod } from 'xen-dev-utils/fraction'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { shortestEdge, type GridOptions } from 'ji-lattice'
 import { LOG_PRIMES } from 'xen-dev-utils/primes'
 import { parseChord } from 'sonic-weave/parser'
+import { useSessionIdStore } from './session-id'
 import { computedAndError, parseVal } from '@/utils'
 import { FIFTH, THIRD } from '@/constants'
 
@@ -11,6 +12,8 @@ import { FIFTH, THIRD } from '@/constants'
  * Store for equal-division grid-lattice visualization state and derived geometry.
  */
 export const useGridStore = defineStore('grid', () => {
+  const { invalidateUploadedId } = useSessionIdStore()
+
   // View
   const size = ref(0.15)
   const viewCenterX = ref(0)
@@ -274,6 +277,10 @@ export const useGridStore = defineStore('grid', () => {
   type LiveState = typeof LIVE_STATE
   type LiveStateKey = keyof LiveState
   type LiveStatePayload = { [K in LiveStateKey]?: LiveState[K]['value'] }
+
+  watch(Object.values(LIVE_STATE), () => {
+    invalidateUploadedId()
+  })
 
   /**
    * Convert live state to a format suitable for storing on the server.

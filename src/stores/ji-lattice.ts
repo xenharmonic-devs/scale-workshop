@@ -14,13 +14,16 @@ import {
 } from 'ji-lattice'
 import { LOG_PRIMES } from 'xen-dev-utils/primes'
 import { parseChord } from 'sonic-weave/parser'
-import { computedAndError } from '@/utils'
 import { TimeMonzo } from 'sonic-weave/monzo'
+import { useSessionIdStore } from './session-id'
+import { computedAndError } from '@/utils'
 
 /**
  * Store for just-intonation lattice rendering state (2D/3D) and presets.
  */
 export const useJiLatticeStore = defineStore('ji-lattice', () => {
+  const { invalidateUploadedId } = useSessionIdStore()
+
   // Kraig Grady's coordinates only go up to 23-limit, but it was the default in Scale Workshop 2.
   const opts = kraigGrady9()
   const horizontalCoordinates = reactive(opts.horizontalCoordinates)
@@ -313,6 +316,10 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
   type LiveState = typeof LIVE_STATE
   type LiveStateKey = keyof LiveState
   type LiveStatePayload = { [K in LiveStateKey]?: LiveState[K]['value'] }
+
+  watch(Object.values(LIVE_STATE), () => {
+    invalidateUploadedId()
+  })
 
   /**
    * Convert live state to a format suitable for storing on the server.

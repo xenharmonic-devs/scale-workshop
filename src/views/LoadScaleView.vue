@@ -6,10 +6,12 @@ import { useGridStore } from '@/stores/grid'
 import { useJiLatticeStore } from '@/stores/ji-lattice'
 import { useScaleStore } from '@/stores/scale'
 import { useStateStore } from '@/stores/state'
+import { useSessionIdStore } from '@/stores/session-id'
 import { isRandomId, unpackPayload } from '@/utils'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
+const sessionId = useSessionIdStore()
 const scale = useScaleStore()
 const audio = useAudioStore()
 const state = useStateStore()
@@ -47,7 +49,7 @@ onMounted(async () => {
         text.value = 'Scale loaded. Redirecting...'
         const body = await res.text()
         if (body) {
-          const payload = unpackPayload(body, id)
+          const payload = unpackPayload(body)
           audio.initialize()
           audio.fromJSON(payload.audio)
           scale.fromJSON(payload.scale)
@@ -63,6 +65,10 @@ onMounted(async () => {
           if ('edo-cycles' in payload) {
             cycles.fromJSON(payload['edo-cycles'])
           }
+          nextTick(() => {
+            sessionId.id = id
+            sessionId.uploadedId = id
+          })
           await router.push('/')
         } else {
           text.value = 'Received empty response from the server.'

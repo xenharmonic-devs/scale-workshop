@@ -1,13 +1,16 @@
 import { modInv } from 'xen-dev-utils/core'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { mmod } from 'xen-dev-utils/fraction'
+import { useSessionIdStore } from './session-id'
 import { parseVal } from '@/utils'
 
 /**
  * Store for EDO cycle diagram parameters and derived cycle math.
  */
 export const useCyclesStore = defineStore('edo-cycles', () => {
+  const { invalidateUploadedId } = useSessionIdStore()
+
   // View
   const size = ref(0.15)
   const labelOffset = ref(2)
@@ -36,6 +39,10 @@ export const useCyclesStore = defineStore('edo-cycles', () => {
   type LiveState = typeof LIVE_STATE
   type LiveStateKey = keyof LiveState
   type LiveStatePayload = { [K in LiveStateKey]?: LiveState[K]['value'] }
+
+  watch(Object.values(LIVE_STATE), () => {
+    invalidateUploadedId()
+  })
 
   /**
    * Convert live state to a format suitable for storing on the server.

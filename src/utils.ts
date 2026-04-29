@@ -696,10 +696,8 @@ export function makeEnvelope(shareStatistics = false) {
   }
 }
 
-export function unpackPayload(body: string, id: string) {
-  const data = JSON.parse(body, (key, value) => Interval.reviver(key, Scale.reviver(key, value)))
-  data.scale.id = id
-  return data
+export function unpackPayload(body: string) {
+  return JSON.parse(body, (key, value) => Interval.reviver(key, Scale.reviver(key, value)))
 }
 
 // Multi-label offsets

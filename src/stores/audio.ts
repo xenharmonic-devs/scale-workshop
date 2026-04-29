@@ -1,5 +1,6 @@
 import { computed, ref, watch, type Ref } from 'vue'
 import { defineStore } from 'pinia'
+import { useSessionIdStore } from './session-id'
 import {
   APERIODIC_WAVEFORMS,
   APERIODIC_WAVES,
@@ -59,6 +60,8 @@ const DEFAULT_APERIODIC = 'jegogan'
  * Global audio-engine store for synth lifecycle, signal routing, and voice parameters.
  */
 export const useAudioStore = defineStore<'audio', AudioStore>('audio', () => {
+  const { invalidateUploadedId } = useSessionIdStore()
+
   const context = ref<AudioContext | null>(null)
   // Chromium has some issues with audio nodes as props
   // so we need this extra ref and the associated watcher.
@@ -390,6 +393,10 @@ export const useAudioStore = defineStore<'audio', AudioStore>('audio', () => {
   type LiveState = typeof LIVE_STATE
   type LiveStateKey = keyof LiveState
   type LiveStatePayload = { [K in LiveStateKey]?: LiveState[K]['value'] }
+
+  watch(Object.values(LIVE_STATE), () => {
+    invalidateUploadedId()
+  })
 
   /**
    * Convert live state to a format suitable for storing on the server.

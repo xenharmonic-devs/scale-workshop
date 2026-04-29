@@ -11,6 +11,7 @@ import { useGridStore } from '@/stores/grid'
 import { useJiLatticeStore } from '@/stores/ji-lattice'
 import { useScaleStore } from '@/stores/scale'
 import { useStateStore } from '@/stores/state'
+import { useSessionIdStore } from '@/stores/session-id'
 import { makeEnvelope, sanitizeFilename } from '@/utils'
 import { computed, defineAsyncComponent, ref } from 'vue'
 
@@ -31,6 +32,7 @@ const KontaktExportModal = defineAsyncComponent(
   () => import('@/components/modals/export/KontaktExport.vue')
 )
 
+const sessionId = useSessionIdStore()
 const state = useStateStore()
 const scale = useScaleStore()
 const audio = useAudioStore()
@@ -49,7 +51,7 @@ const showKontaktExportModal = ref(false)
 
 const uploadBody = computed(() => {
   return JSON.stringify({
-    id: scale.id,
+    id: sessionId.id,
     payload: {
       scale: scale.toJSON(),
       audio: audio.toJSON(),
@@ -62,11 +64,11 @@ const uploadBody = computed(() => {
   })
 })
 
-const uploadedScaleUrl = computed(() => `${window.location.origin}/scale/${scale.uploadedId}`)
+const uploadedScaleUrl = computed(() => `${window.location.origin}/scale/${sessionId.uploadedId}`)
 
 function uploadScale(retries = 1): Promise<string> {
-  const uploadId = scale.id
-  if (scale.uploadedId === uploadId) {
+  const uploadId = sessionId.id
+  if (sessionId.uploadedId === uploadId) {
     return Promise.resolve(`${window.location.origin}/scale/${uploadId}`)
   }
   return new Promise((resolve) => {
@@ -77,11 +79,11 @@ function uploadScale(retries = 1): Promise<string> {
       .then((res) => {
         // Id collision: Retry
         if (res.status === 409 && retries > 0) {
-          scale.rerollId()
+          sessionId.rerollId()
           return uploadScale(retries - 1).then(resolve)
         }
         if (res.ok) {
-          scale.uploadedId = uploadId
+          sessionId.uploadedId = uploadId
           return resolve(`${window.location.origin}/scale/${uploadId}`)
         } else {
           return resolve(window.location.origin)

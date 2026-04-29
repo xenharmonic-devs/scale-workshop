@@ -27,11 +27,8 @@ describe('Scale store', () => {
     const data = JSON.parse(SERIALIZED, (key: string, value: unknown) =>
       Scale.reviver(key, Interval.reviver(key, value))
     )
-    data.id = '123abcABC'
     const scale = useScaleStore()
     scale.fromJSON(data)
-    expect(scale.id).toBe('123abcABC')
-    expect(scale.uploadedId).toBe('123abcABC')
     const centsValues = scale.scale.getCentsRange(60, 66)
     expect(centsValues[0]).toBeCloseTo(0)
     expect(centsValues[1]).toBeCloseTo(240)
@@ -64,7 +61,6 @@ describe('Scale store', () => {
     const data = JSON.parse(serialized, (key: string, value: unknown) =>
       Scale.reviver(key, Interval.reviver(key, value))
     )
-    data.id = 'ABCabc123'
     expect(data.latticeIntervals).toBeNull()
     scale.fromJSON(data)
     expect(scale.scale.size).toBe(255)

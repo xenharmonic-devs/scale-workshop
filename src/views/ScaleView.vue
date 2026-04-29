@@ -10,7 +10,7 @@ import { useScaleStore } from '@/stores/scale'
 import { useStateStore } from '@/stores/state'
 import { debounce } from '@/utils'
 import { getSourceVisitor } from 'sonic-weave/parser'
-import { defineAsyncComponent, defineComponent, h, onMounted, onUnmounted, ref, watch } from 'vue'
+import { defineAsyncComponent, defineComponent, h, onMounted, ref, watch } from 'vue'
 
 // The prop lets the router trigger auto-scrolling
 const props = defineProps<{
@@ -102,11 +102,6 @@ onMounted(() => {
   } else {
     setTimeout(loadAuxiliaryPanels, 100)
   }
-})
-
-onUnmounted(() => {
-  // Prepare to include other state in the server payload
-  scale.rerollId()
 })
 </script>
 

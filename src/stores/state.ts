@@ -1,5 +1,6 @@
 import { reactive, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
+import { useSessionIdStore } from './session-id'
 import { UNIX_NEWLINE, OCTAVE } from '@/constants'
 import { syncValues } from '@/utils'
 
@@ -7,6 +8,8 @@ import { syncValues } from '@/utils'
  * Global UI/application preference store and lightweight shared runtime state.
  */
 export const useStateStore = defineStore('state', () => {
+  const { invalidateUploadedId } = useSessionIdStore()
+
   // Mapping from MIDI index to number of interfaces currently pressing the key down
   const heldNotes = reactive(new Map<number, number>())
   const typingActive = ref(true)
@@ -68,6 +71,10 @@ export const useStateStore = defineStore('state', () => {
   function toJSON() {
     return { latticeType: latticeType.value }
   }
+
+  watch(latticeType, () => {
+    invalidateUploadedId()
+  })
 
   /**
    * Apply revived state to current state.

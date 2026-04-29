@@ -7,7 +7,6 @@ import {
   syncValues,
   isBlackMidiNote,
   midiNoteNumberToName,
-  randomId,
   centString,
   decimalString,
   convertAccidentals,
@@ -44,6 +43,7 @@ import { computeWhiteIndices } from '@/midi'
 import { midiKeyInfo } from 'xen-midi'
 import { undoHistory } from '@/undo'
 import { useHarmonicEntropyStore } from './harmonic-entropy'
+import { useSessionIdStore } from './session-id'
 
 const AUTO_LABEL_MAX_LENGTH = 20
 const MAX_ERROR_LENGTH = 10000
@@ -85,6 +85,8 @@ harmonicEntropy.__node__ = builtinNode(harmonicEntropy)
  * Core scale store for source text evaluation, keyboard mapping, and derived tuning state.
  */
 export const useScaleStore = defineStore('scale', () => {
+  const { invalidateUploadedId } = useSessionIdStore()
+
   // The scale store should remain unit-test friendly so this state needs to be here as well
   const centsFractionDigits = ref(parseInt(localStorage.getItem('centsFractionDigits') ?? '3', 10))
   const decimalFractionDigits = ref(
@@ -166,9 +168,6 @@ export const useScaleStore = defineStore('scale', () => {
   const lowAccidentalColor = ref('maroon')
   const middleAccidentalColor = ref('navy')
   const highAccidentalColor = ref('indigo')
-
-  const id = ref('000000000')
-  const uploadedId = ref('000000000')
 
   // === Computed state ===
   const sourcePrefix = computed(() => {
@@ -422,9 +421,6 @@ export const useScaleStore = defineStore('scale', () => {
   }
 
   // Methods
-  function rerollId() {
-    id.value = randomId()
-  }
 
   function getUserScopeVisitor() {
     const globalVisitor = getGlobalScaleWorkshopVisitor()
@@ -601,15 +597,8 @@ export const useScaleStore = defineStore('scale', () => {
   type LiveStateKey = keyof LiveState
   type LiveStatePayload = { [K in LiveStateKey]?: LiveState[K]['value'] }
 
-  let skipNextRerollWatch = false
   watch(Object.values(LIVE_STATE), () => {
-    if (skipNextRerollWatch) {
-      skipNextRerollWatch = false
-      return
-    }
-    if (uploadedId.value === id.value) {
-      rerollId()
-    }
+    invalidateUploadedId()
   })
 
   /**
@@ -680,7 +669,6 @@ export const useScaleStore = defineStore('scale', () => {
    * @param data JSON revived through {@link Scale.reviver} and {@link Interval.reviver}.
    */
   function fromJSON(data: Record<string, unknown> & LiveStatePayload) {
-    skipNextRerollWatch = true
     for (const stateKey of Object.keys(LIVE_STATE) as LiveStateKey[]) {
       if (stateKey === 'latticeIntervals' && !data[stateKey]) {
         latticeIntervals.value = data['relativeIntervals'] as Interval[]
@@ -696,8 +684,6 @@ export const useScaleStore = defineStore('scale', () => {
         }
       }
     }
-    id.value = data['id'] as string
-    uploadedId.value = data['id'] as string
     history.pushState()
     history.truncate()
   }
@@ -733,8 +719,6 @@ export const useScaleStore = defineStore('scale', () => {
   return {
     // Live state
     ...LIVE_STATE,
-    id,
-    uploadedId,
     isomorphicVerticalText,
     isomorphicHorizontalText,
     // Persistent state
@@ -760,7 +744,6 @@ export const useScaleStore = defineStore('scale', () => {
     whiteModeOffset,
     nameOfEquave,
     // Methods
-    rerollId,
     getUserScopeVisitor,
     computeScale,
     getFrequency,
