@@ -95,7 +95,7 @@ function draw(time: DOMHighResTimeStamp) {
 
   synth.getTimeDomainData(start, end, buffers)
 
-  const frequencies = synth.voices.map((voice) => voice.frequency)
+  const frequencies = synth.getVoiceFrequencies()
   let chord: string[]
   const numActive = Math.min(synth.voices.length, buffers.length)
 

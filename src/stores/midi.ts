@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { Input, Output } from 'webmidi'
 import { syncValues } from '@/utils'
@@ -32,6 +32,20 @@ export const useMidiStore = defineStore('midi', () => {
   const whiteMode = ref<'off' | 'simple' | 'blackAverage' | 'keyColors'>('off')
   const outputMode = ref<'pitchBend' | 'linear'>('pitchBend')
 
+  // == Pitch-bend ==
+  const bend = ref(0) // Current controller wheel position from -1 to +1
+  const upBend = ref(200) // Effective detune in cents
+  const rawDownBend = ref(200)
+  const upScaleBend = ref(1) // Abstract detune in scale steps
+  const rawDownScaleBend = ref(1)
+  const symmetricBend = ref(true)
+  const scaleAwareBend = ref(false)
+
+  const downBend = computed(() => (symmetricBend.value ? upBend.value : rawDownBend.value))
+  const downScaleBend = computed(() =>
+    symmetricBend.value ? upScaleBend.value : rawDownScaleBend.value
+  )
+
   syncValues({
     rawAttackDefault,
     rawReleaseDefault
@@ -51,6 +65,16 @@ export const useMidiStore = defineStore('midi', () => {
     multichannelEquavesDown,
     velocityOn,
     whiteMode,
-    outputMode
+    outputMode,
+    bend,
+    upBend,
+    rawDownBend,
+    upScaleBend,
+    rawDownScaleBend,
+    symmetricBend,
+    scaleAwareBend,
+    // Computed state
+    downBend,
+    downScaleBend
   }
 })

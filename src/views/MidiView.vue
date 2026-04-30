@@ -5,6 +5,7 @@
 import { onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { Input, Output, WebMidi, type NoteMessageEvent, type MessageEvent } from 'webmidi'
 import MidiPiano from '@/components/MidiPiano.vue'
+import NumericSlider from '@/components/NumericSlider.vue'
 import { useMidiStore } from '@/stores/midi'
 import { useScaleStore } from '@/stores/scale'
 
@@ -241,27 +242,79 @@ watch(
               <label for="multichannel">Multichannel-to-equave</label>
             </div>
           </div>
-          <div class="control">
-            <label for="raw-attack-default">Default attack velocity</label>
-            <input
-              id="raw-attack-default"
-              type="number"
-              min="0"
-              max="127"
-              v-model.number="midi.rawAttackDefault"
-              @change="sanitizeRawVelocityDefaults"
-            />
+          <div class="control-group twin-controls">
+            <div class="control">
+              <label for="raw-attack-default">Default attack velocity</label>
+              <input
+                id="raw-attack-default"
+                type="number"
+                min="0"
+                max="127"
+                v-model.number="midi.rawAttackDefault"
+                @change="sanitizeRawVelocityDefaults"
+              />
+            </div>
+            <div class="control">
+              <label for="raw-release-default">Default release velocity</label>
+              <input
+                id="raw-release-default"
+                type="number"
+                min="0"
+                max="127"
+                v-model.number="midi.rawReleaseDefault"
+                @change="sanitizeRawVelocityDefaults"
+              />
+            </div>
+          </div>
+          <h3>Pitch bend</h3>
+          <div class="control checkbox-group">
+            <div>
+              <input type="checkbox" id="scale-aware-bend" v-model="midi.scaleAwareBend" />
+              <label for="scale-aware-bend">Scale-aware bending</label>
+            </div>
+            <div>
+              <input type="checkbox" id="symmetric-bend" v-model="midi.symmetricBend" />
+              <label for="symmetric-bend">Symmetric bend up/down</label>
+            </div>
+          </div>
+          <div v-if="midi.scaleAwareBend" class="control-group twin-controls">
+            <div class="control">
+              <label for="up-bend">Max steps up</label>
+              <input type="number" step="1" v-model="midi.upScaleBend" />
+            </div>
+            <div class="control">
+              <label for="up-bend">Max steps down</label>
+              <input
+                v-if="midi.symmetricBend"
+                type="number"
+                disabled
+                v-model="midi.downScaleBend"
+              />
+              <input v-else type="number" step="1" v-model="midi.rawDownScaleBend" />
+            </div>
+          </div>
+          <div v-else class="control-group twin-controls">
+            <div class="control">
+              <label for="up-bend">Max cents up</label>
+              <input type="number" step="any" v-model="midi.upBend" />
+            </div>
+            <div class="control">
+              <label for="up-bend">Max cents down</label>
+              <input v-if="midi.symmetricBend" type="number" disabled v-model="midi.downBend" />
+              <input v-else type="number" step="any" v-model="midi.rawDownBend" />
+            </div>
           </div>
           <div class="control">
-            <label for="raw-release-default">Default release velocity</label>
-            <input
-              id="raw-release-default"
-              type="number"
-              min="0"
-              max="127"
-              v-model.number="midi.rawReleaseDefault"
-              @change="sanitizeRawVelocityDefaults"
+            <label for="bend">Manual pitch bend</label>
+            <NumericSlider
+              id="bend"
+              class="control"
+              min="-1"
+              max="1"
+              step="any"
+              v-model="midi.bend"
             />
+            <button @click="midi.bend = 0">Reset</button>
           </div>
           <template v-if="midi.multichannelToEquave">
             <label>Settings for multichannel-to-equave mode</label>

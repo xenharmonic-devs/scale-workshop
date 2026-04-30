@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { mmod } from 'xen-dev-utils/fraction'
+import { valueToCents } from 'xen-dev-utils/conversion'
 import { computed, onMounted, onUnmounted, reactive, watch } from 'vue'
 import { RouterLink, RouterView, useRouter, useRoute } from 'vue-router'
 import { DEFAULT_NUMBER_OF_COMPONENTS, LEFT_MOUSE_BTN } from '@/constants'
@@ -87,10 +88,24 @@ function sendNoteOn(index: number, frequency: number, rawAttack: number) {
   }
 
   // Trigger web audio API synth.
-  const synthOff = audio.synth.noteOn(frequency, rawAttack / 127)
+  const pitchBendRange = {
+    down: midi.downBend,
+    up: midi.upBend
+  }
+  if (midi.scaleAwareBend) {
+    // A bit inaccurate when MIDI itself makes up frequencies but we don't care for now
+    const downFrequency = scale.getFrequency(index - midi.downScaleBend)
+    const upFrequency = scale.getFrequency(index + midi.upScaleBend)
+    pitchBendRange.down = valueToCents(Math.abs(frequency / downFrequency))
+    pitchBendRange.up = valueToCents(Math.abs(upFrequency / frequency))
+  }
+  pitchBendRange.down = isNaN(pitchBendRange.down) ? 200 : pitchBendRange.down
+  pitchBendRange.up = isNaN(pitchBendRange.up) ? 200 : pitchBendRange.up
+
+  const synthOff = audio.synth.noteOn(frequency, rawAttack / 127, pitchBendRange)
 
   // Trigger virtual synth for per-voice visualization.
-  const virtualOff = audio.virtualSynth.voiceOn(frequency)
+  const virtualOff = audio.virtualSynth.voiceOn(frequency, pitchBendRange)
 
   const off = (rawRelease: number) => {
     midiOff(rawRelease)
@@ -219,6 +234,12 @@ watch(
     if (newValue !== null) {
       midiIn.listen(newValue as Input)
 
+      // Hook pitch-bend wheel
+      ;(newValue as Input).addListener(
+        'pitchbend',
+        (event) => (midi.bend = Number(event.value ?? 0))
+      )
+
       // Pass everything else through and distribute among the channels
       ;(newValue as Input).addListener('midimessage', (event) => {
         if (!RESERVED_MESSAGES.includes(event.message.type) && midi.output !== null) {
@@ -242,6 +263,21 @@ watch(
         }
       })
     }
+  }
+)
+
+watch(
+  () => midi.bend,
+  (newValue) => {
+    if (audio.synth === null || audio.virtualSynth === null) {
+      return
+    }
+    audio.synth.pitchBend.setTargetAtTime(
+      newValue,
+      audio.context.currentTime + audio.audioDelay,
+      0.005
+    )
+    audio.virtualSynth.pitchBend = newValue
   }
 )
 

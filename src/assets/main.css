@@ -173,6 +173,14 @@ ul.btn-group {
   text-align: left;
   vertical-align: baseline;
 }
+.twin-controls {
+  flex-direction: row;
+  align-items: stretch;
+  flex-wrap: nowrap;
+}
+.twin-controls > .control {
+  width: 50%;
+}
 
 /* Responding to screen size */
 @media (max-width: 991px) {

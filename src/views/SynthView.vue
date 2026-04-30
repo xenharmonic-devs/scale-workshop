@@ -433,8 +433,8 @@ onUnmounted(() => {
             Affects virtual keyboard (and also typing keyboard if in isomorphic mode). Use
             space-separated integer lists for quasi-isomorphic repeating patterns.
           </p>
-          <div class="control-group isomorphic-axis-group">
-            <div class="control half-width-control">
+          <div class="control-group twin-controls">
+            <div class="control">
               <label for="vertical">Vertical</label>
               <div class="spinner-input">
                 <input type="text" id="vertical" v-model="scale.isomorphicVerticalText" />
@@ -458,7 +458,7 @@ onUnmounted(() => {
                 </div>
               </div>
             </div>
-            <div class="control half-width-control">
+            <div class="control">
               <label for="horizontal">Horizontal</label>
               <div class="spinner-input">
                 <input type="text" id="horizontal" v-model="scale.isomorphicHorizontalText" />
@@ -618,16 +618,6 @@ div.keyboard-controls {
 .keyboard-notes-options {
   flex-direction: row;
   flex-wrap: wrap;
-}
-
-.isomorphic-axis-group {
-  flex-direction: row;
-  align-items: stretch;
-  flex-wrap: nowrap;
-}
-
-.half-width-control {
-  width: 50%;
 }
 
 .spinner-input {
