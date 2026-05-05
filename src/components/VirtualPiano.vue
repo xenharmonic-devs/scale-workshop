@@ -255,6 +255,20 @@ const splitKeys = computed(() => {
   return result
 })
 
+const keyMap = computed(() => {
+  const map = new Map<string, VirtualKey | VirtualBlackKey | VirtualSplitKey>()
+  for (const key of whiteKeys.value) {
+    map.set(key.id, key)
+  }
+  for (const key of blackKeys.value) {
+    map.set(key.id, key)
+  }
+  for (const key of splitKeys.value) {
+    map.set(key.id, key)
+  }
+  return map
+})
+
 const { onTouchStart, onTouchEnd, onTouchMove, onMouseDown, onMouseUp, onMouseEnter, releaseAll } =
   useSlidingTouches({
     slideEnabled: () => props.slideBehavior,
@@ -264,17 +278,7 @@ const { onTouchStart, onTouchEnd, onTouchMove, onMouseDown, onMouseUp, onMouseEn
       if (!keyId) {
         return undefined
       }
-      let key: VirtualKey | VirtualBlackKey | VirtualSplitKey | undefined = whiteKeys.value.find(
-        (candidate) => candidate.id === keyId
-      )
-      if (key) {
-        return key
-      }
-      key = blackKeys.value.find((candidate) => candidate.id === keyId)
-      if (key) {
-        return key
-      }
-      return splitKeys.value.find((candidate) => candidate.id === keyId)
+      return keyMap.value.get(keyId)
     },
     noteOn: props.noteOn
   })

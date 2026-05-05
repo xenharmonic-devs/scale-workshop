@@ -69,6 +69,16 @@ const virtualKeys = computed(() => {
   return result
 })
 
+const virtualKeyMap = computed(() => {
+  const keyMap = new Map<string, VirtualKey>()
+  for (const [, row] of virtualKeys.value) {
+    for (const key of row) {
+      keyMap.set(key.id, key)
+    }
+  }
+  return keyMap
+})
+
 const {
   onTouchStart,
   onTouchEnd,
@@ -86,7 +96,7 @@ const {
     if (!keyId) {
       return undefined
     }
-    return virtualKeys.value.flatMap(([, row]) => row).find((candidate) => candidate.id === keyId)
+    return virtualKeyMap.value.get(keyId)
   },
   noteOn: props.noteOn
 })
