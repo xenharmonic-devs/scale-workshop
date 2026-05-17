@@ -4,6 +4,7 @@ import NumericSlider from '@/components/NumericSlider.vue'
 import ScaleRule from '@/components/ScaleRule.vue'
 import { useScaleStore } from '@/stores/scale'
 import { debounce } from '@/utils'
+import { mosModes, splitMosPattern, type ModeInfo } from 'moment-of-symmetry'
 import { getHardness } from 'moment-of-symmetry/hardness'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -42,6 +43,18 @@ const name = ref('Diatonic')
 const pattern = ref('5L 2s')
 const udp = ref('5|1')
 
+const modeSelect = ref<HTMLSelectElement | null>(null)
+
+const modes = computed<ModeInfo[]>(() => {
+  const [numberOfLargeSteps, numberOfSmallSteps] = splitMosPattern(pattern.value)
+  return mosModes(numberOfLargeSteps, numberOfSmallSteps, true)
+})
+
+function formatMode(mode: ModeInfo) {
+  const modeName = mode.modeName ?? '(Unnamed)'
+  return `${mode.udp} — ${mode.mode} — ${modeName}`
+}
+
 function computeScale() {
   const h = rationalHardness.value
   const hStr = h.d ? (h as Fraction).toFraction() : 'inf'
@@ -52,6 +65,14 @@ function computeScale() {
 }
 
 const updateScale = debounce(computeScale)
+
+function selectMode() {
+  message.value = 'Loading...'
+  updateScale()
+  if (modeSelect.value) {
+    modeSelect.value.blur()
+  }
+}
 
 function mos(mosName: string, mosPattern: string, udpStr: string) {
   name.value = mosName
@@ -112,6 +133,14 @@ async function easterEgg() {
           <button class="arrow" @click="vertical--">⇧</button>
           <button class="arrow" @click="vertical++">⇩</button>
         </div>
+        <div class="mode-control">
+          <label for="mos-mode">Mode</label>
+          <select ref="modeSelect" id="mos-mode" v-model="udp" @change="selectMode">
+            <option v-for="mode of modes" :key="mode.udp" :value="mode.udp">
+              {{ formatMode(mode) }}
+            </option>
+          </select>
+        </div>
         <button class="done" @click="done">done</button>
       </div>
     </div>
@@ -137,6 +166,7 @@ main {
   display: flex;
   flex-direction: column;
   padding: 1em;
+  overflow: hidden;
 }
 .grid-container {
   height: 87%;
@@ -155,7 +185,7 @@ main {
   font-size: xx-large;
 }
 .done {
-  margin-top: 1em;
+  margin-top: 0.5em;
   font-size: x-large;
 }
 
@@ -178,8 +208,19 @@ main {
 }
 .pan-controls > div {
   display: inline-block;
-  margin-left: 1em;
-  margin-right: 1em;
+  margin-left: 0;
+  margin-right: 0;
+}
+.mode-control {
+  margin-top: 0.5em;
+}
+.mode-control label {
+  color: var(--color-accent-text-btn);
+  font-weight: bold;
+}
+.mode-control select {
+  min-width: 5em;
+  width: 100%;
 }
 
 /* Content layout (medium-large) */
@@ -202,6 +243,18 @@ main {
   }
   .pan-controls > div {
     display: block;
+  }
+  .done {
+    margin-top: 1em;
+  }
+  .mode-control {
+    margin-top: 1em;
+    overflow: visible;
+  }
+  .mode-control select:focus {
+    width: 18rem;
+    transform: translateX(calc(4em - 18rem));
+    z-index: 1;
   }
 }
 </style>
