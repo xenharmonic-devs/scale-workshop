@@ -10,7 +10,7 @@ import { useStateStore } from '@/stores/state'
 import { useSessionIdStore } from '@/stores/session-id'
 import { useScaleUpload } from '@/upload-scale'
 import { computed, defineAsyncComponent, ref } from 'vue'
-import { sanitizeFilename } from '@/utils'
+import { sanitizeFilename, copyText } from '@/utils'
 
 const ScalaExportModal = defineAsyncComponent(
   () => import('@/components/modals/export/ScalaExport.vue')
@@ -56,13 +56,18 @@ function downloadDebugDump() {
 
 function copyToClipboard() {
   if (API_URL) {
-    uploadScale().then((url) => {
-      window.navigator.clipboard.writeText(url)
-      exportTextClipboard.value = '[Copied URL to clipboard]'
-      window.setTimeout(() => {
-        exportTextClipboard.value = "Copy this scale's unique URL to clipboard"
-      }, 5000)
-    })
+    uploadScale()
+      .then(copyText)
+      .then((success) => {
+        if (success) {
+          exportTextClipboard.value = '[Copied URL to clipboard]'
+        } else {
+          exportTextClipboard.value = '[Clipboard access denied]'
+        }
+        window.setTimeout(() => {
+          exportTextClipboard.value = "Copy this scale's unique URL to clipboard"
+        }, 5000)
+      })
   } else {
     exportTextClipboard.value = 'You must have sw-server running for this to work!'
     window.setTimeout(() => {

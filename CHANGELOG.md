@@ -1,6 +1,10 @@
 # Change log
 
-## 3.3.0 (Unreleased)
+## 3.3.1 (Unreleased)
+  * Feature: Add a mode selector for the MOS tab [#967](https://github.com/xenharmonic-devs/scale-workshop/issues/967)
+  * Feature: Fix clipboard copying in development context [#966](https://github.com/xenharmonic-devs/scale-workshop/issues/966)
+
+## 3.3.0
   * Feature: Add a harmonium sound [#833](https://github.com/xenharmonic-devs/scale-workshop/issues/833)
   * Feature: Add the parabolic waveform [#877](https://github.com/xenharmonic-devs/scale-workshop/issues/877)
   * Feature: Make default attack and release velocities configurable [#887](https://github.com/xenharmonic-devs/scale-workshop/issues/887)

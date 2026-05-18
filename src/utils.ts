@@ -723,3 +723,31 @@ export function labelY(n: number, num: number) {
   }
   return -Math.cos((TAU * n) / num)
 }
+
+/**
+ * Copy text to the clipboard either through the navigator API or by creating a transient HTML element.
+ */
+export const copyText = async (text: string): Promise<boolean> => {
+  if (!text) return false
+
+  const writeClipboardText = navigator.clipboard?.writeText
+
+  if (writeClipboardText) {
+    try {
+      await writeClipboardText.call(navigator.clipboard, text)
+      return true
+    } catch {
+      // Fall back for browsers that do not expose Clipboard API outside secure contexts.
+    }
+  }
+
+  const textArea = document.createElement('textarea')
+  textArea.value = text
+  textArea.style.position = 'fixed'
+  textArea.style.opacity = '0'
+  document.body.append(textArea)
+  textArea.select()
+  const copied = document.execCommand('copy')
+  textArea.remove()
+  return copied
+}
