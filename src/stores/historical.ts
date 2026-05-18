@@ -260,7 +260,7 @@ export const useHistoricalStore = defineStore('historical', () => {
       name: 'Werckmeister (1/6 p.c.) 1698',
       down: 2,
       comma: '531441/524288',
-      commaFractions: '-1/6,-1/6,-1/6,-1/6,-1/6,-1/6,-1/6,-1/6,-1/6,-1/24,1/6,1/6',
+      commaFractions: '-1/6,-1/6,-1/6,-1/6,-1/6,-1/6,-1/6,-1/6,-1/6,-1/24,1/6,1/6'
     },
     neidhardtgrosse: {
       name: 'Neidhardt Große Stadt 1724',
@@ -323,7 +323,7 @@ export const useHistoricalStore = defineStore('historical', () => {
       commaFractions: '0,0,0,0,-1/6,-1/6,-1/6,-1/6,-1/6,-1/18,-1/18'
     },
     ramos: {
-      name: "Ramos 1482",
+      name: 'Ramos 1482',
       down: 5,
       comma: '81/80',
       commaFractions: '0,0,0,0,-1,0,0,0,0,0,0'
