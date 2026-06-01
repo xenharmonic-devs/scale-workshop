@@ -1,6 +1,6 @@
 # Change log
 
-## 3.3.1 (Unreleased)
+## 3.3.1
   * Feature: Add a mode selector for the MOS tab [#967](https://github.com/xenharmonic-devs/scale-workshop/issues/967)
   * Feature: Fix clipboard copying in development context [#966](https://github.com/xenharmonic-devs/scale-workshop/issues/966)
 
