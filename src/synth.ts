@@ -11,6 +11,7 @@ type Timbre = { spectrum: Spectrum; amplitudes: number[]; source?: string }
 
 type Timbres = {
   plainSpectra: { [key: string]: Spectrum }
+  harmonics: { [key: string]: Spectrum }
   timbres: { [key: string]: Timbre }
 }
 
@@ -20,6 +21,14 @@ function getPlainSpectrum(id: string): Spectrum {
 
 function getPlainSpectraWaveformNames(): string[] {
   return Object.keys((TIMBRES as unknown as Timbres).plainSpectra).sort()
+}
+
+function getHarmonicSpectrum(id: string): Spectrum {
+  return (TIMBRES as unknown as Timbres).harmonics[id]
+}
+
+function getHarmonicWaveformNames(): string[] {
+  return Object.keys((TIMBRES as unknown as Timbres).harmonics)
 }
 
 function getTimbre(id: string): Timbre {
@@ -39,14 +48,7 @@ export const BASIC_WAVEFORMS = ['sine', 'square', 'sawtooth', 'triangle']
  *
  * `*-classic` variants preserve the brighter Scale Workshop 2 voicing.
  */
-export const CUSTOM_WAVEFORMS = [
-  'warm1',
-  'warm2',
-  'warm3',
-  'warm4',
-  'octaver',
-  'brightness',
-  'harmonicbell',
+export const CUSTOM_WAVEFORMS = getHarmonicWaveformNames().concat([
   'semisine',
   'rich',
   'slender',
@@ -62,7 +64,7 @@ export const CUSTOM_WAVEFORMS = [
   'bohlen-classic',
   'glass-classic',
   'boethius-classic'
-]
+])
 export const WAVEFORMS = BASIC_WAVEFORMS.concat(CUSTOM_WAVEFORMS)
 /**
  * Lazily-evaluated periodic waves keyed by waveform name.
@@ -97,51 +99,15 @@ export const APERIODIC_WAVES: Record<string, ComputedRef<AperiodicWave>> = {}
  * @param audioContext Active audio context used to create `PeriodicWave` objects.
  */
 export function initializePeriodic(audioContext: BaseAudioContext) {
-  PERIODIC_WAVES.warm1 = computed(() =>
-    audioContext.createPeriodicWave(
-      new Float32Array([0, 10, 2, 2, 2, 1, 1, 0.5]),
-      new Float32Array([0, 0, 0, 0, 0, 0, 0, 0])
-    )
-  )
-
-  PERIODIC_WAVES.warm2 = computed(() =>
-    audioContext.createPeriodicWave(
-      new Float32Array([0, 10, 5, 3.33, 2, 1]),
-      new Float32Array([0, 0, 0, 0, 0, 0])
-    )
-  )
-  PERIODIC_WAVES.warm3 = computed(() =>
-    audioContext.createPeriodicWave(
-      new Float32Array([0, 10, 5, 5, 3]),
-      new Float32Array([0, 0, 0, 0, 0])
-    )
-  )
-  PERIODIC_WAVES.warm4 = computed(() =>
-    audioContext.createPeriodicWave(
-      new Float32Array([0, 10, 2, 2, 1]),
-      new Float32Array([0, 0, 0, 0, 0])
-    )
-  )
-  PERIODIC_WAVES.octaver = computed(() =>
-    audioContext.createPeriodicWave(
-      new Float32Array([0, 1000, 500, 0, 333, 0, 0, 0, 250, 0, 0, 0, 0, 0, 0, 0, 166]),
-      new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-    )
-  )
-  PERIODIC_WAVES.brightness = computed(() =>
-    audioContext.createPeriodicWave(
-      new Float32Array([
-        0, 10, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 0.75, 0.5, 0.2, 0.1
-      ]),
-      new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-    )
-  )
-  PERIODIC_WAVES.harmonicbell = computed(() =>
-    audioContext.createPeriodicWave(
-      new Float32Array([0, 10, 2, 2, 2, 2, 0, 0, 0, 0, 0, 7]),
-      new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-    )
-  )
+  getHarmonicWaveformNames().forEach((id) => {
+    PERIODIC_WAVES[id] = computed(() => {
+      const harmonicSpectrum = getHarmonicSpectrum(id)
+      return audioContext.createPeriodicWave(
+        new Float32Array(harmonicSpectrum),
+        new Float32Array(harmonicSpectrum.length)
+      )
+    })
+  })
 
   // DC-blocked semisine
   PERIODIC_WAVES.semisine = computed(() => {
