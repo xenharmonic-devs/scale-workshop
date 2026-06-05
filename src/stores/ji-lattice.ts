@@ -1,6 +1,6 @@
 import { dot } from 'xen-dev-utils/number-array'
 import { mmod } from 'xen-dev-utils/fraction'
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch, type Ref } from 'vue'
 import { defineStore } from 'pinia'
 import {
   kraigGrady9,
@@ -313,9 +313,22 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
     grayExtras,
     depth
   }
-  type LiveState = typeof LIVE_STATE
-  type LiveStateKey = keyof LiveState
-  type LiveStatePayload = { [K in LiveStateKey]?: LiveState[K]['value'] }
+  type SerializedJiLatticeStore = {
+    horizontalCoordinates: number[]
+    verticalCoordinates: number[]
+    xCoords: number[]
+    yCoords: number[]
+    zCoords: number[]
+    maxDistance: number
+    size: number
+    labelOffset: number
+    edgesString: string
+    showLabels: boolean
+    rotation: number
+    drawArrows: boolean
+    grayExtras: boolean
+    depth: number
+  }
 
   watch(Object.values(LIVE_STATE), () => {
     invalidateUploadedId()
@@ -324,7 +337,7 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
   /**
    * Convert live state to a format suitable for storing on the server.
    */
-  function toJSON() {
+  function toJSON(): SerializedJiLatticeStore {
     const result: Record<string, unknown> = {
       horizontalCoordinates,
       verticalCoordinates,
@@ -335,30 +348,40 @@ export const useJiLatticeStore = defineStore('ji-lattice', () => {
     for (const [key, value] of Object.entries(LIVE_STATE)) {
       result[key] = value.value
     }
-    return result
+    return result as SerializedJiLatticeStore
   }
 
   /**
    * Apply revived state to current state.
    * @param data JSON data as an Object instance.
    */
-  function fromJSON(data: Record<string, unknown> & LiveStatePayload) {
-    for (const stateKey of Object.keys(LIVE_STATE) as LiveStateKey[]) {
-      const value = data[stateKey]
+  function fromJSON(data: Partial<SerializedJiLatticeStore>) {
+    for (const stateKey of Object.keys(LIVE_STATE)) {
+      const value = data[stateKey as keyof SerializedJiLatticeStore]
       if (value !== undefined) {
-        LIVE_STATE[stateKey].value = value
+        ;(LIVE_STATE as Record<string, Ref<unknown>>)[stateKey].value = value
       }
     }
-    horizontalCoordinates.length = 0
-    horizontalCoordinates.push(...(data.horizontalCoordinates as number[]))
-    verticalCoordinates.length = 0
-    verticalCoordinates.push(...(data.verticalCoordinates as number[]))
-    xCoords.length = 0
-    xCoords.push(...(data.xCoords as number[]))
-    yCoords.length = 0
-    yCoords.push(...(data.yCoords as number[]))
-    zCoords.length = 0
-    zCoords.push(...(data.zCoords as number[]))
+    if (data.horizontalCoordinates !== undefined) {
+      horizontalCoordinates.length = 0
+      horizontalCoordinates.push(...data.horizontalCoordinates)
+    }
+    if (data.verticalCoordinates !== undefined) {
+      verticalCoordinates.length = 0
+      verticalCoordinates.push(...data.verticalCoordinates)
+    }
+    if (data.xCoords !== undefined) {
+      xCoords.length = 0
+      xCoords.push(...data.xCoords)
+    }
+    if (data.yCoords !== undefined) {
+      yCoords.length = 0
+      yCoords.push(...data.yCoords)
+    }
+    if (data.zCoords !== undefined) {
+      zCoords.length = 0
+      zCoords.push(...data.zCoords)
+    }
   }
 
   return {

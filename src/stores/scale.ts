@@ -13,7 +13,7 @@ import {
   parseIntegerList
 } from '@/utils'
 import { defineStore } from 'pinia'
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, type Ref } from 'vue'
 import { parseAST, StatementVisitor, ExpressionVisitor, getGlobalVisitor } from 'sonic-weave/parser'
 import {
   relative,
@@ -593,9 +593,49 @@ export const useScaleStore = defineStore('scale', () => {
     middleAccidentalColor,
     highAccidentalColor
   }
-  type LiveState = typeof LIVE_STATE
-  type LiveStateKey = keyof LiveState
-  type LiveStatePayload = { [K in LiveStateKey]?: LiveState[K]['value'] }
+  type SerializedInterval = ReturnType<Interval['toJSON']>
+  type SerializedScaleStore = {
+    scale: ReturnType<Scale['toJSON']>
+    relativeIntervals: SerializedInterval[]
+    latticeIntervals: SerializedInterval[] | null
+    colors: string[]
+    labels: string[]
+    name: string
+    baseMidiNote: number
+    userBaseFrequency: number
+    autoFrequency: boolean
+    autoColors: 'silver' | 'cents' | 'factors'
+    sourceText: string
+    latticeEquave: Interval | undefined
+    error: string
+    warning: string
+    isomorphicVertical: number[]
+    isomorphicHorizontal: number[]
+    keyboardMode: 'isomorphic' | 'piano'
+    equaveShift: number
+    degreeShift: number
+    pianoMode: 'Asdf' | 'QweZxc' | 'Zxc'
+    accidentalColor: string
+    lowAccidentalColor: string
+    middleAccidentalColor: string
+    highAccidentalColor: string
+  }
+  type ScaleStorePayload = Partial<
+    Omit<
+      SerializedScaleStore,
+      | 'scale'
+      | 'relativeIntervals'
+      | 'latticeIntervals'
+      | 'isomorphicVertical'
+      | 'isomorphicHorizontal'
+    >
+  > & {
+    scale?: Scale
+    relativeIntervals?: Interval[]
+    latticeIntervals?: Interval[] | null
+    isomorphicVertical?: number[] | number
+    isomorphicHorizontal?: number[] | number
+  }
 
   watch(Object.values(LIVE_STATE), () => {
     invalidateUploadedId()
@@ -604,7 +644,7 @@ export const useScaleStore = defineStore('scale', () => {
   /**
    * Convert live state to a format suitable for storing on the server.
    */
-  function toJSON() {
+  function toJSON(): SerializedScaleStore {
     let slicedScale = scale.value
     let slicedIntervals = relativeIntervals.value
     let slicedColors = colors.value
@@ -630,20 +670,17 @@ export const useScaleStore = defineStore('scale', () => {
       slicedLabels = slicedLabels.slice(0, MAX_NUMBER_OF_SHARED_INTERVALS - 1)
       slicedLabels.push(equaveLabel)
     }
-    const result: Record<string, unknown> & {
-      colors: string[]
-      labels: string[]
-    } = {
+    const result: Record<string, unknown> = {
       scale: slicedScale.toJSON(),
       relativeIntervals: slicedIntervals.map((i) => i.toJSON()),
       colors: slicedColors,
       labels: slicedLabels
     }
-    if (result.colors.length) {
-      result.colors[result.colors.length - 1] = colors.value[colors.value.length - 1]
+    if (slicedColors.length) {
+      slicedColors[slicedColors.length - 1] = colors.value[colors.value.length - 1]
     }
-    if (result.labels.length) {
-      result.labels[result.labels.length - 1] = labels.value[labels.value.length - 1]
+    if (slicedLabels.length) {
+      slicedLabels[slicedLabels.length - 1] = labels.value[labels.value.length - 1]
     }
     if (relativeIntervals.value === latticeIntervals.value) {
       result.latticeIntervals = null
@@ -661,25 +698,28 @@ export const useScaleStore = defineStore('scale', () => {
       }
       result[key] = value.value
     }
-    return result
+    return result as SerializedScaleStore
   }
 
   /**
    * Apply revived state to current state.
    * @param data JSON revived through {@link Scale.reviver} and {@link Interval.reviver}.
    */
-  function fromJSON(data: Record<string, unknown> & LiveStatePayload) {
-    for (const stateKey of Object.keys(LIVE_STATE) as LiveStateKey[]) {
+  function fromJSON(data: ScaleStorePayload) {
+    for (const stateKey of Object.keys(LIVE_STATE)) {
       if (stateKey === 'latticeIntervals' && !data[stateKey]) {
-        latticeIntervals.value = data['relativeIntervals'] as Interval[]
+        if (data.relativeIntervals !== undefined) {
+          latticeIntervals.value = data.relativeIntervals
+        }
       } else {
-        const value = data[stateKey]
+        const value = data[stateKey as keyof ScaleStorePayload]
         if (value !== undefined) {
-          const liveState = LIVE_STATE as Record<string, { value: unknown }>
           if (stateKey === 'isomorphicHorizontal' || stateKey === 'isomorphicVertical') {
-            liveState[stateKey].value = Array.isArray(value) ? value : [value as number]
+            ;(LIVE_STATE as Record<string, Ref<unknown>>)[stateKey].value = Array.isArray(value)
+              ? value
+              : [value]
           } else {
-            liveState[stateKey].value = value
+            ;(LIVE_STATE as Record<string, Ref<unknown>>)[stateKey].value = value
           }
         }
       }

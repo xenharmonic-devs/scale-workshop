@@ -78,11 +78,7 @@ describe('Scale store', () => {
     const scale = useScaleStore()
     scale.baseMidiNote = 0
     scale.computeScale()
-    const serialized = scale.toJSON() as unknown as {
-      scale: { baseMidiNote: number }
-      error: string
-      warning: string
-    }
+    const serialized = scale.toJSON()
     expect(serialized.scale.baseMidiNote).toBe(0)
     expect(serialized.error).toBe('')
     expect(serialized.warning).toBe('Empty scale defaults to 12-tone equal temperament.')

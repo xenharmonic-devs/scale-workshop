@@ -1,6 +1,14 @@
 import { mmod } from 'xen-dev-utils/fraction'
 import { valueToCents } from 'xen-dev-utils/conversion'
 
+export interface SerializedScale {
+  type: 'ScaleWorkshopScale'
+  intervalRatios: number[]
+  baseFrequency: number
+  baseMidiNote: number
+  title: string
+}
+
 /** Musical scale designed to calculate frequencies repeated at octaves or generic equaves. */
 export class Scale {
   intervalRatios: number[]
@@ -47,7 +55,7 @@ export class Scale {
    * Convert this {@link Scale} instance to JSON.
    * @returns The serialized object with property `type` set to `'ScaleWorkshopScale'`.
    */
-  toJSON() {
+  toJSON(): SerializedScale {
     return {
       type: 'ScaleWorkshopScale',
       intervalRatios: this.intervalRatios,

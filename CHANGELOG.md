@@ -2,6 +2,7 @@
 
 ## 3.3.2 (Unreleased)
   * Bug fix: Make it possible to set MIDI note for base frequency to zero [#973](https://github.com/xenharmonic-devs/scale-workshop/issues/973)
+  * Maintenance: Clarify serialized Pinia store types so saved live-store data has concrete field types.
 
 ## 3.3.1
   * Feature: Add a mode selector for the MOS tab [#967](https://github.com/xenharmonic-devs/scale-workshop/issues/967)
