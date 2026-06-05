@@ -1,5 +1,5 @@
 import { modInv } from 'xen-dev-utils/core'
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, type Ref } from 'vue'
 import { defineStore } from 'pinia'
 import { mmod } from 'xen-dev-utils/fraction'
 import { useSessionIdStore } from './session-id'
@@ -36,9 +36,13 @@ export const useCyclesStore = defineStore('edo-cycles', () => {
     valString,
     generator
   }
-  type LiveState = typeof LIVE_STATE
-  type LiveStateKey = keyof LiveState
-  type LiveStatePayload = { [K in LiveStateKey]?: LiveState[K]['value'] }
+  type SerializedCyclesStore = {
+    size: number
+    labelOffset: number
+    showLabels: boolean
+    valString: string
+    generator: number
+  }
 
   watch(Object.values(LIVE_STATE), () => {
     invalidateUploadedId()
@@ -47,23 +51,23 @@ export const useCyclesStore = defineStore('edo-cycles', () => {
   /**
    * Convert live state to a format suitable for storing on the server.
    */
-  function toJSON() {
+  function toJSON(): SerializedCyclesStore {
     const result: Record<string, unknown> = {}
     for (const [key, value] of Object.entries(LIVE_STATE)) {
       result[key] = value.value
     }
-    return result
+    return result as SerializedCyclesStore
   }
 
   /**
    * Apply revived state to current state.
    * @param data JSON data as an Object instance.
    */
-  function fromJSON(data: Record<string, unknown> & LiveStatePayload) {
-    for (const stateKey of Object.keys(LIVE_STATE) as LiveStateKey[]) {
-      const value = data[stateKey]
+  function fromJSON(data: Partial<SerializedCyclesStore>) {
+    for (const stateKey of Object.keys(LIVE_STATE)) {
+      const value = data[stateKey as keyof SerializedCyclesStore]
       if (value !== undefined) {
-        LIVE_STATE[stateKey].value = value
+        ;(LIVE_STATE as Record<string, Ref<unknown>>)[stateKey].value = value
       }
     }
   }

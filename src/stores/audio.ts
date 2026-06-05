@@ -22,12 +22,29 @@ import {
   AperiodicWave
 } from 'sw-synth'
 
+type SerializedAudioStore = {
+  mainVolume: number
+  waveform: string
+  attackTime: number
+  decayTime: number
+  sustainLevel: number
+  releaseTime: number
+  stackSize: number
+  spread: number
+  aperiodicWaveform: string
+  synthType: 'none' | 'oscillator' | 'unison' | 'aperiodic'
+  pingPongDelayTime: number
+  pingPongFeedback: number
+  pingPongGain: number
+  pingPongSeparation: number
+}
+
 // The compiler chokes on this store so we need an explicit type annotation
 type AudioStore = {
   initialize: () => void
   uninitialize: () => Promise<void>
-  toJSON: () => Record<string, unknown>
-  fromJSON: (data: Record<string, unknown>) => void
+  toJSON: () => SerializedAudioStore
+  fromJSON: (data: Partial<SerializedAudioStore>) => void
   context: Ref<AudioContext>
   mainVolume: Ref<number>
   waveform: Ref<string>
@@ -390,9 +407,6 @@ export const useAudioStore = defineStore<'audio', AudioStore>('audio', () => {
     pingPongGain,
     pingPongSeparation
   }
-  type LiveState = typeof LIVE_STATE
-  type LiveStateKey = keyof LiveState
-  type LiveStatePayload = { [K in LiveStateKey]?: LiveState[K]['value'] }
 
   // The first trigger happens due to user input, which shouldn't be tracked.
   let firstUpdate = true
@@ -407,23 +421,23 @@ export const useAudioStore = defineStore<'audio', AudioStore>('audio', () => {
   /**
    * Convert live state to a format suitable for storing on the server.
    */
-  function toJSON() {
+  function toJSON(): SerializedAudioStore {
     const result: Record<string, unknown> = {}
     for (const [key, value] of Object.entries(LIVE_STATE)) {
       result[key] = value.value
     }
-    return result
+    return result as SerializedAudioStore
   }
 
   /**
    * Apply revived state to current state.
    * @param data JSON data as an Object instance.
    */
-  function fromJSON(data: Record<string, unknown> & LiveStatePayload) {
-    for (const stateKey of Object.keys(LIVE_STATE) as LiveStateKey[]) {
-      const value = data[stateKey]
+  function fromJSON(data: Partial<SerializedAudioStore>) {
+    for (const stateKey of Object.keys(LIVE_STATE)) {
+      const value = data[stateKey as keyof SerializedAudioStore]
       if (value !== undefined) {
-        LIVE_STATE[stateKey].value = value
+        ;(LIVE_STATE as Record<string, Ref<unknown>>)[stateKey].value = value
       }
     }
   }

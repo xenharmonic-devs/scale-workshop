@@ -1,5 +1,5 @@
 import { mmod } from 'xen-dev-utils/fraction'
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, type Ref } from 'vue'
 import { defineStore } from 'pinia'
 import { shortestEdge, type GridOptions } from 'ji-lattice'
 import { LOG_PRIMES } from 'xen-dev-utils/primes'
@@ -274,9 +274,30 @@ export const useGridStore = defineStore('grid', () => {
     diagonals1,
     diagonals2
   }
-  type LiveState = typeof LIVE_STATE
-  type LiveStateKey = keyof LiveState
-  type LiveStatePayload = { [K in LiveStateKey]?: LiveState[K]['value'] }
+  type SerializedGridStore = {
+    size: number
+    viewCenterX: number
+    viewCenterY: number
+    viewScale: number
+    labelOffset: number
+    showLabels: boolean
+    valString: string
+    edgesString: string
+    delta1: number
+    delta1X: number
+    delta1Y: number
+    delta2: number
+    delta2X: number
+    delta2Y: number
+    minX: number
+    maxX: number
+    minY: number
+    maxY: number
+    gridlines1: boolean
+    gridlines2: boolean
+    diagonals1: boolean
+    diagonals2: boolean
+  }
 
   watch(Object.values(LIVE_STATE), () => {
     invalidateUploadedId()
@@ -285,23 +306,23 @@ export const useGridStore = defineStore('grid', () => {
   /**
    * Convert live state to a format suitable for storing on the server.
    */
-  function toJSON() {
+  function toJSON(): SerializedGridStore {
     const result: Record<string, unknown> = {}
     for (const [key, value] of Object.entries(LIVE_STATE)) {
       result[key] = value.value
     }
-    return result
+    return result as SerializedGridStore
   }
 
   /**
    * Apply revived state to current state.
    * @param data JSON data as an Object instance.
    */
-  function fromJSON(data: Record<string, unknown> & LiveStatePayload) {
-    for (const stateKey of Object.keys(LIVE_STATE) as LiveStateKey[]) {
-      const value = data[stateKey]
+  function fromJSON(data: Partial<SerializedGridStore>) {
+    for (const stateKey of Object.keys(LIVE_STATE)) {
+      const value = data[stateKey as keyof SerializedGridStore]
       if (value !== undefined) {
-        LIVE_STATE[stateKey].value = value
+        ;(LIVE_STATE as Record<string, Ref<unknown>>)[stateKey].value = value
       }
     }
   }
