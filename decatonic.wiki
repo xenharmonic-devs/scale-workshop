@@ -1,0 +1,526 @@
+I believe these are all of the strict MV3 scales with ten notes. Unconditional MV3 scales may have any L:M:s ratio. Conditional MV3 scales have a condition specified in the section header that the L:M:s ratio needs to satisfy in order for the scale to be strict MV3. Lines with two scales separated with a slash are lexicographically left and right chiral scales respectively, lines with only one scale are therefore achiral. All scales are written in their brightest mode. Scales are grouped into sisterhoods. Unconditional sisterhoods may have up to six scales while conditional sisterhoods appear to have up to two scales. The two scales in conditional sisterhoods have their L's and s's swapped.
+
+
+'''Here's some stats:'''
+
+193 Scales Total
+
+12 Unconditional Single-Period
+
+161 Conditional Single-Period
+
+16 Unconditional Multi-Period
+
+4 Conditional Multi-Period
+
+
+== Unconditional ==
+
+=== <u>Single-Period</u> ===
+
+'''6L 2M 2s:''' LLMLLsLMLs
+
+'''6L 2M 2s:''' LLMLsLMLLs
+
+'''2L 6M 2s:''' LMMsMLMsMM
+
+'''2L 6M 2s:''' LMMsMMLMsM
+
+'''2L 2M 6s:''' LsMsLssMss
+
+'''2L 2M 6s:''' LsMssLssMs
+
+
+'''4L 4M 2s:''' LMLMLsMLMs
+
+'''4L 4M 2s:''' LMLMsLMLsM
+
+'''4L 2M 4s:''' LMsLsLsMLs
+
+'''4L 2M 4s:''' LMsLsMLsLs
+
+'''2L 4M 4s:''' LMsMLsMsMs
+
+'''2L 4M 4s:''' LMsMsMLsMs
+
+
+=== <u>Multi-Period</u> ===
+
+'''4L 4M 2s:''' LMLsMLMLsM / LMLMsLMLMs
+
+'''4L 2M 4s:''' LsLsMLsLsM / LMsLsLMsLs
+
+'''2L 4M 4s:''' LsMsMLsMsM / LMsMsLMsMs
+
+
+'''6L 2M 2s:''' LLsLMLLsLM / LLMLsLLMLs
+
+'''2L 6M 2s:''' LMsMMLMsMM / LMMsMLMMsM
+
+'''2L 2M 6s:''' LssMsLssMs / LsMssLsMss
+
+
+'''4L 4M 2s:''' LLMsMLLMsM
+
+'''4L 2M 4s:''' LLsMsLLsMs
+
+'''4L 2M 4s:''' LMLssLMLss
+
+'''2L 4M 4s:''' LMssMLMssM
+
+
+== Conditional (MM=Ls) ==
+
+=== <u>Single-Period</u> ===
+
+'''1L 8M 1s:''' LMMMsMMMMM / LMMMMMsMMM
+
+
+'''1L 8M 1s:''' LMMsMMMMMM / LMMMMMMsMM
+
+
+'''1L 8M 1s:''' LMsMMMMMMM / LMMMMMMMsM
+
+
+'''1L 8M 1s:''' LsMMMMMMMM / LMMMMMMMMs
+
+
+'''7L 2M 1s:''' LLLsLLMLLM
+
+'''1L 2M 7s:''' LssMssMsss
+
+
+
+'''7L 2M 1s:''' LLLMLLsLLM
+
+'''1L 2M 7s:''' LssMsssMss
+
+
+
+'''7L 2M 1s:''' LLLMLLMLLs
+
+'''1L 2M 7s:''' LsssMssMss
+
+
+
+'''7L 2M 1s:''' LLLLsLLLMM
+
+'''1L 2M 7s:''' LsssMMssss
+
+
+
+'''7L 2M 1s:''' LLLLMMLLLs
+
+'''1L 2M 7s:''' LssssMMsss
+
+
+
+'''3L 6M 1s:''' LMMLMMLsMM
+
+'''1L 6M 3s:''' LMMsMMsMMs
+
+
+
+'''3L 6M 1s:''' LMMLMMLMsM
+
+'''1L 6M 3s:''' LMsMMsMMsM
+
+
+
+'''3L 6M 1s:''' LMMLMMLMMs
+
+'''1L 6M 3s:''' LsMMsMMsMM
+
+
+
+'''3L 6M 1s:''' LMLsMLMMMM
+
+'''1L 6M 3s:''' LMsMMMMsMs
+
+
+
+'''3L 6M 1s:''' LMLMsLMMMM
+
+'''1L 6M 3s:''' LsMMMMsMsM
+
+
+
+'''3L 6M 1s:''' LMLMMMMLsM
+
+'''1L 6M 3s:''' LMsMsMMMMs
+
+
+
+'''3L 6M 1s:''' LMLMMMMLMs
+
+'''1L 6M 3s:''' LsMsMMMMsM
+
+
+
+'''3L 6M 1s:''' LLsLMMMMMM
+
+'''1L 6M 3s:''' LsMMMMMMss
+
+
+
+'''3L 6M 1s:''' LLMMMMMMLs
+
+'''1L 6M 3s:''' LssMMMMMMs
+
+
+
+'''2L 6M 2s:''' LMMsMMLsMM / LMMsLMMsMM
+
+
+'''2L 6M 2s:''' LMMMsMMLsM
+
+'''2L 6M 2s:''' LMMsLMsMMM
+
+
+
+'''2L 6M 2s:''' LMMMsMMLMs
+
+'''2L 6M 2s:''' LMMsMLsMMM
+
+
+
+'''2L 6M 2s:''' LMMMsMLsMM
+
+'''2L 6M 2s:''' LMMsMMMLMs
+
+
+
+'''2L 6M 2s:''' LMsMLMsMMM / LMMMsMLMsM
+
+
+'''2L 6M 2s:''' LMMMsMLMMs
+
+'''2L 6M 2s:''' LMsMMLsMMM
+
+
+
+'''2L 6M 2s:''' LMMMsLsMMM
+
+'''2L 6M 2s:''' LMMMsMMMLs
+
+
+
+'''2L 6M 2s:''' LMMMsLMsMM
+
+'''2L 6M 2s:''' LMMsMMMLsM
+
+
+
+'''2L 6M 2s:''' LMMMsLMMsM
+
+'''2L 6M 2s:''' LMsMMMLsMM
+
+
+
+'''2L 6M 2s:''' LMMMMsMMLs
+
+'''2L 6M 2s:''' LMMsLsMMMM
+
+
+
+'''2L 6M 2s:''' LMsLMsMMMM / LMMMMsMLsM
+
+
+'''2L 6M 2s:''' LMMMMsMLMs
+
+'''2L 6M 2s:''' LMsMLsMMMM
+
+
+
+'''2L 6M 2s:''' LMMMMsLsMM
+
+'''2L 6M 2s:''' LMMsMMMMLs
+
+
+
+'''2L 6M 2s:''' LMMMMsLMsM
+
+'''2L 6M 2s:''' LMsMMMMLsM
+
+
+
+'''2L 6M 2s:''' LsMMLsMMMM / LMMMMsLMMs
+
+
+'''2L 6M 2s:''' LMMMMMsMLs
+
+'''2L 6M 2s:''' LMsLsMMMMM
+
+
+
+'''2L 6M 2s:''' LMMMMMsLsM
+
+'''2L 6M 2s:''' LMsMMMMMLs
+
+
+
+'''2L 6M 2s:''' LsMLsMMMMM / LMMMMMsLMs
+
+
+'''2L 6M 2s:''' LsLsMMMMMM / LMMMMMMsLs
+
+
+'''2L 6M 2s:''' LMMMLsMMMs
+
+
+
+'''2L 6M 2s:''' LMMLsMMMMs
+
+'''2L 6M 2s:''' LMMMMLsMMs
+
+
+
+'''2L 6M 2s:''' LMLsMMMMMs
+
+'''2L 6M 2s:''' LMMMMMLsMs
+
+
+
+'''2L 6M 2s:''' LLsMMMMMMs
+
+'''2L 6M 2s:''' LMMMMMMLss
+
+
+
+'''5L 4M 1s:''' LLsLMLMMLM
+
+'''1L 4M 5s:''' LsMsMMsMss
+
+
+
+'''5L 4M 1s:''' LLMMMLMLLs
+
+'''1L 4M 5s:''' LssMMMsMss
+
+
+
+'''5L 4M 1s:''' LLMMMLLsLM
+
+'''1L 4M 5s:''' LsMssMMMss
+
+
+
+'''5L 4M 1s:''' LLMMLMLsLM
+
+'''1L 4M 5s:''' LsMssMMsMs
+
+
+
+'''5L 4M 1s:''' LLMMLLsLMM
+
+'''1L 4M 5s:''' LsMMssMMss
+
+
+
+'''5L 4M 1s:''' LLMMLLMMLs
+
+'''1L 4M 5s:''' LssMMssMMs
+
+
+
+'''5L 4M 1s:''' LLMLsLMLMM
+
+'''1L 4M 5s:''' LsMsMMssMs
+
+
+
+'''5L 4M 1s:''' LLMLsLLMMM
+
+'''1L 4M 5s:''' LssMMMssMs
+
+
+
+'''5L 4M 1s:''' LLMLMMMLLs
+
+'''1L 4M 5s:''' LssMsMMMss
+
+
+
+'''5L 4M 1s:''' LLMLMMLMLs
+
+'''1L 4M 5s:''' LssMsMMsMs
+
+
+
+'''5L 2M 3s:''' LLsLsLMMLs
+
+'''3L 2M 5s:''' LsLsMMsLss
+
+
+
+'''5L 2M 3s:''' LLsLMMLsLs
+
+'''3L 2M 5s:''' LsLssLsMMs
+
+
+
+'''4L 2M 4s:''' LMsLsLsLsM
+
+'''4L 2M 4s:''' LMsMLsLsLs
+
+
+
+'''4L 2M 4s:''' LsLsLsMLsM / LMsLMsLsLs
+
+
+'''4L 2M 4s:''' LsLsLsLsMM / LMMsLsLsLs
+
+
+'''4L 4M 2s:''' LMLsMLMMLs
+
+'''2L 4M 4s:''' LMsMMsLsMs
+
+
+
+'''4L 4M 2s:''' LMLsLMMLsM
+
+'''2L 4M 4s:''' LMsMsLsMMs
+
+
+
+'''4L 4M 2s:''' LMLsLMMLMs
+
+'''2L 4M 4s:''' LsMMsMLsMs
+
+
+
+'''4L 4M 2s:''' LMLMsLMMLs
+
+'''2L 4M 4s:''' LsMMsLsMsM
+
+
+
+'''3L 4M 3s:''' LMsLsMLMsM
+
+'''3L 4M 3s:''' LMsMLMsMLs
+
+
+
+'''3L 4M 3s:''' LMsMLsMLsM / LMsLMsLMsM
+
+
+'''3L 4M 3s:''' LMMsMLsMLs
+
+'''3L 4M 3s:''' LMsLMsLsMM
+
+
+
+'''3L 4M 3s:''' LMsLsLMsMM / LMMsMLsLsM
+
+
+'''3L 4M 3s:''' LMMsMLsLMs
+
+'''3L 4M 3s:''' LMsLsMLsMM
+
+
+
+'''3L 4M 3s:''' LMMsMLMsLs
+
+'''3L 4M 3s:''' LMsMLsLsMM
+
+
+
+'''3L 4M 3s:''' LMMsLsMLsM
+
+'''3L 4M 3s:''' LMsLMsMMLs
+
+
+
+'''3L 4M 3s:''' LMMsLsMLMs
+
+'''3L 4M 3s:''' LMsMLsMMLs
+
+
+
+'''3L 4M 3s:''' LMMsLsLsMM
+
+'''3L 4M 3s:''' LMMsMMLsLs
+
+
+
+'''3L 4M 3s:''' LMMsLsLMsM
+
+'''3L 4M 3s:''' LMsMMLsLsM
+
+
+
+'''3L 4M 3s:''' LMMsLMsMLs
+
+'''3L 4M 3s:''' LMsLsMMLsM
+
+
+
+'''3L 4M 3s:''' LMMsLMsLsM
+
+'''3L 4M 3s:''' LMsMMLsMLs
+
+
+
+'''3L 4M 3s:''' LsMLsMLsMM / LMMsLMsLMs
+
+
+'''3L 4M 3s:''' LsLsMMLsMM / LMMsLMMsLs
+
+
+'''3L 4M 3s:''' LMMMsMLsLs
+
+'''3L 4M 3s:''' LMsLsLsMMM
+
+
+
+'''3L 4M 3s:''' LMsLsMMMLs / LMMMsLsMLs
+
+
+'''3L 4M 3s:''' LMMMsLsLsM
+
+'''3L 4M 3s:''' LMsMMMLsLs
+
+
+
+'''3L 4M 3s:''' LMMMsLsLMs
+
+'''3L 4M 3s:''' LsLsMLsMMM
+
+
+
+'''3L 4M 3s:''' LMMMsLMsLs
+
+'''3L 4M 3s:''' LsLsMMMLsM
+
+
+
+'''3L 4M 3s:''' LsLsLsMMMM / LMMMMsLsLs
+
+
+=== <u>Multi-Period</u> ===
+
+'''2L 6M 2s:''' LsMMMLsMMM / LMMMsLMMMs
+
+
+== Conditional (Not MM=Ls) ==
+
+=== <u>Single-Period</u> ===
+
+(none)
+
+
+=== <u>Multi-Period</u> ===
+
+'''4L 4M 2s:''' LMMLsLMMLs
+
+'''2L 4M 4s:''' LsMMsLsMMs
+
+
+== Conditional (MMM=sLs) ==
+
+'''1L 7M 2s:''' LsMMMMMMMs
+
+
+== Conditional (MMM=LsL) ==
+
+'''2L 7M 1s:''' LMMMMMMMLs

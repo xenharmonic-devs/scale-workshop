@@ -1,0 +1,206 @@
+I believe these are all of the strict MV3 scales with seven notes. Unconditional MV3 scales may have any L:M:s ratio. Conditional MV3 scales have a condition specified in the section header that the L:M:s ratio needs to satisfy in order for the scale to be strict MV3. Lines with two scales separated with a slash are lexicographically left and right chiral scales respectively, lines with only one scale are therefore achiral. All scales are written in their brightest mode. Scales are grouped into sisterhoods. Unconditional sisterhoods may have up to six scales while conditional sisterhoods appear to have up to two scales. The two scales in conditional sisterhoods have their L's and s's swapped.
+
+
+'''Here's some stats:'''
+
+54 Scales Total (incl. chirals)
+
+33 Scales Total (not incl. chirals)
+
+
+24 Unconditional Scales (incl. chirals)
+
+15 Unconditional Scales (not incl. chirals)
+
+
+30 Conditional Scales Total (incl. chirals)
+
+18 Conditional Scales Total (not incl. chirals)
+
+
+28 Conditional (MM=Ls) Scales (incl. chirals)
+
+16 Conditional (MM=Ls) Scales (not incl. chirals)
+
+
+1 Conditional (MMM=LsL) Scale (not chiral)
+
+
+1 Conditional (MMM=sLs) Scale (not chiral)
+
+
+42 Chiral Scales Total (21 pairs)
+
+18 Chiral Unconditional Scales (9 pairs)
+
+24 Chiral Conditional (MM=Ls) Scales (12 pairs)
+
+0 Chiral Conditional (MMM=LsL) Scales
+
+0 Chiral Conditional (MMM=sLs) Scales
+
+
+12 Achiral Scales Total
+
+6 Achiral Unconditional Scales
+
+4 Achiral Conditional (MM=Ls) Scales
+
+1 Achiral Conditional (MMM=LsL) Scale
+
+1 Achiral Conditional (MMM=sLs) Scale
+
+
+== Unconditional ==
+
+=== <u>Single-Period</u> ===
+
+'''5L 1M 1s:'''
+LLLsLLM / LLLMLLs
+
+'''1L 5M 1s:'''
+LMMsMMM / LMMMsMM
+
+'''1L 1M 5s:'''
+LsssMss / LssMsss
+
+
+'''3L 3M 1s:'''
+LMLMLsM / LMLMLMs
+
+'''3L 1M 3s:'''
+LsLsLsM / LMsLsLs
+
+'''1L 3M 3s:'''
+LsMsMsM / LMsMsMs
+
+
+'''3L 2M 2s:'''
+LMLsMLs / LMLsLMs
+
+'''2L 3M 2s:'''
+LMsMLsM / LMsLMsM
+
+'''2L 2M 3s:'''
+LsMLsMs / LMsLsMs
+
+
+'''4L 2M 1s:'''
+LLMLsLM
+
+'''4L 1M 2s:'''
+LLsLMLs
+
+'''2L 4M 1s:'''
+LMMLMsM
+
+'''2L 1M 4s:'''
+LsMsLss
+
+'''1L 4M 2s:'''
+LMsMMsM
+
+'''1L 2M 4s:'''
+LsMssMs
+
+
+=== <u>Multi-Period</u> ===
+
+(none)
+
+
+== Conditional (MM=Ls) ==
+
+=== <u>Single-Period</u> ===
+
+'''<u>5-1-1 Family</u>'''
+
+'''1L 5M 1s:''' LMsMMMM / LMMMMsM
+
+
+'''1L 5M 1s:''' LsMMMMM / LMMMMMs
+
+
+'''<u>4-2-1 Family</u>'''
+
+'''2L 4M 1s:''' LMMLsMM
+
+'''1L 4M 2s:''' LMMsMMs
+
+
+
+'''2L 4M 1s:''' LMMLMMs
+
+'''1L 4M 2s:''' LsMMsMM
+
+
+
+'''4L 2M 1s:''' LLsLMLM
+
+'''1L 2M 4s:''' LsMsMss
+
+
+
+'''4L 2M 1s:''' LLMLMLs
+
+'''1L 2M 4s:''' LssMsMs
+
+
+
+'''<u>3-3-1 Family</u>'''
+
+'''3L 3M 1s:''' LLsLMMM
+
+'''1L 3M 3s:''' LsMMMss
+
+
+
+'''3L 3M 1s:''' LLMMMLs
+
+'''1L 3M 3s:''' LssMMMs
+
+
+
+'''<u>3-2-2 Family</u>'''
+
+'''2L 3M 2s:''' LMMsMLs
+
+'''2L 3M 2s:''' LMsLsMM
+
+
+
+'''2L 3M 2s:''' LMMsLsM
+
+'''2L 3M 2s:''' LMsMMLs
+
+
+
+'''2L 3M 2s:''' LsMLsMM / LMMsLMs
+
+
+'''2L 3M 2s:''' LsLsMMM / LMMMsLs
+
+
+'''2L 3M 2s:''' LMLsMMs
+
+'''2L 3M 2s:''' LMMLsMs
+
+
+
+'''2L 3M 2s:''' LLsMMMs
+
+'''2L 3M 2s:''' LMMMLss
+
+
+=== <u>Multi-Period</u> ===
+
+(none)
+
+
+== Conditional (MMM=LsL) ==
+
+'''2L 4M 1s:''' LMMMMLs
+
+== Conditional (MMM=sLs) ==
+
+'''1L 4M 2s:''' LsMMMMs

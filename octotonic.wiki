@@ -1,0 +1,175 @@
+I believe these are all of the strict MV3 scales with eight notes. There are no unconditional eight note MV3 scales that may have any L:M:s ratio and still be strict MV3, note that this means that there exist hardnesses (such as 5:2:1) with no possible strict MV3 scales with eight notes. Conditional MV3 scales have a condition specified in the section header that the L:M:s ratio needs to satisfy in order for the scale to be strict MV3. Lines with two scales separated with a slash are lexicographically left and right chiral scales respectively, lines with only one scale are therefore achiral. All scales are written in their brightest mode. Scales are grouped into sisterhoods. Unconditional sisterhoods may have up to six scales while conditional sisterhoods appear to have up to two scales. The two scales in conditional sisterhoods have their L's and s's swapped.
+
+
+'''Here's some stats:'''
+
+57 Scales Total
+
+0 Unconditional Single-Period
+
+55 Conditional Single-Period
+
+0 Unconditional Multi-Period
+
+2 Conditional Multi-Period
+
+
+== Unconditional ==
+
+'''NONE'''
+
+
+== Conditional (MM=Ls) ==
+
+=== <u>Single-Period</u> ===
+
+'''1L 6M 1s:''' LMMsMMMM / LMMMMsMM
+
+
+'''1L 6M 1s:''' LMsMMMMM / LMMMMMsM
+
+
+'''1L 6M 1s:''' LsMMMMMM / LMMMMMMs
+
+
+
+'''5L 2M 1s:''' LLMLLsLM
+
+'''1L 2M 5s:''' LsMssMss
+
+
+
+'''5L 2M 1s:''' LLMLLMLs
+
+'''1L 2M 5s:''' LssMssMs
+
+
+
+'''5L 2M 1s:''' LLLsLLMM
+
+'''1L 2M 5s:''' LssMMsss
+
+
+
+'''5L 2M 1s:''' LLLMMLLs
+
+'''1L 2M 5s:''' LsssMMss
+
+
+
+'''3L 4M 1s:''' LMLsMLMM
+
+'''1L 4M 3s:''' LMsMMsMs
+
+
+
+'''3L 4M 1s:''' LMLMsLMM
+
+'''1L 4M 3s:''' LsMMsMsM
+
+
+
+'''3L 4M 1s:''' LMLMMLsM
+
+'''1L 4M 3s:''' LMsMsMMs
+
+
+
+'''3L 4M 1s:''' LMLMMLMs
+
+'''1L 4M 3s:''' LsMsMMsM
+
+
+
+'''3L 4M 1s:''' LLsLMMMM
+
+'''1L 4M 3s:''' LsMMMMss
+
+
+
+'''3L 4M 1s:''' LLMMMMLs
+
+'''1L 4M 3s:''' LssMMMMs
+
+
+
+'''2L 4M 2s:''' LMsLMsMM / LMMsMLsM
+
+
+'''2L 4M 2s:''' LMMsMLMs
+
+'''2L 4M 2s:''' LMsMLsMM
+
+
+
+'''2L 4M 2s:''' LMMsLsMM
+
+'''2L 4M 2s:''' LMMsMMLs
+
+
+
+'''2L 4M 2s:''' LMMsLMsM
+
+'''2L 4M 2s:''' LMsMMLsM
+
+
+
+'''2L 4M 2s:''' LMMMsMLs
+
+'''2L 4M 2s:''' LMsLsMMM
+
+
+
+'''2L 4M 2s:''' LMMMsLsM
+
+'''2L 4M 2s:''' LMsMMMLs
+
+
+
+'''2L 4M 2s:''' LsMLsMMM / LMMMsLMs
+
+
+'''2L 4M 2s:''' LsLsMMMM / LMMMMsLs
+
+
+'''2L 4M 2s:''' LMMLsMMs
+
+
+
+'''2L 4M 2s:''' LMLsMMMs
+
+'''2L 4M 2s:''' LMMMLsMs
+
+
+
+'''2L 4M 2s:''' LLsMMMMs
+
+'''2L 4M 2s:''' LMMMMLss
+
+
+
+'''3L 2M 3s:''' LMsLsLsM
+
+'''3L 2M 3s:''' LMsMLsLs
+
+
+
+'''3L 2M 3s:''' LsLsMLsM / LMsLMsLs
+
+
+'''3L 2M 3s:''' LsLsLsMM / LMMsLsLs
+
+
+=== <u>Multi-Period</u> ===
+
+'''2L 4M 2s:''' LsMMLsMM / LMMsLMMs
+
+
+== Conditional (MMM=sLs) ==
+
+'''1L 5M 2s:''' LsMMMMMs
+
+
+== Conditional (MMM=LsL) ==
+
+'''2L 5M 1s:''' LMMMMMLs

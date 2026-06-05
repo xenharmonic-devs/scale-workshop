@@ -1,0 +1,4711 @@
+I believe these are all of the strict MV3 scales with fourteen notes. Unconditional MV3 scales may have any L:M:s ratio. Conditional MV3 scales have a condition specified in the section header that the L:M:s ratio needs to satisfy in order for the scale to be strict MV3. Lines with two scales separated with a slash are lexicographically left and right chiral scales respectively, lines with only one scale are therefore achiral. All scales are written in their brightest mode. Scales are grouped into sisterhoods. Unconditional sisterhoods may have up to six scales while conditional sisterhoods appear to have up to two scales. The two scales in conditional sisterhoods have their L's and s's swapped.
+
+
+'''Here's some stats:'''
+
+1651 Scales Total
+
+18 Unconditional Single-Period
+
+1579 Conditional Single-Period
+
+24 Unconditional Multi-Period
+
+30 Conditional Multi-Period
+
+
+== Unconditional ==
+
+=== <u>Single-Period</u> ===
+
+'''10L 2M 2s:'''
+LLLMLLLsLLMLLs
+
+'''10L 2M 2s:'''
+LLLMLLsLLMLLLs
+
+'''2L 10M 2s:'''
+LMMMsMMMLMMsMM
+
+'''2L 10M 2s:'''
+LMMMsMMLMMsMMM
+
+'''2L 2M 10s:'''
+LssMssLsssMsss
+
+'''2L 2M 10s:'''
+LssMsssLsssMss
+
+
+'''6L 6M 2s:'''
+LMLMLMLsMLMLMs
+
+'''6L 6M 2s:'''
+LMLMLMsLMLMLsM
+
+'''6L 2M 6s:'''
+LMsLsLsLsMLsLs
+
+'''6L 2M 6s:'''
+LMsLsLsMLsLsLs
+
+'''2L 6M 6s:'''
+LMsMsMLsMsMsMs
+
+'''2L 6M 6s:'''
+LMsMsMsMLsMsMs
+
+
+'''6L 4M 4s:'''
+LMLsLMLsMLsLMs
+
+'''6L 4M 4s:'''
+LMLsLMsLMLsMLs
+
+'''4L 6M 4s:'''
+LMsLMsMLMsMLsM
+
+'''4L 6M 4s:'''
+LMsLMsMLsMLMsM
+
+'''4L 4M 6s:'''
+LMsLsMLsMsLsMs
+
+'''4L 4M 6s:'''
+LMsLsMsLsMLsMs
+
+
+=== <u>Multi-Period</u> ===
+
+'''10L 2M 2s:'''
+LLLsLLMLLLsLLM / LLLMLLsLLLMLLs
+
+'''2L 10M 2s:'''
+LMMsMMMLMMsMMM / LMMMsMMLMMMsMM
+
+'''2L 2M 10s:'''
+LsssMssLsssMss / LssMsssLssMsss
+
+
+'''6L 6M 2s:'''
+LMLMLsMLMLMLsM / LMLMLMsLMLMLMs
+
+'''6L 2M 6s:'''
+LsLsLsMLsLsLsM / LMsLsLsLMsLsLs
+
+'''2L 6M 6s:'''
+LsMsMsMLsMsMsM / LMsMsMsLMsMsMs
+
+
+'''6L 4M 4s:'''
+LMLsMLsLMLsMLs / LMLsLMsLMLsLMs
+
+'''4L 6M 4s:'''
+LMsMLsMLMsMLsM / LMsLMsMLMsLMsM
+
+'''4L 4M 6s:'''
+LsMLsMsLsMLsMs / LMsLsMsLMsLsMs
+
+
+'''8L 4M 2s:'''
+LLMLsLMLLMLsLM
+
+'''8L 2M 4s:'''
+LLsLMLsLLsLMLs
+
+'''4L 8M 2s:'''
+LMMLMsMLMMLMsM
+
+'''4L 2M 8s:'''
+LsMsLssLsMsLss
+
+'''2L 8M 4s:'''
+LMsMMsMLMsMMsM
+
+'''2L 4M 8s:'''
+LsMssMsLsMssMs
+
+
+== Conditional (MM=Ls) ==
+
+=== <u>Single-Period</u> ===
+
+'''9L 4M 1s:''' LLMLLMLLMLLsLM
+
+'''1L 4M 9s:''' LsMssMssMssMss
+
+
+
+'''9L 4M 1s:''' LLMLLMLLMLLMLs
+
+'''1L 4M 9s:''' LssMssMssMssMs
+
+
+
+'''9L 4M 1s:''' LLLsLLMLMLLMLM
+
+'''1L 4M 9s:''' LssMsMssMsMsss
+
+
+
+'''9L 4M 1s:''' LLLsLLMLLMMLLM
+
+'''1L 4M 9s:''' LssMssMMssMsss
+
+
+
+'''9L 4M 1s:''' LLLsLLMLLMLLMM
+
+'''1L 4M 9s:''' LssMssMssMMsss
+
+
+
+'''9L 4M 1s:''' LLLMMLMLLLsLLM
+
+'''1L 4M 9s:''' LssMsssMMsMsss
+
+
+
+'''9L 4M 1s:''' LLLMMLLMLLsLLM
+
+'''1L 4M 9s:''' LssMsssMMssMss
+
+
+
+'''9L 4M 1s:''' LLLMMLLMLLMLLs
+
+'''1L 4M 9s:''' LsssMMssMssMss
+
+
+
+'''9L 4M 1s:''' LLLMMLLLsLLMLM
+
+'''1L 4M 9s:''' LssMsMsssMMsss
+
+
+
+'''9L 4M 1s:''' LLLMLMMLLMLLLs
+
+'''1L 4M 9s:''' LsssMsMMssMsss
+
+
+
+'''9L 4M 1s:''' LLLMLMLLsLLMLM
+
+'''1L 4M 9s:''' LssMsMsssMsMss
+
+
+
+'''9L 4M 1s:''' LLLMLMLLsLLLMM
+
+'''1L 4M 9s:''' LsssMMsssMsMss
+
+
+
+'''9L 4M 1s:''' LLLMLMLLMLMLLs
+
+'''1L 4M 9s:''' LsssMsMssMsMss
+
+
+
+'''9L 4M 1s:''' LLLMLLsLLMLLMM
+
+'''1L 4M 9s:''' LssMssMMsssMss
+
+
+
+'''9L 4M 1s:''' LLLMLLsLLLMLMM
+
+'''1L 4M 9s:''' LsssMsMMsssMss
+
+
+
+'''9L 4M 1s:''' LLLMLLMMLMLLLs
+
+'''1L 4M 9s:''' LsssMssMMsMsss
+
+
+
+'''9L 4M 1s:''' LLLMLLMMLLMLLs
+
+'''1L 4M 9s:''' LsssMssMMssMss
+
+
+
+'''9L 4M 1s:''' LLLLsLLLMMLLMM
+
+'''1L 4M 9s:''' LsssMMssMMssss
+
+
+
+'''9L 4M 1s:''' LLLLMMLLMMLLLs
+
+'''1L 4M 9s:''' LssssMMssMMsss
+
+
+
+'''9L 2M 3s:''' LLLsLLsLLMMLLs
+
+'''3L 2M 9s:''' LssLssMMssLsss
+
+
+
+'''9L 2M 3s:''' LLLsLLMMLLsLLs
+
+'''3L 2M 9s:''' LssLsssLssMMss
+
+
+
+'''5L 8M 1s:''' LMLsMLMMLMMLMM
+
+'''1L 8M 5s:''' LMsMMsMMsMMsMs
+
+
+
+'''5L 8M 1s:''' LMLMsLMMLMMLMM
+
+'''1L 8M 5s:''' LsMMsMMsMMsMsM
+
+
+
+'''5L 8M 1s:''' LMLMMMLMLsMLMM
+
+'''1L 8M 5s:''' LMsMMsMsMMMsMs
+
+
+
+'''5L 8M 1s:''' LMLMMMLMLMsLMM
+
+'''1L 8M 5s:''' LsMMsMsMMMsMsM
+
+
+
+'''5L 8M 1s:''' LMLMMLsMLMMLMM
+
+'''1L 8M 5s:''' LMsMMsMMsMsMMs
+
+
+
+'''5L 8M 1s:''' LMLMMLsMLMLMMM
+
+'''1L 8M 5s:''' LMsMsMMMsMsMMs
+
+
+
+'''5L 8M 1s:''' LMLMMLMsLMMLMM
+
+'''1L 8M 5s:''' LsMMsMMsMsMMsM
+
+
+
+'''5L 8M 1s:''' LMLMMLMsLMLMMM
+
+'''1L 8M 5s:''' LsMsMMMsMsMMsM
+
+
+
+'''5L 8M 1s:''' LMLMMLMMLsMLMM
+
+'''1L 8M 5s:''' LMsMMsMsMMsMMs
+
+
+
+'''5L 8M 1s:''' LMLMMLMMLMsLMM
+
+'''1L 8M 5s:''' LsMMsMsMMsMMsM
+
+
+
+'''5L 8M 1s:''' LMLMMLMMLMMLsM
+
+'''1L 8M 5s:''' LMsMsMMsMMsMMs
+
+
+
+'''5L 8M 1s:''' LMLMMLMMLMMLMs
+
+'''1L 8M 5s:''' LsMsMMsMMsMMsM
+
+
+
+'''5L 8M 1s:''' LMLMLsMLMLMMMM
+
+'''1L 8M 5s:''' LMsMsMMMMsMsMs
+
+
+
+'''5L 8M 1s:''' LMLMLMsLMLMMMM
+
+'''1L 8M 5s:''' LsMsMMMMsMsMsM
+
+
+
+'''5L 8M 1s:''' LMLMLMMMMLMLsM
+
+'''1L 8M 5s:''' LMsMsMsMMMMsMs
+
+
+
+'''5L 8M 1s:''' LMLMLMMMMLMLMs
+
+'''1L 8M 5s:''' LsMsMsMMMMsMsM
+
+
+
+'''5L 8M 1s:''' LLsLMMMLMMLMMM
+
+'''1L 8M 5s:''' LsMMMsMMsMMMss
+
+
+
+'''5L 8M 1s:''' LLsLMMLMMMMLMM
+
+'''1L 8M 5s:''' LsMMsMMMMsMMss
+
+
+
+'''5L 8M 1s:''' LLsLMMLMLMMMMM
+
+'''1L 8M 5s:''' LsMMsMsMMMMMss
+
+
+
+'''5L 8M 1s:''' LLsLMLMMLMMMMM
+
+'''1L 8M 5s:''' LsMsMMsMMMMMss
+
+
+
+'''5L 8M 1s:''' LLMMMMMLMMLMLs
+
+'''1L 8M 5s:''' LssMMMMMsMMsMs
+
+
+
+'''5L 8M 1s:''' LLMMMMMLMLMMLs
+
+'''1L 8M 5s:''' LssMMMMMsMsMMs
+
+
+
+'''5L 8M 1s:''' LLMMMMMLLsLMMM
+
+'''1L 8M 5s:''' LsMMMssMMMMMss
+
+
+
+'''5L 8M 1s:''' LLMMMMLMMMMLLs
+
+'''1L 8M 5s:''' LssMMMMsMMMMss
+
+
+
+'''5L 8M 1s:''' LLMMMMLMMLsLMM
+
+'''1L 8M 5s:''' LsMMssMMMMsMMs
+
+
+
+'''5L 8M 1s:''' LLMMMMLMLsLMMM
+
+'''1L 8M 5s:''' LsMMMssMMMMsMs
+
+
+
+'''5L 8M 1s:''' LLMMMMLLsLMMMM
+
+'''1L 8M 5s:''' LsMMMMssMMMMss
+
+
+
+'''5L 8M 1s:''' LLMMMMLLMMMMLs
+
+'''1L 8M 5s:''' LssMMMMssMMMMs
+
+
+
+'''5L 8M 1s:''' LLMMMLsLMMLMMM
+
+'''1L 8M 5s:''' LsMMsMMMssMMMs
+
+
+
+'''5L 8M 1s:''' LLMMMLsLMLMMMM
+
+'''1L 8M 5s:''' LsMsMMMMssMMMs
+
+
+
+'''5L 8M 1s:''' LLMMMLsLLMMMMM
+
+'''1L 8M 5s:''' LssMMMMMssMMMs
+
+
+
+'''5L 8M 1s:''' LLMMMLMMLsLMMM
+
+'''1L 8M 5s:''' LsMMMssMMMsMMs
+
+
+
+'''5L 8M 1s:''' LLMMMLMMLMMMLs
+
+'''1L 8M 5s:''' LssMMMsMMsMMMs
+
+
+
+'''5L 8M 1s:''' LLMMLsLMMLMMMM
+
+'''1L 8M 5s:''' LsMMsMMMMssMMs
+
+
+
+'''5L 8M 1s:''' LLMMLMMMMLMMLs
+
+'''1L 8M 5s:''' LssMMsMMMMsMMs
+
+
+
+'''4L 8M 2s:''' LMMMLsLsMLMMMM
+
+'''2L 8M 4s:''' LMsMMMMsMMMsLs
+
+
+
+'''4L 8M 2s:''' LMMMLMsLsLMMMM
+
+'''2L 8M 4s:''' LsLsMMMMsMMMsM
+
+
+
+'''4L 8M 2s:''' LMMMLMMMMLsLsM
+
+'''2L 8M 4s:''' LMsMMMsMMMMsLs
+
+
+
+'''4L 8M 2s:''' LMMMLMMMMLMsLs
+
+'''2L 8M 4s:''' LsLsMMMsMMMMsM
+
+
+
+'''4L 8M 2s:''' LMMLsMMLMMMLsM
+
+'''2L 8M 4s:''' LMMsMMMsLMsMMs
+
+
+
+'''4L 8M 2s:''' LMMLsMMLMMMLMs
+
+'''2L 8M 4s:''' LMMsMMMsMLsMMs
+
+
+
+'''4L 8M 2s:''' LMMLsMLMMMLsMM
+
+'''2L 8M 4s:''' LMMsMMsLMsMMMs
+
+
+
+'''4L 8M 2s:''' LMMLsMLMMMLMsM
+
+'''2L 8M 4s:''' LMsMMMsMLMsMMs
+
+
+
+'''4L 8M 2s:''' LMMLsMLMMMLMMs
+
+'''2L 8M 4s:''' LMsMMMsMMLsMMs
+
+
+
+'''4L 8M 2s:''' LMMLsLMMMMLsMM
+
+'''2L 8M 4s:''' LMMsMMsLsMMMMs
+
+
+
+'''4L 8M 2s:''' LMMLsLMMMMLMsM
+
+'''2L 8M 4s:''' LMsMMsLsMMMMsM
+
+
+
+'''4L 8M 2s:''' LMMLMsMLMMMMLs
+
+'''2L 8M 4s:''' LMsMMMMsLsMMsM
+
+
+
+'''4L 8M 2s:''' LMMLMsMLMMMLsM
+
+'''2L 8M 4s:''' LMsMMMsLMsMMsM
+
+
+
+'''4L 8M 2s:''' LMMLMsMLMMMLMs
+
+'''2L 8M 4s:''' LMsMMMsMLsMMsM
+
+
+
+'''4L 8M 2s:''' LMMLMsMLMMLsMM
+
+'''2L 8M 4s:''' LMMsMMsMLMsMMs
+
+
+
+'''4L 8M 2s:''' LMMLMsLMMMLsMM
+
+'''2L 8M 4s:''' LMMsMMsMLsMMMs
+
+
+
+'''4L 8M 2s:''' LMMLMsLMMMLMsM
+
+'''2L 8M 4s:''' LMsMMsMLsMMMsM
+
+
+
+'''4L 8M 2s:''' LMMLMsLMMMLMMs
+
+'''2L 8M 4s:''' LsMMMsMMLsMMsM
+
+
+
+'''4L 8M 2s:''' LMMLMMsLMMMMLs
+
+'''2L 8M 4s:''' LsMMMMsLsMMsMM
+
+
+
+'''4L 8M 2s:''' LMMLMMsLMMMLsM
+
+'''2L 8M 4s:''' LMsMMsMMLsMMMs
+
+
+
+'''4L 8M 2s:''' LMMLMMsLMMMLMs
+
+'''2L 8M 4s:''' LsMMMsMLsMMsMM
+
+
+
+'''4L 8M 2s:''' LMMLMMsLMMLsMM
+
+'''2L 8M 4s:''' LMMsMMsMMLsMMs
+
+
+
+'''4L 8M 2s:''' LMMLMMsLMMLMsM
+
+'''2L 8M 4s:''' LMsMMsMMLsMMsM
+
+
+
+'''4L 8M 2s:''' LMMLMMLsMMLMMs
+
+'''2L 8M 4s:''' LMMsMMLsMMsMMs
+
+
+
+'''4L 8M 2s:''' LMLsLMMMMMMLsM
+
+'''2L 8M 4s:''' LMsMsLsMMMMMMs
+
+
+
+'''4L 8M 2s:''' LMLMsLMMMMMMLs
+
+'''2L 8M 4s:''' LsMMMMMMsLsMsM
+
+
+
+'''4L 8M 2s:''' LMLMsLMMMMMLsM
+
+'''2L 8M 4s:''' LMsMsMLsMMMMMs
+
+
+
+'''8L 4M 2s:''' LLMMLMLLsLMLLs
+
+'''2L 4M 8s:''' LsMssLssMMsMss
+
+
+
+'''8L 4M 2s:''' LLMMLLsLMLMLLs
+
+'''2L 4M 8s:''' LsMsMssLssMMss
+
+
+
+'''8L 4M 2s:''' LLMLsLMLMLLsLM
+
+'''2L 4M 8s:''' LsMsMssLsMssMs
+
+
+
+'''8L 4M 2s:''' LLMLsLLMMLMLLs
+
+'''2L 4M 8s:''' LssMMsMssLssMs
+
+
+
+'''8L 4M 2s:''' LLMLsLLMMLLsLM
+
+'''2L 4M 8s:''' LsMssMsLssMMss
+
+
+
+'''8L 4M 2s:''' LLMLMMLLsLMLLs
+
+'''2L 4M 8s:''' LsMssLssMsMMss
+
+
+
+'''8L 4M 2s:''' LLMLMMLLsLLMLs
+
+'''2L 4M 8s:''' LssMsLssMsMMss
+
+
+
+'''8L 4M 2s:''' LLMLMLsLMLMLLs
+
+'''2L 4M 8s:''' LsMsMssLssMsMs
+
+
+
+'''8L 4M 2s:''' LLMLMLsLMLLMLs
+
+'''2L 4M 8s:''' LsMssMsLssMsMs
+
+
+
+'''8L 4M 2s:''' LLMLMLsLLMMLLs
+
+'''2L 4M 8s:''' LssMMssLssMsMs
+
+
+
+'''8L 4M 2s:''' LLMLMLLsLMLMLs
+
+'''2L 4M 8s:''' LsMsMsLssMsMss
+
+
+
+'''3L 8M 3s:''' LMMsMMLMsLMsMM / LMMsMLsMLMMsMM
+
+
+'''3L 8M 3s:''' LMMsMLMsMLMsMM
+
+'''3L 8M 3s:''' LMMsMMLMsMLMsM
+
+
+
+'''3L 8M 3s:''' LMMsMLMsLMMsMM
+
+'''3L 8M 3s:''' LMMsMMLMsMLsMM
+
+
+
+'''3L 8M 3s:''' LMMsMLMMsMMLMs
+
+'''3L 8M 3s:''' LMMsMLsMMLMsMM
+
+
+
+'''3L 8M 3s:''' LMMsMLMMsMLsMM
+
+'''3L 8M 3s:''' LMMsMMLMsMMLMs
+
+
+
+'''3L 8M 3s:''' LMsMLMsMMLMsMM / LMMsMLMMsMLMsM
+
+
+'''3L 8M 3s:''' LMMsLsMMLMMsMM
+
+'''3L 8M 3s:''' LMMsMMLMMsMMLs
+
+
+
+'''3L 8M 3s:''' LMMsLMsMMLMsMM
+
+'''3L 8M 3s:''' LMMsMLMMsMMLsM
+
+
+
+'''3L 8M 3s:''' LMMsLMsMMLMMsM
+
+'''3L 8M 3s:''' LMMsMMLMsMMLsM
+
+
+
+'''3L 8M 3s:''' LMMsLMsMLMMsMM
+
+'''3L 8M 3s:''' LMMsMMLsMLMsMM
+
+
+
+'''3L 8M 3s:''' LMMsLMMsMMLMsM
+
+'''3L 8M 3s:''' LMMsMLMsMMLsMM
+
+
+
+'''3L 8M 3s:''' LMMsLMMsMLMsMM
+
+'''3L 8M 3s:''' LMMsMMLsMMLMsM
+
+
+
+'''3L 8M 3s:''' LMsMMLMsMMLsMM / LMMsLMMsMLMMsM
+
+
+'''3L 8M 3s:''' LMMsMMLsMMLsMM / LMMsLMMsLMMsMM
+
+
+'''3L 8M 3s:''' LMMMsMMLsMMLsM
+
+'''3L 8M 3s:''' LMMsLMMsLMsMMM
+
+
+
+'''3L 8M 3s:''' LMMMsMMLsMMLMs
+
+'''3L 8M 3s:''' LMMsLMMsMLsMMM
+
+
+
+'''3L 8M 3s:''' LMMsLMsLMMsMMM / LMMMsMMLsMLsMM
+
+
+'''3L 8M 3s:''' LMMMsMMLsMLMsM
+
+'''3L 8M 3s:''' LMMsLMsMLMsMMM
+
+
+
+'''3L 8M 3s:''' LMMMsMMLsMLMMs
+
+'''3L 8M 3s:''' LMMsLMsMMLsMMM
+
+
+
+'''3L 8M 3s:''' LMMMsMMLsLsMMM
+
+'''3L 8M 3s:''' LMMMsMMMLMMsLs
+
+
+
+'''3L 8M 3s:''' LMMMsMMLsLMsMM
+
+'''3L 8M 3s:''' LMMsLsMLMMsMMM
+
+
+
+'''3L 8M 3s:''' LMMMsMMLsLMMsM
+
+'''3L 8M 3s:''' LMMsLsMMLMsMMM
+
+
+
+'''3L 8M 3s:''' LMMMsMMLMsMMLs
+
+'''3L 8M 3s:''' LMMsLsMMMLMMsM
+
+
+
+'''3L 8M 3s:''' LMMMsMMLMsMLsM
+
+'''3L 8M 3s:''' LMMsMLMsLMsMMM
+
+
+
+'''3L 8M 3s:''' LMMMsMMLMsMLMs
+
+'''3L 8M 3s:''' LMMsMLMsMLsMMM
+
+
+
+'''3L 8M 3s:''' LMMMsMMLMsLsMM
+
+'''3L 8M 3s:''' LMMsMLsLMMsMMM
+
+
+
+'''3L 8M 3s:''' LMMMsMMLMsLMsM
+
+'''3L 8M 3s:''' LMMsMLsMLMsMMM
+
+
+
+'''3L 8M 3s:''' LMMMsMMLMsLMMs
+
+'''3L 8M 3s:''' LMMsMLsMMLsMMM
+
+
+
+'''3L 8M 3s:''' LMMMsMMLMMsMLs
+
+'''3L 8M 3s:''' LMMsMMLMsLsMMM
+
+
+
+'''3L 8M 3s:''' LMMMsMMLMMsLsM
+
+'''3L 8M 3s:''' LMMsMMLsLMsMMM
+
+
+
+'''3L 8M 3s:''' LMMMsMMLMMsLMs
+
+'''3L 8M 3s:''' LMMsMMLsMLsMMM
+
+
+
+'''3L 8M 3s:''' LMMMsMLsMMLsMM
+
+'''3L 8M 3s:''' LMMsLMMsMMMLMs
+
+
+
+'''3L 8M 3s:''' LMMMsMLsMMLMsM
+
+'''3L 8M 3s:''' LMMsMLMsMMMLMs
+
+
+
+'''3L 8M 3s:''' LMMMsMLsMMLMMs
+
+'''3L 8M 3s:''' LMMsMMLsMMMLMs
+
+
+
+'''3L 8M 3s:''' LMMMsMLsMLsMMM
+
+'''3L 8M 3s:''' LMMMsMMMLMsLMs
+
+
+
+'''3L 8M 3s:''' LMMMsMLsMLMsMM
+
+'''3L 8M 3s:''' LMMsMMMLMsLMsM
+
+
+
+'''3L 8M 3s:''' LMMMsMLsMLMMsM
+
+'''3L 8M 3s:''' LMsLMsMMLMsMMM
+
+
+
+'''3L 8M 3s:''' LMMMsMLsLMsMMM
+
+'''3L 8M 3s:''' LMMMsMMMLMsLsM
+
+
+
+'''3L 8M 3s:''' LMMMsMLsLMMsMM
+
+'''3L 8M 3s:''' LMMsMMMLMsLsMM
+
+
+
+'''3L 8M 3s:''' LMMMsMLMsMMLsM
+
+'''3L 8M 3s:''' LMMsLMsMMMLMsM
+
+
+
+'''3L 8M 3s:''' LMMMsMLMsMMLMs
+
+'''3L 8M 3s:''' LMMsMLsMMMLMsM
+
+
+
+'''3L 8M 3s:''' LMMMsMLMsMLsMM
+
+'''3L 8M 3s:''' LMMsMMMLMsMLMs
+
+
+
+'''3L 8M 3s:''' LMsMLMsMLMsMMM / LMMMsMLMsMLMsM
+
+
+'''3L 8M 3s:''' LMMMsMLMsMLMMs
+
+'''3L 8M 3s:''' LMsMLMsMMLsMMM
+
+
+
+'''3L 8M 3s:''' LMMMsMLMsLsMMM
+
+'''3L 8M 3s:''' LMMMsMMMLMsMLs
+
+
+
+'''3L 8M 3s:''' LMMMsMLMsLMsMM
+
+'''3L 8M 3s:''' LMMsMMMLMsMLsM
+
+
+
+'''3L 8M 3s:''' LMMMsMLMsLMMsM
+
+'''3L 8M 3s:''' LMsMLsMMLMsMMM
+
+
+
+'''3L 8M 3s:''' LMMMsMLMMsMMLs
+
+'''3L 8M 3s:''' LMMsLsMMMLMsMM
+
+
+
+'''3L 8M 3s:''' LMMMsMLMMsMLsM
+
+'''3L 8M 3s:''' LMsLMsMMMLMsMM
+
+
+
+'''3L 8M 3s:''' LMMMsMLMMsMLMs
+
+'''3L 8M 3s:''' LMsMLsMMMLMsMM
+
+
+
+'''3L 8M 3s:''' LMMMsMLMMsLsMM
+
+'''3L 8M 3s:''' LMMsMMMLMsMMLs
+
+
+
+'''3L 8M 3s:''' LMMMsMLMMsLMsM
+
+'''3L 8M 3s:''' LMsMMLsMLMsMMM
+
+
+
+'''3L 8M 3s:''' LMMMsMLMMsLMMs
+
+'''3L 8M 3s:''' LMsMMLsMMLsMMM
+
+
+
+'''3L 8M 3s:''' LMMMsMLMMMsMLs
+
+'''3L 8M 3s:''' LMsLsMMMLMsMMM
+
+
+
+'''3L 8M 3s:''' LMMMsLsMMMLMsM
+
+'''3L 8M 3s:''' LMMMsMLMsMMMLs
+
+
+
+'''3L 8M 3s:''' LMMMsLsMMMLMMs
+
+'''3L 8M 3s:''' LMMMsMMLsMMMLs
+
+
+
+'''3L 8M 3s:''' LMMMsLsMMLsMMM
+
+'''3L 8M 3s:''' LMMMsMMMLsLMMs
+
+
+
+'''3L 8M 3s:''' LMMMsLsMMLMsMM
+
+'''3L 8M 3s:''' LMMsMLMMsMMMLs
+
+
+
+'''3L 8M 3s:''' LMMMsLsMMLMMsM
+
+'''3L 8M 3s:''' LMMsMMLMsMMMLs
+
+
+
+'''3L 8M 3s:''' LMMMsLsMLMsMMM
+
+'''3L 8M 3s:''' LMMMsMMMLsLMsM
+
+
+
+'''3L 8M 3s:''' LMMMsLsMLMMsMM
+
+'''3L 8M 3s:''' LMMsMMMLsLMsMM
+
+
+
+'''3L 8M 3s:''' LMMMsLsMLMMMsM
+
+'''3L 8M 3s:''' LMsMMMLMsMMMLs
+
+
+
+'''3L 8M 3s:''' LMMMsLsLMMsMMM
+
+'''3L 8M 3s:''' LMMMsMMMLsLsMM
+
+
+
+'''3L 8M 3s:''' LMMsMMMLsLsMMM / LMMMsLsLMMMsMM
+
+
+'''3L 8M 3s:''' LMMMsMLsMMMLsM / LMMMsLMsMMMLMs
+
+
+'''3L 8M 3s:''' LMMMsLMsMMLsMM
+
+'''3L 8M 3s:''' LMMsLMMsMMMLsM
+
+
+
+'''3L 8M 3s:''' LMMMsLMsMMLMsM
+
+'''3L 8M 3s:''' LMMsMLMsMMMLsM
+
+
+
+'''3L 8M 3s:''' LMMMsLMsMMLMMs
+
+'''3L 8M 3s:''' LMMsMMLsMMMLsM
+
+
+
+'''3L 8M 3s:''' LMMMsLMsMLsMMM
+
+'''3L 8M 3s:''' LMMMsMMMLsMLMs
+
+
+
+'''3L 8M 3s:''' LMMMsLMsMLMsMM
+
+'''3L 8M 3s:''' LMMsMMMLsMLMsM
+
+
+
+'''3L 8M 3s:''' LMMMsLMsMLMMsM
+
+'''3L 8M 3s:''' LMsMMLMsMMMLsM
+
+
+
+'''3L 8M 3s:''' LMMMsLMsLMsMMM
+
+'''3L 8M 3s:''' LMMMsMMMLsMLsM
+
+
+
+'''3L 8M 3s:''' LMMMsLMsLMMsMM
+
+'''3L 8M 3s:''' LMMsMMMLsMLsMM
+
+
+
+'''3L 8M 3s:''' LMsMMMLsMLsMMM / LMMMsLMsLMMMsM
+
+
+'''3L 8M 3s:''' LMMMsLMMsMMMLs
+
+'''3L 8M 3s:''' LMMMsLsMMMLsMM
+
+
+
+'''3L 8M 3s:''' LMMMsLMMsMMLsM
+
+'''3L 8M 3s:''' LMMsLMsMMMLsMM
+
+
+
+'''3L 8M 3s:''' LMMMsLMMsMMLMs
+
+'''3L 8M 3s:''' LMMsMLsMMMLsMM
+
+
+
+'''3L 8M 3s:''' LMMMsLMMsMLsMM
+
+'''3L 8M 3s:''' LMMsMMMLsMMLMs
+
+
+
+'''3L 8M 3s:''' LMMMsLMMsMLMsM
+
+'''3L 8M 3s:''' LMsMLMsMMMLsMM
+
+
+
+'''3L 8M 3s:''' LMsMMLsMMMLsMM / LMMMsLMMsMLMMs
+
+
+'''3L 8M 3s:''' LMMMsLMMsLsMMM
+
+'''3L 8M 3s:''' LMMMsMMMLsMMLs
+
+
+
+'''3L 8M 3s:''' LMMMsLMMsLMsMM
+
+'''3L 8M 3s:''' LMMsMMMLsMMLsM
+
+
+
+'''3L 8M 3s:''' LMMMsLMMsLMMsM
+
+'''3L 8M 3s:''' LMsMMMLsMMLsMM
+
+
+
+'''3L 8M 3s:''' LMMMsLMMMsMMLs
+
+'''3L 8M 3s:''' LMMsLsMMMLsMMM
+
+
+
+'''3L 8M 3s:''' LMsLMsMMMLsMMM / LMMMsLMMMsMLsM
+
+
+'''3L 8M 3s:''' LMMMsLMMMsMLMs
+
+'''3L 8M 3s:''' LMsMLsMMMLsMMM
+
+
+
+'''3L 8M 3s:''' LMMMsLMMMsLsMM
+
+'''3L 8M 3s:''' LMMsMMMLsMMMLs
+
+
+
+'''3L 8M 3s:''' LMMMsLMMMsLMsM
+
+'''3L 8M 3s:''' LMsMMMLsMMMLsM
+
+
+
+'''3L 8M 3s:''' LsMMLsMMMLsMMM / LMMMsLMMMsLMMs
+
+
+'''3L 8M 3s:''' LMMMMsMMMLsMLs
+
+'''3L 8M 3s:''' LMMMsLMsLsMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsMMMLsLsM
+
+'''3L 8M 3s:''' LMMMsLsLMsMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsMMMLsLMs
+
+'''3L 8M 3s:''' LMMMsLsMLsMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsMMMLMsLs
+
+'''3L 8M 3s:''' LMMMsMLsLsMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsMMLsMMLs
+
+'''3L 8M 3s:''' LMMsLMMsLsMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsMMLsMLsM
+
+'''3L 8M 3s:''' LMMsLMsLMsMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsMMLsMLMs
+
+'''3L 8M 3s:''' LMMsLMsMLsMMMM
+
+
+
+'''3L 8M 3s:''' LMMsLsLMMsMMMM / LMMMMsMMLsLsMM
+
+
+'''3L 8M 3s:''' LMMMMsMMLsLMsM
+
+'''3L 8M 3s:''' LMMsLsMLMsMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsMMLsLMMs
+
+'''3L 8M 3s:''' LMMsLsMMLsMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsMMLMsMLs
+
+'''3L 8M 3s:''' LMMsMLMsLsMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsMMLMsLsM
+
+'''3L 8M 3s:''' LMMsMLsLMsMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsMMLMsLMs
+
+'''3L 8M 3s:''' LMMsMLsMLsMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsMMLMMsLs
+
+'''3L 8M 3s:''' LMMsMMLsLsMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsMLsMMMLs
+
+'''3L 8M 3s:''' LMMMsLsMMMMLMs
+
+
+
+'''3L 8M 3s:''' LMMsLMsMMMMLMs / LMMMMsMLsMMLsM
+
+
+'''3L 8M 3s:''' LMMMMsMLsMMLMs
+
+'''3L 8M 3s:''' LMMsMLsMMMMLMs
+
+
+
+'''3L 8M 3s:''' LMMMMsMLsMLsMM
+
+'''3L 8M 3s:''' LMMsMMMMLMsLMs
+
+
+
+'''3L 8M 3s:''' LMMMMsMLsMLMsM
+
+'''3L 8M 3s:''' LMsLMsMLMsMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsMLsMLMMs
+
+'''3L 8M 3s:''' LMsLMsMMLsMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsMLsLsMMM
+
+'''3L 8M 3s:''' LMMMsMMMMLMsLs
+
+
+
+'''3L 8M 3s:''' LMMMMsMLsLMsMM
+
+'''3L 8M 3s:''' LMMsMMMMLMsLsM
+
+
+
+'''3L 8M 3s:''' LMMMMsMLsLMMsM
+
+'''3L 8M 3s:''' LMsLsMMLMsMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsMLsLMMMs
+
+'''3L 8M 3s:''' LMsLsMMMLsMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsMLMsMMLs
+
+'''3L 8M 3s:''' LMMsLsMMMMLMsM
+
+
+
+'''3L 8M 3s:''' LMMMMsMLMsMLsM
+
+'''3L 8M 3s:''' LMsLMsMMMMLMsM
+
+
+
+'''3L 8M 3s:''' LMMMMsMLMsMLMs
+
+'''3L 8M 3s:''' LMsMLMsMLsMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsMLMsLsMM
+
+'''3L 8M 3s:''' LMMsMMMMLMsMLs
+
+
+
+'''3L 8M 3s:''' LMsMLsMLMsMMMM / LMMMMsMLMsLMsM
+
+
+'''3L 8M 3s:''' LMMMMsMLMsLMMs
+
+'''3L 8M 3s:''' LMsMLsMMLsMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsMLMMsMLs
+
+'''3L 8M 3s:''' LMsLsMMMMLMsMM
+
+
+
+'''3L 8M 3s:''' LMMMMsMLMMsLsM
+
+'''3L 8M 3s:''' LMsMMLsLMsMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsMLMMsLMs
+
+'''3L 8M 3s:''' LMsMMLsMLsMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsMLMMMsLs
+
+'''3L 8M 3s:''' LMsMMMLsLsMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsLsMMMLsM
+
+'''3L 8M 3s:''' LMMMsLMsMMMMLs
+
+
+
+'''3L 8M 3s:''' LMMMMsLsMMMLMs
+
+'''3L 8M 3s:''' LMMMsMLsMMMMLs
+
+
+
+'''3L 8M 3s:''' LMMMMsLsMMLsMM
+
+'''3L 8M 3s:''' LMMsLMMsMMMMLs
+
+
+
+'''3L 8M 3s:''' LMMMMsLsMMLMsM
+
+'''3L 8M 3s:''' LMMsMLMsMMMMLs
+
+
+
+'''3L 8M 3s:''' LMMMMsLsMMLMMs
+
+'''3L 8M 3s:''' LMMsMMLsMMMMLs
+
+
+
+'''3L 8M 3s:''' LMMMMsLsMLsMMM
+
+'''3L 8M 3s:''' LMMMsMMMMLsLMs
+
+
+
+'''3L 8M 3s:''' LMMMMsLsMLMsMM
+
+'''3L 8M 3s:''' LMMsMMMMLsLMsM
+
+
+
+'''3L 8M 3s:''' LMMMMsLsMLMMsM
+
+'''3L 8M 3s:''' LMsMMLMsMMMMLs
+
+
+
+'''3L 8M 3s:''' LMMMMsLsMLMMMs
+
+'''3L 8M 3s:''' LMsMMMLsMMMMLs
+
+
+
+'''3L 8M 3s:''' LMMMMsLsLsMMMM
+
+'''3L 8M 3s:''' LMMMMsMMMMLsLs
+
+
+
+'''3L 8M 3s:''' LMMMMsLsLMsMMM
+
+'''3L 8M 3s:''' LMMMsMMMMLsLsM
+
+
+
+'''3L 8M 3s:''' LMMMMsLsLMMsMM
+
+'''3L 8M 3s:''' LMMsMMMMLsLsMM
+
+
+
+'''3L 8M 3s:''' LMMMMsLsLMMMsM
+
+'''3L 8M 3s:''' LMsMMMMLsLsMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsLMsMMMLs
+
+'''3L 8M 3s:''' LMMMsLsMMMMLsM
+
+
+
+'''3L 8M 3s:''' LMMMMsLMsMMLsM
+
+'''3L 8M 3s:''' LMMsLMsMMMMLsM
+
+
+
+'''3L 8M 3s:''' LMMsMLsMMMMLsM / LMMMMsLMsMMLMs
+
+
+'''3L 8M 3s:''' LMMMMsLMsMLsMM
+
+'''3L 8M 3s:''' LMMsMMMMLsMLMs
+
+
+
+'''3L 8M 3s:''' LMMMMsLMsMLMsM
+
+'''3L 8M 3s:''' LMsMLMsMMMMLsM
+
+
+
+'''3L 8M 3s:''' LMMMMsLMsMLMMs
+
+'''3L 8M 3s:''' LMsMMLsMMMMLsM
+
+
+
+'''3L 8M 3s:''' LMMMMsLMsLsMMM
+
+'''3L 8M 3s:''' LMMMsMMMMLsMLs
+
+
+
+'''3L 8M 3s:''' LMMMMsLMsLMsMM
+
+'''3L 8M 3s:''' LMMsMMMMLsMLsM
+
+
+
+'''3L 8M 3s:''' LMMMMsLMsLMMsM
+
+'''3L 8M 3s:''' LMsMMMMLsMLsMM
+
+
+
+'''3L 8M 3s:''' LMMMMsLMsLMMMs
+
+'''3L 8M 3s:''' LsMLsMMMLsMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsLMMsMMLs
+
+'''3L 8M 3s:''' LMMsLsMMMMLsMM
+
+
+
+'''3L 8M 3s:''' LMMMMsLMMsMLsM
+
+'''3L 8M 3s:''' LMsLMsMMMMLsMM
+
+
+
+'''3L 8M 3s:''' LMMMMsLMMsMLMs
+
+'''3L 8M 3s:''' LMsMLsMMMMLsMM
+
+
+
+'''3L 8M 3s:''' LMMMMsLMMsLsMM
+
+'''3L 8M 3s:''' LMMsMMMMLsMMLs
+
+
+
+'''3L 8M 3s:''' LMMMMsLMMsLMsM
+
+'''3L 8M 3s:''' LMsMMMMLsMMLsM
+
+
+
+'''3L 8M 3s:''' LsMMLsMMLsMMMM / LMMMMsLMMsLMMs
+
+
+'''3L 8M 3s:''' LMMMMsLMMMsMLs
+
+'''3L 8M 3s:''' LMsLsMMMMLsMMM
+
+
+
+'''3L 8M 3s:''' LMMMMsLMMMsLsM
+
+'''3L 8M 3s:''' LMsMMMMLsMMMLs
+
+
+
+'''3L 8M 3s:''' LMMMMsLMMMsLMs
+
+'''3L 8M 3s:''' LsMLsMMMMLsMMM
+
+
+
+'''3L 8M 3s:''' LsLsMMMMLsMMMM / LMMMMsLMMMMsLs
+
+
+'''3L 8M 3s:''' LMMMMMsMMMLsLs
+
+'''3L 8M 3s:''' LMMMsLsLsMMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMMsMMLsMLs
+
+'''3L 8M 3s:''' LMMsLMsLsMMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMMsMMLsLsM
+
+'''3L 8M 3s:''' LMMsLsLMsMMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMMsMMLsLMs
+
+'''3L 8M 3s:''' LMMsLsMLsMMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMMsMMLMsLs
+
+'''3L 8M 3s:''' LMMsMLsLsMMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMMsMLsMMLs
+
+'''3L 8M 3s:''' LMMsLsMMMMMLMs
+
+
+
+'''3L 8M 3s:''' LMsLMsLMsMMMMM / LMMMMMsMLsMLsM
+
+
+'''3L 8M 3s:''' LMMMMMsMLsMLMs
+
+'''3L 8M 3s:''' LMsLMsMLsMMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMMsMLsLsMM
+
+'''3L 8M 3s:''' LMMsMMMMMLMsLs
+
+
+
+'''3L 8M 3s:''' LMMMMMsMLsLMsM
+
+'''3L 8M 3s:''' LMsLsMLMsMMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMMsMLsLMMs
+
+'''3L 8M 3s:''' LMsLsMMLsMMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMMsMLMsMLs
+
+'''3L 8M 3s:''' LMsLsMMMMMLMsM
+
+
+
+'''3L 8M 3s:''' LMMMMMsMLMsLsM
+
+'''3L 8M 3s:''' LMsMLsLMsMMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMMsMLMsLMs
+
+'''3L 8M 3s:''' LMsMLsMLsMMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMMsMLMMsLs
+
+'''3L 8M 3s:''' LMsMMLsLsMMMMM
+
+
+
+'''3L 8M 3s:''' LMMMsLsMMMMMLs / LMMMMMsLsMMMLs
+
+
+'''3L 8M 3s:''' LMMMMMsLsMMLsM
+
+'''3L 8M 3s:''' LMMsLMsMMMMMLs
+
+
+
+'''3L 8M 3s:''' LMMMMMsLsMMLMs
+
+'''3L 8M 3s:''' LMMsMLsMMMMMLs
+
+
+
+'''3L 8M 3s:''' LMMMMMsLsMLsMM
+
+'''3L 8M 3s:''' LMMsMMMMMLsLMs
+
+
+
+'''3L 8M 3s:''' LMMMMMsLsMLMsM
+
+'''3L 8M 3s:''' LMsMLMsMMMMMLs
+
+
+
+'''3L 8M 3s:''' LMMMMMsLsMLMMs
+
+'''3L 8M 3s:''' LMsMMLsMMMMMLs
+
+
+
+'''3L 8M 3s:''' LMMMMMsLsLsMMM
+
+'''3L 8M 3s:''' LMMMsMMMMMLsLs
+
+
+
+'''3L 8M 3s:''' LMMMMMsLsLMsMM
+
+'''3L 8M 3s:''' LMMsMMMMMLsLsM
+
+
+
+'''3L 8M 3s:''' LMMMMMsLsLMMsM
+
+'''3L 8M 3s:''' LMsMMMMMLsLsMM
+
+
+
+'''3L 8M 3s:''' LMMMMMsLsLMMMs
+
+'''3L 8M 3s:''' LsLsMMMLsMMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMMsLMsMMLs
+
+'''3L 8M 3s:''' LMMsLsMMMMMLsM
+
+
+
+'''3L 8M 3s:''' LMMMMMsLMsMLsM
+
+'''3L 8M 3s:''' LMsLMsMMMMMLsM
+
+
+
+'''3L 8M 3s:''' LMsMLsMMMMMLsM / LMMMMMsLMsMLMs
+
+
+'''3L 8M 3s:''' LMMMMMsLMsLsMM
+
+'''3L 8M 3s:''' LMMsMMMMMLsMLs
+
+
+
+'''3L 8M 3s:''' LMMMMMsLMsLMsM
+
+'''3L 8M 3s:''' LMsMMMMMLsMLsM
+
+
+
+'''3L 8M 3s:''' LMMMMMsLMsLMMs
+
+'''3L 8M 3s:''' LsMLsMMLsMMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMMsLMMsMLs
+
+'''3L 8M 3s:''' LMsLsMMMMMLsMM
+
+
+
+'''3L 8M 3s:''' LMMMMMsLMMsLsM
+
+'''3L 8M 3s:''' LMsMMMMMLsMMLs
+
+
+
+'''3L 8M 3s:''' LMMMMMsLMMsLMs
+
+'''3L 8M 3s:''' LsMLsMMMMMLsMM
+
+
+
+'''3L 8M 3s:''' LMMMMMsLMMMsLs
+
+'''3L 8M 3s:''' LsLsMMMMMLsMMM
+
+
+
+'''3L 8M 3s:''' LMMMMMMsMMLsLs
+
+'''3L 8M 3s:''' LMMsLsLsMMMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMMMsMLsMLs
+
+'''3L 8M 3s:''' LMsLMsLsMMMMMM
+
+
+
+'''3L 8M 3s:''' LMsLsLMsMMMMMM / LMMMMMMsMLsLsM
+
+
+'''3L 8M 3s:''' LMMMMMMsMLsLMs
+
+'''3L 8M 3s:''' LMsLsMLsMMMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMMMsMLMsLs
+
+'''3L 8M 3s:''' LMsMLsLsMMMMMM
+
+
+
+'''3L 8M 3s:''' LMMsLsMMMMMMLs / LMMMMMMsLsMMLs
+
+
+'''3L 8M 3s:''' LMMMMMMsLsMLsM
+
+'''3L 8M 3s:''' LMsLMsMMMMMMLs
+
+
+
+'''3L 8M 3s:''' LMMMMMMsLsMLMs
+
+'''3L 8M 3s:''' LMsMLsMMMMMMLs
+
+
+
+'''3L 8M 3s:''' LMMMMMMsLsLsMM
+
+'''3L 8M 3s:''' LMMsMMMMMMLsLs
+
+
+
+'''3L 8M 3s:''' LMMMMMMsLsLMsM
+
+'''3L 8M 3s:''' LMsMMMMMMLsLsM
+
+
+
+'''3L 8M 3s:''' LMMMMMMsLsLMMs
+
+'''3L 8M 3s:''' LsLsMMLsMMMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMMMsLMsMLs
+
+'''3L 8M 3s:''' LMsLsMMMMMMLsM
+
+
+
+'''3L 8M 3s:''' LMMMMMMsLMsLsM
+
+'''3L 8M 3s:''' LMsMMMMMMLsMLs
+
+
+
+'''3L 8M 3s:''' LsMLsMLsMMMMMM / LMMMMMMsLMsLMs
+
+
+'''3L 8M 3s:''' LMMMMMMsLMMsLs
+
+'''3L 8M 3s:''' LsLsMMMMMMLsMM
+
+
+
+'''3L 8M 3s:''' LMMMMMMMsMLsLs
+
+'''3L 8M 3s:''' LMsLsLsMMMMMMM
+
+
+
+'''3L 8M 3s:''' LMsLsMMMMMMMLs / LMMMMMMMsLsMLs
+
+
+'''3L 8M 3s:''' LMMMMMMMsLsLsM
+
+'''3L 8M 3s:''' LMsMMMMMMMLsLs
+
+
+
+'''3L 8M 3s:''' LMMMMMMMsLsLMs
+
+'''3L 8M 3s:''' LsLsMLsMMMMMMM
+
+
+
+'''3L 8M 3s:''' LMMMMMMMsLMsLs
+
+'''3L 8M 3s:''' LsLsMMMMMMMLsM
+
+
+
+'''3L 8M 3s:''' LsLsLsMMMMMMMM / LMMMMMMMMsLsLs
+
+
+'''7L 6M 1s:''' LLsLMLMLMMLMLM
+
+'''1L 6M 7s:''' LsMsMsMMsMsMss
+
+
+
+'''7L 6M 1s:''' LLMMMLMLMLLsLM
+
+'''1L 6M 7s:''' LsMssMMMsMsMss
+
+
+
+'''7L 6M 1s:''' LLMMMLMLLsLMLM
+
+'''1L 6M 7s:''' LsMsMssMMMsMss
+
+
+
+'''7L 6M 1s:''' LLMMLMMLLsLMLM
+
+'''1L 6M 7s:''' LsMsMssMMsMMss
+
+
+
+'''7L 6M 1s:''' LLMMLMLMLsLMLM
+
+'''1L 6M 7s:''' LsMsMssMMsMsMs
+
+
+
+'''7L 6M 1s:''' LLMMLMLLsLMLMM
+
+'''1L 6M 7s:''' LsMsMMssMMsMss
+
+
+
+'''7L 6M 1s:''' LLMMLMLLsLLMMM
+
+'''1L 6M 7s:''' LssMMMssMMsMss
+
+
+
+'''7L 6M 1s:''' LLMMLMLLMMMLLs
+
+'''1L 6M 7s:''' LssMMsMssMMMss
+
+
+
+'''7L 6M 1s:''' LLMMLMLLMMLMLs
+
+'''1L 6M 7s:''' LssMMsMssMMsMs
+
+
+
+'''7L 6M 1s:''' LLMMLLsLMLLMMM
+
+'''1L 6M 7s:''' LsMssMMMssMMss
+
+
+
+'''7L 6M 1s:''' LLMMLLMMMLMLLs
+
+'''1L 6M 7s:''' LssMMssMMMsMss
+
+
+
+'''7L 6M 1s:''' LLMMLLMMLLsLMM
+
+'''1L 6M 7s:''' LsMMssMMssMMss
+
+
+
+'''7L 6M 1s:''' LLMMLLMMLLMMLs
+
+'''1L 6M 7s:''' LssMMssMMssMMs
+
+
+
+'''7L 6M 1s:''' LLMLsLMLMLMMLM
+
+'''1L 6M 7s:''' LsMsMsMMsMssMs
+
+
+
+'''7L 6M 1s:''' LLMLsLMLMLLMMM
+
+'''1L 6M 7s:''' LsMsMssMMMssMs
+
+
+
+'''7L 6M 1s:''' LLMLsLMLLMMMLM
+
+'''1L 6M 7s:''' LsMssMMMsMssMs
+
+
+
+'''7L 6M 1s:''' LLMLsLLMMLMMLM
+
+'''1L 6M 7s:''' LssMMsMMsMssMs
+
+
+
+'''7L 6M 1s:''' LLMLsLLMMLLMMM
+
+'''1L 6M 7s:''' LssMMssMMMssMs
+
+
+
+'''7L 6M 1s:''' LLMLMMMLMLMLLs
+
+'''1L 6M 7s:''' LssMsMMMsMsMss
+
+
+
+'''7L 6M 1s:''' LLMLMMMLMLLsLM
+
+'''1L 6M 7s:''' LsMssMsMMMsMss
+
+
+
+'''7L 6M 1s:''' LLMLMMMLMLLMLs
+
+'''1L 6M 7s:''' LssMsMMMsMssMs
+
+
+
+'''7L 6M 1s:''' LLMLMMMLLMMLLs
+
+'''1L 6M 7s:''' LssMsMMMssMMss
+
+
+
+'''7L 6M 1s:''' LLMLMMMLLMLsLM
+
+'''1L 6M 7s:''' LsMssMsMMMssMs
+
+
+
+'''7L 6M 1s:''' LLMLMMLMMLLsLM
+
+'''1L 6M 7s:''' LsMssMsMMsMMss
+
+
+
+'''7L 6M 1s:''' LLMLMMLMLMLsLM
+
+'''1L 6M 7s:''' LsMssMsMMsMsMs
+
+
+
+'''7L 6M 1s:''' LLMLMMLLsLMLMM
+
+'''1L 6M 7s:''' LsMsMMssMsMMss
+
+
+
+'''7L 6M 1s:''' LLMLMMLLsLLMMM
+
+'''1L 6M 7s:''' LssMMMssMsMMss
+
+
+
+'''7L 6M 1s:''' LLMLMMLLMMMLLs
+
+'''1L 6M 7s:''' LssMsMMssMMMss
+
+
+
+'''7L 6M 1s:''' LLMLMMLLMMLMLs
+
+'''1L 6M 7s:''' LssMsMMssMMsMs
+
+
+
+'''7L 6M 1s:''' LLMLMLsLMLMLMM
+
+'''1L 6M 7s:''' LsMsMsMMssMsMs
+
+
+
+'''7L 6M 1s:''' LLMLMLsLMLLMMM
+
+'''1L 6M 7s:''' LsMssMMMssMsMs
+
+
+
+'''7L 6M 1s:''' LLMLMLsLLMMLMM
+
+'''1L 6M 7s:''' LssMMsMMssMsMs
+
+
+
+'''7L 6M 1s:''' LLMLMLsLLMLMMM
+
+'''1L 6M 7s:''' LssMsMMMssMsMs
+
+
+
+'''7L 6M 1s:''' LLMLMLMMMLMLLs
+
+'''1L 6M 7s:''' LssMsMsMMMsMss
+
+
+
+'''7L 6M 1s:''' LLMLMLMMMLLMLs
+
+'''1L 6M 7s:''' LssMsMsMMMssMs
+
+
+
+'''7L 6M 1s:''' LLMLMLMMLMLMLs
+
+'''1L 6M 7s:''' LssMsMsMMsMsMs
+
+
+
+'''7L 6M 1s:''' LLLsLLMMLMMLMM
+
+'''1L 6M 7s:''' LssMMsMMsMMsss
+
+
+
+'''7L 6M 1s:''' LLLMMLMMLMMLLs
+
+'''1L 6M 7s:''' LsssMMsMMsMMss
+
+
+
+'''7L 2M 5s:''' LLsLsLsLMMLsLs
+
+'''5L 2M 7s:''' LsLsLsMMsLsLss
+
+
+
+'''7L 2M 5s:''' LLsLsLMMLsLsLs
+
+'''5L 2M 7s:''' LsLsLssLsLsMMs
+
+
+
+'''7L 4M 3s:''' LLsLMMLMLsLMLs
+
+'''3L 4M 7s:''' LsMMsMsLsMsLss
+
+
+
+'''7L 4M 3s:''' LLsLMMLLsLMMLs
+
+'''3L 4M 7s:''' LsMMsLssLsMMss
+
+
+
+'''7L 4M 3s:''' LLsLMLsLMMLMLs
+
+'''3L 4M 7s:''' LsMMsMsLssLsMs
+
+
+
+'''7L 4M 3s:''' LLsLMLsLMLMMLs
+
+'''3L 4M 7s:''' LsMsLsMsMMsLss
+
+
+
+'''7L 4M 3s:''' LLsLMLsLLsLMMM
+
+'''3L 4M 7s:''' LsMMMssLsMsLss
+
+
+
+'''7L 4M 3s:''' LLsLMLMMLsLMLs
+
+'''3L 4M 7s:''' LsMsLssLsMsMMs
+
+
+
+'''7L 4M 3s:''' LLMMMLsLLsLMLs
+
+'''3L 4M 7s:''' LsMsLssMMMsLss
+
+
+
+'''7L 4M 3s:''' LLMMLsLLsLMMLs
+
+'''3L 4M 7s:''' LsMMsLssMMsLss
+
+
+
+'''6L 2M 6s:''' LMsLsLsLsLsMLs
+
+'''6L 2M 6s:''' LMsLsMLsLsLsLs
+
+
+
+'''6L 2M 6s:''' LMsLsLsLsLsLsM
+
+'''6L 2M 6s:''' LMsMLsLsLsLsLs
+
+
+
+'''6L 2M 6s:''' LsLsLsLsMLsLsM / LMsLsLMsLsLsLs
+
+
+'''6L 2M 6s:''' LsLsLsLsLsMLsM / LMsLMsLsLsLsLs
+
+
+'''6L 2M 6s:''' LsLsLsLsLsLsMM / LMMsLsLsLsLsLs
+
+
+'''6L 6M 2s:''' LMLMLsMLMLMMLs
+
+'''2L 6M 6s:''' LMsMsMMsLsMsMs
+
+
+
+'''6L 6M 2s:''' LMLMLsLMMLMLsM
+
+'''2L 6M 6s:''' LMsMsMsLsMMsMs
+
+
+
+'''6L 6M 2s:''' LMLMLsLMMLMLMs
+
+'''2L 6M 6s:''' LsMMsMsMLsMsMs
+
+
+
+'''6L 6M 2s:''' LMLMLMsLMLMMLs
+
+'''2L 6M 6s:''' LsMsMMsLsMsMsM
+
+
+
+'''6L 6M 2s:''' LLsLMMMLMMLMLs
+
+'''2L 6M 6s:''' LsMMMsMMsMsLss
+
+
+
+'''6L 6M 2s:''' LLsLMMMLMLMMLs
+
+'''2L 6M 6s:''' LsMMMsMsMMsLss
+
+
+
+'''6L 6M 2s:''' LLsLMMLMLsLMMM
+
+'''2L 6M 6s:''' LsMMMssLsMMsMs
+
+
+
+'''6L 6M 2s:''' LLsLMMLMLMMMLs
+
+'''2L 6M 6s:''' LsMMsMsMMMsLss
+
+
+
+'''6L 6M 2s:''' LLsLMLsLMMLMMM
+
+'''2L 6M 6s:''' LsMMsMMMssLsMs
+
+
+
+'''6L 6M 2s:''' LLsLMLsLMLMMMM
+
+'''2L 6M 6s:''' LsMsLsMsMMMMss
+
+
+
+'''6L 6M 2s:''' LLsLMLMMLsLMMM
+
+'''2L 6M 6s:''' LsMMMssLsMsMMs
+
+
+
+'''6L 6M 2s:''' LLsLMLMMLMMMLs
+
+'''2L 6M 6s:''' LsMsMMsMMMsLss
+
+
+
+'''6L 6M 2s:''' LLsLLsLMMLMMMM
+
+'''2L 6M 6s:''' LsMMsMMMMssLss
+
+
+
+'''6L 6M 2s:''' LLMMMMMLLsLMLs
+
+'''2L 6M 6s:''' LsMsLssMMMMMss
+
+
+
+'''6L 6M 2s:''' LLMMMMLMMLsLLs
+
+'''2L 6M 6s:''' LssLssMMMMsMMs
+
+
+
+'''6L 6M 2s:''' LLMMMMLMLsLMLs
+
+'''2L 6M 6s:''' LsMsLssMMMMsMs
+
+
+
+'''6L 6M 2s:''' LLMMMLsLMMLMLs
+
+'''2L 6M 6s:''' LsMMsMsLssMMMs
+
+
+
+'''6L 6M 2s:''' LLMMMLsLMLMMLs
+
+'''2L 6M 6s:''' LsMsMMsLssMMMs
+
+
+
+'''6L 6M 2s:''' LLMMMLsLLsLMMM
+
+'''2L 6M 6s:''' LsMMMssMMMsLss
+
+
+
+'''6L 6M 2s:''' LLMMMLMMLsLMLs
+
+'''2L 6M 6s:''' LsMsLssMMMsMMs
+
+
+
+'''6L 6M 2s:''' LLMMMLLsLMMMLs
+
+'''2L 6M 6s:''' LsMMMsLssMMMss
+
+
+
+'''5L 6M 3s:''' LMMLsMLMMMLsLs
+
+'''3L 6M 5s:''' LMsMMMsLsLsMMs
+
+
+
+'''5L 6M 3s:''' LMMLsLsLMMMLsM
+
+'''3L 6M 5s:''' LMsMMsLsLsMMMs
+
+
+
+'''5L 6M 3s:''' LMMLsLsLMMMLMs
+
+'''3L 6M 5s:''' LsLsMMMsMLsMMs
+
+
+
+'''5L 6M 3s:''' LMMLsLsLMMLsMM
+
+'''3L 6M 5s:''' LMMsMMsLsLsMMs
+
+
+
+'''5L 6M 3s:''' LMMLsLMMLsMMLs
+
+'''3L 6M 5s:''' LMMsLsMMsLsMMs
+
+
+
+'''5L 6M 3s:''' LMMLsLMMLsLMMs
+
+'''3L 6M 5s:''' LsMMLsMMsLsMMs
+
+
+
+'''5L 6M 3s:''' LMMLMsMLMMLsLs
+
+'''3L 6M 5s:''' LMsMMsLsLsMMsM
+
+
+
+'''5L 6M 3s:''' LMMLMsLMMMLsLs
+
+'''3L 6M 5s:''' LsLsMMsMLsMMMs
+
+
+
+'''5L 6M 3s:''' LMMLMMsLMMLsLs
+
+'''3L 6M 5s:''' LsLsMMsMMLsMMs
+
+
+
+'''5L 6M 3s:''' LMLsMLsLMMMMLs
+
+'''3L 6M 5s:''' LMsLsMMMMsLsMs
+
+
+
+'''5L 6M 3s:''' LMLsMLsLMMMLMs
+
+'''3L 6M 5s:''' LMsLsMMMsMLsMs
+
+
+
+'''5L 6M 3s:''' LMLsMLMsLMMLsM
+
+'''3L 6M 5s:''' LMsMLsMMsLMsMs
+
+
+
+'''5L 6M 3s:''' LMLsMLMMMLsMLs
+
+'''3L 6M 5s:''' LMsLsMsLMsMMMs
+
+
+
+'''5L 6M 3s:''' LMLsMLMMMLsLMs
+
+'''3L 6M 5s:''' LMsMMMsLsMLsMs
+
+
+
+'''5L 6M 3s:''' LMLsLMsLMMMMLs
+
+'''3L 6M 5s:''' LsMLsMMMMsLsMs
+
+
+
+'''5L 6M 3s:''' LMLsLMsLMMMLMs
+
+'''3L 6M 5s:''' LsMLsMMMsMLsMs
+
+
+
+'''5L 6M 3s:''' LMLsLMMMMLsMLs
+
+'''3L 6M 5s:''' LMsLsMsLsMMMMs
+
+
+
+'''5L 6M 3s:''' LMLsLMMMMLsLMs
+
+'''3L 6M 5s:''' LsMLsMsLsMMMMs
+
+
+
+'''5L 6M 3s:''' LMLMsLMMLsMLMs
+
+'''3L 6M 5s:''' LMsMLsMsMLsMMs
+
+
+
+'''5L 6M 3s:''' LLsLsLMMMMMMLs
+
+'''3L 6M 5s:''' LsLsMMMMMMsLss
+
+
+
+'''5L 6M 3s:''' LLsLMMMMMMLsLs
+
+'''3L 6M 5s:''' LsLssLsMMMMMMs
+
+
+
+'''4L 6M 4s:''' LMsLsMLMsMLMsM
+
+'''4L 6M 4s:''' LMsMLMsMLMsMLs
+
+
+
+'''4L 6M 4s:''' LMsMLMsMLsMLsM / LMsLMsLMsMLMsM
+
+
+'''4L 6M 4s:''' LMsLMsLMsLMsMM / LMMsMLsMLsMLsM
+
+
+'''4L 6M 4s:''' LMMsMLsMLsMLMs
+
+'''4L 6M 4s:''' LMsLMsLMsMLsMM
+
+
+
+'''4L 6M 4s:''' LMMsMLsMLsLsMM
+
+'''4L 6M 4s:''' LMMsMMLMsLMsLs
+
+
+
+'''4L 6M 4s:''' LMMsMLsMLsLMsM
+
+'''4L 6M 4s:''' LMsLMsLsMLMsMM
+
+
+
+'''4L 6M 4s:''' LMMsMLsMLMsMLs
+
+'''4L 6M 4s:''' LMsLMsMLMsLsMM
+
+
+
+'''4L 6M 4s:''' LMMsMLsMLMsLsM
+
+'''4L 6M 4s:''' LMsLMsMLsLMsMM
+
+
+
+'''4L 6M 4s:''' LMMsMLsMLMsLMs
+
+'''4L 6M 4s:''' LMsLMsMLsMLsMM
+
+
+
+'''4L 6M 4s:''' LMMsMLsLsMMLMs
+
+'''4L 6M 4s:''' LMMsMLsMMLMsLs
+
+
+
+'''4L 6M 4s:''' LMMsMLsLsMLsMM
+
+'''4L 6M 4s:''' LMMsMMLMsLsLMs
+
+
+
+'''4L 6M 4s:''' LMMsMLsLsMLMsM
+
+'''4L 6M 4s:''' LMsLsLMsMLMsMM
+
+
+
+'''4L 6M 4s:''' LMMsMLsLsLMsMM
+
+'''4L 6M 4s:''' LMMsMMLMsLsLsM
+
+
+
+'''4L 6M 4s:''' LMMsMLsLMsMLsM
+
+'''4L 6M 4s:''' LMsLMsMMLMsLsM
+
+
+
+'''4L 6M 4s:''' LMMsMLsLMsMLMs
+
+'''4L 6M 4s:''' LMsLsMLMsMLsMM
+
+
+
+'''4L 6M 4s:''' LMMsMLsLMsLsMM
+
+'''4L 6M 4s:''' LMMsMMLMsLsMLs
+
+
+
+'''4L 6M 4s:''' LMMsMLsLMsLMsM
+
+'''4L 6M 4s:''' LMsLsMLsMLMsMM
+
+
+
+'''4L 6M 4s:''' LMMsMLMsMLsMLs
+
+'''4L 6M 4s:''' LMsLMsLsMMLMsM
+
+
+
+'''4L 6M 4s:''' LMMsMLMsMLsLsM
+
+'''4L 6M 4s:''' LMsLsLMsMMLMsM
+
+
+
+'''4L 6M 4s:''' LMMsMLMsMLsLMs
+
+'''4L 6M 4s:''' LMsLsMLsMMLMsM
+
+
+
+'''4L 6M 4s:''' LMMsMLMsMLMsLs
+
+'''4L 6M 4s:''' LMsMLMsMLsLsMM
+
+
+
+'''4L 6M 4s:''' LMMsMLMsLsMLsM
+
+'''4L 6M 4s:''' LMsLMsMMLMsMLs
+
+
+
+'''4L 6M 4s:''' LMMsMLMsLsMLMs
+
+'''4L 6M 4s:''' LMsMLsLMsMLsMM
+
+
+
+'''4L 6M 4s:''' LMMsMLMsLsLsMM
+
+'''4L 6M 4s:''' LMMsMMLMsMLsLs
+
+
+
+'''4L 6M 4s:''' LMsMLsLsMLMsMM / LMMsMLMsLsLMsM
+
+
+'''4L 6M 4s:''' LMMsMLMsLMsMLs
+
+'''4L 6M 4s:''' LMsLsMMLMsMLsM
+
+
+
+'''4L 6M 4s:''' LMMsMLMsLMsLsM
+
+'''4L 6M 4s:''' LMsMLsMLsLMsMM
+
+
+
+'''4L 6M 4s:''' LMMsMLMsLMsLMs
+
+'''4L 6M 4s:''' LMsMLsMLsMLsMM
+
+
+
+'''4L 6M 4s:''' LMMsMLMMsMLsLs
+
+'''4L 6M 4s:''' LMsLsLsMMLMsMM
+
+
+
+'''4L 6M 4s:''' LMMsLsMMLMsMLs
+
+'''4L 6M 4s:''' LMMsMLMsLsMMLs
+
+
+
+'''4L 6M 4s:''' LMMsLsMMLMsLsM
+
+'''4L 6M 4s:''' LMMsMLsLMsMMLs
+
+
+
+'''4L 6M 4s:''' LMMsLsMMLMsLMs
+
+'''4L 6M 4s:''' LMMsMLsMLsMMLs
+
+
+
+'''4L 6M 4s:''' LMMsLsMLsMMLMs
+
+'''4L 6M 4s:''' LMMsMLsMMLsLMs
+
+
+
+'''4L 6M 4s:''' LMMsLsMLsMLsMM
+
+'''4L 6M 4s:''' LMMsMMLsLMsLMs
+
+
+
+'''4L 6M 4s:''' LMMsLsMLsMLMsM
+
+'''4L 6M 4s:''' LMsLMsMLMsMMLs
+
+
+
+'''4L 6M 4s:''' LMMsLsMLsLMsMM
+
+'''4L 6M 4s:''' LMMsMMLsLMsLsM
+
+
+
+'''4L 6M 4s:''' LMsLsMMLMsMMLs / LMMsLsMLsLMMsM
+
+
+'''4L 6M 4s:''' LMMsLsMLMsMMLs
+
+'''4L 6M 4s:''' LMMsLsMMLsLMsM
+
+
+
+'''4L 6M 4s:''' LMMsLsMLMsMLsM
+
+'''4L 6M 4s:''' LMsLMsMMLsLMsM
+
+
+
+'''4L 6M 4s:''' LMMsLsMLMsMLMs
+
+'''4L 6M 4s:''' LMsMLMsMLsMMLs
+
+
+
+'''4L 6M 4s:''' LMMsLsMLMsLsMM
+
+'''4L 6M 4s:''' LMMsMMLsLMsMLs
+
+
+
+'''4L 6M 4s:''' LMMsLsMLMsLMsM
+
+'''4L 6M 4s:''' LMsMLsMLMsMMLs
+
+
+
+'''4L 6M 4s:''' LMsLsMMLsLMsMM / LMMsLsMLMMsMLs
+
+
+'''4L 6M 4s:''' LMMsLsLsMMLMsM
+
+'''4L 6M 4s:''' LMMsMLMsMMLsLs
+
+
+
+'''4L 6M 4s:''' LMMsLsLsMLMsMM
+
+'''4L 6M 4s:''' LMMsMMLsLsLMsM
+
+
+
+'''4L 6M 4s:''' LMMsLsLsMLMMsM
+
+'''4L 6M 4s:''' LMsMMLMsMMLsLs
+
+
+
+'''4L 6M 4s:''' LMMsMMLsLsLsMM / LMMsLsLsLMMsMM
+
+
+'''4L 6M 4s:''' LMMsLsLMsMMLMs
+
+'''4L 6M 4s:''' LMMsMLsMMLsLsM
+
+
+
+'''4L 6M 4s:''' LMMsLsLMsMLsMM
+
+'''4L 6M 4s:''' LMMsMMLsLsMLMs
+
+
+
+'''4L 6M 4s:''' LMMsLsLMsMLMsM
+
+'''4L 6M 4s:''' LMsMLMsMMLsLsM
+
+
+
+'''4L 6M 4s:''' LMMsLsLMsLMsMM
+
+'''4L 6M 4s:''' LMMsMMLsLsMLsM
+
+
+
+'''4L 6M 4s:''' LMMsLsLMsLMMsM
+
+'''4L 6M 4s:''' LMsMMLsLsMLsMM
+
+
+
+'''4L 6M 4s:''' LMMsLsLMMsMMLs
+
+'''4L 6M 4s:''' LMMsLsMMLsLsMM
+
+
+
+'''4L 6M 4s:''' LMsLMsMMLsLsMM / LMMsLsLMMsMLsM
+
+
+'''4L 6M 4s:''' LMMsLsLMMsMLMs
+
+'''4L 6M 4s:''' LMsMLsMMLsLsMM
+
+
+
+'''4L 6M 4s:''' LMMsLsLMMsLsMM
+
+'''4L 6M 4s:''' LMMsMMLsLsMMLs
+
+
+
+'''4L 6M 4s:''' LMMsLMsMMLsLsM
+
+'''4L 6M 4s:''' LMMsLsLMsMMLsM
+
+
+
+'''4L 6M 4s:''' LMMsLMsMMLsLMs
+
+'''4L 6M 4s:''' LMMsLsMLsMMLsM
+
+
+
+'''4L 6M 4s:''' LMMsLMsMMLMsLs
+
+'''4L 6M 4s:''' LMMsMLsLsMMLsM
+
+
+
+'''4L 6M 4s:''' LMMsLMsMLsMMLs
+
+'''4L 6M 4s:''' LMMsLsMMLsMLMs
+
+
+
+'''4L 6M 4s:''' LMMsLMsMLsMLsM
+
+'''4L 6M 4s:''' LMsLMsLMsMMLsM
+
+
+
+'''4L 6M 4s:''' LMsLMsMLsMMLsM / LMMsLMsMLsMLMs
+
+
+'''4L 6M 4s:''' LMMsLMsMLsLsMM
+
+'''4L 6M 4s:''' LMMsMMLsMLMsLs
+
+
+
+'''4L 6M 4s:''' LMMsLMsMLsLMsM
+
+'''4L 6M 4s:''' LMsLsMLMsMMLsM
+
+
+
+'''4L 6M 4s:''' LMMsLMsMLMsMLs
+
+'''4L 6M 4s:''' LMsLsMMLsMLMsM
+
+
+
+'''4L 6M 4s:''' LMMsLMsMLMsLsM
+
+'''4L 6M 4s:''' LMsMLsLMsMMLsM
+
+
+
+'''4L 6M 4s:''' LMMsLMsMLMsLMs
+
+'''4L 6M 4s:''' LMsMLsMLsMMLsM
+
+
+
+'''4L 6M 4s:''' LMMsLMsMLMMsLs
+
+'''4L 6M 4s:''' LMsMMLsLsMMLsM
+
+
+
+'''4L 6M 4s:''' LMMsLMsLsMMLsM
+
+'''4L 6M 4s:''' LMMsLMsMMLsMLs
+
+
+
+'''4L 6M 4s:''' LMMsLMsLsMMLMs
+
+'''4L 6M 4s:''' LMMsMLsMMLsMLs
+
+
+
+'''4L 6M 4s:''' LMMsLMsLsMLsMM
+
+'''4L 6M 4s:''' LMMsMMLsMLsLMs
+
+
+
+'''4L 6M 4s:''' LMMsLMsLsMLMsM
+
+'''4L 6M 4s:''' LMsMLMsMMLsMLs
+
+
+
+'''4L 6M 4s:''' LMMsLMsLsLMsMM
+
+'''4L 6M 4s:''' LMMsMMLsMLsLsM
+
+
+
+'''4L 6M 4s:''' LMMsLMsLsLMMsM
+
+'''4L 6M 4s:''' LMsMMLsMLsLsMM
+
+
+
+'''4L 6M 4s:''' LMMsLMsLMsMMLs
+
+'''4L 6M 4s:''' LMMsLsMMLsMLsM
+
+
+
+'''4L 6M 4s:''' LMMsLMsLMsMLsM
+
+'''4L 6M 4s:''' LMsLMsMMLsMLsM
+
+
+
+'''4L 6M 4s:''' LMMsLMsLMsMLMs
+
+'''4L 6M 4s:''' LMsMLsMMLsMLsM
+
+
+
+'''4L 6M 4s:''' LMMsLMsLMsLsMM
+
+'''4L 6M 4s:''' LMMsMMLsMLsMLs
+
+
+
+'''4L 6M 4s:''' LMMsLMsLMsLMsM
+
+'''4L 6M 4s:''' LMsMMLsMLsMLsM
+
+
+
+'''4L 6M 4s:''' LMMsLMsLMMsMLs
+
+'''4L 6M 4s:''' LMsLsMMLsMLsMM
+
+
+
+'''4L 6M 4s:''' LMMsLMsLMMsLsM
+
+'''4L 6M 4s:''' LMsMMLsMLsMMLs
+
+
+
+'''4L 6M 4s:''' LMMsLMMsMMLsLs
+
+'''4L 6M 4s:''' LMMsLsLsMMLsMM
+
+
+
+'''4L 6M 4s:''' LMMsLMMsMLsMLs
+
+'''4L 6M 4s:''' LMsLMsLsMMLsMM
+
+
+
+'''4L 6M 4s:''' LMsLsLMsMMLsMM / LMMsLMMsMLsLsM
+
+
+'''4L 6M 4s:''' LMMsLMMsMLsLMs
+
+'''4L 6M 4s:''' LMsLsMLsMMLsMM
+
+
+
+'''4L 6M 4s:''' LMMsLMMsMLMsLs
+
+'''4L 6M 4s:''' LMsMLsLsMMLsMM
+
+
+
+'''4L 6M 4s:''' LMMsLsMMLsMMLs / LMMsLMMsLsMMLs
+
+
+'''4L 6M 4s:''' LMMsLMMsLsMLsM
+
+'''4L 6M 4s:''' LMsLMsMMLsMMLs
+
+
+
+'''4L 6M 4s:''' LMMsLMMsLsMLMs
+
+'''4L 6M 4s:''' LMsMLsMMLsMMLs
+
+
+
+'''4L 6M 4s:''' LMMsLMMsLsLsMM
+
+'''4L 6M 4s:''' LMMsMMLsMMLsLs
+
+
+
+'''4L 6M 4s:''' LMMsLMMsLsLMsM
+
+'''4L 6M 4s:''' LMsMMLsMMLsLsM
+
+
+
+'''4L 6M 4s:''' LMMsLMMsLMsMLs
+
+'''4L 6M 4s:''' LMsLsMMLsMMLsM
+
+
+
+'''4L 6M 4s:''' LMMsLMMsLMsLsM
+
+'''4L 6M 4s:''' LMsMMLsMMLsMLs
+
+
+
+'''4L 6M 4s:''' LsMLsMLsMMLsMM / LMMsLMMsLMsLMs
+
+
+'''4L 6M 4s:''' LsLsMMLsMMLsMM / LMMsLMMsLMMsLs
+
+
+'''4L 6M 4s:''' LMMMsMMLsMLsLs
+
+'''4L 6M 4s:''' LMMsLMsLsLsMMM
+
+
+
+'''4L 6M 4s:''' LMMMsMMLsLsMLs
+
+'''4L 6M 4s:''' LMMsLsLMsLsMMM
+
+
+
+'''4L 6M 4s:''' LMMMsMMLsLsLsM
+
+'''4L 6M 4s:''' LMMsLsLsLMsMMM
+
+
+
+'''4L 6M 4s:''' LMMMsMMLsLsLMs
+
+'''4L 6M 4s:''' LMMsLsLsMLsMMM
+
+
+
+'''4L 6M 4s:''' LMMMsMMLsLMsLs
+
+'''4L 6M 4s:''' LMMsLsMLsLsMMM
+
+
+
+'''4L 6M 4s:''' LMMMsMMLMsLsLs
+
+'''4L 6M 4s:''' LMMsMLsLsLsMMM
+
+
+
+'''4L 6M 4s:''' LMMMsMLsMMLsLs
+
+'''4L 6M 4s:''' LMMsLsLsMMMLMs
+
+
+
+'''4L 6M 4s:''' LMMMsMLsMLsMLs
+
+'''4L 6M 4s:''' LMsLMsLMsLsMMM
+
+
+
+'''4L 6M 4s:''' LMMMsMLsMLsLsM
+
+'''4L 6M 4s:''' LMsLMsLsLMsMMM
+
+
+
+'''4L 6M 4s:''' LMMMsMLsMLsLMs
+
+'''4L 6M 4s:''' LMsLMsLsMLsMMM
+
+
+
+'''4L 6M 4s:''' LMMMsMLsMLMsLs
+
+'''4L 6M 4s:''' LMsLMsMLsLsMMM
+
+
+
+'''4L 6M 4s:''' LMMMsMLsLsMMLs
+
+'''4L 6M 4s:''' LMMsLsMMMLMsLs
+
+
+
+'''4L 6M 4s:''' LMMMsMLsLsMLsM
+
+'''4L 6M 4s:''' LMsLMsMMMLMsLs
+
+
+
+'''4L 6M 4s:''' LMMMsMLsLsMLMs
+
+'''4L 6M 4s:''' LMsLsLMsMLsMMM
+
+
+
+'''4L 6M 4s:''' LMMMsMLsLsLsMM
+
+'''4L 6M 4s:''' LMMsMMMLMsLsLs
+
+
+
+'''4L 6M 4s:''' LMMMsMLsLsLMsM
+
+'''4L 6M 4s:''' LMsLsLsMLMsMMM
+
+
+
+'''4L 6M 4s:''' LMMMsMLsLsLMMs
+
+'''4L 6M 4s:''' LMsLsLsMMLsMMM
+
+
+
+'''4L 6M 4s:''' LMMMsMLsLMsMLs
+
+'''4L 6M 4s:''' LMsLsMLMsLsMMM
+
+
+
+'''4L 6M 4s:''' LMsLsMLsLMsMMM / LMMMsMLsLMsLsM
+
+
+'''4L 6M 4s:''' LMMMsMLsLMsLMs
+
+'''4L 6M 4s:''' LMsLsMLsMLsMMM
+
+
+
+'''4L 6M 4s:''' LMMMsMLsLMMsLs
+
+'''4L 6M 4s:''' LMsLsMMLsLsMMM
+
+
+
+'''4L 6M 4s:''' LMMMsMLMsMLsLs
+
+'''4L 6M 4s:''' LMsLsLsMMMLMsM
+
+
+
+'''4L 6M 4s:''' LMMMsMLMsLsMLs
+
+'''4L 6M 4s:''' LMsLsMMMLMsMLs
+
+
+
+'''4L 6M 4s:''' LMMMsMLMsLsLsM
+
+'''4L 6M 4s:''' LMsMLsLsLMsMMM
+
+
+
+'''4L 6M 4s:''' LMMMsMLMsLsLMs
+
+'''4L 6M 4s:''' LMsMLsLsMLsMMM
+
+
+
+'''4L 6M 4s:''' LMMMsMLMsLMsLs
+
+'''4L 6M 4s:''' LMsMLsMLsLsMMM
+
+
+
+'''4L 6M 4s:''' LMMMsMLMMsLsLs
+
+'''4L 6M 4s:''' LMsMMLsLsLsMMM
+
+
+
+'''4L 6M 4s:''' LMMMsLsMMLsMLs
+
+'''4L 6M 4s:''' LMMsLMsLsMMMLs
+
+
+
+'''4L 6M 4s:''' LMMMsLsMMLsLsM
+
+'''4L 6M 4s:''' LMMsLsLMsMMMLs
+
+
+
+'''4L 6M 4s:''' LMMMsLsMMLsLMs
+
+'''4L 6M 4s:''' LMMsLsMLsMMMLs
+
+
+
+'''4L 6M 4s:''' LMMMsLsMMLMsLs
+
+'''4L 6M 4s:''' LMMsMLsLsMMMLs
+
+
+
+'''4L 6M 4s:''' LMMMsLsMLsMMLs
+
+'''4L 6M 4s:''' LMMsLsMMMLsLMs
+
+
+
+'''4L 6M 4s:''' LMMMsLsMLsMLsM
+
+'''4L 6M 4s:''' LMsLMsLMsMMMLs
+
+
+
+'''4L 6M 4s:''' LMMMsLsMLsMLMs
+
+'''4L 6M 4s:''' LMsLMsMLsMMMLs
+
+
+
+'''4L 6M 4s:''' LMMMsLsMLsLsMM
+
+'''4L 6M 4s:''' LMMsMMMLsLMsLs
+
+
+
+'''4L 6M 4s:''' LMMMsLsMLsLMsM
+
+'''4L 6M 4s:''' LMsLsMLMsMMMLs
+
+
+
+'''4L 6M 4s:''' LMMMsLsMLsLMMs
+
+'''4L 6M 4s:''' LMsLsMMLsMMMLs
+
+
+
+'''4L 6M 4s:''' LMsLsMMMLsLMsM / LMMMsLsMLMsMLs
+
+
+'''4L 6M 4s:''' LMMMsLsMLMsLsM
+
+'''4L 6M 4s:''' LMsMLsLMsMMMLs
+
+
+
+'''4L 6M 4s:''' LMMMsLsMLMsLMs
+
+'''4L 6M 4s:''' LMsMLsMLsMMMLs
+
+
+
+'''4L 6M 4s:''' LMMMsLsMLMMsLs
+
+'''4L 6M 4s:''' LMsMMLsLsMMMLs
+
+
+
+'''4L 6M 4s:''' LMMMsLsLsMMMLs
+
+'''4L 6M 4s:''' LMMMsLsMMMLsLs
+
+
+
+'''4L 6M 4s:''' LMMMsLsLsMMLsM
+
+'''4L 6M 4s:''' LMMsLMsMMMLsLs
+
+
+
+'''4L 6M 4s:''' LMMMsLsLsMMLMs
+
+'''4L 6M 4s:''' LMMsMLsMMMLsLs
+
+
+
+'''4L 6M 4s:''' LMMMsLsLsMLsMM
+
+'''4L 6M 4s:''' LMMsMMMLsLsLMs
+
+
+
+'''4L 6M 4s:''' LMMMsLsLsMLMsM
+
+'''4L 6M 4s:''' LMsMLMsMMMLsLs
+
+
+
+'''4L 6M 4s:''' LMMMsLsLsMLMMs
+
+'''4L 6M 4s:''' LMsMMLsMMMLsLs
+
+
+
+'''4L 6M 4s:''' LMMMsLsLsLsMMM
+
+'''4L 6M 4s:''' LMMMsMMMLsLsLs
+
+
+
+'''4L 6M 4s:''' LMMMsLsLsLMsMM
+
+'''4L 6M 4s:''' LMMsMMMLsLsLsM
+
+
+
+'''4L 6M 4s:''' LMMMsLsLsLMMsM
+
+'''4L 6M 4s:''' LMsMMMLsLsLsMM
+
+
+
+'''4L 6M 4s:''' LMMMsLsLMsMMLs
+
+'''4L 6M 4s:''' LMMsLsMMMLsLsM
+
+
+
+'''4L 6M 4s:''' LMMMsLsLMsMLsM
+
+'''4L 6M 4s:''' LMsLMsMMMLsLsM
+
+
+
+'''4L 6M 4s:''' LMMMsLsLMsMLMs
+
+'''4L 6M 4s:''' LMsMLsMMMLsLsM
+
+
+
+'''4L 6M 4s:''' LMMMsLsLMsLsMM
+
+'''4L 6M 4s:''' LMMsMMMLsLsMLs
+
+
+
+'''4L 6M 4s:''' LMMMsLsLMsLMsM
+
+'''4L 6M 4s:''' LMsMMMLsLsMLsM
+
+
+
+'''4L 6M 4s:''' LMMMsLsLMsLMMs
+
+'''4L 6M 4s:''' LsLsMLsMMLsMMM
+
+
+
+'''4L 6M 4s:''' LMMMsLsLMMsMLs
+
+'''4L 6M 4s:''' LMsLsMMMLsLsMM
+
+
+
+'''4L 6M 4s:''' LMMMsLsLMMsLsM
+
+'''4L 6M 4s:''' LMsMMMLsLsMMLs
+
+
+
+'''4L 6M 4s:''' LMMMsLsLMMsLMs
+
+'''4L 6M 4s:''' LsLsMMLsMLsMMM
+
+
+
+'''4L 6M 4s:''' LMMMsLMsMMLsLs
+
+'''4L 6M 4s:''' LMMsLsLsMMMLsM
+
+
+
+'''4L 6M 4s:''' LMMMsLMsMLsMLs
+
+'''4L 6M 4s:''' LMsLMsLsMMMLsM
+
+
+
+'''4L 6M 4s:''' LMMMsLMsMLsLsM
+
+'''4L 6M 4s:''' LMsLsLMsMMMLsM
+
+
+
+'''4L 6M 4s:''' LMMMsLMsMLsLMs
+
+'''4L 6M 4s:''' LMsLsMLsMMMLsM
+
+
+
+'''4L 6M 4s:''' LMMMsLMsMLMsLs
+
+'''4L 6M 4s:''' LMsMLsLsMMMLsM
+
+
+
+'''4L 6M 4s:''' LMMMsLMsLsMMLs
+
+'''4L 6M 4s:''' LMMsLsMMMLsMLs
+
+
+
+'''4L 6M 4s:''' LMMMsLMsLsMLsM
+
+'''4L 6M 4s:''' LMsLMsMMMLsMLs
+
+
+
+'''4L 6M 4s:''' LMMMsLMsLsMLMs
+
+'''4L 6M 4s:''' LMsMLsMMMLsMLs
+
+
+
+'''4L 6M 4s:''' LMMMsLMsLsLsMM
+
+'''4L 6M 4s:''' LMMsMMMLsMLsLs
+
+
+
+'''4L 6M 4s:''' LMMMsLMsLsLMsM
+
+'''4L 6M 4s:''' LMsMMMLsMLsLsM
+
+
+
+'''4L 6M 4s:''' LMMMsLMsLsLMMs
+
+'''4L 6M 4s:''' LsLsMMLsMMMLsM
+
+
+
+'''4L 6M 4s:''' LMMMsLMsLMsMLs
+
+'''4L 6M 4s:''' LMsLsMMMLsMLsM
+
+
+
+'''4L 6M 4s:''' LMMMsLMsLMsLsM
+
+'''4L 6M 4s:''' LMsMMMLsMLsMLs
+
+
+
+'''4L 6M 4s:''' LsMLsMLsMLsMMM / LMMMsLMsLMsLMs
+
+
+'''4L 6M 4s:''' LMMMsLMsLMMsLs
+
+'''4L 6M 4s:''' LsLsMMMLsMLsMM
+
+
+
+'''4L 6M 4s:''' LMMMsLMMsMLsLs
+
+'''4L 6M 4s:''' LMsLsLsMMMLsMM
+
+
+
+'''4L 6M 4s:''' LMMMsLMMsLsMLs
+
+'''4L 6M 4s:''' LMsLsMMMLsMMLs
+
+
+
+'''4L 6M 4s:''' LMMMsLMMsLsLsM
+
+'''4L 6M 4s:''' LMsMMMLsMMLsLs
+
+
+
+'''4L 6M 4s:''' LMMMsLMMsLsLMs
+
+'''4L 6M 4s:''' LsLsMLsMMMLsMM
+
+
+
+'''4L 6M 4s:''' LMMMsLMMsLMsLs
+
+'''4L 6M 4s:''' LsLsMMMLsMMLsM
+
+
+
+'''4L 6M 4s:''' LsLsLsMMMLsMMM / LMMMsLMMMsLsLs
+
+
+'''4L 6M 4s:''' LMMMMsMMLsLsLs
+
+'''4L 6M 4s:''' LMMsLsLsLsMMMM
+
+
+
+'''4L 6M 4s:''' LMMMMsMLsMLsLs
+
+'''4L 6M 4s:''' LMsLMsLsLsMMMM
+
+
+
+'''4L 6M 4s:''' LMMMMsMLsLsMLs
+
+'''4L 6M 4s:''' LMsLsLMsLsMMMM
+
+
+
+'''4L 6M 4s:''' LMsLsLsLMsMMMM / LMMMMsMLsLsLsM
+
+
+'''4L 6M 4s:''' LMMMMsMLsLsLMs
+
+'''4L 6M 4s:''' LMsLsLsMLsMMMM
+
+
+
+'''4L 6M 4s:''' LMMMMsMLsLMsLs
+
+'''4L 6M 4s:''' LMsLsMLsLsMMMM
+
+
+
+'''4L 6M 4s:''' LMMMMsMLMsLsLs
+
+'''4L 6M 4s:''' LMsMLsLsLsMMMM
+
+
+
+'''4L 6M 4s:''' LMMMMsLsMMLsLs
+
+'''4L 6M 4s:''' LMMsLsLsMMMMLs
+
+
+
+'''4L 6M 4s:''' LMsLMsLsMMMMLs / LMMMMsLsMLsMLs
+
+
+'''4L 6M 4s:''' LMMMMsLsMLsLsM
+
+'''4L 6M 4s:''' LMsLsLMsMMMMLs
+
+
+
+'''4L 6M 4s:''' LMMMMsLsMLsLMs
+
+'''4L 6M 4s:''' LMsLsMLsMMMMLs
+
+
+
+'''4L 6M 4s:''' LMMMMsLsMLMsLs
+
+'''4L 6M 4s:''' LMsMLsLsMMMMLs
+
+
+
+'''4L 6M 4s:''' LMMMMsLsLsMMLs
+
+'''4L 6M 4s:''' LMMsLsMMMMLsLs
+
+
+
+'''4L 6M 4s:''' LMMMMsLsLsMLsM
+
+'''4L 6M 4s:''' LMsLMsMMMMLsLs
+
+
+
+'''4L 6M 4s:''' LMMMMsLsLsMLMs
+
+'''4L 6M 4s:''' LMsMLsMMMMLsLs
+
+
+
+'''4L 6M 4s:''' LMMMMsLsLsLsMM
+
+'''4L 6M 4s:''' LMMsMMMMLsLsLs
+
+
+
+'''4L 6M 4s:''' LMMMMsLsLsLMsM
+
+'''4L 6M 4s:''' LMsMMMMLsLsLsM
+
+
+
+'''4L 6M 4s:''' LMMMMsLsLsLMMs
+
+'''4L 6M 4s:''' LsLsLsMMLsMMMM
+
+
+
+'''4L 6M 4s:''' LMMMMsLsLMsMLs
+
+'''4L 6M 4s:''' LMsLsMMMMLsLsM
+
+
+
+'''4L 6M 4s:''' LMMMMsLsLMsLsM
+
+'''4L 6M 4s:''' LMsMMMMLsLsMLs
+
+
+
+'''4L 6M 4s:''' LMMMMsLsLMsLMs
+
+'''4L 6M 4s:''' LsLsMLsMLsMMMM
+
+
+
+'''4L 6M 4s:''' LsLsMMLsLsMMMM / LMMMMsLsLMMsLs
+
+
+'''4L 6M 4s:''' LMMMMsLMsMLsLs
+
+'''4L 6M 4s:''' LMsLsLsMMMMLsM
+
+
+
+'''4L 6M 4s:''' LMMMMsLMsLsMLs
+
+'''4L 6M 4s:''' LMsLsMMMMLsMLs
+
+
+
+'''4L 6M 4s:''' LMMMMsLMsLsLsM
+
+'''4L 6M 4s:''' LMsMMMMLsMLsLs
+
+
+
+'''4L 6M 4s:''' LsLsMLsMMMMLsM / LMMMMsLMsLsLMs
+
+
+'''4L 6M 4s:''' LMMMMsLMsLMsLs
+
+'''4L 6M 4s:''' LsLsMMMMLsMLsM
+
+
+
+'''4L 6M 4s:''' LMMMMsLMMsLsLs
+
+'''4L 6M 4s:''' LsLsLsMMMMLsMM
+
+
+
+'''4L 6M 4s:''' LMMMMMsMLsLsLs
+
+'''4L 6M 4s:''' LMsLsLsLsMMMMM
+
+
+
+'''4L 6M 4s:''' LMMMMMsLsMLsLs
+
+'''4L 6M 4s:''' LMsLsLsMMMMMLs
+
+
+
+'''4L 6M 4s:''' LMMMMMsLsLsMLs
+
+'''4L 6M 4s:''' LMsLsMMMMMLsLs
+
+
+
+'''4L 6M 4s:''' LMMMMMsLsLsLsM
+
+'''4L 6M 4s:''' LMsMMMMMLsLsLs
+
+
+
+'''4L 6M 4s:''' LMMMMMsLsLsLMs
+
+'''4L 6M 4s:''' LsLsLsMLsMMMMM
+
+
+
+'''4L 6M 4s:''' LsLsMLsLsMMMMM / LMMMMMsLsLMsLs
+
+
+'''4L 6M 4s:''' LMMMMMsLMsLsLs
+
+'''4L 6M 4s:''' LsLsLsMMMMMLsM
+
+
+
+'''4L 6M 4s:''' LsLsLsLsMMMMMM / LMMMMMMsLsLsLs
+
+
+'''5L 4M 5s:''' LMsLsMLMsLsMLs
+
+'''5L 4M 5s:''' LMsLsMLsLMsMLs
+
+
+
+'''5L 4M 5s:''' LMsLsLsMLsLMsM
+
+'''5L 4M 5s:''' LMsLsMLMsMLsLs
+
+
+
+'''5L 4M 5s:''' LMsLsLsMLMsMLs
+
+'''5L 4M 5s:''' LMsLsMLsLsLMsM
+
+
+
+'''5L 4M 5s:''' LMsLsLsMLMsLsM
+
+'''5L 4M 5s:''' LMsMLsLMsMLsLs
+
+
+
+'''5L 4M 5s:''' LMsLsLsLsMLMsM
+
+'''5L 4M 5s:''' LMsMLMsMLsLsLs
+
+
+
+'''5L 4M 5s:''' LMsMLsLsMLsLsM / LMsLsLMsLsLMsM
+
+
+'''5L 4M 5s:''' LMsLMsMLsLsMLs
+
+'''5L 4M 5s:''' LMsLsLMsLsMLsM
+
+
+
+'''5L 4M 5s:''' LMsLsLsLMsMLsM / LMsLMsMLsLsLsM
+
+
+'''5L 4M 5s:''' LMsLMsMLsLMsLs
+
+'''5L 4M 5s:''' LMsLsMLsLsMLsM
+
+
+
+'''5L 4M 5s:''' LMsLMsMLMsLsLs
+
+'''5L 4M 5s:''' LMsMLsLsLsMLsM
+
+
+
+'''5L 4M 5s:''' LMsLMsLsMLsLsM
+
+'''5L 4M 5s:''' LMsLsLMsMLsMLs
+
+
+
+'''5L 4M 5s:''' LMsLMsLsMLMsLs
+
+'''5L 4M 5s:''' LMsMLsLsMLsMLs
+
+
+
+'''5L 4M 5s:''' LMsLMsLsLsMLsM
+
+'''5L 4M 5s:''' LMsLMsMLsMLsLs
+
+
+
+'''5L 4M 5s:''' LMsLMsLsLsLMsM
+
+'''5L 4M 5s:''' LMsMLsMLsLsLsM
+
+
+
+'''5L 4M 5s:''' LMsLMsLsLMsMLs
+
+'''5L 4M 5s:''' LMsLsMLsMLsLsM
+
+
+
+'''5L 4M 5s:''' LMsLMsLsLMsLsM
+
+'''5L 4M 5s:''' LMsMLsMLsLsMLs
+
+
+
+'''5L 4M 5s:''' LMsLMsLMsMLsLs
+
+'''5L 4M 5s:''' LMsLsLsMLsMLsM
+
+
+
+'''5L 4M 5s:''' LMsLsMLsMLsMLs / LMsLMsLMsLsMLs
+
+
+'''5L 4M 5s:''' LMsLMsLMsLsLsM
+
+'''5L 4M 5s:''' LMsMLsMLsMLsLs
+
+
+
+'''5L 4M 5s:''' LsLsMLsMLsMLsM / LMsLMsLMsLMsLs
+
+
+'''5L 4M 5s:''' LMMsMLsMLsLsLs
+
+'''5L 4M 5s:''' LMsLMsLsLsLsMM
+
+
+
+'''5L 4M 5s:''' LMMsMLsLsMLsLs
+
+'''5L 4M 5s:''' LMsLsLMsLsLsMM
+
+
+
+'''5L 4M 5s:''' LMMsMLsLsLsMLs
+
+'''5L 4M 5s:''' LMsLsLsLMsLsMM
+
+
+
+'''5L 4M 5s:''' LMsLsLsLsLMsMM / LMMsMLsLsLsLsM
+
+
+'''5L 4M 5s:''' LMMsMLsLsLsLMs
+
+'''5L 4M 5s:''' LMsLsLsLsMLsMM
+
+
+
+'''5L 4M 5s:''' LMMsMLsLsLMsLs
+
+'''5L 4M 5s:''' LMsLsLsMLsLsMM
+
+
+
+'''5L 4M 5s:''' LMMsMLsLMsLsLs
+
+'''5L 4M 5s:''' LMsLsMLsLsLsMM
+
+
+
+'''5L 4M 5s:''' LMMsMLMsLsLsLs
+
+'''5L 4M 5s:''' LMsMLsLsLsLsMM
+
+
+
+'''5L 4M 5s:''' LMMsLsMLsMLsLs
+
+'''5L 4M 5s:''' LMsLMsLsLsMMLs
+
+
+
+'''5L 4M 5s:''' LMsLsLMsLsMMLs / LMMsLsMLsLsMLs
+
+
+'''5L 4M 5s:''' LMMsLsMLsLsLsM
+
+'''5L 4M 5s:''' LMsLsLsLMsMMLs
+
+
+
+'''5L 4M 5s:''' LMMsLsMLsLsLMs
+
+'''5L 4M 5s:''' LMsLsLsMLsMMLs
+
+
+
+'''5L 4M 5s:''' LMMsLsMLsLMsLs
+
+'''5L 4M 5s:''' LMsLsMLsLsMMLs
+
+
+
+'''5L 4M 5s:''' LMMsLsMLMsLsLs
+
+'''5L 4M 5s:''' LMsMLsLsLsMMLs
+
+
+
+'''5L 4M 5s:''' LMMsLsLsMLsMLs
+
+'''5L 4M 5s:''' LMsLMsLsMMLsLs
+
+
+
+'''5L 4M 5s:''' LMMsLsLsMLsLsM
+
+'''5L 4M 5s:''' LMsLsLMsMMLsLs
+
+
+
+'''5L 4M 5s:''' LMMsLsLsMLsLMs
+
+'''5L 4M 5s:''' LMsLsMLsMMLsLs
+
+
+
+'''5L 4M 5s:''' LMMsLsLsMLMsLs
+
+'''5L 4M 5s:''' LMsMLsLsMMLsLs
+
+
+
+'''5L 4M 5s:''' LMMsLsLsLsMMLs
+
+'''5L 4M 5s:''' LMMsLsMMLsLsLs
+
+
+
+'''5L 4M 5s:''' LMMsLsLsLsMLsM
+
+'''5L 4M 5s:''' LMsLMsMMLsLsLs
+
+
+
+'''5L 4M 5s:''' LMMsLsLsLsMLMs
+
+'''5L 4M 5s:''' LMsMLsMMLsLsLs
+
+
+
+'''5L 4M 5s:''' LMMsLsLsLsLsMM
+
+'''5L 4M 5s:''' LMMsMMLsLsLsLs
+
+
+
+'''5L 4M 5s:''' LMMsLsLsLsLMsM
+
+'''5L 4M 5s:''' LMsMMLsLsLsLsM
+
+
+
+'''5L 4M 5s:''' LMMsLsLsLMsMLs
+
+'''5L 4M 5s:''' LMsLsMMLsLsLsM
+
+
+
+'''5L 4M 5s:''' LMMsLsLsLMsLsM
+
+'''5L 4M 5s:''' LMsMMLsLsLsMLs
+
+
+
+'''5L 4M 5s:''' LMMsLsLsLMsLMs
+
+'''5L 4M 5s:''' LsLsLsMLsMLsMM
+
+
+
+'''5L 4M 5s:''' LMMsLsLMsMLsLs
+
+'''5L 4M 5s:''' LMsLsLsMMLsLsM
+
+
+
+'''5L 4M 5s:''' LMMsLsLMsLsMLs
+
+'''5L 4M 5s:''' LMsLsMMLsLsMLs
+
+
+
+'''5L 4M 5s:''' LMMsLsLMsLsLsM
+
+'''5L 4M 5s:''' LMsMMLsLsMLsLs
+
+
+
+'''5L 4M 5s:''' LMMsLsLMsLsLMs
+
+'''5L 4M 5s:''' LsLsMLsLsMLsMM
+
+
+
+'''5L 4M 5s:''' LsLsMLsMLsLsMM / LMMsLsLMsLMsLs
+
+
+'''5L 4M 5s:''' LsLsLsMMLsLsMM / LMMsLsLMMsLsLs
+
+
+'''5L 4M 5s:''' LMMsLMsMLsLsLs
+
+'''5L 4M 5s:''' LMsLsLsLsMMLsM
+
+
+
+'''5L 4M 5s:''' LMMsLMsLsMLsLs
+
+'''5L 4M 5s:''' LMsLsLsMMLsMLs
+
+
+
+'''5L 4M 5s:''' LMMsLMsLsLsMLs
+
+'''5L 4M 5s:''' LMsLsMMLsMLsLs
+
+
+
+'''5L 4M 5s:''' LMMsLMsLsLsLsM
+
+'''5L 4M 5s:''' LMsMMLsMLsLsLs
+
+
+
+'''5L 4M 5s:''' LsLsLsMLsMMLsM / LMMsLMsLsLsLMs
+
+
+'''5L 4M 5s:''' LMMsLMsLsLMsLs
+
+'''5L 4M 5s:''' LsLsMLsLsMMLsM
+
+
+
+'''5L 4M 5s:''' LMMsLMsLMsLsLs
+
+'''5L 4M 5s:''' LsLsLsMMLsMLsM
+
+
+
+'''5L 4M 5s:''' LsLsLsLsMMLsMM / LMMsLMMsLsLsLs
+
+
+'''5L 4M 5s:''' LMMMsMLsLsLsLs
+
+'''5L 4M 5s:''' LMsLsLsLsLsMMM
+
+
+
+'''5L 4M 5s:''' LMMMsLsMLsLsLs
+
+'''5L 4M 5s:''' LMsLsLsLsMMMLs
+
+
+
+'''5L 4M 5s:''' LMsLsLsMMMLsLs / LMMMsLsLsMLsLs
+
+
+'''5L 4M 5s:''' LMMMsLsLsLsMLs
+
+'''5L 4M 5s:''' LMsLsMMMLsLsLs
+
+
+
+'''5L 4M 5s:''' LMMMsLsLsLsLsM
+
+'''5L 4M 5s:''' LMsMMMLsLsLsLs
+
+
+
+'''5L 4M 5s:''' LMMMsLsLsLsLMs
+
+'''5L 4M 5s:''' LsLsLsLsMLsMMM
+
+
+
+'''5L 4M 5s:''' LMMMsLsLsLMsLs
+
+'''5L 4M 5s:''' LsLsLsMLsLsMMM
+
+
+
+'''5L 4M 5s:''' LMMMsLsLMsLsLs
+
+'''5L 4M 5s:''' LsLsLsMMMLsLsM
+
+
+
+'''5L 4M 5s:''' LMMMsLMsLsLsLs
+
+'''5L 4M 5s:''' LsLsLsLsMMMLsM
+
+
+
+'''5L 4M 5s:''' LsLsLsLsLsMMMM / LMMMMsLsLsLsLs
+
+
+'''1L 12M 1s:''' LMMMMMsMMMMMMM / LMMMMMMMsMMMMM
+
+
+'''1L 12M 1s:''' LMMMMsMMMMMMMM / LMMMMMMMMsMMMM
+
+
+'''1L 12M 1s:''' LMMMsMMMMMMMMM / LMMMMMMMMMsMMM
+
+
+'''1L 12M 1s:''' LMMsMMMMMMMMMM / LMMMMMMMMMMsMM
+
+
+'''1L 12M 1s:''' LMsMMMMMMMMMMM / LMMMMMMMMMMMsM
+
+
+'''1L 12M 1s:''' LsMMMMMMMMMMMM / LMMMMMMMMMMMMs
+
+
+'''11L 2M 1s:''' LLLLMLLLLsLLLM
+
+'''1L 2M 11s:''' LsssMssssMssss
+
+
+
+'''11L 2M 1s:''' LLLLMLLLLMLLLs
+
+'''1L 2M 11s:''' LssssMssssMsss
+
+
+
+'''11L 2M 1s:''' LLLLLsLLLLMLLM
+
+'''1L 2M 11s:''' LssssMssMsssss
+
+
+
+'''11L 2M 1s:''' LLLLLMLLMLLLLs
+
+'''1L 2M 11s:''' LsssssMssMssss
+
+
+
+'''11L 2M 1s:''' LLLLLLsLLLLLMM
+
+'''1L 2M 11s:''' LsssssMMssssss
+
+
+
+'''11L 2M 1s:''' LLLLLLMMLLLLLs
+
+'''1L 2M 11s:''' LssssssMMsssss
+
+
+
+'''3L 10M 1s:''' LMMMLsMMMLMMMM
+
+'''1L 10M 3s:''' LMMMsMMMMsMMMs
+
+
+
+'''3L 10M 1s:''' LMMMLMsMMLMMMM
+
+'''1L 10M 3s:''' LMMsMMMMsMMMsM
+
+
+
+'''3L 10M 1s:''' LMMMLMMsMLMMMM
+
+'''1L 10M 3s:''' LMsMMMMsMMMsMM
+
+
+
+'''3L 10M 1s:''' LMMMLMMMsLMMMM
+
+'''1L 10M 3s:''' LsMMMMsMMMsMMM
+
+
+
+'''3L 10M 1s:''' LMMMLMMMMLsMMM
+
+'''1L 10M 3s:''' LMMMsMMMsMMMMs
+
+
+
+'''3L 10M 1s:''' LMMMLMMMMLMsMM
+
+'''1L 10M 3s:''' LMMsMMMsMMMMsM
+
+
+
+'''3L 10M 1s:''' LMMMLMMMMLMMsM
+
+'''1L 10M 3s:''' LMsMMMsMMMMsMM
+
+
+
+'''3L 10M 1s:''' LMMMLMMMMLMMMs
+
+'''1L 10M 3s:''' LsMMMsMMMMsMMM
+
+
+
+'''3L 10M 1s:''' LMMLsMMLMMMMMM
+
+'''1L 10M 3s:''' LMMsMMMMMMsMMs
+
+
+
+'''3L 10M 1s:''' LMMLMsMLMMMMMM
+
+'''1L 10M 3s:''' LMsMMMMMMsMMsM
+
+
+
+'''3L 10M 1s:''' LMMLMMsLMMMMMM
+
+'''1L 10M 3s:''' LsMMMMMMsMMsMM
+
+
+
+'''3L 10M 1s:''' LMMLMMMMMMLsMM
+
+'''1L 10M 3s:''' LMMsMMsMMMMMMs
+
+
+
+'''3L 10M 1s:''' LMMLMMMMMMLMsM
+
+'''1L 10M 3s:''' LMsMMsMMMMMMsM
+
+
+
+'''3L 10M 1s:''' LMMLMMMMMMLMMs
+
+'''1L 10M 3s:''' LsMMsMMMMMMsMM
+
+
+
+'''3L 10M 1s:''' LMLsMLMMMMMMMM
+
+'''1L 10M 3s:''' LMsMMMMMMMMsMs
+
+
+
+'''3L 10M 1s:''' LMLMsLMMMMMMMM
+
+'''1L 10M 3s:''' LsMMMMMMMMsMsM
+
+
+
+'''3L 10M 1s:''' LMLMMMMMMMMLsM
+
+'''1L 10M 3s:''' LMsMsMMMMMMMMs
+
+
+
+'''3L 10M 1s:''' LMLMMMMMMMMLMs
+
+'''1L 10M 3s:''' LsMsMMMMMMMMsM
+
+
+
+'''3L 10M 1s:''' LLsLMMMMMMMMMM
+
+'''1L 10M 3s:''' LsMMMMMMMMMMss
+
+
+
+'''3L 10M 1s:''' LLMMMMMMMMMMLs
+
+'''1L 10M 3s:''' LssMMMMMMMMMMs
+
+
+
+'''2L 10M 2s:''' LMMMsMMMLMsMMM / LMMMsMLMMMsMMM
+
+
+'''2L 10M 2s:''' LMMMsLMMMsMMMM / LMMMMsMMMLsMMM
+
+
+'''2L 10M 2s:''' LMMMMsMMMLMsMM
+
+'''2L 10M 2s:''' LMMMsMLMMsMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMsMMMLMMsM
+
+'''2L 10M 2s:''' LMMMsMMLMsMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMsMMMLMMMs
+
+'''2L 10M 2s:''' LMMMsMMMLsMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMsMMLsMMMM
+
+'''2L 10M 2s:''' LMMMMsMMMMLMMs
+
+
+
+'''2L 10M 2s:''' LMMMMsMMLMsMMM
+
+'''2L 10M 2s:''' LMMMsMMMMLMMsM
+
+
+
+'''2L 10M 2s:''' LMMsMMLMMsMMMM / LMMMMsMMLMMsMM
+
+
+'''2L 10M 2s:''' LMMMMsMMLMMMsM
+
+'''2L 10M 2s:''' LMMsMMMLMsMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMsMLMsMMMM
+
+'''2L 10M 2s:''' LMMMMsMMMMLMsM
+
+
+
+'''2L 10M 2s:''' LMMMMsMLMMsMMM
+
+'''2L 10M 2s:''' LMMMsMMMMLMsMM
+
+
+
+'''2L 10M 2s:''' LMMMMsMLMMMsMM
+
+'''2L 10M 2s:''' LMMsMMMMLMsMMM
+
+
+
+'''2L 10M 2s:''' LMMMMsLMMsMMMM
+
+'''2L 10M 2s:''' LMMMMsMMMMLsMM
+
+
+
+'''2L 10M 2s:''' LMMMMsLMMMsMMM
+
+'''2L 10M 2s:''' LMMMsMMMMLsMMM
+
+
+
+'''2L 10M 2s:''' LMMsMMMMLsMMMM / LMMMMsLMMMMsMM
+
+
+'''2L 10M 2s:''' LMMMMMsMMMMLsM
+
+'''2L 10M 2s:''' LMMMMsLMsMMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMMsMMMMLMs
+
+'''2L 10M 2s:''' LMMMMsMLsMMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMMsMMMLsMM
+
+'''2L 10M 2s:''' LMMMsLMMsMMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMMsMMMLMsM
+
+'''2L 10M 2s:''' LMMMsMLMsMMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMMsMMMLMMs
+
+'''2L 10M 2s:''' LMMMsMMLsMMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMMsMMLsMMM
+
+'''2L 10M 2s:''' LMMMsMMMMMLMMs
+
+
+
+'''2L 10M 2s:''' LMMsMLMMsMMMMM / LMMMMMsMMLMsMM
+
+
+'''2L 10M 2s:''' LMMMMMsMMLMMsM
+
+'''2L 10M 2s:''' LMMsMMLMsMMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMMsMMLMMMs
+
+'''2L 10M 2s:''' LMMsMMMLsMMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMMsMLsMMMM
+
+'''2L 10M 2s:''' LMMMMsMMMMMLMs
+
+
+
+'''2L 10M 2s:''' LMMMMMsMLMsMMM
+
+'''2L 10M 2s:''' LMMMsMMMMMLMsM
+
+
+
+'''2L 10M 2s:''' LMMMMMsMLMMsMM
+
+'''2L 10M 2s:''' LMMsMMMMMLMsMM
+
+
+
+'''2L 10M 2s:''' LMsMMMLMsMMMMM / LMMMMMsMLMMMsM
+
+
+'''2L 10M 2s:''' LMMMMMsMLMMMMs
+
+'''2L 10M 2s:''' LMsMMMMLsMMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMMsLsMMMMM
+
+'''2L 10M 2s:''' LMMMMMsMMMMMLs
+
+
+
+'''2L 10M 2s:''' LMMMMMsLMsMMMM
+
+'''2L 10M 2s:''' LMMMMsMMMMMLsM
+
+
+
+'''2L 10M 2s:''' LMMMMMsLMMsMMM
+
+'''2L 10M 2s:''' LMMMsMMMMMLsMM
+
+
+
+'''2L 10M 2s:''' LMMMMMsLMMMsMM
+
+'''2L 10M 2s:''' LMMsMMMMMLsMMM
+
+
+
+'''2L 10M 2s:''' LMMMMMsLMMMMsM
+
+'''2L 10M 2s:''' LMsMMMMMLsMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMMMsMMMMLs
+
+'''2L 10M 2s:''' LMMMMsLsMMMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMMMsMMMLsM
+
+'''2L 10M 2s:''' LMMMsLMsMMMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMMMsMMMLMs
+
+'''2L 10M 2s:''' LMMMsMLsMMMMMM
+
+
+
+'''2L 10M 2s:''' LMMsLMMsMMMMMM / LMMMMMMsMMLsMM
+
+
+'''2L 10M 2s:''' LMMMMMMsMMLMsM
+
+'''2L 10M 2s:''' LMMsMLMsMMMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMMMsMMLMMs
+
+'''2L 10M 2s:''' LMMsMMLsMMMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMMMsMLsMMM
+
+'''2L 10M 2s:''' LMMMsMMMMMMLMs
+
+
+
+'''2L 10M 2s:''' LMMMMMMsMLMsMM
+
+'''2L 10M 2s:''' LMMsMMMMMMLMsM
+
+
+
+'''2L 10M 2s:''' LMsMMLMsMMMMMM / LMMMMMMsMLMMsM
+
+
+'''2L 10M 2s:''' LMMMMMMsMLMMMs
+
+'''2L 10M 2s:''' LMsMMMLsMMMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMMMsLsMMMM
+
+'''2L 10M 2s:''' LMMMMsMMMMMMLs
+
+
+
+'''2L 10M 2s:''' LMMMMMMsLMsMMM
+
+'''2L 10M 2s:''' LMMMsMMMMMMLsM
+
+
+
+'''2L 10M 2s:''' LMMMMMMsLMMsMM
+
+'''2L 10M 2s:''' LMMsMMMMMMLsMM
+
+
+
+'''2L 10M 2s:''' LMMMMMMsLMMMsM
+
+'''2L 10M 2s:''' LMsMMMMMMLsMMM
+
+
+
+'''2L 10M 2s:''' LsMMMMLsMMMMMM / LMMMMMMsLMMMMs
+
+
+'''2L 10M 2s:''' LMMMMMMMsMMMLs
+
+'''2L 10M 2s:''' LMMMsLsMMMMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMMMMsMMLsM
+
+'''2L 10M 2s:''' LMMsLMsMMMMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMMMMsMMLMs
+
+'''2L 10M 2s:''' LMMsMLsMMMMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMMMMsMLsMM
+
+'''2L 10M 2s:''' LMMsMMMMMMMLMs
+
+
+
+'''2L 10M 2s:''' LMsMLMsMMMMMMM / LMMMMMMMsMLMsM
+
+
+'''2L 10M 2s:''' LMMMMMMMsMLMMs
+
+'''2L 10M 2s:''' LMsMMLsMMMMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMMMMsLsMMM
+
+'''2L 10M 2s:''' LMMMsMMMMMMMLs
+
+
+
+'''2L 10M 2s:''' LMMMMMMMsLMsMM
+
+'''2L 10M 2s:''' LMMsMMMMMMMLsM
+
+
+
+'''2L 10M 2s:''' LMMMMMMMsLMMsM
+
+'''2L 10M 2s:''' LMsMMMMMMMLsMM
+
+
+
+'''2L 10M 2s:''' LsMMMLsMMMMMMM / LMMMMMMMsLMMMs
+
+
+'''2L 10M 2s:''' LMMMMMMMMsMMLs
+
+'''2L 10M 2s:''' LMMsLsMMMMMMMM
+
+
+
+'''2L 10M 2s:''' LMsLMsMMMMMMMM / LMMMMMMMMsMLsM
+
+
+'''2L 10M 2s:''' LMMMMMMMMsMLMs
+
+'''2L 10M 2s:''' LMsMLsMMMMMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMMMMMsLsMM
+
+'''2L 10M 2s:''' LMMsMMMMMMMMLs
+
+
+
+'''2L 10M 2s:''' LMMMMMMMMsLMsM
+
+'''2L 10M 2s:''' LMsMMMMMMMMLsM
+
+
+
+'''2L 10M 2s:''' LsMMLsMMMMMMMM / LMMMMMMMMsLMMs
+
+
+'''2L 10M 2s:''' LMMMMMMMMMsMLs
+
+'''2L 10M 2s:''' LMsLsMMMMMMMMM
+
+
+
+'''2L 10M 2s:''' LMMMMMMMMMsLsM
+
+'''2L 10M 2s:''' LMsMMMMMMMMMLs
+
+
+
+'''2L 10M 2s:''' LsMLsMMMMMMMMM / LMMMMMMMMMsLMs
+
+
+'''2L 10M 2s:''' LsLsMMMMMMMMMM / LMMMMMMMMMMsLs
+
+
+'''2L 10M 2s:''' LMMMMMLsMMMMMs
+
+
+
+'''2L 10M 2s:''' LMMMMLsMMMMMMs
+
+'''2L 10M 2s:''' LMMMMMMLsMMMMs
+
+
+
+'''2L 10M 2s:''' LMMMLsMMMMMMMs
+
+'''2L 10M 2s:''' LMMMMMMMLsMMMs
+
+
+
+'''2L 10M 2s:''' LMMLsMMMMMMMMs
+
+'''2L 10M 2s:''' LMMMMMMMMLsMMs
+
+
+
+'''2L 10M 2s:''' LMLsMMMMMMMMMs
+
+'''2L 10M 2s:''' LMMMMMMMMMLsMs
+
+
+
+'''2L 10M 2s:''' LLsMMMMMMMMMMs
+
+'''2L 10M 2s:''' LMMMMMMMMMMLss
+
+
+
+=== <u>Multi-Period</u> ===
+
+'''2L 10M 2s:''' LMsMMMMLMsMMMM / LMMMMsMLMMMMsM
+
+
+'''2L 10M 2s:''' LsMMMMMLsMMMMM / LMMMMMsLMMMMMs
+
+
+'''4L 8M 2s:''' LMMLsMMLMMLsMM
+
+'''2L 8M 4s:''' LMMsMMsLMMsMMs
+
+
+
+'''4L 8M 2s:''' LMMLMMsLMMLMMs
+
+'''2L 8M 4s:''' LsMMsMMLsMMsMM
+
+
+
+'''8L 4M 2s:''' LLsLMLMLLsLMLM
+
+'''2L 4M 8s:''' LsMsMssLsMsMss
+
+
+
+'''8L 4M 2s:''' LLMLMLsLLMLMLs
+
+'''2L 4M 8s:''' LssMsMsLssMsMs
+
+
+
+'''6L 6M 2s:''' LLsLMMMLLsLMMM
+
+'''2L 6M 6s:''' LsMMMssLsMMMss
+
+
+
+'''6L 6M 2s:''' LLMMMLsLLMMMLs
+
+'''2L 6M 6s:''' LssMMMsLssMMMs
+
+
+
+'''4L 6M 4s:''' LMMsMLsLMMsMLs
+
+'''4L 6M 4s:''' LMsLsMMLMsLsMM
+
+
+
+'''4L 6M 4s:''' LMMsLsMLMMsLsM
+
+'''4L 6M 4s:''' LMsMMLsLMsMMLs
+
+
+
+'''4L 6M 4s:''' LsMLsMMLsMLsMM / LMMsLMsLMMsLMs
+
+
+'''4L 6M 4s:''' LsLsMMMLsLsMMM / LMMMsLsLMMMsLs
+
+
+'''4L 6M 4s:''' LMLsMMsLMLsMMs
+
+'''4L 6M 4s:''' LMMLsMsLMMLsMs
+
+
+
+'''4L 6M 4s:''' LLsMMMsLLsMMMs
+
+'''4L 6M 4s:''' LMMMLssLMMMLss
+
+
+
+== Conditional (MMM=LsL) ==
+
+=== <u>Single-Period</u> ===
+
+'''2L 11M 1s:''' LMMMMMMMMMMMLs
+
+
+
+=== <u>Multi-Period</u> ===
+
+'''4L 8M 2s:''' LMMMMLsLMMMMLs
+
+
+
+== Conditional (MMM=sLs) ==
+
+=== <u>Single-Period</u> ===
+
+'''1L 11M 2s:''' LsMMMMMMMMMMMs
+
+
+
+=== <u>Multi-Period</u> ===
+
+'''2L 8M 4s:''' LsMMMMsLsMMMMs

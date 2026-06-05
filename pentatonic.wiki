@@ -1,0 +1,75 @@
+I believe these are all of the strict MV3 scales with five notes. Unconditional MV3 scales may have any L:M:s ratio. Conditional MV3 scales have a condition specified in the section header that the L:M:s ratio needs to satisfy in order for the scale to be strict MV3. Note the two pentatonic MV3 scales with the seemingly unique (Not MM=Ls) condition that no other known MV3 scales have. Lines with two scales separated with a slash are lexicographically left and right chiral scales respectively, lines with only one scale are therefore achiral. All scales are written in their brightest mode. Scales are grouped into sisterhoods. Unconditional sisterhoods may have up to six scales while conditional sisterhoods appear to have up to two scales. The two scales in conditional sisterhoods have their L's and s's swapped.
+
+
+'''Here's some stats:'''
+
+20 Scales Total
+
+16 Unconditional Single-Period
+
+4 Conditional Single-Period
+
+0 Unconditional Multi-Period
+
+0 Conditional Multi-Period
+
+
+== Unconditional ==
+
+=== <u>Single-Period</u> ===
+
+'''3L 1M 1s:'''
+LLsLM / LLMLs
+
+'''1L 3M 1s:'''
+LMsMM / LMMsM
+
+'''1L 1M 3s:'''
+LssMs / LsMss
+
+
+'''2L 2M 1s:'''
+LMLsM / LMLMs
+
+'''2L 1M 2s:'''
+LsLsM / LMsLs
+
+'''1L 2M 2s:'''
+LsMsM / LMsMs
+
+
+'''2L 2M 1s:'''
+LLMsM
+
+'''2L 1M 2s:'''
+LLsMs
+
+'''2L 1M 2s:'''
+LMLss
+
+'''1L 2M 2s:'''
+LMssM
+
+
+=== <u>Multi-Period</u> ===
+
+(none)
+
+
+== Conditional (MM=Ls) ==
+
+=== <u>Single-Period</u> ===
+
+'''1L 3M 1s:''' LsMMM / LMMMs
+
+
+=== <u>Multi-Period</u> ===
+
+(none)
+
+
+== Conditional (Not MM=Ls) ==
+
+'''2L 2M 1s:''' LMMLs
+
+'''1L 2M 2s:''' LsMMs
