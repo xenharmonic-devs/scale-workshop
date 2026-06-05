@@ -73,4 +73,18 @@ describe('Scale store', () => {
     expect(scale.colorForIndex(scale.baseMidiNote)).toBe('gray')
     expect(scale.colorForIndex(scale.baseMidiNote + 1)).toBe('silver')
   })
+
+  it('supports base MIDI notes with negative octaves', () => {
+    const scale = useScaleStore()
+    scale.baseMidiNote = 0
+    scale.computeScale()
+    const serialized = scale.toJSON() as unknown as {
+      scale: { baseMidiNote: number }
+      error: string
+      warning: string
+    }
+    expect(serialized.scale.baseMidiNote).toBe(0)
+    expect(serialized.error).toBe('')
+    expect(serialized.warning).toBe('Empty scale defaults to 12-tone equal temperament.')
+  })
 })

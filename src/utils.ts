@@ -225,7 +225,8 @@ export function midiNoteNumberToName(
   const quotient = (noteNumber - remainder) / 12 + octaveOffset
   const result = MIDI_NOTE_NAMES[remainder] + quotient.toString()
   if (accidentalStyle === 'ASCII') {
-    return result.replace('♮', '').replace('♯', '#')
+    // SonicWeave is cursed: C-1 parses as C - 1 (variable minus literal)
+    return result.replace('♮', quotient < 0 ? '_' : '').replace('♯', '#')
   }
   return result
 }
