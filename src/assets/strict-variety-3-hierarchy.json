@@ -1,0 +1,9594 @@
+{
+  "3-4": [
+    {
+      "steps": "LsM",
+      "chiral": true
+    },
+    {
+      "steps": "LMMs",
+      "chiral": true
+    }
+  ],
+  "5": [
+    {
+      "steps": "LLsLM",
+      "chiral": true
+    },
+    {
+      "steps": "LMsMM",
+      "chiral": true
+    },
+    {
+      "steps": "LssMs",
+      "chiral": true
+    },
+    {
+      "steps": "LMLsM",
+      "chiral": true
+    },
+    {
+      "steps": "LsLsM",
+      "chiral": true
+    },
+    {
+      "steps": "LsMsM",
+      "chiral": true
+    },
+    {
+      "steps": "LLMsM",
+      "chiral": false
+    },
+    {
+      "steps": "LLsMs",
+      "chiral": false
+    },
+    {
+      "steps": "LMLss",
+      "chiral": false
+    },
+    {
+      "steps": "LMssM",
+      "chiral": false
+    },
+    {
+      "steps": "LsMMM",
+      "chiral": true
+    },
+    {
+      "steps": "LMMLs",
+      "chiral": false
+    },
+    {
+      "steps": "LsMMs",
+      "chiral": false
+    }
+  ],
+  "6": [
+    {
+      "steps": "LMLsMs",
+      "chiral": false
+    },
+    {
+      "steps": "LMsLsM",
+      "chiral": false
+    },
+    {
+      "steps": "LMsMLs",
+      "chiral": false
+    },
+    {
+      "steps": "LsMLsM",
+      "chiral": true
+    },
+    {
+      "steps": "LMsMMM",
+      "chiral": true
+    },
+    {
+      "steps": "LsMMMM",
+      "chiral": true
+    },
+    {
+      "steps": "LLsLMM",
+      "chiral": true
+    },
+    {
+      "steps": "LsMMss",
+      "chiral": true
+    },
+    {
+      "steps": "LsLsMM",
+      "chiral": true
+    },
+    {
+      "steps": "LLsMMs",
+      "chiral": false
+    },
+    {
+      "steps": "LMMLss",
+      "chiral": false
+    },
+    {
+      "steps": "LsMMMs",
+      "chiral": false
+    },
+    {
+      "steps": "LMMMLs",
+      "chiral": false
+    }
+  ],
+  "7": [
+    {
+      "steps": "LLLsLLM",
+      "chiral": true
+    },
+    {
+      "steps": "LMMsMMM",
+      "chiral": true
+    },
+    {
+      "steps": "LsssMss",
+      "chiral": true
+    },
+    {
+      "steps": "LMLMLsM",
+      "chiral": true
+    },
+    {
+      "steps": "LsLsLsM",
+      "chiral": true
+    },
+    {
+      "steps": "LsMsMsM",
+      "chiral": true
+    },
+    {
+      "steps": "LMLsMLs",
+      "chiral": true
+    },
+    {
+      "steps": "LMsMLsM",
+      "chiral": true
+    },
+    {
+      "steps": "LsMLsMs",
+      "chiral": true
+    },
+    {
+      "steps": "LLMLsLM",
+      "chiral": false
+    },
+    {
+      "steps": "LLsLMLs",
+      "chiral": false
+    },
+    {
+      "steps": "LMMLMsM",
+      "chiral": false
+    },
+    {
+      "steps": "LsMsLss",
+      "chiral": false
+    },
+    {
+      "steps": "LMsMMsM",
+      "chiral": false
+    },
+    {
+      "steps": "LsMssMs",
+      "chiral": false
+    },
+    {
+      "steps": "LMsMMMM",
+      "chiral": true
+    },
+    {
+      "steps": "LsMMMMM",
+      "chiral": true
+    },
+    {
+      "steps": "LMMLsMM",
+      "chiral": true
+    },
+    {
+      "steps": "LMMsMMs",
+      "chiral": true
+    },
+    {
+      "steps": "LLsLMLM",
+      "chiral": true
+    },
+    {
+      "steps": "LsMsMss",
+      "chiral": true
+    },
+    {
+      "steps": "LLsLMMM",
+      "chiral": true
+    },
+    {
+      "steps": "LsMMMss",
+      "chiral": true
+    },
+    {
+      "steps": "LMMsMLs",
+      "chiral": true
+    },
+    {
+      "steps": "LMsLsMM",
+      "chiral": true
+    },
+    {
+      "steps": "LsMLsMM",
+      "chiral": true
+    },
+    {
+      "steps": "LsLsMMM",
+      "chiral": true
+    },
+    {
+      "steps": "LMLsMMs",
+      "chiral": false
+    },
+    {
+      "steps": "LMMLsMs",
+      "chiral": false
+    },
+    {
+      "steps": "LLsMMMs",
+      "chiral": false
+    },
+    {
+      "steps": "LMMMLss",
+      "chiral": false
+    },
+    {
+      "steps": "LMMMMLs",
+      "chiral": false
+    },
+    {
+      "steps": "LsMMMMs",
+      "chiral": false
+    }
+  ],
+  "8": [
+    {
+      "steps": "LMMsMMMM",
+      "chiral": true
+    },
+    {
+      "steps": "LMsMMMMM",
+      "chiral": true
+    },
+    {
+      "steps": "LsMMMMMM",
+      "chiral": true
+    },
+    {
+      "steps": "LLMLLsLM",
+      "chiral": true
+    },
+    {
+      "steps": "LsMssMss",
+      "chiral": true
+    },
+    {
+      "steps": "LLLsLLMM",
+      "chiral": true
+    },
+    {
+      "steps": "LssMMsss",
+      "chiral": true
+    },
+    {
+      "steps": "LMLsMLMM",
+      "chiral": true
+    },
+    {
+      "steps": "LMsMMsMs",
+      "chiral": true
+    },
+    {
+      "steps": "LMLMsLMM",
+      "chiral": true
+    },
+    {
+      "steps": "LsMMsMsM",
+      "chiral": true
+    },
+    {
+      "steps": "LLsLMMMM",
+      "chiral": true
+    },
+    {
+      "steps": "LsMMMMss",
+      "chiral": true
+    },
+    {
+      "steps": "LMsLMsMM",
+      "chiral": true
+    },
+    {
+      "steps": "LMMsMLMs",
+      "chiral": true
+    },
+    {
+      "steps": "LMsMLsMM",
+      "chiral": true
+    },
+    {
+      "steps": "LMMsLsMM",
+      "chiral": false
+    },
+    {
+      "steps": "LMMsMMLs",
+      "chiral": false
+    },
+    {
+      "steps": "LMMMsMLs",
+      "chiral": true
+    },
+    {
+      "steps": "LMsLsMMM",
+      "chiral": true
+    },
+    {
+      "steps": "LsMLsMMM",
+      "chiral": true
+    },
+    {
+      "steps": "LsLsMMMM",
+      "chiral": true
+    },
+    {
+      "steps": "LMMLsMMs",
+      "chiral": false
+    },
+    {
+      "steps": "LMLsMMMs",
+      "chiral": false
+    },
+    {
+      "steps": "LMMMLsMs",
+      "chiral": false
+    },
+    {
+      "steps": "LLsMMMMs",
+      "chiral": false
+    },
+    {
+      "steps": "LMMMMLss",
+      "chiral": false
+    },
+    {
+      "steps": "LMsLsLsM",
+      "chiral": false
+    },
+    {
+      "steps": "LMsMLsLs",
+      "chiral": false
+    },
+    {
+      "steps": "LsLsMLsM",
+      "chiral": true
+    },
+    {
+      "steps": "LsLsLsMM",
+      "chiral": true
+    },
+    {
+      "steps": "LsMMLsMM",
+      "chiral": true
+    },
+    {
+      "steps": "LsMMMMMs",
+      "chiral": false
+    },
+    {
+      "steps": "LMMMMMLs",
+      "chiral": false
+    }
+  ],
+  "9": {
+    "1L 7M 1s": [
+      {
+        "steps": "LMMMsMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMMMM",
+        "chiral": true
+      }
+    ],
+    "5L 2M 2s": [
+      {
+        "steps": "LLsLMLsLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMLMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLsLLsLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLLsLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLLsLMMLs",
+        "chiral": false
+      }
+    ],
+    "2L 5M 2s": [
+      {
+        "steps": "LMsMLMsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLMsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsMLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMLsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMLsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMsMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMLsMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsMMMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMMMLsMMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMLsMMMMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMMMMLsMs",
+        "chiral": false
+      },
+      {
+        "steps": "LLsMMMMMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMMMMMLss",
+        "chiral": false
+      }
+    ],
+    "2L 2M 5s": [
+      {
+        "steps": "LsMsLssMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMsLss",
+        "chiral": false
+      },
+      {
+        "steps": "LsMMssLss",
+        "chiral": true
+      },
+      {
+        "steps": "LsLssMMss",
+        "chiral": false
+      },
+      {
+        "steps": "LsMMsLsss",
+        "chiral": false
+      }
+    ],
+    "4L 4M 1s": [
+      {
+        "steps": "LMLMLMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMMLLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLMMLsLMM",
+        "chiral": false
+      }
+    ],
+    "1L 4M 4s": [
+      {
+        "steps": "LsMsMsMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMMMMss",
+        "chiral": false
+      },
+      {
+        "steps": "LsMMssMMs",
+        "chiral": false
+      }
+    ],
+    "3L 3M 3s": [
+      {
+        "steps": "LMLsMsLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMLsMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMLsMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMLsLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMLsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLsLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsLsMMM",
+        "chiral": true
+      }
+    ],
+    "2L 6M 1s": [
+      {
+        "steps": "LMMMLsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMLMsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMMMLs",
+        "chiral": false
+      }
+    ],
+    "1L 6M 2s": [
+      {
+        "steps": "LMMMsMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMMMs",
+        "chiral": false
+      }
+    ],
+    "3L 5M 1s": [
+      {
+        "steps": "LMLsMLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMsLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMMMM",
+        "chiral": true
+      }
+    ],
+    "1L 5M 3s": [
+      {
+        "steps": "LMsMMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMsMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMMss",
+        "chiral": true
+      }
+    ],
+    "5L 3M 1s": [
+      {
+        "steps": "LLsLMLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLLsLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLsLMLM",
+        "chiral": true
+      }
+    ],
+    "1L 3M 5s": [
+      {
+        "steps": "LsMsMsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMssMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMssMs",
+        "chiral": true
+      }
+    ],
+    "misc.": [
+      {
+        "steps": "LLLLsLLLM",
+        "chiral": true
+      },
+      {
+        "steps": "LssssMsss",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsLsLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLsLLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LssMsMsss",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMLsLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMLsLMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMsLsMs",
+        "chiral": true
+      }
+    ]
+  },
+  "10": {
+    "6L 2M 2s": [
+      {
+        "steps": "LLMLLsLMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLMLsLMLLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLsLMLLsLM",
+        "chiral": true
+      }
+    ],
+    "2L 6M 2s": [
+      {
+        "steps": "LMMsMLMsMM",
+        "chiral": false
+      },
+      {
+        "steps": "LMMsMMLMsM",
+        "chiral": false
+      },
+      {
+        "steps": "LMsMMLMsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsMMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLMsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsMMLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMLsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMLMsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsMLMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMLsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsLsMMM",
+        "chiral": false
+      },
+      {
+        "steps": "LMMMsMMMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LMMMMsMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLsMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLMsMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMsMLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMLsMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMLsMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMMsMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMLsMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMLsMMMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMMLsMMMMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMMMMLsMMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMLsMMMMMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMMMMMLsMs",
+        "chiral": false
+      },
+      {
+        "steps": "LLsMMMMMMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMMMMMMLss",
+        "chiral": false
+      },
+      {
+        "steps": "LsMMMLsMMM",
+        "chiral": true
+      }
+    ],
+    "2L 2M 6s": [
+      {
+        "steps": "LsMsLssMss",
+        "chiral": false
+      },
+      {
+        "steps": "LsMssLssMs",
+        "chiral": false
+      },
+      {
+        "steps": "LssMsLssMs",
+        "chiral": true
+      }
+    ],
+    "4L 4M 2s": [
+      {
+        "steps": "LMLMLsMLMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMLMsLMLsM",
+        "chiral": false
+      },
+      {
+        "steps": "LMLsMLMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMsMLLMsM",
+        "chiral": false
+      },
+      {
+        "steps": "LMLsMLMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMLsLMMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsLMMLs",
+        "chiral": false
+      }
+    ],
+    "4L 2M 4s": [
+      {
+        "steps": "LMsLsLsMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LMsLsMLsLs",
+        "chiral": false
+      },
+      {
+        "steps": "LsLsMLsLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsMsLLsMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMLssLMLss",
+        "chiral": false
+      },
+      {
+        "steps": "LMsLsLsLsM",
+        "chiral": false
+      },
+      {
+        "steps": "LMsMLsLsLs",
+        "chiral": false
+      },
+      {
+        "steps": "LsLsLsMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsLsLsMM",
+        "chiral": true
+      }
+    ],
+    "2L 4M 4s": [
+      {
+        "steps": "LMsMLsMsMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMsMsMLsMs",
+        "chiral": false
+      },
+      {
+        "steps": "LsMsMLsMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMssMLMssM",
+        "chiral": false
+      },
+      {
+        "steps": "LMsMMsLsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMsLsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsLsMMs",
+        "chiral": false
+      }
+    ],
+    "1L 8M 1s": [
+      {
+        "steps": "LMMMsMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMMMMM",
+        "chiral": true
+      }
+    ],
+    "7L 2M 1s": [
+      {
+        "steps": "LLLsLLMLLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLMLLsLLM",
+        "chiral": false
+      },
+      {
+        "steps": "LLLLsLLLMM",
+        "chiral": true
+      }
+    ],
+    "1L 2M 7s": [
+      {
+        "steps": "LssMssMsss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMsssMss",
+        "chiral": false
+      },
+      {
+        "steps": "LsssMMssss",
+        "chiral": true
+      }
+    ],
+    "3L 6M 1s": [
+      {
+        "steps": "LMMLMMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLMMLMsM",
+        "chiral": false
+      },
+      {
+        "steps": "LMLsMLMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMsLMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMMMMM",
+        "chiral": true
+      }
+    ],
+    "1L 6M 3s": [
+      {
+        "steps": "LMMsMMsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMsMMsM",
+        "chiral": false
+      },
+      {
+        "steps": "LMsMMMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMsMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMMMss",
+        "chiral": true
+      }
+    ],
+    "5L 4M 1s": [
+      {
+        "steps": "LLsLMLMMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMLMLLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMLLsLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLMLsLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLLsLMM",
+        "chiral": true
+      }
+    ],
+    "1L 4M 5s": [
+      {
+        "steps": "LsMsMMsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMMMsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMssMMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMssMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMssMMss",
+        "chiral": true
+      }
+    ],
+    "3L 4M 3s": [
+      {
+        "steps": "LMsLsMLMsM",
+        "chiral": false
+      },
+      {
+        "steps": "LMsMLMsMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LMsMLsMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMLsMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLMsLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsLMsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMLsLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMLMsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMLsLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLsMLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMLsMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLsLsMM",
+        "chiral": false
+      },
+      {
+        "steps": "LMMsMMLsLs",
+        "chiral": false
+      },
+      {
+        "steps": "LsMLsMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsMMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsMLsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsLsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsMMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsLsLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsMLsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsLsMMMM",
+        "chiral": true
+      }
+    ],
+    "misc.": [
+      {
+        "steps": "LLsLsLMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsMMsLss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMMMMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMMMMMMMLs",
+        "chiral": false
+      }
+    ]
+  },
+  "11": {
+    "1L 9M 1s": [
+      {
+        "steps": "LMMMMsMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMMMMMM",
+        "chiral": true
+      }
+    ],
+    "2L 7M 2s": [
+      {
+        "steps": "LMMsMMLMsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLMMsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsMMLMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMLMsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsMMLMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMLsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsMLsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsMMMLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMLMsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMLsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMsMMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsLsMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMsMMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLMsMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMsMMLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMLsMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMLMsMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMsMLMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMLsMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMLsMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMMsMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLsMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLMsMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMMsMLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMLsMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMLsMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMMMsMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMLsMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsMMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMLsMMMMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMMMMLsMMMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMMLsMMMMMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMMMMMLsMMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMLsMMMMMMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMMMMMMLsMs",
+        "chiral": false
+      },
+      {
+        "steps": "LLsMMMMMMMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMMMMMMMLss",
+        "chiral": false
+      }
+    ],
+    "5L 5M 1s": [
+      {
+        "steps": "LMLMLMLMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMLMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMLMMMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMLMLsLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMLLsLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLsLMLMM",
+        "chiral": true
+      }
+    ],
+    "1L 5M 5s": [
+      {
+        "steps": "LsMsMsMsMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsMsMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMMMsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMssMMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMssMMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMMssMMs",
+        "chiral": true
+      }
+    ],
+    "3L 5M 3s": [
+      {
+        "steps": "LMsMLMsMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLMsLMsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMLsMLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLMsMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMLsLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMLMsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMLsLMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsMLMsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMLMsMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsMMLMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMLMsLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMLsMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLsMMLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMLsMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLsMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMLsLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMLsLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMLsMMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLMMsMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsMMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMLsMMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsMMLsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLsLsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsMLsMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLMsLsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsLMsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsMLsLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsMLsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsMLMsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMLsLsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLsMMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsLsMLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMLsMMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsLsLMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsMMLsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMLsMLsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMsMLsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsLsMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsMMMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMsLsLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsMLsMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsLsMMMMM",
+        "chiral": true
+      }
+    ],
+    "4L 4M 3s": [
+      {
+        "steps": "LMLsMLsMLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMLsMLsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMLsLsMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsMMLsLs",
+        "chiral": true
+      }
+    ],
+    "4L 3M 4s": [
+      {
+        "steps": "LMsLsMLsMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMLsLsLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsLMsMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsMLsLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLMsMLsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsLsMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsMLsMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMLsLsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsLsLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLsMLsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsLsMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLsLsLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsLsMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsMLsLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsLsLsMMM",
+        "chiral": true
+      }
+    ],
+    "3L 4M 4s": [
+      {
+        "steps": "LMsMLsMLsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsLsMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsMMMsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLsLsMMs",
+        "chiral": true
+      }
+    ],
+    "2L 8M 1s": [
+      {
+        "steps": "LMMMMLsMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMLMsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMLMMsMM",
+        "chiral": false
+      },
+      {
+        "steps": "LMMMMMMMMLs",
+        "chiral": false
+      }
+    ],
+    "1L 8M 2s": [
+      {
+        "steps": "LMMMMsMMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsMMMMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMMMsMM",
+        "chiral": false
+      },
+      {
+        "steps": "LsMMMMMMMMs",
+        "chiral": false
+      }
+    ],
+    "3L 7M 1s": [
+      {
+        "steps": "LMMLsMMLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLMsMLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLMMsLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLsMLMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMsLMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMMMMMM",
+        "chiral": true
+      }
+    ],
+    "1L 7M 3s": [
+      {
+        "steps": "LMMsMMMsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMsMMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMsMMsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMMsMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMMMMss",
+        "chiral": true
+      }
+    ],
+    "7L 3M 1s": [
+      {
+        "steps": "LLMLLMLLsLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLsLLMLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLsLLMLLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLMMLMLLLs",
+        "chiral": true
+      }
+    ],
+    "1L 3M 7s": [
+      {
+        "steps": "LsMssMssMss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMsMsMsss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMssMMsss",
+        "chiral": true
+      },
+      {
+        "steps": "LsssMMsMsss",
+        "chiral": true
+      }
+    ],
+    "4L 6M 1s": [
+      {
+        "steps": "LMLsMLMMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMsLMMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMMLsMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMMLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMLMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMLsLMMM",
+        "chiral": false
+      }
+    ],
+    "1L 6M 4s": [
+      {
+        "steps": "LMsMMsMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsMMsMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMsMsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMsMMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMMMMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMssMMMs",
+        "chiral": false
+      }
+    ],
+    "6L 4M 1s": [
+      {
+        "steps": "LLsLMLMLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLLsLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLsLMLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLsLMLLMM",
+        "chiral": false
+      },
+      {
+        "steps": "LLMLsLLMMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLMLsLMLM",
+        "chiral": false
+      },
+      {
+        "steps": "LLLsLLMMLMM",
+        "chiral": true
+      }
+    ],
+    "1L 4M 6s": [
+      {
+        "steps": "LsMsMsMsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMssMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMsMssMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMssMMssMs",
+        "chiral": false
+      },
+      {
+        "steps": "LssMMsMssMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMssMsMs",
+        "chiral": false
+      },
+      {
+        "steps": "LssMMsMMsss",
+        "chiral": true
+      }
+    ],
+    "3L 6M 2s": [
+      {
+        "steps": "LMMMMLsLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMLsLMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMLMsLsM",
+        "chiral": false
+      },
+      {
+        "steps": "LMMMLsMMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsMMLMsM",
+        "chiral": true
+      }
+    ],
+    "2L 6M 3s": [
+      {
+        "steps": "LMMsMMMMsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMMsLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMMsMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LMMMsLsMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMLMsMMs",
+        "chiral": true
+      }
+    ],
+    "6L 3M 2s": [
+      {
+        "steps": "LLsLMLMLsLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMLMLMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLsLLsLMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMLLsLLs",
+        "chiral": false
+      }
+    ],
+    "2L 3M 6s": [
+      {
+        "steps": "LsMsMsLsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMsMsLss",
+        "chiral": false
+      },
+      {
+        "steps": "LsMsMMssLss",
+        "chiral": true
+      },
+      {
+        "steps": "LssLssMMMss",
+        "chiral": false
+      }
+    ],
+    "4L 5M 2s": [
+      {
+        "steps": "LMLsMLMMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLsMLMMLMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMLsLMMMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMsLMMLsM",
+        "chiral": false
+      }
+    ],
+    "2L 5M 4s": [
+      {
+        "steps": "LMsMMsLMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMsMLsMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMsMsLsMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMsMLsMMs",
+        "chiral": false
+      }
+    ],
+    "5L 4M 2s": [
+      {
+        "steps": "LMLMLsMLMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMMLMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMLsLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMLsLMMM",
+        "chiral": true
+      }
+    ],
+    "2L 4M 5s": [
+      {
+        "steps": "LMsMsLsMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMsMsLss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsLsMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMssLsMs",
+        "chiral": true
+      }
+    ],
+    "misc.": [
+      {
+        "steps": "LLLLLsLLLLM",
+        "chiral": true
+      },
+      {
+        "steps": "LsssssMssss",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLLsLMLLs",
+        "chiral": true
+      },
+      {
+        "steps": "LssMsLssMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsLsLsLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLsLMLsMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLsLMMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMLsMsLsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsMMMsLss",
+        "chiral": true
+      },
+      {
+        "steps": "LLLMLLLsLLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLLsLLLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LssMsssMsss",
+        "chiral": true
+      },
+      {
+        "steps": "LsssMsMssss",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMLsLMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LsMsLsMsLss",
+        "chiral": false
+      }
+    ]
+  },
+  "12": {
+    "4L 4M 4s": {
+      "1-2 runs of M": [
+        {
+          "steps": "LMMsLsLsMMLs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsLsMMLsLs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsLsLsLsMM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsMMLsLsLs",
+          "chiral": false
+        },
+        {
+          "steps": "LsLsLsMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsLsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsLsLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMMLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LLsMMsLLsMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMLssLMMLss",
+          "chiral": false
+        }
+      ],
+      "3 runs of M": [
+        {
+          "steps": "LMMsMLsMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLMsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMLsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMLsMMLsM",
+          "chiral": true
+        }
+      ],
+      "4 runs of M": [
+        {
+          "steps": "LMLsMsLMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMLsMLsMsLMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMsLMsLsMLsM",
+          "chiral": false
+        },
+        {
+          "steps": "LMsLMsMLsMLs",
+          "chiral": false
+        },
+        {
+          "steps": "LsMLsMLsMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMLsMsLMLsMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMsLsMLMsLsM",
+          "chiral": false
+        },
+        {
+          "steps": "LMsMLsLMsMLs",
+          "chiral": false
+        },
+        {
+          "steps": "LMsLsMLsLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsMLMsM",
+          "chiral": false
+        },
+        {
+          "steps": "LMsMLMsMLsLs",
+          "chiral": false
+        },
+        {
+          "steps": "LMsLsLMsMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsLsMLsM",
+          "chiral": true
+        }
+      ]
+    },
+    "3L 8M 1s": [
+      {
+        "steps": "LMMLsMMLMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLMsMLMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLMMsLMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLsMLMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMsLMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMMMMMMM",
+        "chiral": true
+      }
+    ],
+    "1L 8M 3s": [
+      {
+        "steps": "LMMsMMMMsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMMsMMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMsMMsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMMMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMMMsMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMMMMMss",
+        "chiral": true
+      }
+    ],
+    "2L 8M 2s": {
+      "1-2 runs of M": [
+        {
+          "steps": "LMMMMsLsMMMM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMMsMMMMLs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMMMsMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsMMMLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsMMLsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsMLsMMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMMMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMLsMMMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMLsMMMMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMMMLsMMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMLsMMMMMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMMMMLsMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMLsMMMMMMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMMMMMLsMs",
+          "chiral": false
+        },
+        {
+          "steps": "LLsMMMMMMMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMMMMMMLss",
+          "chiral": false
+        },
+        {
+          "steps": "LsMMMMLsMMMM",
+          "chiral": true
+        }
+      ],
+      "3 runs of M": [
+        {
+          "steps": "LMMMsMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLMMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMMMMM",
+          "chiral": true
+        }
+      ],
+      "4 runs of M": [
+        {
+          "steps": "LMMsMLMMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLMMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMsMMM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMsMMMLMsM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMMsMMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLMsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMMLMsMMM",
+          "chiral": true
+        }
+      ]
+    },
+    "8L 2M 2s": [
+      {
+        "steps": "LLLsLLMLMLLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLLsLLLsLLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLMMLLLsLLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLLLsLLMMLLs",
+        "chiral": false
+      }
+    ],
+    "2L 2M 8s": [
+      {
+        "steps": "LssMsMssLsss",
+        "chiral": false
+      },
+      {
+        "steps": "LssMMsssLsss",
+        "chiral": true
+      },
+      {
+        "steps": "LssLsssMMsss",
+        "chiral": false
+      },
+      {
+        "steps": "LssMMssLssss",
+        "chiral": false
+      }
+    ],
+    "7L 4M 1s": [
+      {
+        "steps": "LLMLMLLsLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLMLLMLsLM",
+        "chiral": false
+      },
+      {
+        "steps": "LLMLLsLMLLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLsLLMMLLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLsLLMLMMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLMMLMMLLLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLLMMLLsLLMM",
+        "chiral": false
+      }
+    ],
+    "1L 4M 7s": [
+      {
+        "steps": "LsMsMssMsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMssMsMssMs",
+        "chiral": false
+      },
+      {
+        "steps": "LsMssMMssMss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMMssMMsss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMsMMsMsss",
+        "chiral": true
+      },
+      {
+        "steps": "LsssMMsMMsss",
+        "chiral": false
+      },
+      {
+        "steps": "LssMMsssMMss",
+        "chiral": false
+      }
+    ],
+    "5L 6M 1s": [
+      {
+        "steps": "LMLMLsMLMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMLMsLMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMLMMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMLMLMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMMLMMLLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMMLLsLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMLMLsLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMLLsLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLsLMMLMM",
+        "chiral": true
+      }
+    ],
+    "1L 6M 5s": [
+      {
+        "steps": "LMsMsMMsMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMMsMsMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsMMsMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMsMMMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMMMMsMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMssMMMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMssMMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMssMMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsMMssMMs",
+        "chiral": true
+      }
+    ],
+    "4L 6M 2s": [
+      {
+        "steps": "LMMLsLMMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLMsMLMMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LMLsMLMMMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLsLMMMMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMsLMMMLsM",
+        "chiral": false
+      },
+      {
+        "steps": "LMMMLsLMMMLs",
+        "chiral": false
+      }
+    ],
+    "2L 6M 4s": [
+      {
+        "steps": "LMMsMMsLsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMsLsMMsM",
+        "chiral": false
+      },
+      {
+        "steps": "LMsMMMsLMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMsLsMMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMsMLsMMMs",
+        "chiral": false
+      },
+      {
+        "steps": "LsMMMsLsMMMs",
+        "chiral": false
+      }
+    ],
+    "6L 4M 2s": [
+      {
+        "steps": "LLsLMMLMLMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMLMLsLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLLsLMMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLLsLMLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMMLLsLLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLMMLsLMMLLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLMMLsLLsLMM",
+        "chiral": false
+      },
+      {
+        "steps": "LLMMLMMLLsLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLMMLLsLMMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLLsLMMLMMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLsLMMLLsLMM",
+        "chiral": true
+      }
+    ],
+    "2L 4M 6s": [
+      {
+        "steps": "LsMMsMsMsLss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMssLsMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsMMssLss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMMMssLss",
+        "chiral": true
+      },
+      {
+        "steps": "LssLssMMMMss",
+        "chiral": false
+      },
+      {
+        "steps": "LsMMssLssMMs",
+        "chiral": false
+      },
+      {
+        "steps": "LsMMssMMsLss",
+        "chiral": false
+      },
+      {
+        "steps": "LsLssMMsMMss",
+        "chiral": false
+      },
+      {
+        "steps": "LsMMsLssMMss",
+        "chiral": false
+      },
+      {
+        "steps": "LsMMsMMsLsss",
+        "chiral": false
+      },
+      {
+        "steps": "LsMMssLsMMss",
+        "chiral": true
+      }
+    ],
+    "3L 6M 3s": {
+      "1-2 runs of M": [
+        {
+          "steps": "LMMMsLsLsMMM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMsMMMLsLs",
+          "chiral": false
+        },
+        {
+          "steps": "LsLsMMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsLsLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsLsMMMMMM",
+          "chiral": true
+        }
+      ],
+      "3 runs of M": [
+        {
+          "steps": "LMMsMMLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMMsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLsLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLsMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLMsLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsMLsMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsLsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LsMLsMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMLsMMsLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsMMLsMMLsMM",
+          "chiral": true
+        }
+      ],
+      "4 runs of M": [
+        {
+          "steps": "LMMsMLsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLMsMM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsMMLMsLsM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsMLMsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMLMsM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsMLMsMMLs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsMLsMMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMsMLsMM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsMMLsMLMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMsMMLsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMMsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMMLsM",
+          "chiral": true
+        }
+      ],
+      "5 runs of M": [
+        {
+          "steps": "LMMsMLsMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLMsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMLMsMM",
+          "chiral": true
+        }
+      ]
+    },
+    "5L 2M 5s": [
+      {
+        "steps": "LMsLsLsLsMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LMsLsMLsLsLs",
+        "chiral": false
+      },
+      {
+        "steps": "LMsLsLsLsLsM",
+        "chiral": false
+      },
+      {
+        "steps": "LMsMLsLsLsLs",
+        "chiral": false
+      },
+      {
+        "steps": "LsLsLsMLsLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsLsLsMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsLsLsLsMM",
+        "chiral": true
+      }
+    ],
+    "1L 10M 1s": [
+      {
+        "steps": "LMMMMsMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsMMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMMMMMMM",
+        "chiral": true
+      }
+    ],
+    "misc.": [
+      {
+        "steps": "LLLLsLLLMLLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLLLsLLLLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsssMssMssss",
+        "chiral": true
+      },
+      {
+        "steps": "LssssMMsssss",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLLsLMLMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLsLLsLLsLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMsLssLss",
+        "chiral": false
+      },
+      {
+        "steps": "LsMMssLssLss",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLsLMMMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsMMMMsLss",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMMMMMMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LsMMMMMMMMMs",
+        "chiral": false
+      }
+    ]
+  },
+  "13": {
+    "1L 11M 1s": [
+      {
+        "steps": "LMMMMMsMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMsMMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsMMMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMMMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMMMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMMMMMMMM",
+        "chiral": true
+      }
+    ],
+    "2L 9M 2s": {
+      "1-2 runs of M": [
+        {
+          "steps": "LMMMMMsMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsMMMMLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMsMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsMMMLsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMMsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsMMLsMMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMMMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsMLsMMMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMMMMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMLsMMMMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMMMLsMMMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMLsMMMMMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMMMMLsMMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMLsMMMMMMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMMMMMLsMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMLsMMMMMMMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMMMMMMLsMs",
+          "chiral": false
+        },
+        {
+          "steps": "LLsMMMMMMMMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMMMMMMMLss",
+          "chiral": false
+        }
+      ],
+      "3 runs of M": [
+        {
+          "steps": "LMMMsMMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLMMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMLMMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMMMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMMMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLMsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMMsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMLMMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMMLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMsMMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMsMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMsMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMMsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMMMMMM",
+          "chiral": true
+        }
+      ],
+      "4 runs of M": [
+        {
+          "steps": "LMMsMMLMMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMMLMMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMMLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMLMMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMMLMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLMsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLMsMMMMMM",
+          "chiral": true
+        }
+      ]
+    },
+    "3L 7M 3s": {
+      "1-2 runs of M": [
+        {
+          "steps": "LMMMMsMMMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsLsLMMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMMMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsLsLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMMLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMsMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMsLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMLsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsLsMMMMMMM",
+          "chiral": true
+        }
+      ],
+      "3 runs of M": [
+        {
+          "steps": "LMMMsMMLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMMsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLMMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLsLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLMMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMMLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLsMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMMLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMMLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsMMLsMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLMMMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsMLsMMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMsLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMLsLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLsLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLMMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLsLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsLsMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsLsMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLsMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsLMsLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsMLsMMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLMsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsLsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LsMLsMLsMMMMM",
+          "chiral": true
+        }
+      ],
+      "4 runs of M": [
+        {
+          "steps": "LMMsMLsLMMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLMsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMMsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMMsMMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMsMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMMsMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLsMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLsMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMsLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLsLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLMsLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMsMMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsLMMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMsLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMMLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMMMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLMsMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLsMMMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLsLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMMMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMMMLsM",
+          "chiral": true
+        }
+      ],
+      "5 runs of M": [
+        {
+          "steps": "LMMsMLsMLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLMsLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLMsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMMLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMMsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLMsMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLMsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMLMsMMM",
+          "chiral": true
+        }
+      ],
+      "6+ runs of M": [
+        {
+          "steps": "LMsMLMsMLMsMM",
+          "chiral": true
+        }
+      ]
+    },
+    "6L 6M 1s": [
+      {
+        "steps": "LMLMLMLMLMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMLMLMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMLMMLMMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMLMMLMLLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMLMMLLsLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLsLMLMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLMMMLMLLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLMMMLLsLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLMMLMLsLM",
+        "chiral": true
+      }
+    ],
+    "1L 6M 6s": [
+      {
+        "steps": "LsMsMsMsMsMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsMsMsMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMMsMMsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMMMsMMsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMssMMMsMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMsMMssMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LssMMsMMMsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMssMMsMMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMssMMsMMsMs",
+        "chiral": true
+      }
+    ],
+    "5L 5M 3s": [
+      {
+        "steps": "LMLsMLMLsMLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsLsLMMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLsMLsLMMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMLsLMsLMMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLsLMMMMMLs",
+        "chiral": true
+      }
+    ],
+    "5L 3M 5s": [
+      {
+        "steps": "LMsLsMLsLsMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMLsLsLsLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsLsLMsMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsMLsLsLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsLMsMLsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsLsMLsLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLMsMLsLsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsLsLsMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLMsLsMLsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsLsMLsMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsMLsLsMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsLsMLsMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMLsLsLsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsLsLsLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLsMLsLsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsLsLsMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsLsMMLsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLsLsLsLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsLsLsMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLsLsLMsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsLsMLsLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsLsLsLsMMM",
+        "chiral": true
+      }
+    ],
+    "3L 5M 5s": [
+      {
+        "steps": "LMsMLsMsMLsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMsLsLsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsMMMsLsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMLsMMMsLsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsMMMMMsLss",
+        "chiral": true
+      }
+    ],
+    "5L 4M 4s": [
+      {
+        "steps": "LMLsMLsMLsLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMLsLsMLsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsMMLsLsLs",
+        "chiral": true
+      }
+    ],
+    "4L 5M 4s": {
+      "1-2 runs of M": [
+        {
+          "steps": "LMMMsMMLsLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLsMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsLsLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsLsMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMMLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLsLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsLsMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsLsLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsLsMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMLsLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsLsLsMMMMM",
+          "chiral": true
+        }
+      ],
+      "3 runs of M": [
+        {
+          "steps": "LMMsMLsLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLMsLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLsLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLsMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLsLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLsLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLMMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMMLsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMMsMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMMsLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMLsMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLMsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMsLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLsMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsLsMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsLsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsLMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMLsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMLsMMMLsM",
+          "chiral": true
+        }
+      ],
+      "4 runs of M": [
+        {
+          "steps": "LMMsMLsMLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLMsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMLsLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLsLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLMsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLsLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsMLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLMsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsMMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMLMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsLsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMLsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMLsLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMLMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLMsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMLsLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMsMLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsMMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LsMLsMLsMLsMM",
+          "chiral": true
+        }
+      ],
+      "5 runs of M": [
+        {
+          "steps": "LMsLMsMLsMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLMsMLsLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMLsLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLMsMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMLMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMLsMLsM",
+          "chiral": true
+        }
+      ]
+    },
+    "4L 4M 5s": [
+      {
+        "steps": "LMsLsMLsMLsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsLsMMMsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLsLsLsMMs",
+        "chiral": true
+      }
+    ],
+    "3L 9M 1s": [
+      {
+        "steps": "LMMMLMMMLsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMLMMMLMsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsMMLMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLMsMLMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLMMsLMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLsMLMMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMsLMMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMMMMMMMM",
+        "chiral": true
+      }
+    ],
+    "1L 9M 3s": [
+      {
+        "steps": "LMMMsMMMsMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMMsMMMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMMMMsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMMMsMMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMMsMMsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMMMMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMMMMsMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMMMMMMss",
+        "chiral": true
+      }
+    ],
+    "9L 3M 1s": [
+      {
+        "steps": "LLLsLLMLLMLLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLMLMLLLsLLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLMLLsLLMLLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLLsLLLMLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLLsLLLMLLMM",
+        "chiral": true
+      }
+    ],
+    "1L 3M 9s": [
+      {
+        "steps": "LssMssMssMsss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMsssMsMsss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMssMsssMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsssMsMsMssss",
+        "chiral": true
+      },
+      {
+        "steps": "LsssMssMMssss",
+        "chiral": true
+      }
+    ],
+    "4L 8M 1s": [
+      {
+        "steps": "LMMLMMLMMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLMMLMMLMsM",
+        "chiral": false
+      },
+      {
+        "steps": "LMLsMLMMMLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMsLMMMLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMMMLsMLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMMMLMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMLMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMMLsLMMMM",
+        "chiral": false
+      }
+    ],
+    "1L 8M 4s": [
+      {
+        "steps": "LMMsMMsMMsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMsMMsMMsM",
+        "chiral": false
+      },
+      {
+        "steps": "LMsMMMsMMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMsMMMsMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMsMsMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMsMMMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsMMMMMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMssMMMMs",
+        "chiral": false
+      }
+    ],
+    "8L 4M 1s": [
+      {
+        "steps": "LLMLLsLMLLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLLMLsLLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLsLLMLMLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLsLLMLLMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLMMLMLMLLLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLLMMLLLsLLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLMLMMLMLLLs",
+        "chiral": false
+      }
+    ],
+    "1L 4M 8s": [
+      {
+        "steps": "LsMssMsMssMss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMsMssMssMs",
+        "chiral": true
+      },
+      {
+        "steps": "LssMsMsMsMsss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMssMsMMsss",
+        "chiral": true
+      },
+      {
+        "steps": "LsssMMsMsMsss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMMsssMMsss",
+        "chiral": true
+      },
+      {
+        "steps": "LsssMsMMsMsss",
+        "chiral": false
+      }
+    ],
+    "3L 8M 2s": [
+      {
+        "steps": "LMMMMMLsMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMMLsLsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMMLsLMsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMMLsLMMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMMLMsMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMMLMsLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMLsMMMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMLsMMMLMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMLsMMLMMsM",
+        "chiral": true
+      }
+    ],
+    "2L 8M 3s": [
+      {
+        "steps": "LMMsMMMMMsLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsMMMMMsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMMMMsLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMMMsLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLMsMMMMMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMMMMsMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMsLsMMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsMLMsMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMLMsMMMs",
+        "chiral": true
+      }
+    ],
+    "5L 7M 1s": [
+      {
+        "steps": "LMLMMLMLsMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMMLMLMsLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMLsMLMLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMLMsLMLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMMLMLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMLMMMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMLMMMMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMMLMMMLLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMMLMLsLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMMLLsLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMLsLMLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMLMMLsLMM",
+        "chiral": true
+      }
+    ],
+    "1L 7M 5s": [
+      {
+        "steps": "LMsMMsMsMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsMsMMsMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMsMMMsMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMMMsMsMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMsMsMMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsMMMsMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMMMMsMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMMMMsMMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMssMMMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMssMMMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMMMssMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMssMMMsMMs",
+        "chiral": true
+      }
+    ],
+    "7L 5M 1s": [
+      {
+        "steps": "LLsLMLMLMLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLMLLsLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLLsLMLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLLMMLLsLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLsLMLMLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLsLMLMLLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLsLMLLMMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLsLLMMLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLMMLLsLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLMLsLMLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLLsLMLLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLsLLMMLMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLsLLMLMMLMM",
+        "chiral": true
+      }
+    ],
+    "1L 5M 7s": [
+      {
+        "steps": "LsMsMsMsMsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMssMMsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMsMssMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMssMMssMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMsMsMssMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMssMMssMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMssMMsMssMs",
+        "chiral": true
+      },
+      {
+        "steps": "LssMMsMsMssMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMssMsMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMsMssMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMssMMMssMss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMMsMsMMsss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMsMMsMMsss",
+        "chiral": true
+      }
+    ],
+    "4L 7M 2s": [
+      {
+        "steps": "LMMMLMMMLsLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsMMLMMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsMLMMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsLMMMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsLMMMLMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLMsMLMMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLMsLMMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLsLMMMMMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMsLMMMMLsM",
+        "chiral": false
+      }
+    ],
+    "2L 7M 4s": [
+      {
+        "steps": "LMsMMMsMMMsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMMsLsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMsLMsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMsLsMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMsLsMMMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMsLMsMMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMsMLsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMsLsMMMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMsMLsMMMMs",
+        "chiral": false
+      }
+    ],
+    "7L 4M 2s": [
+      {
+        "steps": "LLsLMLMLsLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMLMLMLsLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMLMLMLMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLsLMLLsLMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLLsLMLMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMLLsLMLLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLMLsLMLLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLLsLMMLLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLsLMLMLsLM",
+        "chiral": false
+      }
+    ],
+    "2L 4M 7s": [
+      {
+        "steps": "LsMsMsLsMsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMsMsLsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMsMsMsLss",
+        "chiral": false
+      },
+      {
+        "steps": "LsMsMMssLsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMsMMssLss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMssLssMMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMssLssMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMssLssMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMsLsMssMs",
+        "chiral": false
+      }
+    ],
+    "5L 6M 2s": [
+      {
+        "steps": "LMLsMLMMLsLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLsMLMMLMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMLsLMMMLMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLsLMMLMsLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLsLMMLMMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLsLMLsMLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMsLMMMLMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMsLMMLMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMsLMLsLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMMLsLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMLsLMMMM",
+        "chiral": true
+      }
+    ],
+    "2L 6M 5s": [
+      {
+        "steps": "LMsMMsLsMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMsMMsLsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMsLsMMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsMLsMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMsLsMMsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMsMsLsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMsMsLsMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMsMLsMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMsMsMLsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMsLsMMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMssLsMMs",
+        "chiral": true
+      }
+    ],
+    "6L 5M 2s": [
+      {
+        "steps": "LMLMLsLMLMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMLMLsLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMLMMLsLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLLsLMMLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLLsLMLMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMMLLsLMLs",
+        "chiral": false
+      }
+    ],
+    "2L 5M 6s": [
+      {
+        "steps": "LMsMsMsLsMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsMsLsMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMssLsMsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsMMMssLss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMMMMssLss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsLssMMMMss",
+        "chiral": false
+      }
+    ],
+    "4L 6M 3s": [
+      {
+        "steps": "LMMMMMLsLsLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMLsMLMsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMLsLsMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMLsLMsMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LMMMLsMMMLsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMLsMMLMsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsMMLsMLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsMLMsMLMs",
+        "chiral": false
+      }
+    ],
+    "3L 6M 4s": [
+      {
+        "steps": "LMsMMMMMsLsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMLsLsMMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLsMMMMsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsMMMMsLsM",
+        "chiral": false
+      },
+      {
+        "steps": "LMMMsLsLsMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMLsLsMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLMsMLsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMLMsMLsMMs",
+        "chiral": false
+      }
+    ],
+    "6L 4M 3s": [
+      {
+        "steps": "LMLsLMLsLMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLsLMMLMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMMLsLMLs",
+        "chiral": true
+      }
+    ],
+    "3L 4M 6s": [
+      {
+        "steps": "LMsMsLsMsLsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsMMsMMsLss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMsLsMsLss",
+        "chiral": true
+      }
+    ],
+    "2L 10M 1s": [
+      {
+        "steps": "LMMMMMLsMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMMLMsMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMMLMMsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMMMMMMMLs",
+        "chiral": false
+      }
+    ],
+    "1L 10M 2s": [
+      {
+        "steps": "LMMMMMsMMMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMsMMMMMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsMMMMMsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMMMMMMMs",
+        "chiral": false
+      }
+    ],
+    "10L 2M 1s": [
+      {
+        "steps": "LLLLsLLLMLLLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLLMLLLsLLLM",
+        "chiral": false
+      },
+      {
+        "steps": "LLLLLsLLLLMLM",
+        "chiral": true
+      }
+    ],
+    "1L 2M 10s": [
+      {
+        "steps": "LsssMsssMssss",
+        "chiral": true
+      },
+      {
+        "steps": "LsssMssssMsss",
+        "chiral": false
+      },
+      {
+        "steps": "LssssMsMsssss",
+        "chiral": true
+      }
+    ],
+    "misc.": [
+      {
+        "steps": "LLLLLLsLLLLLM",
+        "chiral": true
+      },
+      {
+        "steps": "LssssssMsssss",
+        "chiral": true
+      },
+      {
+        "steps": "LLLsLLMLLsLLM",
+        "chiral": true
+      },
+      {
+        "steps": "LssMssLsssMss",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMLsLMLsLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLLsLMMLMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsLsMsLssMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsMsLssLss",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsLsLsLsLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLLsLMLLMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLLsLLMMLMLLs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMssMsLssMss",
+        "chiral": false
+      },
+      {
+        "steps": "LssMMsMssLsss",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLsLMMMLsLs",
+        "chiral": false
+      },
+      {
+        "steps": "LsLsMMMsLsLss",
+        "chiral": false
+      }
+    ]
+  },
+  "14": {
+    "10L 2M 2s": [
+      {
+        "steps": "LLLMLLLsLLMLLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLLMLLsLLMLLLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLLsLLMLLLsLLM",
+        "chiral": true
+      }
+    ],
+    "2L 10M 2s": {
+      "1-2 runs of M": [
+        {
+          "steps": "LMMMMMsLsMMMMM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMMMsMMMMMLs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMMMMsMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsLsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsMMMMLsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMMsMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsMMMLsMMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMMMsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsMMLsMMMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMMMMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMMMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsMLsMMMMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMMMMMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMLsMMMMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMMLsMMMMMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMMMMLsMMMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMLsMMMMMMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMMMMMLsMMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMLsMMMMMMMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMMMMMMLsMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMLsMMMMMMMMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMMMMMMMLsMs",
+          "chiral": false
+        },
+        {
+          "steps": "LLsMMMMMMMMMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMMMMMMMMLss",
+          "chiral": false
+        },
+        {
+          "steps": "LsMMMMMLsMMMMM",
+          "chiral": true
+        }
+      ],
+      "3 runs of M": [
+        {
+          "steps": "LMMMsLMMMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMMLMMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMMMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMMMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMMMMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsLMsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMMMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLMMsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMMMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMMLMMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMMLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMLMMMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMMMLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMsMMMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLMsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMsMMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMMsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMsMMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMsMLMMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMMLsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMMsMMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMsMMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMMsMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMMsMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLsMMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMMMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMMMsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMMMMMMM",
+          "chiral": true
+        }
+      ],
+      "4 runs of M": [
+        {
+          "steps": "LMMMsMMMLMMsMM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMsMMLMMsMMM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsMMMLMMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMMLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMMLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMMLMMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLMMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMLMMMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMMLMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLMsMMMM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMMsMMMMLMsM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMMMsMMMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMMsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMMLMMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLMsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMMLMsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMsMMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLMsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLMsMMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMMMLMsMMMM",
+          "chiral": true
+        }
+      ]
+    },
+    "2L 2M 10s": [
+      {
+        "steps": "LssMssLsssMsss",
+        "chiral": false
+      },
+      {
+        "steps": "LssMsssLsssMss",
+        "chiral": false
+      },
+      {
+        "steps": "LsssMssLsssMss",
+        "chiral": true
+      }
+    ],
+    "6L 6M 2s": [
+      {
+        "steps": "LMLMLMLsMLMLMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMLMLMsLMLMLsM",
+        "chiral": false
+      },
+      {
+        "steps": "LMLMLsMLMLMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMLsMLMLMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMLsLMMLMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMMLMMLMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMMLMLMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMLMLsLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMLsLMMLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMLsLMLMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMLMMLsLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLLsLMMLMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMMMLLsLMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLMMMLsLLsLMMM",
+        "chiral": false
+      },
+      {
+        "steps": "LLMMMLLsLMMMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLsLMMMLLsLMMM",
+        "chiral": true
+      }
+    ],
+    "6L 2M 6s": [
+      {
+        "steps": "LMsLsLsLsMLsLs",
+        "chiral": false
+      },
+      {
+        "steps": "LMsLsLsMLsLsLs",
+        "chiral": false
+      },
+      {
+        "steps": "LsLsLsMLsLsLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsLsLsLsMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LMsLsMLsLsLsLs",
+        "chiral": false
+      },
+      {
+        "steps": "LMsLsLsLsLsLsM",
+        "chiral": false
+      },
+      {
+        "steps": "LMsMLsLsLsLsLs",
+        "chiral": false
+      },
+      {
+        "steps": "LsLsLsLsMLsLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsLsLsLsMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsLsLsLsLsMM",
+        "chiral": true
+      }
+    ],
+    "2L 6M 6s": [
+      {
+        "steps": "LMsMsMLsMsMsMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMsMsMsMLsMsMs",
+        "chiral": false
+      },
+      {
+        "steps": "LsMsMsMLsMsMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMsMMsLsMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMsMsLsMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMsMMsMsLss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMsMsMMsLss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMssLsMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsMMMssLsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsLsMsMMMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMssLsMsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsMMMMssLss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsLssMMMMMss",
+        "chiral": false
+      },
+      {
+        "steps": "LsMMMssMMMsLss",
+        "chiral": false
+      },
+      {
+        "steps": "LsMMMsLssMMMss",
+        "chiral": false
+      },
+      {
+        "steps": "LsMMMssLsMMMss",
+        "chiral": true
+      }
+    ],
+    "6L 4M 4s": [
+      {
+        "steps": "LMLsLMLsMLsLMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMLsLMsLMLsMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LMLsMLsLMLsMLs",
+        "chiral": true
+      }
+    ],
+    "4L 6M 4s": {
+      "1-2 runs of M": [
+        {
+          "steps": "LMMMsLsLsMMMLs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMsLsMMMLsLs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMsLsLsLsMMM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMsMMMLsLsLs",
+          "chiral": false
+        },
+        {
+          "steps": "LsLsLsMMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMLsLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLsLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsLsMMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLsMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsLsLsLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsLsMMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMMLsLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMLsLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsLsMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsMMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsLsLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsLsMLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMLsLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsLsLsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMMMLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LLsMMMsLLsMMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMLssLMMMLss",
+          "chiral": false
+        }
+      ],
+      "3 runs of M": [
+        {
+          "steps": "LMMsMMLsLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLMMsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMMsMMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLsMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMMLsMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLsMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMsLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLsLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLMsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLsLsLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLsLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLsLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLsLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLMsLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsMMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLsMMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMMLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsLsLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsLMMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMMsLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLsLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMMLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMsLsMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMMLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMLsMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMMLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLsMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMLsLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMLsMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMLMMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLsLsMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsLsMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMMMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsLsMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLsMMMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsLMsLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMLsMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsLMMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMMLsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLMsLsLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMMLsMMMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLsMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLsLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLsLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLMsLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsLMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLsLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLsLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLMsLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsLsLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLsMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsLsMLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsLsMLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsLsMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsLsLsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMMMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsLsLMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMLsMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMLsMMMMLsM",
+          "chiral": true
+        }
+      ],
+      "4 runs of M": [
+        {
+          "steps": "LMMsMLsMLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLMsLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLsMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMMLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLMsLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLsLMsMM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsMMLMsLsLsM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsMLsLMsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLMsLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLMsMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMMsMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsMMLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMLMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMLMsLsM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsMLsLMsMMLs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsLsMMLMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMLsMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMMLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMLsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLsLMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMLMsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMLMsLsMM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsMMLsLMsMLs",
+          "chiral": false
+        },
+        {
+          "steps": "LMsLsMMLsLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLsMMLMsM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsMLMsMMLsLs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsLsLMsMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMMLsLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLMsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLsLsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLMsLMMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLsLsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMMLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLMMsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMsMMLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMLsMMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMsMLsMMLs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsLsMMLsMLMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsLMsLsMLsMM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsMMLsMLsLMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsLMsLMMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMLsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMMsMLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLsMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLMsMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMMsMLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMMsMLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsLsMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMMsLsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LsMLsMLsMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsMLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLMsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsMLsLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLsLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsMLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsMLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsLsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLMsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsLsLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsMLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsLMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLMsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsLMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMsMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsMMMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMsLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMMLMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMsLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsLsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMsLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMLsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMLsMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMMLsLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMLMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMLsMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsLMsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMMLsLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLMsMLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsMMMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LsMLsMLsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLMMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMLMsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsMLsMMLsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMLsMMsLMLsMMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMLsMsLMMLsMs",
+          "chiral": false
+        }
+      ],
+      "5 runs of M": [
+        {
+          "steps": "LMsLMsLMsLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMLsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLMsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMLsLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLsMLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMLMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMLMsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMLMsLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMLsLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMLMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMLsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLsMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLMsMLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLMsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLMsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLMsLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsMLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsMLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLsMMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsMLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsMMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsMLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLMsMLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsLsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsLMsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsLsMLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsLMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMLMsMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsLMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMLsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMLMsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLMsMLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMLsMMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMsMLMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMLsMMLsM",
+          "chiral": true
+        }
+      ],
+      "6+ runs of M": [
+        {
+          "steps": "LMsLMsMLMsMLsM",
+          "chiral": false
+        },
+        {
+          "steps": "LMsLMsMLsMLMsM",
+          "chiral": false
+        },
+        {
+          "steps": "LMsMLsMLMsMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLMsMLMsM",
+          "chiral": false
+        },
+        {
+          "steps": "LMsMLMsMLMsMLs",
+          "chiral": false
+        },
+        {
+          "steps": "LMsMLMsMLsMLsM",
+          "chiral": true
+        }
+      ]
+    },
+    "4L 4M 6s": [
+      {
+        "steps": "LMsLsMLsMsLsMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMsLsMsLsMLsMs",
+        "chiral": false
+      },
+      {
+        "steps": "LsMLsMsLsMLsMs",
+        "chiral": true
+      }
+    ],
+    "8L 4M 2s": [
+      {
+        "steps": "LLMLsLMLLMLsLM",
+        "chiral": false
+      },
+      {
+        "steps": "LLMMLMLLsLMLLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLLsLMLMLLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLsLMLMLLsLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLsLLMMLMLLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLsLLMMLLsLM",
+        "chiral": false
+      },
+      {
+        "steps": "LLMLMLsLMLMLLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLMLMLLsLMLMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLsLMLMLLsLMLM",
+        "chiral": true
+      }
+    ],
+    "4L 8M 2s": [
+      {
+        "steps": "LMMLMsMLMMLMsM",
+        "chiral": false
+      },
+      {
+        "steps": "LMMMLsLsMLMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMLMsLsLMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsMMLMMMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsMMLMMMLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsMLMMMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsMLMMMLMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsLMMMMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsLMMMMLMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLMsMLMMMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLMsMLMMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLMsLMMMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLMMsLMMLsMM",
+        "chiral": false
+      },
+      {
+        "steps": "LMMLMMLsMMLMMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMLsLMMMMMMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMsLMMMMMLsM",
+        "chiral": false
+      },
+      {
+        "steps": "LMMLsMMLMMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMLsLMMMMLs",
+        "chiral": false
+      }
+    ],
+    "2L 8M 4s": [
+      {
+        "steps": "LMsMMsMLMsMMsM",
+        "chiral": false
+      },
+      {
+        "steps": "LMsMMMMsMMMsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsMMMMsMMMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMMsLMsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMMsMLsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMsLMsMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMsMLMsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMsLsMMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMsLsMMMMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMsLMsMMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMsMLMsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMsMLsMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMsMMLsMMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMMsMMLsMMsMMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMsMsLsMMMMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMsMLsMMMMMs",
+        "chiral": false
+      },
+      {
+        "steps": "LMMsMMsLMMsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMsLsMMMMs",
+        "chiral": false
+      }
+    ],
+    "2L 4M 8s": [
+      {
+        "steps": "LsMssMsLsMssMs",
+        "chiral": false
+      },
+      {
+        "steps": "LsMssLssMMsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMssLssMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMssLsMssMs",
+        "chiral": true
+      },
+      {
+        "steps": "LssMMsMssLssMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMssMsLssMMss",
+        "chiral": false
+      },
+      {
+        "steps": "LsMsMssLssMsMs",
+        "chiral": false
+      },
+      {
+        "steps": "LsMsMsLssMsMss",
+        "chiral": false
+      },
+      {
+        "steps": "LsMsMssLsMsMss",
+        "chiral": true
+      }
+    ],
+    "9L 4M 1s": [
+      {
+        "steps": "LLMLLMLLMLLsLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLsLLMLMLLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLsLLMLLMMLLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLsLLMLLMLLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLMMLMLLLsLLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLMMLLMLLsLLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLMMLLLsLLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLMLMMLLMLLLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLLMLMLLsLLMLM",
+        "chiral": false
+      },
+      {
+        "steps": "LLLLsLLLMMLLMM",
+        "chiral": true
+      }
+    ],
+    "1L 4M 9s": [
+      {
+        "steps": "LsMssMssMssMss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMsMssMsMsss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMssMMssMsss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMssMssMMsss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMsssMMsMsss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMsssMMssMss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMsMsssMMsss",
+        "chiral": true
+      },
+      {
+        "steps": "LsssMsMMssMsss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMsMsssMsMss",
+        "chiral": false
+      },
+      {
+        "steps": "LsssMMssMMssss",
+        "chiral": true
+      }
+    ],
+    "5L 8M 1s": [
+      {
+        "steps": "LMLsMLMMLMMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMsLMMLMMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMMMLMLsMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMMMLMLMsLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMMLsMLMMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMMLMsLMMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMLsMLMLMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMLMsLMLMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMMLMMLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMLMMMMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMLMLMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMLMMLMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMMMLLsLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMMLMMMMLLs",
+        "chiral": false
+      },
+      {
+        "steps": "LLMMMMLMMLsLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMMLMLsLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMMLLsLMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMLsLMMLMMM",
+        "chiral": true
+      }
+    ],
+    "1L 8M 5s": [
+      {
+        "steps": "LMsMMsMMsMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsMMsMMsMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMsMsMMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsMsMMMsMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMsMMsMsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsMMsMsMMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMsMMMMsMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMMMMsMsMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMsMMsMMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsMMMMsMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsMsMMMMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMMsMMMMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMssMMMMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMMMMsMMMMss",
+        "chiral": false
+      },
+      {
+        "steps": "LsMMssMMMMsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMssMMMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMssMMMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsMMMssMMMs",
+        "chiral": true
+      }
+    ],
+    "3L 8M 3s": {
+      "1-2 runs of M": [
+        {
+          "steps": "LMMMMsLsLsMMMM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMMsMMMMLsLs",
+          "chiral": false
+        },
+        {
+          "steps": "LsLsMMMMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMMMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsLsLMMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMMMLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMsMMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMsLsLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMMLsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMMsMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsMMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMMMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMMsLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMLsMMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsLsMMMMMMMM",
+          "chiral": true
+        }
+      ],
+      "3 runs of M": [
+        {
+          "steps": "LMMMsMMLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMMLMMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMMMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLsMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMMLsLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMMLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLMMMsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsMMLsMMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMMLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLMsLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMMLsLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsLMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMMLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMMLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMMsLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLMMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMLsLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMLMMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLsLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLsMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMMMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLsLMMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLMMMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMMLsLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsLsMMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsLsMMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLsMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsLsMLMMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMMLsMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsLMsLMMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsMLsMMMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsMMLsMMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMMLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMsLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMMLsLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLMsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMMLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMMLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMMMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMLsLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMLMMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLsLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsLsMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsLsMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLsMMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsLMsLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsMLsMMLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMsMLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLMsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMsMLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMsMLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsLsMMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMMsLsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMMMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LsMLsMLsMMMMMM",
+          "chiral": true
+        }
+      ],
+      "4 runs of M": [
+        {
+          "steps": "LMMsLsMMLMMsMM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsMMLMMsMMLs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsMMLsMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLsMMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMMsLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLsMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMMsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMsLMMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLsMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMsMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLsLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMLMMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLsLMMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLMsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMMLMMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLMsLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLMMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLMsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLMMsLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLsLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLMMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsMMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLsMMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMMLMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsLMsMMM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMsMMMLMsLsM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMsMLMsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMMLMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMMsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMMLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMMsLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLsMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMMMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMMLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMMMLMsM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMsMLMsMMMLs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMsMLsMMMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLMsMMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLsMMMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLMsMLsMMM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMMsMMMLsMLMs",
+          "chiral": false
+        },
+        {
+          "steps": "LMsMMMLsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLsMMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLMMMsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMLsMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMsLMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMLsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMsMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMLsLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMLMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMLMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMLMsLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMMLMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMsMMMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLsMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMMMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLsMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLsLMMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMLMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLMsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMMMMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLMsLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLMMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMMMLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLMMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLsMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMMMMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsLMsMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLsMMMMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLMsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMLsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMLsLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLMsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMLMsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMMMMMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMMsMLMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMLsMMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMMMMLsM",
+          "chiral": true
+        }
+      ],
+      "5 runs of M": [
+        {
+          "steps": "LMMsMMLMsLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsLMMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLMsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMMsMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMMLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMMsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMMLMsMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMMsMMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMMLMsMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLsMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLMsMLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLMsMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLMsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMMLMsLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsMMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsMMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsMLMMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMMLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMsMMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsMMMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMsMLMMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLMsMMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMsLMMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMLMsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLMMsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMMLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLsMLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMLMsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMMsMLMsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLMsMLsMMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMLMsMMMM",
+          "chiral": true
+        }
+      ],
+      "6+ runs of M": [
+        {
+          "steps": "LMMsMLMsMLMsMM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsMMLMsMLMsM",
+          "chiral": false
+        },
+        {
+          "steps": "LMsMLMsMMLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLMsMLMsMMM",
+          "chiral": true
+        }
+      ]
+    },
+    "7L 6M 1s": [
+      {
+        "steps": "LLsLMLMLMMLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMLMLMLLsLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMMLMLLsLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLMMLLsLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLMLMLsLMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLMLLsLMLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLMLLsLLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLMLLMMMLLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLMLLMMLMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLLsLMLLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLLMMMLMLLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLMMLLMMLLsLMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLsLMLMLMMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLsLMLMLLMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLsLMLLMMMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLsLLMMLMMLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLMMMLMLMLLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLMLMMMLMLLsLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLsLLMMLMMLMM",
+        "chiral": true
+      }
+    ],
+    "1L 6M 7s": [
+      {
+        "steps": "LsMsMsMMsMsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMssMMMsMsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMssMMMsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMssMMsMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMssMMsMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMMssMMsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMMMssMMsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMMsMssMMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMMsMssMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMssMMMssMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMMssMMMsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMssMMssMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMsMMsMssMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMsMssMMMssMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMssMMMsMssMs",
+        "chiral": true
+      },
+      {
+        "steps": "LssMMsMMsMssMs",
+        "chiral": true
+      },
+      {
+        "steps": "LssMsMMMsMsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMssMsMMMsMss",
+        "chiral": true
+      },
+      {
+        "steps": "LssMMsMMsMMsss",
+        "chiral": true
+      }
+    ],
+    "7L 4M 3s": [
+      {
+        "steps": "LLsLMMLMLsLMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMLLsLMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMLsLMMLMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMLsLLsLMMM",
+        "chiral": true
+      }
+    ],
+    "3L 4M 7s": [
+      {
+        "steps": "LsMMsMsLsMsLss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsLssLsMMss",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMsMsLssLsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMssLsMsLss",
+        "chiral": true
+      }
+    ],
+    "5L 6M 3s": [
+      {
+        "steps": "LMMLsMLMMMLsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsLsLMMMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsLsLMMLsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsLMMLsMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLMsMLMMLsLs",
+        "chiral": false
+      },
+      {
+        "steps": "LMLsMLsLMMMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMLsMLsLMMMLMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMLsMLMsLMMLsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLsMLMMMLsMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LMLsLMsLMMMMLs",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLsLMMMMMMLs",
+        "chiral": true
+      }
+    ],
+    "3L 6M 5s": [
+      {
+        "steps": "LMsMMMsLsLsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMsLsLsMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMsLsLsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsLsMMsLsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMsLsLsMMsM",
+        "chiral": false
+      },
+      {
+        "steps": "LMsLsMMMMsLsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsMMMsMLsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMLsMMsLMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsLsMsLMsMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMLsMMMMsLsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsMMMMMMsLss",
+        "chiral": true
+      }
+    ],
+    "5L 4M 5s": {
+      "1-2 runs of M": [
+        {
+          "steps": "LMMsLsLsLsMMLs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsLsMMLsLsLs",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsLsLsLsLsMM",
+          "chiral": false
+        },
+        {
+          "steps": "LMMsMMLsLsLsLs",
+          "chiral": false
+        },
+        {
+          "steps": "LsLsLsMMLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsLsLsMMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsMLsLsLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsMLsLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsLsMMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsMMMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsLsLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsLsLsMLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMMsLsLsLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsLsMLsLsMMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsLsLsLsMMMM",
+          "chiral": true
+        }
+      ],
+      "3 runs of M": [
+        {
+          "steps": "LMMsMLsMLsLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLsLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLsMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLMsLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLsLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsLMsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsLsLMsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLsLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsLsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLsLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsMLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLsLMsLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsMLMsLsLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsLsLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMLsMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLsLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLMsLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMLsLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsMLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMLsLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsMLMsLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsLsLsMMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLsMLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsMMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLsMLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsLsMMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLsLsMLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsMMLsLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLsLMsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsLsMLsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LMMsLsLMsLsLMs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMLsLsMLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMLsMLsLsMM",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsLsMLsMMLsM",
+          "chiral": true
+        }
+      ],
+      "4 runs of M": [
+        {
+          "steps": "LMsLsMLMsLsMLs",
+          "chiral": false
+        },
+        {
+          "steps": "LMsLsMLsLMsMLs",
+          "chiral": false
+        },
+        {
+          "steps": "LMsLsLsMLsLMsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLMsMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsMLMsLsM",
+          "chiral": false
+        },
+        {
+          "steps": "LMsMLsLMsMLsLs",
+          "chiral": false
+        },
+        {
+          "steps": "LMsLsLsLsMLMsM",
+          "chiral": false
+        },
+        {
+          "steps": "LMsMLMsMLsLsLs",
+          "chiral": false
+        },
+        {
+          "steps": "LMsMLsLsMLsLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMLsLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLMsLsMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsLMsMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMLsLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsLsMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsMLMsLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsLsLsMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLsMLMsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsMLsLsMLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLMsLsLsMLsM",
+          "chiral": false
+        },
+        {
+          "steps": "LMsLMsMLsMLsLs",
+          "chiral": false
+        },
+        {
+          "steps": "LMsLMsLMsMLsLs",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsLsMLsMLsM",
+          "chiral": true
+        },
+        {
+          "steps": "LMsLsMLsMLsMLs",
+          "chiral": true
+        },
+        {
+          "steps": "LsLsMLsMLsMLsM",
+          "chiral": true
+        }
+      ]
+    },
+    "1L 12M 1s": [
+      {
+        "steps": "LMMMMMsMMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMsMMMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMsMMMMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMMMMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMMMMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMMMMMMMMM",
+        "chiral": true
+      }
+    ],
+    "11L 2M 1s": [
+      {
+        "steps": "LLLLMLLLLsLLLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLLLsLLLLMLLM",
+        "chiral": true
+      },
+      {
+        "steps": "LLLLLLsLLLLLMM",
+        "chiral": true
+      }
+    ],
+    "1L 2M 11s": [
+      {
+        "steps": "LsssMssssMssss",
+        "chiral": true
+      },
+      {
+        "steps": "LssssMssMsssss",
+        "chiral": true
+      },
+      {
+        "steps": "LsssssMMssssss",
+        "chiral": true
+      }
+    ],
+    "3L 10M 1s": [
+      {
+        "steps": "LMMMLsMMMLMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMLMsMMLMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMLMMsMLMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMLMMMsLMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLsMMLMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLMsMLMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMLMMsLMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLsMLMMMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMLMsLMMMMMMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLMMMMMMMMMM",
+        "chiral": true
+      }
+    ],
+    "1L 10M 3s": [
+      {
+        "steps": "LMMMsMMMMsMMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMMMsMMMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMMsMMMsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMsMMMsMMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMMsMMMMMMsMMs",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMMMMsMMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMMMsMMsMM",
+        "chiral": true
+      },
+      {
+        "steps": "LMsMMMMMMMMsMs",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMMMMMsMsM",
+        "chiral": true
+      },
+      {
+        "steps": "LsMMMMMMMMMMss",
+        "chiral": true
+      }
+    ],
+    "misc.": [
+      {
+        "steps": "LLsLMLsLLsLMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LsMsLssLsMsLss",
+        "chiral": false
+      },
+      {
+        "steps": "LLLsLLsLLMMLLs",
+        "chiral": true
+      },
+      {
+        "steps": "LssLssMMssLsss",
+        "chiral": true
+      },
+      {
+        "steps": "LLsLsLsLMMLsLs",
+        "chiral": true
+      },
+      {
+        "steps": "LsLsLsMMsLsLss",
+        "chiral": true
+      },
+      {
+        "steps": "LMMMMMMMMMMMLs",
+        "chiral": false
+      },
+      {
+        "steps": "LsMMMMMMMMMMMs",
+        "chiral": false
+      }
+    ]
+  }
+}
