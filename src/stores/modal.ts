@@ -29,6 +29,17 @@ export const useModalStore = defineStore('modal', () => {
   const equaveString = ref('2/1')
   const equave = ref(OCTAVE)
 
+  // Strict Variety 3
+  const strictVarietyThreeSize = ref('5')
+  const strictVarietyThreeTier = ref('')
+  const strictVarietyThreeRun = ref('')
+  const strictVarietyThreeSteps = ref('')
+  const strictVarietyThreeInvert = ref(false)
+  const strictVarietyThreeMode = ref('')
+  const strictVarietyThreeHardnessLM = ref(2)
+  const strictVarietyThreeHardnessMS = ref(2)
+  const strictVarietyThreeHardnessLS = ref(4)
+
   // CPS
   const factorsString = ref('')
   const addUnity = ref(false)
@@ -504,6 +515,17 @@ export const useModalStore = defineStore('modal', () => {
     // Generic
     equaveString,
     equave,
+
+    // Strict Variety 3
+    strictVarietyThreeSize,
+    strictVarietyThreeTier,
+    strictVarietyThreeRun,
+    strictVarietyThreeSteps,
+    strictVarietyThreeInvert,
+    strictVarietyThreeMode,
+    strictVarietyThreeHardnessLM,
+    strictVarietyThreeHardnessMS,
+    strictVarietyThreeHardnessLS,
 
     // CPS
     factorsString,
