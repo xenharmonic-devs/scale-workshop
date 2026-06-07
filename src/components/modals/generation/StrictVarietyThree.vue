@@ -6,7 +6,7 @@ import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { OCTAVE } from '@/constants'
 import { useModalStore } from '@/stores/modal'
-import { expandCode } from '@/utils'
+import { expandCode, nameOfEd } from '@/utils'
 
 type StrictVarietyThreeScale = {
   steps: string
@@ -126,17 +126,22 @@ const hostDivisions = computed(() =>
 const projector = computed(() =>
   modal.equave.compare(OCTAVE) ? `<${modal.equave.toString()}>` : ''
 )
-const intervalSizes = computed(() => {
+const intervalFractions = computed(() => {
   const L = new Fraction(sizeOfLargeStep.value).div(hostDivisions.value)
   const M = sizeOfMediumStep.value.div(hostDivisions.value)
   const s = new Fraction(sizeOfSmallStep.value).div(hostDivisions.value)
 
-  const d = lcm(lcm(L.d, M.d), s.d)
+  const hostEd = lcm(lcm(L.d, M.d), s.d)
 
+  return { L, M, s, hostEd }
+})
+const hostEd = computed(() => intervalFractions.value['hostEd'])
+const intervalSizes = computed(() => {
+  const { L, M, s, hostEd } = intervalFractions.value
   return {
-    L: `${L.s * L.n * (d / L.d)}\\${d}${projector.value}`,
-    M: `${M.s * M.n * (d / M.d)}\\${d}${projector.value}`,
-    s: `${s.s * s.n * (d / s.d)}\\${d}${projector.value}`
+    L: `${L.s * L.n * (hostEd / L.d)}\\${hostEd}${projector.value}`,
+    M: `${M.s * M.n * (hostEd / M.d)}\\${hostEd}${projector.value}`,
+    s: `${s.s * s.n * (hostEd / s.d)}\\${hostEd}${projector.value}`
   }
 })
 
@@ -483,6 +488,7 @@ function conditionWeight(counts: StepCounts) {
         <button @click="() => generate(true)">OK</button>
         <button @click="$emit('cancel')">Cancel</button>
         <button @click="() => generate(false)">Raw</button>
+        <i>{{ hostEd }}{{ nameOfEd(modal.equave, modal.equaveString) }}</i>
       </div>
     </template>
   </Modal>
