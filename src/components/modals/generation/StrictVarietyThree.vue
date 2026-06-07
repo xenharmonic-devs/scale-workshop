@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Fraction } from 'xen-dev-utils/fraction'
+import { Fraction, lcm } from 'xen-dev-utils/fraction'
 import { computed, watchEffect } from 'vue'
 import strictVarietyThreeHierarchy from '@/assets/strict-variety-3-hierarchy.json'
 import Modal from '@/components/ModalDialog.vue'
@@ -126,11 +126,20 @@ const hostDivisions = computed(() =>
 const projector = computed(() =>
   modal.equave.compare(OCTAVE) ? `<${modal.equave.toString()}>` : ''
 )
-const intervalSizes = computed(() => ({
-  L: formatEtInterval(sizeOfLargeStep.value),
-  M: formatEtInterval(sizeOfMediumStep.value),
-  s: formatEtInterval(sizeOfSmallStep.value)
-}))
+const intervalSizes = computed(() => {
+  const L = new Fraction(sizeOfLargeStep.value).div(hostDivisions.value)
+  const M = sizeOfMediumStep.value.div(hostDivisions.value)
+  const s = new Fraction(sizeOfSmallStep.value).div(hostDivisions.value)
+
+  const d = lcm(lcm(L.d, M.d), s.d)
+
+  return {
+    L: `${L.s * L.n * (d / L.d)}\\${d}${projector.value}`,
+    M: `${M.s * M.n * (d / M.d)}\\${d}${projector.value}`,
+    s: `${s.s * s.n * (d / s.d)}\\${d}${projector.value}`
+  }
+})
+
 const stepOrderingWarning = computed(() =>
   sizeOfMediumStep.value.compare(sizeOfLargeStep.value) >= 0 ||
   sizeOfMediumStep.value.compare(sizeOfSmallStep.value) <= 0
@@ -259,17 +268,17 @@ function compareModesByBrightness(a: string, b: string) {
       return difference
     }
   }
-  return a.localeCompare(b)
+  return 0
 }
 
 function brightnessValue(step: string) {
   if (step === 'L') {
-    return 2
+    return 3
   }
   if (step === 'M') {
-    return 1
+    return 2
   }
-  return 0
+  return 1
 }
 
 function positiveInteger(value: number, fallback: number) {
