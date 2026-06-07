@@ -47,6 +47,10 @@ function factorName(index: number) {
   return `MOS ${index + 1}`
 }
 
+function factorPattern(factor: FokkerBlockFactor) {
+  return `${safeLargeSteps(factor)}L${inferredSmallSteps(factor)}s`
+}
+
 function safeLargeSteps(factor: FokkerBlockFactor) {
   return safeInteger(factor.numberOfLargeSteps, 1, 1, scaleSize.value - 1)
 }
@@ -122,17 +126,20 @@ const hostEdo = computed(() =>
 )
 
 const symbolStepMap = computed(() => {
-  const result = new Map<string, number>()
+  const result = new Map<string, { letters: string; steps: number }>()
   productSymbols.value.forEach((symbol, index) => {
     const step = productSteps.value[index]
-    result.set(symbol, step.numerator * (hostEdo.value / step.denominator))
+    result.set(symbol, {
+      letters: step.letters,
+      steps: step.numerator * (hostEdo.value / step.denominator)
+    })
   })
   return result
 })
 
 const preview = computed(() =>
   [...symbolStepMap.value.entries()]
-    .map(([symbol, steps]) => `${symbol}: ${steps}/${hostEdo.value}`)
+    .map(([symbol, step]) => `${symbol} (${step.letters}): ${step.steps}/${hostEdo.value}`)
     .join(', ')
 )
 
@@ -156,13 +163,13 @@ function generate(expand = true) {
     const sourceLines: string[] = []
     let degree = 0
     productSymbols.value.forEach((symbol) => {
-      degree += symbolStepMap.value.get(symbol) ?? 0
+      degree += symbolStepMap.value.get(symbol)?.steps ?? 0
       sourceLines.push(`${degree}\\${hostEdo.value}${projector}`)
     })
     source = `${sourceLines.join('\n')}\n`
   } else {
     const steps = [...symbolStepMap.value.entries()]
-      .map(([symbol, step]) => `${symbol}: ${step}\\${hostEdo.value}${projector}`)
+      .map(([symbol, step]) => `${symbol}: ${step.steps}\\${hostEdo.value}${projector}`)
       .join(', ')
     source = `realizeWord("${productWord.value}", #{${steps}})`
   }
@@ -212,13 +219,12 @@ function generate(expand = true) {
           :class="{ active: index === modal.fokkerBlockActiveFactorIndex }"
           @click="selectFactor(index)"
         >
-          {{ factorName(index) }}
+          {{ factorPattern(factor) }}
         </button>
         <button @click="modal.addFokkerBlockFactor">+</button>
       </div>
 
       <div v-if="activeFactor" class="control-group factor-panel">
-        <h3>{{ factorName(modal.fokkerBlockActiveFactorIndex) }}</h3>
         <div class="control">
           <label :for="`fokker-large-${activeFactor.id}`">
             Large steps ({{ inferredSmallSteps(activeFactor) }} small)
@@ -260,7 +266,7 @@ function generate(expand = true) {
           />
         </div>
         <div class="control">
-          <label>Word</label>
+          <label>Word for {{ factorName(modal.fokkerBlockActiveFactorIndex) }}</label>
           <output>{{ factorWord(activeFactor).join('') }}</output>
         </div>
         <button
@@ -304,10 +310,6 @@ function generate(expand = true) {
 .factor-tabs button.active {
   color: var(--color-background);
   background-color: var(--color-text);
-}
-
-.factor-panel h3 {
-  margin-top: 0;
 }
 
 output {
