@@ -2,12 +2,11 @@
 import { computed, watchEffect } from 'vue'
 import strictVarietyThreeHierarchy from '@/assets/strict-variety-3-hierarchy.json'
 import Modal from '@/components/ModalDialog.vue'
-import NumericSlider from '@/components/NumericSlider.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { OCTAVE } from '@/constants'
-import { useScaleStore } from '@/stores/scale'
 import { useModalStore } from '@/stores/modal'
-import { centString } from '@/utils'
+
+const CONDITION_EPSILON = 1e-9
 
 type StrictVarietyThreeScale = {
   steps: string
@@ -23,10 +22,16 @@ type ScaleOption = StrictVarietyThreeScale & {
   counts: TierCounts
 }
 
-type TierCounts = {
-  L: number
-  M: number
-  s: number
+type Tier = 'L' | 'M' | 's'
+
+type TierCounts = Record<Tier, number>
+
+type ParsedCondition = {
+  negated: boolean
+  lhs: string
+  rhs: string
+  lhsCounts: TierCounts
+  rhsCounts: TierCounts
 }
 
 const hierarchy = strictVarietyThreeHierarchy as Record<string, StrictVarietyThreeEntry>
@@ -37,10 +42,7 @@ defineProps<{
   show: boolean
 }>()
 
-const scale = useScaleStore()
 const modal = useModalStore()
-
-type Tier = 'L' | 'M' | 's'
 
 const sizeKeys = computed(() => Object.keys(hierarchy).sort(compareSizeKeys))
 const selectedEntry = computed(() => hierarchy[modal.strictVarietyThreeSize])
@@ -91,7 +93,11 @@ const selectedScale = computed<StrictVarietyThreeScale | undefined>(() =>
   scaleOptions.value.find((option) => option.steps === modal.strictVarietyThreeSteps)
 )
 const isChiral = computed(() => selectedScale.value?.chiral ?? false)
-const isConditional = computed(() => Boolean(selectedScale.value?.condition))
+const parsedCondition = computed(() => parseCondition(selectedScale.value?.condition))
+const derivesMediumFromCondition = computed(() => {
+  const condition = parsedCondition.value
+  return Boolean(condition && !condition.negated && mediumCoefficient(condition))
+})
 const orientedWord = computed(() => {
   const steps = selectedScale.value?.steps ?? ''
   return modal.strictVarietyThreeInvert && isChiral.value ? [...steps].reverse().join('') : steps
@@ -99,25 +105,48 @@ const orientedWord = computed(() => {
 const modes = computed(() => uniqueRotations(orientedWord.value).sort(compareModesByBrightness))
 const selectedMode = computed(() => modal.strictVarietyThreeMode || modes.value[0] || '')
 const selectedCounts = computed(() => countTiers(selectedScale.value?.steps ?? ''))
-const intervalSizes = computed(() => {
-  const counts = selectedCounts.value
-  let sWeight = 1
-  let mWeight = Math.max(1, modal.strictVarietyThreeHardnessMS) * sWeight
-  let lWeight = Math.max(1, modal.strictVarietyThreeHardnessLM) * mWeight
 
-  if (isConditional.value) {
-    sWeight = 1
-    lWeight = Math.max(1, modal.strictVarietyThreeHardnessLS)
-    mWeight = deriveConditionalM(lWeight, sWeight, selectedScale.value?.condition)
+const sizeOfLargeStep = computed(() => positiveNumber(modal.strictVarietyThreeSizeOfLargeStep, 4))
+const sizeOfSmallStep = computed(() => positiveNumber(modal.strictVarietyThreeSizeOfSmallStep, 1))
+const sizeOfMediumStep = computed(() => {
+  const condition = parsedCondition.value
+  if (condition && derivesMediumFromCondition.value) {
+    return deriveMediumStepSize(condition, sizeOfLargeStep.value, sizeOfSmallStep.value)
   }
-
-  const totalWeight = counts.L * lWeight + counts.M * mWeight + counts.s * sWeight
-  const centsPerWeight = modal.equave.value.totalCents() / totalWeight
-  return {
-    L: centString(lWeight * centsPerWeight, scale.centsFractionDigits),
-    M: centString(mWeight * centsPerWeight, scale.centsFractionDigits),
-    s: centString(sWeight * centsPerWeight, scale.centsFractionDigits)
+  return positiveNumber(modal.strictVarietyThreeSizeOfMediumStep, 2)
+})
+const hostDivisions = computed(
+  () =>
+    selectedCounts.value.L * sizeOfLargeStep.value +
+    selectedCounts.value.M * sizeOfMediumStep.value +
+    selectedCounts.value.s * sizeOfSmallStep.value
+)
+const projector = computed(() => (modal.equave.compare(OCTAVE) ? `<${modal.equave.toString()}>` : ''))
+const intervalSizes = computed(() => ({
+  L: formatEtInterval(sizeOfLargeStep.value),
+  M: formatEtInterval(sizeOfMediumStep.value),
+  s: formatEtInterval(sizeOfSmallStep.value)
+}))
+const stepOrderingWarning = computed(() =>
+  sizeOfLargeStep.value <= sizeOfMediumStep.value || sizeOfMediumStep.value <= sizeOfSmallStep.value
+    ? 'Warning: Strict Variety 3 scales require L > M > s.'
+    : ''
+)
+const conditionWarning = computed(() => {
+  const condition = parsedCondition.value
+  if (!condition) {
+    return ''
   }
+  if (condition.negated) {
+    if (conditionEqualityHolds(condition)) {
+      return `Warning: condition “Not ${condition.lhs}=${condition.rhs}” applies; the current step sizes satisfy ${condition.lhs}=${condition.rhs}.`
+    }
+    return ''
+  }
+  if (derivesMediumFromCondition.value) {
+    return `Condition ${condition.lhs}=${condition.rhs} applies; M is derived from L and s.`
+  }
+  return `Warning: condition ${condition.lhs}=${condition.rhs} cannot derive M from the current equation.`
 })
 
 watchEffect(() => {
@@ -240,13 +269,64 @@ function brightnessValue(step: string) {
   return 0
 }
 
-function deriveConditionalM(lWeight: number, sWeight: number, condition?: string) {
-  // Strict-variety data does not currently encode a numeric condition; use the neutral geometric
-  // mean when a future conditional entry asks the dialog to collapse to one L:s control.
-  if (!condition) {
-    return Math.sqrt(lWeight * sWeight)
+function positiveNumber(value: number, fallback: number) {
+  if (!Number.isFinite(value) || value <= 0) {
+    return fallback
   }
-  return Math.sqrt(lWeight * sWeight)
+  return value
+}
+
+function parseCondition(condition?: string): ParsedCondition | undefined {
+  if (!condition) {
+    return undefined
+  }
+  let normalized = condition.trim()
+  let negated = false
+  const notMatch = normalized.match(/^not\s+/i)
+  if (notMatch) {
+    negated = true
+    normalized = normalized.slice(notMatch[0].length).trim()
+  }
+  const [lhs, rhs, ...extra] = normalized.split('=')
+  if (!lhs || !rhs || extra.length) {
+    return undefined
+  }
+  return {
+    negated,
+    lhs,
+    rhs,
+    lhsCounts: countTiers(lhs),
+    rhsCounts: countTiers(rhs)
+  }
+}
+
+function mediumCoefficient(condition: ParsedCondition) {
+  return condition.lhsCounts.M - condition.rhsCounts.M
+}
+
+function deriveMediumStepSize(condition: ParsedCondition, largeStep: number, smallStep: number) {
+  const lhsKnown = condition.lhsCounts.L * largeStep + condition.lhsCounts.s * smallStep
+  const rhsKnown = condition.rhsCounts.L * largeStep + condition.rhsCounts.s * smallStep
+  const derived = (rhsKnown - lhsKnown) / mediumCoefficient(condition)
+  return Number.isFinite(derived) && derived > 0 ? derived : positiveNumber(modal.strictVarietyThreeSizeOfMediumStep, 2)
+}
+
+function conditionEqualityHolds(condition: ParsedCondition) {
+  const lhs = conditionWeight(condition.lhsCounts)
+  const rhs = conditionWeight(condition.rhsCounts)
+  return Math.abs(lhs - rhs) < CONDITION_EPSILON
+}
+
+function conditionWeight(counts: TierCounts) {
+  return counts.L * sizeOfLargeStep.value + counts.M * sizeOfMediumStep.value + counts.s * sizeOfSmallStep.value
+}
+
+function formatEtInterval(steps: number) {
+  return `${formatNumber(steps)}\\${formatNumber(hostDivisions.value)}${projector.value}`
+}
+
+function formatNumber(value: number) {
+  return Number.isInteger(value) ? value.toString() : value.toFixed(6).replace(/\.?0+$/, '')
 }
 </script>
 
@@ -273,7 +353,7 @@ function deriveConditionalM(lWeight: number, sWeight: number, condition?: string
 
       <div v-if="!selectedEntryIsArray" class="control-group">
         <div class="control">
-          <label for="strict-variety-3-tier">Tiers</label>
+          <label for="strict-variety-3-tier">Pattern</label>
           <select id="strict-variety-3-tier" v-model="modal.strictVarietyThreeTier">
             <option v-for="tierKey of tierKeys" :key="tierKey" :value="tierKey">
               {{ tierKey }}
@@ -302,16 +382,16 @@ function deriveConditionalM(lWeight: number, sWeight: number, condition?: string
             </option>
           </select>
         </div>
-        <div class="control">
-          <label for="strict-variety-3-invert" :class="{ disabled: !isChiral }">
-            Invert chiral scale
-          </label>
+        <div class="control checkbox-container">
           <input
             id="strict-variety-3-invert"
             type="checkbox"
             v-model="modal.strictVarietyThreeInvert"
             :disabled="!isChiral"
           />
+          <label for="strict-variety-3-invert" :class="{ disabled: !isChiral }">
+            Invert chiral scale
+          </label>
         </div>
         <div class="control">
           <label for="strict-variety-3-mode">Mode</label>
@@ -324,44 +404,58 @@ function deriveConditionalM(lWeight: number, sWeight: number, condition?: string
       </div>
 
       <div class="control-group">
-        <div v-if="isConditional" class="control">
-          <label for="strict-variety-3-hardness-ls">
-            L:s hardness ({{ modal.strictVarietyThreeHardnessLS.toFixed(2) }})
-          </label>
-          <NumericSlider
-            id="strict-variety-3-hardness-ls"
-            class="wide-range"
-            min="1"
-            max="16"
-            step="any"
-            v-model="modal.strictVarietyThreeHardnessLS"
-          />
-        </div>
-        <template v-else>
+        <template v-if="derivesMediumFromCondition">
           <div class="control">
-            <label for="strict-variety-3-hardness-lm">
-              L:M hardness ({{ modal.strictVarietyThreeHardnessLM.toFixed(2) }})
-            </label>
-            <NumericSlider
-              id="strict-variety-3-hardness-lm"
-              class="wide-range"
+            <label for="strict-variety-3-size-of-large-step">Size of large step</label>
+            <input
+              id="strict-variety-3-size-of-large-step"
+              type="number"
               min="1"
-              max="16"
               step="any"
-              v-model="modal.strictVarietyThreeHardnessLM"
+              v-model.number="modal.strictVarietyThreeSizeOfLargeStep"
             />
           </div>
           <div class="control">
-            <label for="strict-variety-3-hardness-ms">
-              M:s hardness ({{ modal.strictVarietyThreeHardnessMS.toFixed(2) }})
-            </label>
-            <NumericSlider
-              id="strict-variety-3-hardness-ms"
-              class="wide-range"
+            <label for="strict-variety-3-size-of-small-step">Size of small step</label>
+            <input
+              id="strict-variety-3-size-of-small-step"
+              type="number"
               min="1"
-              max="16"
               step="any"
-              v-model="modal.strictVarietyThreeHardnessMS"
+              v-model.number="modal.strictVarietyThreeSizeOfSmallStep"
+            />
+          </div>
+          <p>Derived size of medium step: {{ formatNumber(sizeOfMediumStep) }}</p>
+        </template>
+        <template v-else>
+          <div class="control">
+            <label for="strict-variety-3-size-of-large-step">Size of large step</label>
+            <input
+              id="strict-variety-3-size-of-large-step"
+              type="number"
+              min="1"
+              step="any"
+              v-model.number="modal.strictVarietyThreeSizeOfLargeStep"
+            />
+          </div>
+          <div class="control">
+            <label for="strict-variety-3-size-of-medium-step">Size of medium step</label>
+            <input
+              id="strict-variety-3-size-of-medium-step"
+              type="number"
+              min="1"
+              step="any"
+              v-model.number="modal.strictVarietyThreeSizeOfMediumStep"
+            />
+          </div>
+          <div class="control">
+            <label for="strict-variety-3-size-of-small-step">Size of small step</label>
+            <input
+              id="strict-variety-3-size-of-small-step"
+              type="number"
+              min="1"
+              step="any"
+              v-model.number="modal.strictVarietyThreeSizeOfSmallStep"
             />
           </div>
         </template>
@@ -375,6 +469,18 @@ function deriveConditionalM(lWeight: number, sWeight: number, condition?: string
           />
         </div>
       </div>
+      <p v-if="conditionWarning" class="warning">{{ conditionWarning }}</p>
+      <p v-if="stepOrderingWarning" class="warning">{{ stepOrderingWarning }}</p>
     </template>
   </Modal>
 </template>
+
+<style scoped>
+/* Content layout (medium) */
+@media screen and (min-width: 600px) {
+  .modal-mask :deep(.modal-container) {
+    min-width: 40rem;
+    max-width: 41rem;
+  }
+}
+</style>

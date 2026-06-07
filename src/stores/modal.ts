@@ -36,9 +36,9 @@ export const useModalStore = defineStore('modal', () => {
   const strictVarietyThreeSteps = ref('')
   const strictVarietyThreeInvert = ref(false)
   const strictVarietyThreeMode = ref('')
-  const strictVarietyThreeHardnessLM = ref(2)
-  const strictVarietyThreeHardnessMS = ref(2)
-  const strictVarietyThreeHardnessLS = ref(4)
+  const strictVarietyThreeSizeOfLargeStep = ref(5)
+  const strictVarietyThreeSizeOfMediumStep = ref(2)
+  const strictVarietyThreeSizeOfSmallStep = ref(1)
 
   // CPS
   const factorsString = ref('')
@@ -523,9 +523,9 @@ export const useModalStore = defineStore('modal', () => {
     strictVarietyThreeSteps,
     strictVarietyThreeInvert,
     strictVarietyThreeMode,
-    strictVarietyThreeHardnessLM,
-    strictVarietyThreeHardnessMS,
-    strictVarietyThreeHardnessLS,
+    strictVarietyThreeSizeOfLargeStep,
+    strictVarietyThreeSizeOfMediumStep,
+    strictVarietyThreeSizeOfSmallStep,
 
     // CPS
     factorsString,
