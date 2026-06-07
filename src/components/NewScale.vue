@@ -23,6 +23,9 @@ const EqualTemperamentModal = defineAsyncComponent(
 const EulerGenusModal = defineAsyncComponent(
   () => import('@/components/modals/generation/EulerGenus.vue')
 )
+const FokkerBlockModal = defineAsyncComponent(
+  () => import('@/components/modals/generation/FokkerBlock.vue')
+)
 const GeneratorSequenceModal = defineAsyncComponent(
   () => import('@/components/modals/generation/GeneratorSequence.vue')
 )
@@ -62,6 +65,7 @@ const showCpsModal = ref(false)
 const showEnumerateModal = ref(false)
 const showEqualTemperamentModal = ref(false)
 const showEulerGenusModal = ref(false)
+const showFokkerBlockModal = ref(false)
 const showGeneratorSequenceModal = ref(false)
 const showHarmonicModal = ref(false)
 const showHistoricalModal = ref(false)
@@ -80,6 +84,7 @@ function updateSourceAndHideModals(source: string) {
   showEnumerateModal.value = false
   showEqualTemperamentModal.value = false
   showEulerGenusModal.value = false
+  showFokkerBlockModal.value = false
   showGeneratorSequenceModal.value = false
   showHarmonicModal.value = false
   showHistoricalModal.value = false
@@ -143,6 +148,7 @@ defineExpose({ blur })
       <a href="#" @click="showStackModal = true"><li>Stack steps</li></a>
       <a href="#" @click="showCpsModal = true"><li>Combination product set</li></a>
       <a href="#" @click="showMosModal = true"><li>Moment of symmetry scale</li></a>
+      <a href="#" @click="showFokkerBlockModal = true"><li>Fokker block</li></a>
       <a href="#" @click="showHistoricalModal = true"><li>Historical temperament</li></a>
       <a href="#" @click="showEulerGenusModal = true"><li>Euler-Fokker genus</li></a>
       <a href="#" @click="showLatticeModal = true"><li>Parallelotope / Lattice</li></a>
@@ -204,6 +210,13 @@ defineExpose({ blur })
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
       @cancel="showEulerGenusModal = false"
+    />
+    <FokkerBlockModal
+      v-if="showFokkerBlockModal"
+      :show="showFokkerBlockModal"
+      @update:scaleName="scale.name = $event"
+      @update:source="updateSourceAndHideModals"
+      @cancel="showFokkerBlockModal = false"
     />
     <GeneratorSequenceModal
       v-if="showGeneratorSequenceModal"
