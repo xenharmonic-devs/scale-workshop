@@ -105,21 +105,34 @@ const productSteps = computed<ProductStep[]>(() => {
   })
 })
 
-const productWord = computed(() => {
+const productSymbols = computed(() => {
   const symbols = new Map<string, string>()
-  return productSteps.value
-    .map((step) => {
-      if (!symbols.has(step.letters)) {
-        symbols.set(step.letters, STEP_LETTERS[symbols.size] ?? `x${symbols.size + 1}`)
-      }
-      return symbols.get(step.letters)
-    })
-    .join('')
+  return productSteps.value.map((step) => {
+    if (!symbols.has(step.letters)) {
+      symbols.set(step.letters, STEP_LETTERS[symbols.size] ?? `x${symbols.size + 1}`)
+    }
+    return symbols.get(step.letters)!
+  })
+})
+
+const productWord = computed(() => productSymbols.value.join(''))
+
+const hostEdo = computed(() =>
+  productSteps.value.reduce((accumulator, step) => lcm(accumulator, step.denominator), 1)
+)
+
+const symbolStepMap = computed(() => {
+  const result = new Map<string, number>()
+  productSymbols.value.forEach((symbol, index) => {
+    const step = productSteps.value[index]
+    result.set(symbol, step.numerator * (hostEdo.value / step.denominator))
+  })
+  return result
 })
 
 const preview = computed(() =>
-  productSteps.value
-    .map((step) => `${step.letters}: ${step.numerator}/${step.denominator}`)
+  [...symbolStepMap.value.entries()]
+    .map(([symbol, steps]) => `${symbol}: ${steps}/${hostEdo.value}`)
     .join(', ')
 )
 
@@ -131,26 +144,31 @@ function removeFactor(index: number) {
   modal.removeFokkerBlockFactor(index)
 }
 
-function generate() {
-  const sourceLines: string[] = []
-  let numerator = 0
-  let denominator = 1
-  const projector = modal.equave.compare(OCTAVE) ? `<${modal.equave.toString()}>` : ''
+function projectorString() {
+  return modal.equave.compare(OCTAVE) ? `<${modal.equave.toString()}>` : ''
+}
 
-  productSteps.value.forEach((step) => {
-    const nextDenominator = lcm(denominator, step.denominator)
-    numerator =
-      numerator * (nextDenominator / denominator) +
-      step.numerator * (nextDenominator / step.denominator)
-    denominator = nextDenominator
-    const divisor = Math.abs(gcd(numerator, denominator))
-    numerator /= divisor
-    denominator /= divisor
-    sourceLines.push(`${numerator}\\${denominator}${projector}`)
-  })
+function generate(expand = true) {
+  const projector = projectorString()
+  let source: string
+
+  if (expand) {
+    const sourceLines: string[] = []
+    let degree = 0
+    productSymbols.value.forEach((symbol) => {
+      degree += symbolStepMap.value.get(symbol) ?? 0
+      sourceLines.push(`${degree}\\${hostEdo.value}${projector}`)
+    })
+    source = `${sourceLines.join('\n')}\n`
+  } else {
+    const steps = [...symbolStepMap.value.entries()]
+      .map(([symbol, step]) => `${symbol}: ${step}\\${hostEdo.value}${projector}`)
+      .join(', ')
+    source = `realizeWord("${productWord.value}", #{${steps}})`
+  }
 
   emit('update:scaleName', `Rank-${rank.value} Fokker block ${productWord.value}`)
-  emit('update:source', `${sourceLines.join('\n')}\n`)
+  emit('update:source', source)
 }
 </script>
 
@@ -202,7 +220,9 @@ function generate() {
       <div v-if="activeFactor" class="control-group factor-panel">
         <h3>{{ factorName(modal.fokkerBlockActiveFactorIndex) }}</h3>
         <div class="control">
-          <label :for="`fokker-large-${activeFactor.id}`">Large steps</label>
+          <label :for="`fokker-large-${activeFactor.id}`">
+            Large steps ({{ inferredSmallSteps(activeFactor) }} small)
+          </label>
           <input
             :id="`fokker-large-${activeFactor.id}`"
             type="number"
@@ -210,10 +230,6 @@ function generate() {
             :max="scaleSize - 1"
             v-model.number="activeFactor.numberOfLargeSteps"
           />
-        </div>
-        <div class="control">
-          <label>Small steps</label>
-          <output>{{ inferredSmallSteps(activeFactor) }}</output>
         </div>
         <div class="control">
           <label :for="`fokker-large-size-${activeFactor.id}`">Large step size</label>
@@ -259,13 +275,15 @@ function generate() {
         <p>
           Product word: <strong>{{ productWord }}</strong>
         </p>
+        <p>Host EDO: {{ hostEdo }}</p>
         <p v-if="preview">Averaged steps: {{ preview }}</p>
       </div>
     </template>
     <template #footer>
       <div class="btn-group">
-        <button @click="generate">OK</button>
+        <button @click="() => generate(true)">OK</button>
         <button @click="$emit('cancel')">Cancel</button>
+        <button @click="() => generate(false)">Raw</button>
       </div>
     </template>
   </Modal>

@@ -292,14 +292,14 @@ export const useModalStore = defineStore('modal', () => {
     {
       id: 1,
       numberOfLargeSteps: 4,
-      sizeOfLargeStep: 1,
+      sizeOfLargeStep: 2,
       sizeOfSmallStep: 1,
       rotation: 0
     },
     {
       id: 2,
       numberOfLargeSteps: 5,
-      sizeOfLargeStep: 1,
+      sizeOfLargeStep: 2,
       sizeOfSmallStep: 1,
       rotation: 0
     }
