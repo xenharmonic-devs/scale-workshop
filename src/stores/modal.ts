@@ -36,7 +36,7 @@ export const useModalStore = defineStore('modal', () => {
   const strictVarietyThreeSteps = ref('')
   const strictVarietyThreeInvert = ref(false)
   const strictVarietyThreeMode = ref('')
-  const strictVarietyThreeSizeOfLargeStep = ref(5)
+  const strictVarietyThreeSizeOfLargeStep = ref(3)
   const strictVarietyThreeSizeOfMediumStep = ref(2)
   const strictVarietyThreeSizeOfSmallStep = ref(1)
 

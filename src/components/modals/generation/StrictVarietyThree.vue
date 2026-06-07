@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Fraction } from 'xen-dev-utils/fraction'
 import { computed, watchEffect } from 'vue'
 import strictVarietyThreeHierarchy from '@/assets/strict-variety-3-hierarchy.json'
 import Modal from '@/components/ModalDialog.vue'
@@ -6,8 +7,6 @@ import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { OCTAVE } from '@/constants'
 import { useModalStore } from '@/stores/modal'
 import { expandCode } from '@/utils'
-
-const CONDITION_EPSILON = 1e-9
 
 type StrictVarietyThreeScale = {
   steps: string
@@ -109,20 +108,20 @@ const modes = computed(() => uniqueRotations(orientedWord.value).sort(compareMod
 const selectedMode = computed(() => modal.strictVarietyThreeMode || modes.value[0] || '')
 const selectedCounts = computed(() => countSteps(selectedScale.value?.steps ?? ''))
 
-const sizeOfLargeStep = computed(() => positiveNumber(modal.strictVarietyThreeSizeOfLargeStep, 4))
-const sizeOfSmallStep = computed(() => positiveNumber(modal.strictVarietyThreeSizeOfSmallStep, 1))
-const sizeOfMediumStep = computed(() => {
+const sizeOfLargeStep = computed(() => positiveInteger(modal.strictVarietyThreeSizeOfLargeStep, 3))
+const sizeOfSmallStep = computed(() => positiveInteger(modal.strictVarietyThreeSizeOfSmallStep, 1))
+const sizeOfMediumStep = computed<Fraction>(() => {
   const condition = parsedCondition.value
   if (condition && derivesMediumFromCondition.value) {
     return deriveMediumStepSize(condition, sizeOfLargeStep.value, sizeOfSmallStep.value)
   }
-  return positiveNumber(modal.strictVarietyThreeSizeOfMediumStep, 2)
+  return new Fraction(positiveInteger(modal.strictVarietyThreeSizeOfMediumStep, 2))
 })
-const hostDivisions = computed(
-  () =>
-    selectedCounts.value.L * sizeOfLargeStep.value +
-    selectedCounts.value.M * sizeOfMediumStep.value +
-    selectedCounts.value.s * sizeOfSmallStep.value
+const hostDivisions = computed(() =>
+  sizeOfMediumStep.value
+    .mul(selectedCounts.value.M)
+    .add(selectedCounts.value.L * sizeOfLargeStep.value)
+    .add(selectedCounts.value.s * sizeOfSmallStep.value)
 )
 const projector = computed(() =>
   modal.equave.compare(OCTAVE) ? `<${modal.equave.toString()}>` : ''
@@ -133,7 +132,8 @@ const intervalSizes = computed(() => ({
   s: formatEtInterval(sizeOfSmallStep.value)
 }))
 const stepOrderingWarning = computed(() =>
-  sizeOfLargeStep.value <= sizeOfMediumStep.value || sizeOfMediumStep.value <= sizeOfSmallStep.value
+  sizeOfMediumStep.value.compare(sizeOfLargeStep.value) >= 0 ||
+  sizeOfMediumStep.value.compare(sizeOfSmallStep.value) <= 0
     ? 'Warning: Strict Variety 3 scales require L > M > s.'
     : ''
 )
@@ -178,7 +178,7 @@ watchEffect(() => {
 function generate(expand = true) {
   const intervals = intervalSizes.value
   const source = `realizeWord('${selectedMode.value}', #{L: ${intervals.L}, M: ${intervals.M}, s: ${intervals.s}})`
-  emit('update:scaleName', `Strict Variety 3 ${formatCounts(selectedCounts.value)}`)
+  emit('update:scaleName', `SV3: ${formatCounts(selectedCounts.value)}`)
   emit('update:source', expand ? expandCode(source) : source)
 }
 
@@ -272,11 +272,11 @@ function brightnessValue(step: string) {
   return 0
 }
 
-function positiveNumber(value: number, fallback: number) {
+function positiveInteger(value: number, fallback: number) {
   if (!Number.isFinite(value) || value <= 0) {
     return fallback
   }
-  return value
+  return Math.round(value)
 }
 
 function parseCondition(condition?: string): ParsedCondition | undefined {
@@ -310,32 +310,25 @@ function mediumCoefficient(condition: ParsedCondition) {
 function deriveMediumStepSize(condition: ParsedCondition, largeStep: number, smallStep: number) {
   const lhsKnown = condition.lhsCounts.L * largeStep + condition.lhsCounts.s * smallStep
   const rhsKnown = condition.rhsCounts.L * largeStep + condition.rhsCounts.s * smallStep
-  const derived = (rhsKnown - lhsKnown) / mediumCoefficient(condition)
-  return Number.isFinite(derived) && derived > 0
-    ? derived
-    : positiveNumber(modal.strictVarietyThreeSizeOfMediumStep, 2)
+  return new Fraction(rhsKnown - lhsKnown, mediumCoefficient(condition))
 }
 
 function conditionEqualityHolds(condition: ParsedCondition) {
   const lhs = conditionWeight(condition.lhsCounts)
   const rhs = conditionWeight(condition.rhsCounts)
-  return Math.abs(lhs - rhs) < CONDITION_EPSILON
+  return lhs.equals(rhs)
 }
 
 function conditionWeight(counts: StepCounts) {
-  return (
-    counts.L * sizeOfLargeStep.value +
-    counts.M * sizeOfMediumStep.value +
-    counts.s * sizeOfSmallStep.value
-  )
+  return sizeOfMediumStep.value
+    .mul(counts.M)
+    .add(counts.L * sizeOfLargeStep.value)
+    .add(counts.s * sizeOfSmallStep.value)
 }
 
-function formatEtInterval(steps: number) {
-  return `${formatNumber(steps)}\\${formatNumber(hostDivisions.value)}${projector.value}`
-}
-
-function formatNumber(value: number) {
-  return Number.isInteger(value) ? value.toString() : value.toFixed(6).replace(/\.?0+$/, '')
+function formatEtInterval(steps: number | Fraction) {
+  const et = new Fraction(steps).div(hostDivisions.value)
+  return et.toFraction().replace('/', '\\') + projector.value
 }
 </script>
 
@@ -434,7 +427,7 @@ function formatNumber(value: number) {
               v-model.number="modal.strictVarietyThreeSizeOfSmallStep"
             />
           </div>
-          <p>Derived size of medium step: {{ formatNumber(sizeOfMediumStep) }}</p>
+          <p>Derived size of medium step: {{ sizeOfMediumStep.toFraction() }}</p>
         </template>
         <template v-else>
           <div class="control">
@@ -495,8 +488,8 @@ function formatNumber(value: number) {
 /* Content layout (medium) */
 @media screen and (min-width: 600px) {
   .modal-mask :deep(.modal-container) {
-    min-width: 40rem;
-    max-width: 41rem;
+    min-width: 35rem;
+    max-width: 36rem;
   }
 }
 </style>
