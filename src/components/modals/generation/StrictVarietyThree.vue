@@ -5,6 +5,7 @@ import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { OCTAVE } from '@/constants'
 import { useModalStore } from '@/stores/modal'
+import { expandCode } from '@/utils'
 
 const CONDITION_EPSILON = 1e-9
 
@@ -14,24 +15,26 @@ type StrictVarietyThreeScale = {
   condition?: string
 }
 
-type StrictVarietyThreeBranch = StrictVarietyThreeScale[] | Record<string, StrictVarietyThreeScale[]>
+type StrictVarietyThreeBranch =
+  | StrictVarietyThreeScale[]
+  | Record<string, StrictVarietyThreeScale[]>
 type StrictVarietyThreeEntry = StrictVarietyThreeScale[] | Record<string, StrictVarietyThreeBranch>
 
 type ScaleOption = StrictVarietyThreeScale & {
   label: string
-  counts: TierCounts
+  counts: StepCounts
 }
 
-type Tier = 'L' | 'M' | 's'
+type StepSymbol = 'L' | 'M' | 's'
 
-type TierCounts = Record<Tier, number>
+type StepCounts = Record<StepSymbol, number>
 
 type ParsedCondition = {
   negated: boolean
   lhs: string
   rhs: string
-  lhsCounts: TierCounts
-  rhsCounts: TierCounts
+  lhsCounts: StepCounts
+  rhsCounts: StepCounts
 }
 
 const hierarchy = strictVarietyThreeHierarchy as Record<string, StrictVarietyThreeEntry>
@@ -45,46 +48,46 @@ defineProps<{
 const modal = useModalStore()
 
 const sizeKeys = computed(() => Object.keys(hierarchy).sort(compareSizeKeys))
-const selectedEntry = computed(() => hierarchy[modal.strictVarietyThreeSize])
-const selectedEntryIsArray = computed(() => Array.isArray(selectedEntry.value))
-const tierKeys = computed(() => {
-  const entry = selectedEntry.value
+const selectedSizeEntry = computed(() => hierarchy[modal.strictVarietyThreeSize])
+const selectedSizeEntryIsArray = computed(() => Array.isArray(selectedSizeEntry.value))
+const patternKeys = computed(() => {
+  const entry = selectedSizeEntry.value
   if (!entry || Array.isArray(entry)) {
     return []
   }
-  return Object.keys(entry).sort(compareTierKeys)
+  return Object.keys(entry).sort(comparePatternKeys)
 })
-const selectedSubEntry = computed<StrictVarietyThreeBranch | undefined>(() => {
-  const entry = selectedEntry.value
+const selectedPatternEntry = computed<StrictVarietyThreeBranch | undefined>(() => {
+  const entry = selectedSizeEntry.value
   if (!entry || Array.isArray(entry)) {
     return undefined
   }
-  return entry[modal.strictVarietyThreeTier]
+  return entry[modal.strictVarietyThreePattern]
 })
-const selectedSubEntryIsArray = computed(() => Array.isArray(selectedSubEntry.value))
+const selectedPatternEntryIsArray = computed(() => Array.isArray(selectedPatternEntry.value))
 const runKeys = computed(() => {
-  const subEntry = selectedSubEntry.value
-  if (!subEntry || Array.isArray(subEntry)) {
+  const patternEntry = selectedPatternEntry.value
+  if (!patternEntry || Array.isArray(patternEntry)) {
     return []
   }
-  return Object.keys(subEntry).sort(compareRunKeys)
+  return Object.keys(patternEntry).sort(compareRunKeys)
 })
 const selectedScales = computed<StrictVarietyThreeScale[]>(() => {
-  const entry = selectedEntry.value
+  const entry = selectedSizeEntry.value
   if (!entry) {
     return []
   }
   if (Array.isArray(entry)) {
     return entry
   }
-  const subEntry = entry[modal.strictVarietyThreeTier]
-  if (!subEntry) {
+  const patternEntry = entry[modal.strictVarietyThreePattern]
+  if (!patternEntry) {
     return []
   }
-  if (Array.isArray(subEntry)) {
-    return subEntry
+  if (Array.isArray(patternEntry)) {
+    return patternEntry
   }
-  return subEntry[modal.strictVarietyThreeRun] ?? []
+  return patternEntry[modal.strictVarietyThreeRun] ?? []
 })
 const scaleOptions = computed<ScaleOption[]>(() =>
   selectedScales.value.map(toOption).sort(compareScaleOptions)
@@ -104,7 +107,7 @@ const orientedWord = computed(() => {
 })
 const modes = computed(() => uniqueRotations(orientedWord.value).sort(compareModesByBrightness))
 const selectedMode = computed(() => modal.strictVarietyThreeMode || modes.value[0] || '')
-const selectedCounts = computed(() => countTiers(selectedScale.value?.steps ?? ''))
+const selectedCounts = computed(() => countSteps(selectedScale.value?.steps ?? ''))
 
 const sizeOfLargeStep = computed(() => positiveNumber(modal.strictVarietyThreeSizeOfLargeStep, 4))
 const sizeOfSmallStep = computed(() => positiveNumber(modal.strictVarietyThreeSizeOfSmallStep, 1))
@@ -121,7 +124,9 @@ const hostDivisions = computed(
     selectedCounts.value.M * sizeOfMediumStep.value +
     selectedCounts.value.s * sizeOfSmallStep.value
 )
-const projector = computed(() => (modal.equave.compare(OCTAVE) ? `<${modal.equave.toString()}>` : ''))
+const projector = computed(() =>
+  modal.equave.compare(OCTAVE) ? `<${modal.equave.toString()}>` : ''
+)
 const intervalSizes = computed(() => ({
   L: formatEtInterval(sizeOfLargeStep.value),
   M: formatEtInterval(sizeOfMediumStep.value),
@@ -153,8 +158,8 @@ watchEffect(() => {
   if (!sizeKeys.value.includes(modal.strictVarietyThreeSize)) {
     modal.strictVarietyThreeSize = sizeKeys.value[0] ?? ''
   }
-  if (tierKeys.value.length && !tierKeys.value.includes(modal.strictVarietyThreeTier)) {
-    modal.strictVarietyThreeTier = tierKeys.value[0]
+  if (patternKeys.value.length && !patternKeys.value.includes(modal.strictVarietyThreePattern)) {
+    modal.strictVarietyThreePattern = patternKeys.value[0]
   }
   if (runKeys.value.length && !runKeys.value.includes(modal.strictVarietyThreeRun)) {
     modal.strictVarietyThreeRun = runKeys.value[0]
@@ -170,21 +175,19 @@ watchEffect(() => {
   }
 })
 
-function generate() {
+function generate(expand = true) {
   const intervals = intervalSizes.value
+  const source = `realizeWord('${selectedMode.value}', #{L: ${intervals.L}, M: ${intervals.M}, s: ${intervals.s}})`
   emit('update:scaleName', `Strict Variety 3 ${formatCounts(selectedCounts.value)}`)
-  emit(
-    'update:source',
-    `realizeWord('${selectedMode.value}', #{L: ${intervals.L}, M: ${intervals.M}, s: ${intervals.s}})`
-  )
+  emit('update:source', expand ? expandCode(source) : source)
 }
 
 function toOption(entry: StrictVarietyThreeScale): ScaleOption {
-  const counts = countTiers(entry.steps)
+  const counts = countSteps(entry.steps)
   return {
     ...entry,
     counts,
-    label: selectedEntryIsArray.value ? `${formatCounts(counts)}: ${entry.steps}` : entry.steps
+    label: selectedSizeEntryIsArray.value ? `${formatCounts(counts)}: ${entry.steps}` : entry.steps
   }
 }
 
@@ -192,7 +195,7 @@ function compareScaleOptions(a: ScaleOption, b: ScaleOption) {
   return compareCounts(a.counts, b.counts) || a.steps.localeCompare(b.steps)
 }
 
-function compareCounts(a: TierCounts, b: TierCounts) {
+function compareCounts(a: StepCounts, b: StepCounts) {
   return a.L - b.L || a.M - b.M || a.s - b.s
 }
 
@@ -200,8 +203,8 @@ function compareSizeKeys(a: string, b: string) {
   return firstNumber(a) - firstNumber(b) || a.localeCompare(b, undefined, { numeric: true })
 }
 
-function compareTierKeys(a: string, b: string) {
-  return compareCounts(parseCountsLabel(a), parseCountsLabel(b)) || a.localeCompare(b)
+function comparePatternKeys(a: string, b: string) {
+  return compareCounts(parsePatternCountsLabel(a), parsePatternCountsLabel(b)) || a.localeCompare(b)
 }
 
 function compareRunKeys(a: string, b: string) {
@@ -212,7 +215,7 @@ function firstNumber(value: string) {
   return parseInt(value.match(/\d+/)?.[0] ?? '0', 10)
 }
 
-function parseCountsLabel(label: string): TierCounts {
+function parsePatternCountsLabel(label: string): StepCounts {
   return {
     L: parseInt(label.match(/(\d+)L/)?.[1] ?? '0', 10),
     M: parseInt(label.match(/(\d+)M/)?.[1] ?? '0', 10),
@@ -220,7 +223,7 @@ function parseCountsLabel(label: string): TierCounts {
   }
 }
 
-function countTiers(steps: string): TierCounts {
+function countSteps(steps: string): StepCounts {
   return {
     L: countStep(steps, 'L'),
     M: countStep(steps, 'M'),
@@ -228,11 +231,11 @@ function countTiers(steps: string): TierCounts {
   }
 }
 
-function countStep(steps: string, step: Tier) {
+function countStep(steps: string, step: StepSymbol) {
   return [...steps].filter((char) => char === step).length
 }
 
-function formatCounts(counts: TierCounts) {
+function formatCounts(counts: StepCounts) {
   return `${counts.L}L ${counts.M}M ${counts.s}s`
 }
 
@@ -295,8 +298,8 @@ function parseCondition(condition?: string): ParsedCondition | undefined {
     negated,
     lhs,
     rhs,
-    lhsCounts: countTiers(lhs),
-    rhsCounts: countTiers(rhs)
+    lhsCounts: countSteps(lhs),
+    rhsCounts: countSteps(rhs)
   }
 }
 
@@ -308,7 +311,9 @@ function deriveMediumStepSize(condition: ParsedCondition, largeStep: number, sma
   const lhsKnown = condition.lhsCounts.L * largeStep + condition.lhsCounts.s * smallStep
   const rhsKnown = condition.rhsCounts.L * largeStep + condition.rhsCounts.s * smallStep
   const derived = (rhsKnown - lhsKnown) / mediumCoefficient(condition)
-  return Number.isFinite(derived) && derived > 0 ? derived : positiveNumber(modal.strictVarietyThreeSizeOfMediumStep, 2)
+  return Number.isFinite(derived) && derived > 0
+    ? derived
+    : positiveNumber(modal.strictVarietyThreeSizeOfMediumStep, 2)
 }
 
 function conditionEqualityHolds(condition: ParsedCondition) {
@@ -317,8 +322,12 @@ function conditionEqualityHolds(condition: ParsedCondition) {
   return Math.abs(lhs - rhs) < CONDITION_EPSILON
 }
 
-function conditionWeight(counts: TierCounts) {
-  return counts.L * sizeOfLargeStep.value + counts.M * sizeOfMediumStep.value + counts.s * sizeOfSmallStep.value
+function conditionWeight(counts: StepCounts) {
+  return (
+    counts.L * sizeOfLargeStep.value +
+    counts.M * sizeOfMediumStep.value +
+    counts.s * sizeOfSmallStep.value
+  )
 }
 
 function formatEtInterval(steps: number) {
@@ -351,18 +360,18 @@ function formatNumber(value: number) {
         </div>
       </div>
 
-      <div v-if="!selectedEntryIsArray" class="control-group">
+      <div v-if="!selectedSizeEntryIsArray" class="control-group">
         <div class="control">
-          <label for="strict-variety-3-tier">Pattern</label>
-          <select id="strict-variety-3-tier" v-model="modal.strictVarietyThreeTier">
-            <option v-for="tierKey of tierKeys" :key="tierKey" :value="tierKey">
-              {{ tierKey }}
+          <label for="strict-variety-3-pattern">Pattern</label>
+          <select id="strict-variety-3-pattern" v-model="modal.strictVarietyThreePattern">
+            <option v-for="patternKey of patternKeys" :key="patternKey" :value="patternKey">
+              {{ patternKey }}
             </option>
           </select>
         </div>
       </div>
 
-      <div v-if="!selectedSubEntryIsArray && runKeys.length" class="control-group">
+      <div v-if="!selectedPatternEntryIsArray && runKeys.length" class="control-group">
         <div class="control">
           <label for="strict-variety-3-run">Runs of M</label>
           <select id="strict-variety-3-run" v-model="modal.strictVarietyThreeRun">
@@ -471,6 +480,13 @@ function formatNumber(value: number) {
       </div>
       <p v-if="conditionWarning" class="warning">{{ conditionWarning }}</p>
       <p v-if="stepOrderingWarning" class="warning">{{ stepOrderingWarning }}</p>
+    </template>
+    <template #footer>
+      <div class="btn-group">
+        <button @click="() => generate(true)">OK</button>
+        <button @click="$emit('cancel')">Cancel</button>
+        <button @click="() => generate(false)">Raw</button>
+      </div>
     </template>
   </Modal>
 </template>
