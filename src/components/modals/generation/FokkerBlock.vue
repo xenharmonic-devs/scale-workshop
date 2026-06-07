@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { computed } from 'vue'
 import { mos } from 'moment-of-symmetry/core'
 import { OCTAVE } from '@/constants'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
+import { useModalStore } from '@/stores/modal'
 import { gcd, lcm } from 'xen-dev-utils/fraction'
 
 defineProps<{
@@ -12,14 +13,11 @@ defineProps<{
 
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
-interface MosFactor {
+interface FokkerBlockFactor {
   id: number
-  name: string
   numberOfLargeSteps: number
-  numberOfSmallSteps: number
   sizeOfLargeStep: number
   sizeOfSmallStep: number
-  up: number
   rotation: number
 }
 
@@ -31,76 +29,53 @@ interface ProductStep {
 
 const STEP_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
-let nextFactorId = 3
-
-const factors = reactive<MosFactor[]>([
-  {
-    id: 1,
-    name: 'MOS 1',
-    numberOfLargeSteps: 4,
-    numberOfSmallSteps: 3,
-    sizeOfLargeStep: 1,
-    sizeOfSmallStep: 1,
-    up: 4,
-    rotation: 0
-  },
-  {
-    id: 2,
-    name: 'MOS 2',
-    numberOfLargeSteps: 5,
-    numberOfSmallSteps: 2,
-    sizeOfLargeStep: 1,
-    sizeOfSmallStep: 1,
-    up: 5,
-    rotation: 0
-  }
-])
-
-const equaveString = ref('2/1')
-const equave = ref(OCTAVE)
+const modal = useModalStore()
 
 function safeInteger(value: number, fallback: number, min = 0, max = 1000) {
-  if (!Number.isFinite(value)) {
+  const numericValue = Number(value)
+  if (!Number.isFinite(numericValue)) {
     return fallback
   }
-  return Math.max(min, Math.min(max, Math.round(value)))
+  return Math.max(min, Math.min(max, Math.round(numericValue)))
 }
 
-function rotate<T>(items: T[], amount: number) {
-  if (!items.length) {
-    return []
-  }
-  const shift = ((Math.round(amount) % items.length) + items.length) % items.length
-  return items.slice(shift).concat(items.slice(0, shift))
+const scaleSize = computed(() => safeInteger(modal.fokkerBlockScaleSize, 7, 2))
+const rank = computed(() => modal.fokkerBlockFactors.length + 1)
+const activeFactor = computed(() => modal.fokkerBlockFactors[modal.fokkerBlockActiveFactorIndex])
+
+function factorName(index: number) {
+  return `MOS ${index + 1}`
 }
 
-function factorCardinality(factor: MosFactor) {
-  return safeInteger(factor.numberOfLargeSteps, 1, 1) + safeInteger(factor.numberOfSmallSteps, 1, 1)
+function safeLargeSteps(factor: FokkerBlockFactor) {
+  return safeInteger(factor.numberOfLargeSteps, 1, 1, scaleSize.value - 1)
 }
 
-function factorWord(factor: MosFactor) {
-  const large = safeInteger(factor.numberOfLargeSteps, 1, 1)
-  const small = safeInteger(factor.numberOfSmallSteps, 1, 1)
-  const cardinality = large + small
+function inferredSmallSteps(factor: FokkerBlockFactor) {
+  return scaleSize.value - safeLargeSteps(factor)
+}
+
+function safeRotation(factor: FokkerBlockFactor) {
+  const large = safeLargeSteps(factor)
+  const small = inferredSmallSteps(factor)
   const periods = Math.abs(gcd(large, small))
-  const upMax = cardinality - periods
-  const up = Math.floor(safeInteger(factor.up, 0, 0, upMax) / periods) * periods
-  const steps = mos(large, small, {
+  const upMax = scaleSize.value - periods
+  return Math.floor(safeInteger(factor.rotation, 0, 0, upMax) / periods) * periods
+}
+
+function factorWord(factor: FokkerBlockFactor) {
+  const steps = mos(safeLargeSteps(factor), inferredSmallSteps(factor), {
     sizeOfLargeStep: 2,
     sizeOfSmallStep: 1,
-    up
+    up: safeRotation(factor)
   })
   const degrees = [0, ...steps]
-  const sizes = steps.map((step, index) => step - degrees[index])
-  return rotate(
-    sizes.map((size) => (size === 2 ? 'L' : 's')),
-    factor.rotation
-  )
+  return steps.map((step, index) => (step - degrees[index] === 2 ? 'L' : 's'))
 }
 
-function factorStepFractions(factor: MosFactor) {
-  const large = safeInteger(factor.numberOfLargeSteps, 1, 1)
-  const small = safeInteger(factor.numberOfSmallSteps, 1, 1)
+function factorStepFractions(factor: FokkerBlockFactor) {
+  const large = safeLargeSteps(factor)
+  const small = inferredSmallSteps(factor)
   const largeSize = safeInteger(factor.sizeOfLargeStep, 1, 1)
   const smallSize = safeInteger(factor.sizeOfSmallStep, 1, 1)
   const total = large * largeSize + small * smallSize
@@ -108,25 +83,14 @@ function factorStepFractions(factor: MosFactor) {
   return sizes.map((size) => ({ numerator: size, denominator: total }))
 }
 
-const cardinalities = computed(() => factors.map(factorCardinality))
-const cardinality = computed(() => cardinalities.value[0] ?? 0)
-const hasMatchingCardinalities = computed(() =>
-  cardinalities.value.every((value) => value === cardinality.value)
-)
-const canGenerate = computed(() => factors.length >= 2 && hasMatchingCardinalities.value)
-const rank = computed(() => factors.length + 1)
-
 const productSteps = computed<ProductStep[]>(() => {
-  if (!canGenerate.value) {
-    return []
-  }
-  const stepFractions = factors.map(factorStepFractions)
+  const stepFractions = modal.fokkerBlockFactors.map(factorStepFractions)
   const commonDenominator = stepFractions
     .flat()
     .reduce((accumulator, fraction) => lcm(accumulator, fraction.denominator), 1)
-  const denominator = commonDenominator * factors.length
+  const denominator = commonDenominator * modal.fokkerBlockFactors.length
 
-  return Array.from({ length: cardinality.value }, (_, index) => {
+  return Array.from({ length: scaleSize.value }, (_, index) => {
     const numerator = stepFractions.reduce(
       (sum, factor) =>
         sum + factor[index].numerator * (commonDenominator / factor[index].denominator),
@@ -134,7 +98,7 @@ const productSteps = computed<ProductStep[]>(() => {
     )
     const divisor = Math.abs(gcd(numerator, denominator))
     return {
-      letters: factors.map((factor) => factorWord(factor)[index]).join(''),
+      letters: modal.fokkerBlockFactors.map((factor) => factorWord(factor)[index]).join(''),
       numerator: numerator / divisor,
       denominator: denominator / divisor
     }
@@ -159,32 +123,19 @@ const preview = computed(() =>
     .join(', ')
 )
 
-function addFactor() {
-  const previous = factors[factors.length - 1]
-  factors.push({
-    ...previous,
-    id: nextFactorId,
-    name: `MOS ${nextFactorId}`,
-    rotation: 0
-  })
-  nextFactorId += 1
+function selectFactor(index: number) {
+  modal.fokkerBlockActiveFactorIndex = index
 }
 
 function removeFactor(index: number) {
-  if (factors.length <= 2) {
-    return
-  }
-  factors.splice(index, 1)
+  modal.removeFokkerBlockFactor(index)
 }
 
 function generate() {
-  if (!canGenerate.value) {
-    return
-  }
   const sourceLines: string[] = []
   let numerator = 0
   let denominator = 1
-  const projector = equave.value.compare(OCTAVE) ? `<${equave.value.toString()}>` : ''
+  const projector = modal.equave.compare(OCTAVE) ? `<${modal.equave.toString()}>` : ''
 
   productSteps.value.forEach((step) => {
     const nextDenominator = lcm(denominator, step.denominator)
@@ -211,99 +162,101 @@ function generate() {
     <template #body>
       <div class="control-group">
         <p>
-          Build a rank-n Fokker block as a step-pattern product: choose two or more MOS scales with
-          the same number of steps, rotate each mode or dome, then average the matching steps.
+          Build a rank-{{ rank }} Fokker block as a step-pattern product: choose a shared scale
+          size, configure two or more MOS factors, rotate each mode or dome, then average matching
+          steps.
         </p>
+        <div class="control">
+          <label for="fokker-scale-size">Scale size</label>
+          <input
+            id="fokker-scale-size"
+            type="number"
+            min="2"
+            max="1000"
+            v-model.number="modal.fokkerBlockScaleSize"
+          />
+        </div>
         <div class="control">
           <label for="fokker-equave">Equave</label>
           <ScaleLineInput
             id="fokker-equave"
-            v-model="equaveString"
+            v-model="modal.equaveString"
             :defaultValue="OCTAVE"
-            @update:value="equave = $event"
+            @update:value="modal.equave = $event"
           />
         </div>
       </div>
 
-      <div class="control-group" v-for="(factor, index) in factors" :key="factor.id">
-        <h3>{{ factor.name }}</h3>
+      <div class="factor-tabs">
+        <button
+          v-for="(factor, index) in modal.fokkerBlockFactors"
+          :key="factor.id"
+          :class="{ active: index === modal.fokkerBlockActiveFactorIndex }"
+          @click="selectFactor(index)"
+        >
+          {{ factorName(index) }}
+        </button>
+        <button @click="modal.addFokkerBlockFactor">+</button>
+      </div>
+
+      <div v-if="activeFactor" class="control-group factor-panel">
+        <h3>{{ factorName(modal.fokkerBlockActiveFactorIndex) }}</h3>
         <div class="control">
-          <label :for="`fokker-large-${factor.id}`">Large steps</label>
+          <label :for="`fokker-large-${activeFactor.id}`">Large steps</label>
           <input
-            :id="`fokker-large-${factor.id}`"
+            :id="`fokker-large-${activeFactor.id}`"
             type="number"
             min="1"
-            v-model="factor.numberOfLargeSteps"
+            :max="scaleSize - 1"
+            v-model.number="activeFactor.numberOfLargeSteps"
           />
         </div>
         <div class="control">
-          <label :for="`fokker-small-${factor.id}`">Small steps</label>
+          <label>Small steps</label>
+          <output>{{ inferredSmallSteps(activeFactor) }}</output>
+        </div>
+        <div class="control">
+          <label :for="`fokker-large-size-${activeFactor.id}`">Large step size</label>
           <input
-            :id="`fokker-small-${factor.id}`"
+            :id="`fokker-large-size-${activeFactor.id}`"
             type="number"
             min="1"
-            v-model="factor.numberOfSmallSteps"
+            v-model.number="activeFactor.sizeOfLargeStep"
           />
         </div>
         <div class="control">
-          <label :for="`fokker-large-size-${factor.id}`">Large step size</label>
+          <label :for="`fokker-small-size-${activeFactor.id}`">Small step size</label>
           <input
-            :id="`fokker-large-size-${factor.id}`"
+            :id="`fokker-small-size-${activeFactor.id}`"
             type="number"
             min="1"
-            v-model="factor.sizeOfLargeStep"
+            v-model.number="activeFactor.sizeOfSmallStep"
           />
         </div>
         <div class="control">
-          <label :for="`fokker-small-size-${factor.id}`">Small step size</label>
+          <label :for="`fokker-rotation-${activeFactor.id}`">Mode / dome rotation</label>
           <input
-            :id="`fokker-small-size-${factor.id}`"
-            type="number"
-            min="1"
-            v-model="factor.sizeOfSmallStep"
-          />
-        </div>
-        <div class="control">
-          <label :for="`fokker-up-${factor.id}`">Bright generators up</label>
-          <input
-            :id="`fokker-up-${factor.id}`"
+            :id="`fokker-rotation-${activeFactor.id}`"
             type="number"
             min="0"
-            :max="
-              factorCardinality(factor) -
-              Math.abs(
-                gcd(
-                  safeInteger(factor.numberOfLargeSteps, 1, 1),
-                  safeInteger(factor.numberOfSmallSteps, 1, 1)
-                )
-              )
-            "
-            v-model="factor.up"
+            :max="Math.max(0, scaleSize - 1)"
+            v-model.number="activeFactor.rotation"
           />
         </div>
         <div class="control">
-          <label :for="`fokker-rotation-${factor.id}`">Mode / dome rotation</label>
-          <input
-            :id="`fokker-rotation-${factor.id}`"
-            type="number"
-            min="0"
-            :max="Math.max(0, factorCardinality(factor) - 1)"
-            v-model="factor.rotation"
-          />
+          <label>Word</label>
+          <output>{{ factorWord(activeFactor).join('') }}</output>
         </div>
-        <div class="control">
-          <label>Word: {{ factorWord(factor).join('') }}</label>
-        </div>
-        <button v-if="factors.length > 2" @click="removeFactor(index)">Remove MOS</button>
+        <button
+          v-if="modal.fokkerBlockFactors.length > 2"
+          @click="removeFactor(modal.fokkerBlockActiveFactorIndex)"
+        >
+          Remove {{ factorName(modal.fokkerBlockActiveFactorIndex) }}
+        </button>
       </div>
 
       <div class="control-group">
-        <button @click="addFactor">Add MOS factor</button>
-        <p v-if="!hasMatchingCardinalities">
-          All MOS factors must have the same number of steps. Current sizes:
-          {{ cardinalities.join(', ') }}.
-        </p>
-        <p v-else>
+        <p>
           Product word: <strong>{{ productWord }}</strong>
         </p>
         <p v-if="preview">Averaged steps: {{ preview }}</p>
@@ -311,9 +264,42 @@ function generate() {
     </template>
     <template #footer>
       <div class="btn-group">
-        <button :disabled="!canGenerate" @click="generate">OK</button>
+        <button @click="generate">OK</button>
         <button @click="$emit('cancel')">Cancel</button>
       </div>
     </template>
   </Modal>
 </template>
+
+<style scoped>
+.factor-tabs {
+  display: flex;
+  gap: 0.25rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.factor-tabs button {
+  flex: 0 0 auto;
+}
+
+.factor-tabs button.active {
+  color: var(--color-background);
+  background-color: var(--color-text);
+}
+
+.factor-panel h3 {
+  margin-top: 0;
+}
+
+output {
+  align-self: center;
+}
+
+@media screen and (min-width: 600px) {
+  .modal-mask :deep(.modal-container) {
+    min-width: 40rem;
+    max-width: 41rem;
+  }
+}
+</style>

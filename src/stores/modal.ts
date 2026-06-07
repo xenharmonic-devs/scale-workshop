@@ -275,6 +275,61 @@ export const useModalStore = defineStore('modal', () => {
   const sizeOfLargeStep = ref(2)
   const sizeOfSmallStep = ref(1)
   const up = ref(5)
+
+  // === Fokker block ===
+  interface FokkerBlockFactor {
+    id: number
+    numberOfLargeSteps: number
+    sizeOfLargeStep: number
+    sizeOfSmallStep: number
+    rotation: number
+  }
+
+  const fokkerBlockScaleSize = ref(7)
+  const fokkerBlockActiveFactorIndex = ref(0)
+  const fokkerBlockNextFactorId = ref(3)
+  const fokkerBlockFactors = reactive<FokkerBlockFactor[]>([
+    {
+      id: 1,
+      numberOfLargeSteps: 4,
+      sizeOfLargeStep: 1,
+      sizeOfSmallStep: 1,
+      rotation: 0
+    },
+    {
+      id: 2,
+      numberOfLargeSteps: 5,
+      sizeOfLargeStep: 1,
+      sizeOfSmallStep: 1,
+      rotation: 0
+    }
+  ])
+
+  function addFokkerBlockFactor() {
+    const previous =
+      fokkerBlockFactors[fokkerBlockActiveFactorIndex.value] ??
+      fokkerBlockFactors[fokkerBlockFactors.length - 1]
+    fokkerBlockFactors.push({
+      ...previous,
+      id: fokkerBlockNextFactorId.value,
+      rotation: 0
+    })
+    fokkerBlockActiveFactorIndex.value = fokkerBlockFactors.length - 1
+    fokkerBlockNextFactorId.value += 1
+  }
+
+  function removeFokkerBlockFactor(index: number) {
+    if (fokkerBlockFactors.length <= 2) {
+      return
+    }
+    fokkerBlockFactors.splice(index, 1)
+    fokkerBlockActiveFactorIndex.value = clamp(
+      0,
+      fokkerBlockFactors.length - 1,
+      fokkerBlockActiveFactorIndex.value
+    )
+  }
+
   // State for key colors
   const colorMethod = ref<'none' | 'parent' | 'daughter'>('none')
   const parentColorAccidentals = ref<'flat' | 'sharp'>('sharp')
@@ -619,6 +674,13 @@ export const useModalStore = defineStore('modal', () => {
     sortByHardness,
     sortBySize,
     moreForEdo,
+
+    // Fokker block
+    fokkerBlockScaleSize,
+    fokkerBlockActiveFactorIndex,
+    fokkerBlockFactors,
+    addFokkerBlockFactor,
+    removeFokkerBlockFactor,
 
     // Concordance shell
     mediumInteger,
