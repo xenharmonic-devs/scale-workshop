@@ -334,11 +334,6 @@ function conditionWeight(counts: StepCounts) {
     .add(counts.L * sizeOfLargeStep.value)
     .add(counts.s * sizeOfSmallStep.value)
 }
-
-function formatEtInterval(steps: number | Fraction) {
-  const et = new Fraction(steps).div(hostDivisions.value)
-  return et.toFraction().replace('/', '\\') + projector.value
-}
 </script>
 
 <template>
