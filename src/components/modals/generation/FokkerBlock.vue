@@ -1,25 +1,18 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { mos } from 'moment-of-symmetry/core'
+import { stepString } from 'moment-of-symmetry/core'
 import { OCTAVE } from '@/constants'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { useModalStore } from '@/stores/modal'
 import { gcd, lcm } from 'xen-dev-utils/fraction'
+import type { FokkerBlockFactor } from '@/types'
 
 defineProps<{
   show: boolean
 }>()
 
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
-
-interface FokkerBlockFactor {
-  id: number
-  numberOfLargeSteps: number
-  sizeOfLargeStep: number
-  sizeOfSmallStep: number
-  rotation: number
-}
 
 interface ProductStep {
   letters: string
@@ -68,13 +61,11 @@ function safeRotation(factor: FokkerBlockFactor) {
 }
 
 function factorWord(factor: FokkerBlockFactor) {
-  const steps = mos(safeLargeSteps(factor), inferredSmallSteps(factor), {
-    sizeOfLargeStep: 2,
-    sizeOfSmallStep: 1,
-    up: safeRotation(factor)
-  })
-  const degrees = [0, ...steps]
-  return steps.map((step, index) => (step - degrees[index] === 2 ? 'L' : 's'))
+  return [
+    ...stepString(safeLargeSteps(factor), inferredSmallSteps(factor), {
+      up: safeRotation(factor)
+    })
+  ]
 }
 
 function factorStepFractions(factor: FokkerBlockFactor) {

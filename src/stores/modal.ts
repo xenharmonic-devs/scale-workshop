@@ -12,6 +12,7 @@ import { TimeMonzo, TimeReal } from 'sonic-weave/monzo'
 import { evaluateExpression, parseChord } from 'sonic-weave/parser'
 import { hasConstantStructure } from 'sonic-weave/tools'
 import { freeVAOs, vao } from '@/analysis'
+import type { FokkerBlockFactor } from '@/types'
 
 function scaleGet(monzos: TimeMonzo[], index: number) {
   const equave = monzos[monzos.length - 1]
@@ -277,13 +278,6 @@ export const useModalStore = defineStore('modal', () => {
   const up = ref(5)
 
   // === Fokker block ===
-  interface FokkerBlockFactor {
-    id: number
-    numberOfLargeSteps: number
-    sizeOfLargeStep: number
-    sizeOfSmallStep: number
-    rotation: number
-  }
 
   const fokkerBlockScaleSize = ref(7)
   const fokkerBlockActiveFactorIndex = ref(0)
