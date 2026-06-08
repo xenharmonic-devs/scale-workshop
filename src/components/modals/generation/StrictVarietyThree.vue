@@ -415,61 +415,39 @@ function conditionWeight(counts: StepCounts) {
       </div>
 
       <div class="control-group">
-        <template v-if="derivesMediumFromCondition">
-          <div class="control">
-            <label for="strict-variety-3-size-of-large-step">Size of large step</label>
-            <input
-              id="strict-variety-3-size-of-large-step"
-              type="number"
-              min="1"
-              step="any"
-              v-model.number="modal.strictVarietyThreeSizeOfLargeStep"
-            />
-          </div>
-          <div class="control">
-            <label for="strict-variety-3-size-of-small-step">Size of small step</label>
-            <input
-              id="strict-variety-3-size-of-small-step"
-              type="number"
-              min="1"
-              step="any"
-              v-model.number="modal.strictVarietyThreeSizeOfSmallStep"
-            />
-          </div>
-          <p>Derived size of medium step: {{ sizeOfMediumStep.toFraction() }}</p>
-        </template>
-        <template v-else>
-          <div class="control">
-            <label for="strict-variety-3-size-of-large-step">Size of large step</label>
-            <input
-              id="strict-variety-3-size-of-large-step"
-              type="number"
-              min="1"
-              step="any"
-              v-model.number="modal.strictVarietyThreeSizeOfLargeStep"
-            />
-          </div>
-          <div class="control">
-            <label for="strict-variety-3-size-of-medium-step">Size of medium step</label>
-            <input
-              id="strict-variety-3-size-of-medium-step"
-              type="number"
-              min="1"
-              step="any"
-              v-model.number="modal.strictVarietyThreeSizeOfMediumStep"
-            />
-          </div>
-          <div class="control">
-            <label for="strict-variety-3-size-of-small-step">Size of small step</label>
-            <input
-              id="strict-variety-3-size-of-small-step"
-              type="number"
-              min="1"
-              step="any"
-              v-model.number="modal.strictVarietyThreeSizeOfSmallStep"
-            />
-          </div>
-        </template>
+        <div class="control">
+          <label for="strict-variety-3-size-of-large-step">Size of large step</label>
+          <input
+            id="strict-variety-3-size-of-large-step"
+            type="number"
+            min="1"
+            step="any"
+            v-model.number="modal.strictVarietyThreeSizeOfLargeStep"
+          />
+        </div>
+        <div v-if="!derivesMediumFromCondition" class="control">
+          <label for="strict-variety-3-size-of-medium-step">Size of medium step</label>
+          <input
+            id="strict-variety-3-size-of-medium-step"
+            type="number"
+            min="1"
+            step="any"
+            v-model.number="modal.strictVarietyThreeSizeOfMediumStep"
+          />
+        </div>
+        <div class="control">
+          <label for="strict-variety-3-size-of-small-step">Size of small step</label>
+          <input
+            id="strict-variety-3-size-of-small-step"
+            type="number"
+            min="1"
+            step="any"
+            v-model.number="modal.strictVarietyThreeSizeOfSmallStep"
+          />
+        </div>
+        <p v-if="derivesMediumFromCondition">
+          Derived size of medium step: {{ sizeOfMediumStep.toFraction() }}
+        </p>
         <div class="control">
           <label for="strict-variety-3-equave">Equave</label>
           <ScaleLineInput
