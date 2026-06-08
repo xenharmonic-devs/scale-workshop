@@ -7,6 +7,7 @@ import { repr } from 'sonic-weave/stdlib'
 import { version } from '../package.json'
 import { Scale } from './scale'
 import { getRandomValuesCompat } from './platform-compat'
+import { OCTAVE, FIFTH, TRITAVE } from './constants'
 
 const TAU = 2 * Math.PI
 
@@ -751,4 +752,20 @@ export const copyText = async (text: string): Promise<boolean> => {
   const copied = document.execCommand('copy')
   textArea.remove()
   return copied
+}
+
+/**
+ * Get the name of "equal division of the (blank)" as a short string like "EDO" or "EDT".
+ */
+export function nameOfEd(equave: Interval, fallback: string) {
+  if (equave.equals(OCTAVE)) {
+    return 'EDO'
+  } else if (equave.equals(TRITAVE)) {
+    return 'EDT'
+  } else if (equave.equals(FIFTH)) {
+    return 'EDF'
+  } else if (equave.value.isIntegral()) {
+    return `ED${equave.toInteger()}`
+  }
+  return `ED${fallback}`
 }

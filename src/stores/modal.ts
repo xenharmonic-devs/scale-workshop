@@ -3,7 +3,7 @@ import { Fraction, gcd, mmod } from 'xen-dev-utils/fraction'
 import { computed, reactive, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { CS_EDO, CS_VAL, FIFTH, FIFTH_12TET, OCTAVE } from '@/constants'
-import { computedAndError, splitText } from '@/utils'
+import { computedAndError, splitText, nameOfEd } from '@/utils'
 import { anyForEdo, makeEdoMap, modeInfo, allForEdo } from 'moment-of-symmetry/core'
 import { tamnamsInfo } from 'moment-of-symmetry/names'
 import { getHardness } from 'moment-of-symmetry/hardness'
@@ -28,6 +28,17 @@ export const useModalStore = defineStore('modal', () => {
   // Generic
   const equaveString = ref('2/1')
   const equave = ref(OCTAVE)
+
+  // Strict Variety 3
+  const strictVarietyThreeSize = ref('5')
+  const strictVarietyThreePattern = ref('')
+  const strictVarietyThreeRun = ref('')
+  const strictVarietyThreeSteps = ref('')
+  const strictVarietyThreeInvert = ref(false)
+  const strictVarietyThreeMode = ref('')
+  const strictVarietyThreeSizeOfLargeStep = ref(3)
+  const strictVarietyThreeSizeOfMediumStep = ref(2)
+  const strictVarietyThreeSizeOfSmallStep = ref(1)
 
   // CPS
   const factorsString = ref('')
@@ -318,12 +329,7 @@ export const useModalStore = defineStore('modal', () => {
   const hostEd = computed(
     () => safeNumLarge.value * safeSizeLarge.value + safeNumSmall.value * safeSizeSmall.value
   )
-  const ed = computed(() => {
-    if (equave.value.equals(OCTAVE)) {
-      return `${hostEd.value}EDO`
-    }
-    return `${hostEd.value}ED${equaveString.value}`
-  })
+  const ed = computed(() => `${hostEd.value}${nameOfEd(equave.value, equaveString.value)}`)
   const previewName = computed(() => {
     const info = tamnamsInfo(previewL.value, previewS.value)
     if (info?.name === undefined) {
@@ -504,6 +510,17 @@ export const useModalStore = defineStore('modal', () => {
     // Generic
     equaveString,
     equave,
+
+    // Strict Variety 3
+    strictVarietyThreeSize,
+    strictVarietyThreePattern,
+    strictVarietyThreeRun,
+    strictVarietyThreeSteps,
+    strictVarietyThreeInvert,
+    strictVarietyThreeMode,
+    strictVarietyThreeSizeOfLargeStep,
+    strictVarietyThreeSizeOfMediumStep,
+    strictVarietyThreeSizeOfSmallStep,
 
     // CPS
     factorsString,

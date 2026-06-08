@@ -45,6 +45,9 @@ const RankTwoModal = defineAsyncComponent(
 const StackModal = defineAsyncComponent(
   () => import('@/components/modals/generation/StackSteps.vue')
 )
+const StrictVarietyThreeModal = defineAsyncComponent(
+  () => import('@/components/modals/generation/StrictVarietyThree.vue')
+)
 const SubharmonicSeriesModal = defineAsyncComponent(
   () => import('@/components/modals/generation/SubharmonicSeries.vue')
 )
@@ -67,6 +70,7 @@ const showMosModal = ref(false)
 const showPresetModal = ref(false)
 const showRankTwoModal = ref(false)
 const showStackModal = ref(false)
+const showStrictVarietyThreeModal = ref(false)
 const showSubharmonicModal = ref(false)
 
 function updateSourceAndHideModals(source: string) {
@@ -84,6 +88,7 @@ function updateSourceAndHideModals(source: string) {
   showPresetModal.value = false
   showRankTwoModal.value = false
   showStackModal.value = false
+  showStrictVarietyThreeModal.value = false
   showSubharmonicModal.value = false
   scale.computeScale()
   emit('done')
@@ -143,6 +148,7 @@ defineExpose({ blur })
       <a href="#" @click="showLatticeModal = true"><li>Parallelotope / Lattice</li></a>
       <a href="#" @click="showGeneratorSequenceModal = true"><li>Generator sequence</li></a>
       <a href="#" @click="showConcordanceShellModal = true"><li>Concordance shell</li></a>
+      <a href="#" @click="showStrictVarietyThreeModal = true"><li>Strict Variety 3</li></a>
       <li class="divider"></li>
       <a href="#" @click="scalaFile!.click()"><li>Import .scl</li></a>
       <a href="#" @click="anamarkFile!.click()"><li>Import .tun</li></a>
@@ -272,6 +278,13 @@ defineExpose({ blur })
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
       @cancel="showStackModal = false"
+    />
+    <StrictVarietyThreeModal
+      v-if="showStrictVarietyThreeModal"
+      :show="showStrictVarietyThreeModal"
+      @update:scaleName="scale.name = $event"
+      @update:source="updateSourceAndHideModals"
+      @cancel="showStrictVarietyThreeModal = false"
     />
     <SubharmonicSeriesModal
       v-if="showSubharmonicModal"
