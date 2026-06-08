@@ -39,6 +39,11 @@ export const useModalStore = defineStore('modal', () => {
   const strictVarietyThreeSizeOfLargeStep = ref(3)
   const strictVarietyThreeSizeOfMediumStep = ref(2)
   const strictVarietyThreeSizeOfSmallStep = ref(1)
+  const strictVarietyThreeJustIntonationEquave = ref('2')
+  const strictVarietyThreeJustIntonationSteps = ref('')
+  const strictVarietyThreeJustIntonationInvert = ref(false)
+  const strictVarietyThreeJustIntonationMode = ref('')
+  const strictVarietyThreeJustIntonationStepSizesIndex = ref(0)
 
   // CPS
   const factorsString = ref('')
@@ -521,6 +526,11 @@ export const useModalStore = defineStore('modal', () => {
     strictVarietyThreeSizeOfLargeStep,
     strictVarietyThreeSizeOfMediumStep,
     strictVarietyThreeSizeOfSmallStep,
+    strictVarietyThreeJustIntonationEquave,
+    strictVarietyThreeJustIntonationSteps,
+    strictVarietyThreeJustIntonationInvert,
+    strictVarietyThreeJustIntonationMode,
+    strictVarietyThreeJustIntonationStepSizesIndex,
 
     // CPS
     factorsString,
