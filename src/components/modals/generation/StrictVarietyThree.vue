@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Fraction, lcm } from 'xen-dev-utils/fraction'
-import { computed, ref, watchEffect } from 'vue'
+import { computed, watchEffect } from 'vue'
 import strictVarietyThreeHierarchy from '@/assets/strict-variety-3-hierarchy.json'
 import strictVarietyThreeJustIntonation from '@/assets/strict-variety-3-ji.json'
 import Modal from '@/components/ModalDialog.vue'
@@ -57,7 +57,6 @@ defineProps<{
 }>()
 
 const modal = useModalStore()
-const activeTab = ref<'equalTemperament' | 'justIntonation'>('equalTemperament')
 
 const sizeKeys = computed(() => Object.keys(hierarchy).sort(compareSizeKeys))
 const selectedSizeEntry = computed(() => hierarchy[modal.strictVarietyThreeSize])
@@ -269,7 +268,7 @@ watchEffect(() => {
 })
 
 function generate(expand = true) {
-  if (activeTab.value === 'justIntonation') {
+  if (modal.strictVarietyThreeType === 'justIntonation') {
     generateJustIntonation(expand)
     return
   }
@@ -313,7 +312,12 @@ function toJustIntonationScaleOption(steps: string): ScaleOption {
 }
 
 function compareScaleOptions(a: ScaleOption, b: ScaleOption) {
-  return compareCounts(a.counts, b.counts) || a.steps.localeCompare(b.steps)
+  return (
+    a.steps.length - b.steps.length ||
+    a.counts.L - b.counts.L ||
+    a.counts.M - b.counts.M ||
+    a.steps.localeCompare(b.steps)
+  )
 }
 
 function compareCounts(a: StepCounts, b: StepCounts) {
@@ -461,13 +465,13 @@ function conditionWeight(counts: StepCounts) {
     <template #body>
       <div class="control-group">
         <div class="control radio-group">
-          <label>Tab</label>
+          <label>Type</label>
           <span>
             <input
               id="strict-variety-3-tab-equal-temperament"
               type="radio"
               value="equalTemperament"
-              v-model="activeTab"
+              v-model="modal.strictVarietyThreeType"
             />
             <label for="strict-variety-3-tab-equal-temperament">Equal temperament</label>
           </span>
@@ -476,14 +480,14 @@ function conditionWeight(counts: StepCounts) {
               id="strict-variety-3-tab-just-intonation"
               type="radio"
               value="justIntonation"
-              v-model="activeTab"
+              v-model="modal.strictVarietyThreeType"
             />
             <label for="strict-variety-3-tab-just-intonation">Just intonation</label>
           </span>
         </div>
       </div>
 
-      <template v-if="activeTab === 'equalTemperament'">
+      <template v-if="modal.strictVarietyThreeType === 'equalTemperament'">
         <div class="control-group">
           <div class="control radio-group">
             <label>Scale size</label>
@@ -682,10 +686,9 @@ function conditionWeight(counts: StepCounts) {
         <button @click="() => generate(true)">OK</button>
         <button @click="$emit('cancel')">Cancel</button>
         <button @click="() => generate(false)">Raw</button>
-        <i v-if="activeTab === 'equalTemperament'">
+        <i v-if="modal.strictVarietyThreeType === 'equalTemperament'">
           {{ hostEd }}{{ nameOfEd(modal.equave, modal.equaveString) }}
         </i>
-        <i v-else>Equave {{ modal.strictVarietyThreeJustIntonationEquave }}</i>
       </div>
     </template>
   </Modal>

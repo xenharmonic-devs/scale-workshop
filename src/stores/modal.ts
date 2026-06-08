@@ -30,6 +30,7 @@ export const useModalStore = defineStore('modal', () => {
   const equave = ref(OCTAVE)
 
   // Strict Variety 3
+  const strictVarietyThreeType = ref<'equalTemperament' | 'justIntonation'>('equalTemperament')
   const strictVarietyThreeSize = ref('5')
   const strictVarietyThreePattern = ref('')
   const strictVarietyThreeRun = ref('')
@@ -517,6 +518,7 @@ export const useModalStore = defineStore('modal', () => {
     equave,
 
     // Strict Variety 3
+    strictVarietyThreeType,
     strictVarietyThreeSize,
     strictVarietyThreePattern,
     strictVarietyThreeRun,
