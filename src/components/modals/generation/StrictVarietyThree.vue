@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { Fraction, lcm } from 'xen-dev-utils/fraction'
-import { computed, watchEffect } from 'vue'
+import { computed, defineAsyncComponent, useTemplateRef, watchEffect } from 'vue'
 import strictVarietyThreeHierarchy from '@/assets/strict-variety-3-hierarchy.json'
-import strictVarietyThreeJustIntonation from '@/assets/strict-variety-3-ji.json'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { OCTAVE } from '@/constants'
@@ -29,13 +28,6 @@ type ScaleOption = StrictVarietyThreeScale & {
   counts: StepCounts
 }
 
-type JustIntonationStepSizes = Record<StepSymbol, string>
-
-type JustIntonationStepSizeOption = JustIntonationStepSizes & {
-  index: number
-  label: string
-}
-
 type ParsedCondition = {
   negated: boolean
   lhs: string
@@ -45,11 +37,14 @@ type ParsedCondition = {
 }
 
 const hierarchy = strictVarietyThreeHierarchy as Record<string, StrictVarietyThreeEntry>
-const justIntonationHierarchy = strictVarietyThreeJustIntonation as Record<
-  string,
-  Record<string, JustIntonationStepSizes[]>
->
 
+type StrictVarietyThreeJustIntonationComponent = {
+  generate: (expand?: boolean) => void
+}
+
+const StrictVarietyThreeJustIntonation = defineAsyncComponent(
+  () => import('@/components/modals/generation/StrictVarietyThreeJustIntonation.vue')
+)
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
 defineProps<{
@@ -57,6 +52,8 @@ defineProps<{
 }>()
 
 const modal = useModalStore()
+const justIntonationTab =
+  useTemplateRef<StrictVarietyThreeJustIntonationComponent>('justIntonationTab')
 
 const sizeKeys = computed(() => Object.keys(hierarchy).sort(compareSizeKeys))
 const selectedSizeEntry = computed(() => hierarchy[modal.strictVarietyThreeSize])
@@ -157,50 +154,6 @@ const intervalSizes = computed(() => {
   }
 })
 
-const justIntonationEquaveKeys = computed(() => Object.keys(justIntonationHierarchy))
-const selectedJustIntonationEquaveEntry = computed(
-  () => justIntonationHierarchy[modal.strictVarietyThreeJustIntonationEquave]
-)
-const justIntonationStepOptions = computed<ScaleOption[]>(() =>
-  Object.keys(selectedJustIntonationEquaveEntry.value ?? {})
-    .map((steps) => toJustIntonationScaleOption(steps))
-    .sort(compareScaleOptions)
-)
-const justIntonationSelectedScale = computed<ScaleOption | undefined>(() =>
-  justIntonationStepOptions.value.find(
-    (option) => option.steps === modal.strictVarietyThreeJustIntonationSteps
-  )
-)
-const justIntonationIsChiral = computed(() =>
-  Boolean(
-    justIntonationSelectedScale.value && isChiralWord(justIntonationSelectedScale.value.steps)
-  )
-)
-const justIntonationOrientedWord = computed(() => {
-  const steps = justIntonationSelectedScale.value?.steps ?? ''
-  return modal.strictVarietyThreeJustIntonationInvert && justIntonationIsChiral.value
-    ? [...steps].reverse().join('')
-    : steps
-})
-const justIntonationModes = computed(() =>
-  uniqueRotations(justIntonationOrientedWord.value).sort(compareModesByBrightness)
-)
-const selectedJustIntonationMode = computed(
-  () => modal.strictVarietyThreeJustIntonationMode || justIntonationModes.value[0] || ''
-)
-const justIntonationStepSizeOptions = computed<JustIntonationStepSizeOption[]>(() =>
-  (
-    selectedJustIntonationEquaveEntry.value?.[modal.strictVarietyThreeJustIntonationSteps] ?? []
-  ).map((stepSizes, index) => ({
-    ...stepSizes,
-    index,
-    label: `L=${stepSizes.L}, M=${stepSizes.M}, s=${stepSizes.s}`
-  }))
-)
-const selectedJustIntonationStepSizes = computed<JustIntonationStepSizeOption | undefined>(
-  () => justIntonationStepSizeOptions.value[modal.strictVarietyThreeJustIntonationStepSizesIndex]
-)
-
 const stepOrderingWarning = computed(() =>
   sizeOfMediumStep.value.compare(sizeOfLargeStep.value) >= 0 ||
   sizeOfMediumStep.value.compare(sizeOfSmallStep.value) <= 0
@@ -245,50 +198,14 @@ watchEffect(() => {
   }
 })
 
-watchEffect(() => {
-  if (!justIntonationEquaveKeys.value.includes(modal.strictVarietyThreeJustIntonationEquave)) {
-    modal.strictVarietyThreeJustIntonationEquave = justIntonationEquaveKeys.value[0] ?? ''
-  }
-  if (
-    !justIntonationStepOptions.value.some(
-      (option) => option.steps === modal.strictVarietyThreeJustIntonationSteps
-    )
-  ) {
-    modal.strictVarietyThreeJustIntonationSteps = justIntonationStepOptions.value[0]?.steps ?? ''
-  }
-  if (!justIntonationIsChiral.value) {
-    modal.strictVarietyThreeJustIntonationInvert = false
-  }
-  if (!justIntonationModes.value.includes(modal.strictVarietyThreeJustIntonationMode)) {
-    modal.strictVarietyThreeJustIntonationMode = justIntonationModes.value[0] ?? ''
-  }
-  if (!justIntonationStepSizeOptions.value[modal.strictVarietyThreeJustIntonationStepSizesIndex]) {
-    modal.strictVarietyThreeJustIntonationStepSizesIndex = 0
-  }
-})
-
 function generate(expand = true) {
   if (modal.strictVarietyThreeType === 'justIntonation') {
-    generateJustIntonation(expand)
+    justIntonationTab.value?.generate(expand)
     return
   }
   const intervals = intervalSizes.value
   const source = `realizeWord('${selectedMode.value}', #{L: ${intervals.L}, M: ${intervals.M}, s: ${intervals.s}})`
   emit('update:scaleName', `SV3: ${formatCounts(selectedCounts.value)}`)
-  emit('update:source', expand ? expandCode(source) : source)
-}
-
-function generateJustIntonation(expand = true) {
-  const intervals = selectedJustIntonationStepSizes.value
-  if (!intervals) {
-    return
-  }
-  const source = `realizeWord('${selectedJustIntonationMode.value}', #{L: ${intervals.L}, M: ${intervals.M}, s: ${intervals.s}})`
-  const counts = countSteps(modal.strictVarietyThreeJustIntonationSteps)
-  emit(
-    'update:scaleName',
-    `SV3 JI ${modal.strictVarietyThreeJustIntonationEquave}: ${formatCounts(counts)}`
-  )
   emit('update:source', expand ? expandCode(source) : source)
 }
 
@@ -298,16 +215,6 @@ function toOption(entry: StrictVarietyThreeScale): ScaleOption {
     ...entry,
     counts,
     label: selectedSizeEntryIsArray.value ? `${formatCounts(counts)}: ${entry.steps}` : entry.steps
-  }
-}
-
-function toJustIntonationScaleOption(steps: string): ScaleOption {
-  const counts = countSteps(steps)
-  return {
-    steps,
-    chiral: isChiralWord(steps),
-    counts,
-    label: `${formatCounts(counts)}: ${steps}`
   }
 }
 
@@ -373,11 +280,6 @@ function uniqueRotations(steps: string) {
     }
   }
   return result
-}
-
-function isChiralWord(steps: string) {
-  const reversed = [...steps].reverse().join('')
-  return !uniqueRotations(steps).includes(reversed)
 }
 
 function compareModesByBrightness(a: string, b: string) {
@@ -603,83 +505,12 @@ function conditionWeight(counts: StepCounts) {
         <p v-if="stepOrderingWarning" class="warning">{{ stepOrderingWarning }}</p>
       </template>
 
-      <template v-else>
-        <div class="control-group">
-          <div class="control radio-group">
-            <label>Equave</label>
-            <span v-for="equaveKey of justIntonationEquaveKeys" :key="equaveKey">
-              <input
-                :id="`strict-variety-3-ji-equave-${equaveKey}`"
-                type="radio"
-                :value="equaveKey"
-                v-model="modal.strictVarietyThreeJustIntonationEquave"
-              />
-              <label :for="`strict-variety-3-ji-equave-${equaveKey}`">{{ equaveKey }}</label>
-            </span>
-          </div>
-        </div>
-
-        <div class="control-group">
-          <div class="control">
-            <label for="strict-variety-3-ji-steps">Steps</label>
-            <select
-              id="strict-variety-3-ji-steps"
-              v-model="modal.strictVarietyThreeJustIntonationSteps"
-            >
-              <option
-                v-for="option of justIntonationStepOptions"
-                :key="option.steps"
-                :value="option.steps"
-              >
-                {{ option.label }}
-              </option>
-            </select>
-          </div>
-        </div>
-
-        <div class="control-group">
-          <div class="control checkbox-container">
-            <input
-              id="strict-variety-3-ji-invert"
-              type="checkbox"
-              v-model="modal.strictVarietyThreeJustIntonationInvert"
-              :disabled="!justIntonationIsChiral"
-            />
-            <label for="strict-variety-3-ji-invert" :class="{ disabled: !justIntonationIsChiral }">
-              Invert chiral scale
-            </label>
-          </div>
-          <div class="control">
-            <label for="strict-variety-3-ji-mode">Mode</label>
-            <select
-              id="strict-variety-3-ji-mode"
-              v-model="modal.strictVarietyThreeJustIntonationMode"
-            >
-              <option v-for="(mode, index) of justIntonationModes" :key="mode" :value="mode">
-                {{ index + 1 }}: {{ mode }}
-              </option>
-            </select>
-          </div>
-        </div>
-
-        <div class="control-group">
-          <div class="control">
-            <label for="strict-variety-3-ji-step-sizes">Step sizes</label>
-            <select
-              id="strict-variety-3-ji-step-sizes"
-              v-model.number="modal.strictVarietyThreeJustIntonationStepSizesIndex"
-            >
-              <option
-                v-for="option of justIntonationStepSizeOptions"
-                :key="option.index"
-                :value="option.index"
-              >
-                {{ option.label }}
-              </option>
-            </select>
-          </div>
-        </div>
-      </template>
+      <StrictVarietyThreeJustIntonation
+        v-else
+        ref="justIntonationTab"
+        @update:source="$emit('update:source', $event)"
+        @update:scaleName="$emit('update:scaleName', $event)"
+      />
     </template>
     <template #footer>
       <div class="btn-group">
