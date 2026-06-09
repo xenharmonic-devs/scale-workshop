@@ -16,6 +16,7 @@ import {
 } from '@/components/modals/generation/sv3-common'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
+import StrictVarietyThreeJustIntonationLoading from '@/components/modals/generation/StrictVarietyThreeJustIntonationLoading.vue'
 import { OCTAVE } from '@/constants'
 import { useModalStore } from '@/stores/modal'
 import { expandCode, nameOfEd } from '@/utils'
@@ -34,9 +35,11 @@ type StrictVarietyThreeJustIntonationComponent = {
   generate: (expand?: boolean) => void
 }
 
-const StrictVarietyThreeJustIntonation = defineAsyncComponent(
-  () => import('@/components/modals/generation/StrictVarietyThreeJustIntonation.vue')
-)
+const StrictVarietyThreeJustIntonation = defineAsyncComponent({
+  loader: () => import('@/components/modals/generation/StrictVarietyThreeJustIntonation.vue'),
+  loadingComponent: StrictVarietyThreeJustIntonationLoading,
+  delay: 0
+})
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
 defineProps<{
