@@ -29,7 +29,7 @@ const emit = defineEmits(['update:source', 'update:scaleName'])
 
 const modal = useModalStore()
 
-const equaveKeys = computed(() => Object.keys(justIntonationHierarchy))
+const equaveKeys = computed(() => Object.keys(justIntonationHierarchy).sort(compareEquaves))
 const equaveKeySet = computed(() => new Set(equaveKeys.value))
 const selectedEquaveEntry = computed(
   () => justIntonationHierarchy[modal.strictVarietyThreeJustIntonationEquave]
@@ -69,6 +69,20 @@ const stepSizeOptions = computed<JustIntonationStepSizeOption[]>(() =>
 const selectedStepSizes = computed<JustIntonationStepSizeOption | undefined>(
   () => stepSizeOptions.value[modal.strictVarietyThreeJustIntonationStepSizesIndex]
 )
+function compareEquaves(a: string, b: string) {
+  if (a.includes('/')) {
+    if (b.includes('/')) {
+      const [an, ad] = a.split('/').map((x) => parseInt(x, 10))
+      const [bn, bd] = b.split('/').map((x) => parseInt(x, 10))
+      return ad - bd || an - bn
+    }
+    return 1
+  }
+  if (b.includes('/')) {
+    return -1
+  }
+  return parseInt(a, 10) - parseInt(b, 10)
+}
 
 watchEffect(() => {
   if (!equaveKeySet.value.has(modal.strictVarietyThreeJustIntonationEquave)) {
