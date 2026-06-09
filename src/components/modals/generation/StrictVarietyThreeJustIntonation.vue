@@ -1,21 +1,20 @@
 <script setup lang="ts">
 import { computed, watchEffect } from 'vue'
 import strictVarietyThreeJustIntonation from '@/assets/strict-variety-3-ji.json'
+import {
+  compareModesByBrightness,
+  compareScaleOptions,
+  countSteps,
+  formatCounts,
+  isChiralWord,
+  type ScaleOption,
+  type StepSymbol,
+  uniqueRotations
+} from '@/components/generation/sv3-common'
 import { useModalStore } from '@/stores/modal'
 import { expandCode } from '@/utils'
 
-type StepSymbol = 'L' | 'M' | 's'
-
-type StepCounts = Record<StepSymbol, number>
-
 type JustIntonationStepSizes = Record<StepSymbol, string>
-
-type ScaleOption = {
-  steps: string
-  chiral: boolean
-  label: string
-  counts: StepCounts
-}
 
 type JustIntonationStepSizeOption = JustIntonationStepSizes & {
   index: number
@@ -32,6 +31,7 @@ const emit = defineEmits(['update:source', 'update:scaleName'])
 const modal = useModalStore()
 
 const equaveKeys = computed(() => Object.keys(justIntonationHierarchy))
+const equaveKeySet = computed(() => new Set(equaveKeys.value))
 const selectedEquaveEntry = computed(
   () => justIntonationHierarchy[modal.strictVarietyThreeJustIntonationEquave]
 )
@@ -40,6 +40,7 @@ const stepOptions = computed<ScaleOption[]>(() =>
     .map((steps) => toScaleOption(steps))
     .sort(compareScaleOptions)
 )
+const stepOptionSet = computed(() => new Set(stepOptions.value.map((option) => option.steps)))
 const selectedScale = computed<ScaleOption | undefined>(() =>
   stepOptions.value.find((option) => option.steps === modal.strictVarietyThreeJustIntonationSteps)
 )
@@ -53,6 +54,7 @@ const orientedWord = computed(() => {
     : steps
 })
 const modes = computed(() => uniqueRotations(orientedWord.value).sort(compareModesByBrightness))
+const modeSet = computed(() => new Set(modes.value))
 const selectedMode = computed(
   () => modal.strictVarietyThreeJustIntonationMode || modes.value[0] || ''
 )
@@ -70,20 +72,16 @@ const selectedStepSizes = computed<JustIntonationStepSizeOption | undefined>(
 )
 
 watchEffect(() => {
-  if (!equaveKeys.value.includes(modal.strictVarietyThreeJustIntonationEquave)) {
+  if (!equaveKeySet.value.has(modal.strictVarietyThreeJustIntonationEquave)) {
     modal.strictVarietyThreeJustIntonationEquave = equaveKeys.value[0] ?? ''
   }
-  if (
-    !stepOptions.value.some(
-      (option) => option.steps === modal.strictVarietyThreeJustIntonationSteps
-    )
-  ) {
+  if (!stepOptionSet.value.has(modal.strictVarietyThreeJustIntonationSteps)) {
     modal.strictVarietyThreeJustIntonationSteps = stepOptions.value[0]?.steps ?? ''
   }
   if (!isChiral.value) {
     modal.strictVarietyThreeJustIntonationInvert = false
   }
-  if (!modes.value.includes(modal.strictVarietyThreeJustIntonationMode)) {
+  if (!modeSet.value.has(modal.strictVarietyThreeJustIntonationMode)) {
     modal.strictVarietyThreeJustIntonationMode = modes.value[0] ?? ''
   }
   if (!stepSizeOptions.value[modal.strictVarietyThreeJustIntonationStepSizesIndex]) {
@@ -113,69 +111,6 @@ function toScaleOption(steps: string): ScaleOption {
     counts,
     label: `${formatCounts(counts)}: ${steps}`
   }
-}
-
-function compareScaleOptions(a: ScaleOption, b: ScaleOption) {
-  return (
-    a.steps.length - b.steps.length ||
-    a.counts.L - b.counts.L ||
-    a.counts.M - b.counts.M ||
-    a.steps.localeCompare(b.steps)
-  )
-}
-
-function countSteps(steps: string): StepCounts {
-  return {
-    L: countStep(steps, 'L'),
-    M: countStep(steps, 'M'),
-    s: countStep(steps, 's')
-  }
-}
-
-function countStep(steps: string, step: StepSymbol) {
-  return [...steps].filter((char) => char === step).length
-}
-
-function formatCounts(counts: StepCounts) {
-  return `${counts.L}L ${counts.M}M ${counts.s}s`
-}
-
-function uniqueRotations(steps: string) {
-  const result: string[] = []
-  for (let i = 0; i < steps.length; ++i) {
-    const rotation = steps.slice(i) + steps.slice(0, i)
-    if (!result.includes(rotation)) {
-      result.push(rotation)
-    }
-  }
-  return result
-}
-
-function isChiralWord(steps: string) {
-  const reversed = [...steps].reverse().join('')
-  return !uniqueRotations(steps).includes(reversed)
-}
-
-function compareModesByBrightness(a: string, b: string) {
-  const aValues = [...a].map(brightnessValue)
-  const bValues = [...b].map(brightnessValue)
-  for (let i = 0; i < Math.min(aValues.length, bValues.length); ++i) {
-    const difference = bValues[i] - aValues[i]
-    if (difference) {
-      return difference
-    }
-  }
-  return 0
-}
-
-function brightnessValue(step: string) {
-  if (step === 'L') {
-    return 3
-  }
-  if (step === 'M') {
-    return 2
-  }
-  return 1
 }
 
 defineExpose({ generate })

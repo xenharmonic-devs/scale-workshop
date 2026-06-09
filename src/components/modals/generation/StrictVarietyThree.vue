@@ -2,31 +2,24 @@
 import { Fraction, lcm } from 'xen-dev-utils/fraction'
 import { computed, defineAsyncComponent, useTemplateRef, watchEffect } from 'vue'
 import strictVarietyThreeHierarchy from '@/assets/strict-variety-3-hierarchy.json'
+import {
+  compareCounts,
+  compareModesByBrightness,
+  compareScaleOptions,
+  countSteps,
+  formatCounts,
+  type ScaleOption,
+  type StepCounts,
+  type StrictVarietyThreeBranch,
+  type StrictVarietyThreeEntry,
+  type StrictVarietyThreeScale,
+  uniqueRotations
+} from '@/components/generation/sv3-common'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { OCTAVE } from '@/constants'
 import { useModalStore } from '@/stores/modal'
 import { expandCode, nameOfEd } from '@/utils'
-
-type StrictVarietyThreeScale = {
-  steps: string
-  chiral: boolean
-  condition?: string
-}
-
-type StrictVarietyThreeBranch =
-  | StrictVarietyThreeScale[]
-  | Record<string, StrictVarietyThreeScale[]>
-type StrictVarietyThreeEntry = StrictVarietyThreeScale[] | Record<string, StrictVarietyThreeBranch>
-
-type StepSymbol = 'L' | 'M' | 's'
-
-type StepCounts = Record<StepSymbol, number>
-
-type ScaleOption = StrictVarietyThreeScale & {
-  label: string
-  counts: StepCounts
-}
 
 type ParsedCondition = {
   negated: boolean
@@ -56,6 +49,7 @@ const justIntonationTab =
   useTemplateRef<StrictVarietyThreeJustIntonationComponent>('justIntonationTab')
 
 const sizeKeys = computed(() => Object.keys(hierarchy).sort(compareSizeKeys))
+const sizeKeySet = computed(() => new Set(sizeKeys.value))
 const selectedSizeEntry = computed(() => hierarchy[modal.strictVarietyThreeSize])
 const selectedSizeEntryIsArray = computed(() => Array.isArray(selectedSizeEntry.value))
 const patternKeys = computed(() => {
@@ -65,6 +59,7 @@ const patternKeys = computed(() => {
   }
   return Object.keys(entry).sort(comparePatternKeys)
 })
+const patternKeySet = computed(() => new Set(patternKeys.value))
 const selectedPatternEntry = computed<StrictVarietyThreeBranch | undefined>(() => {
   const entry = selectedSizeEntry.value
   if (!entry || Array.isArray(entry)) {
@@ -80,6 +75,7 @@ const runKeys = computed(() => {
   }
   return Object.keys(patternEntry).sort(compareRunKeys)
 })
+const runKeySet = computed(() => new Set(runKeys.value))
 const selectedScales = computed<StrictVarietyThreeScale[]>(() => {
   const entry = selectedSizeEntry.value
   if (!entry) {
@@ -100,6 +96,7 @@ const selectedScales = computed<StrictVarietyThreeScale[]>(() => {
 const scaleOptions = computed<ScaleOption[]>(() =>
   selectedScales.value.map(toOption).sort(compareScaleOptions)
 )
+const scaleOptionStepSet = computed(() => new Set(scaleOptions.value.map((option) => option.steps)))
 const selectedScale = computed<StrictVarietyThreeScale | undefined>(() =>
   scaleOptions.value.find((option) => option.steps === modal.strictVarietyThreeSteps)
 )
@@ -114,6 +111,7 @@ const orientedWord = computed(() => {
   return modal.strictVarietyThreeInvert && isChiral.value ? [...steps].reverse().join('') : steps
 })
 const modes = computed(() => uniqueRotations(orientedWord.value).sort(compareModesByBrightness))
+const modeSet = computed(() => new Set(modes.value))
 const selectedMode = computed(() => modal.strictVarietyThreeMode || modes.value[0] || '')
 const selectedCounts = computed(() => countSteps(selectedScale.value?.steps ?? ''))
 
@@ -178,22 +176,22 @@ const conditionWarning = computed(() => {
 })
 
 watchEffect(() => {
-  if (!sizeKeys.value.includes(modal.strictVarietyThreeSize)) {
+  if (!sizeKeySet.value.has(modal.strictVarietyThreeSize)) {
     modal.strictVarietyThreeSize = sizeKeys.value[0] ?? ''
   }
-  if (patternKeys.value.length && !patternKeys.value.includes(modal.strictVarietyThreePattern)) {
+  if (patternKeys.value.length && !patternKeySet.value.has(modal.strictVarietyThreePattern)) {
     modal.strictVarietyThreePattern = patternKeys.value[0]
   }
-  if (runKeys.value.length && !runKeys.value.includes(modal.strictVarietyThreeRun)) {
+  if (runKeys.value.length && !runKeySet.value.has(modal.strictVarietyThreeRun)) {
     modal.strictVarietyThreeRun = runKeys.value[0]
   }
-  if (!scaleOptions.value.some((option) => option.steps === modal.strictVarietyThreeSteps)) {
+  if (!scaleOptionStepSet.value.has(modal.strictVarietyThreeSteps)) {
     modal.strictVarietyThreeSteps = scaleOptions.value[0]?.steps ?? ''
   }
   if (!isChiral.value) {
     modal.strictVarietyThreeInvert = false
   }
-  if (!modes.value.includes(modal.strictVarietyThreeMode)) {
+  if (!modeSet.value.has(modal.strictVarietyThreeMode)) {
     modal.strictVarietyThreeMode = modes.value[0] ?? ''
   }
 })
@@ -218,19 +216,6 @@ function toOption(entry: StrictVarietyThreeScale): ScaleOption {
   }
 }
 
-function compareScaleOptions(a: ScaleOption, b: ScaleOption) {
-  return (
-    a.steps.length - b.steps.length ||
-    a.counts.L - b.counts.L ||
-    a.counts.M - b.counts.M ||
-    a.steps.localeCompare(b.steps)
-  )
-}
-
-function compareCounts(a: StepCounts, b: StepCounts) {
-  return a.L - b.L || a.M - b.M || a.s - b.s
-}
-
 function compareSizeKeys(a: string, b: string) {
   return firstNumber(a) - firstNumber(b) || a.localeCompare(b, undefined, { numeric: true })
 }
@@ -253,55 +238,6 @@ function parsePatternCountsLabel(label: string): StepCounts {
     M: parseInt(label.match(/(\d+)M/)?.[1] ?? '0', 10),
     s: parseInt(label.match(/(\d+)s/)?.[1] ?? '0', 10)
   }
-}
-
-function countSteps(steps: string): StepCounts {
-  return {
-    L: countStep(steps, 'L'),
-    M: countStep(steps, 'M'),
-    s: countStep(steps, 's')
-  }
-}
-
-function countStep(steps: string, step: StepSymbol) {
-  return [...steps].filter((char) => char === step).length
-}
-
-function formatCounts(counts: StepCounts) {
-  return `${counts.L}L ${counts.M}M ${counts.s}s`
-}
-
-function uniqueRotations(steps: string) {
-  const result: string[] = []
-  for (let i = 0; i < steps.length; ++i) {
-    const rotation = steps.slice(i) + steps.slice(0, i)
-    if (!result.includes(rotation)) {
-      result.push(rotation)
-    }
-  }
-  return result
-}
-
-function compareModesByBrightness(a: string, b: string) {
-  const aValues = [...a].map(brightnessValue)
-  const bValues = [...b].map(brightnessValue)
-  for (let i = 0; i < Math.min(aValues.length, bValues.length); ++i) {
-    const difference = bValues[i] - aValues[i]
-    if (difference) {
-      return difference
-    }
-  }
-  return 0
-}
-
-function brightnessValue(step: string) {
-  if (step === 'L') {
-    return 3
-  }
-  if (step === 'M') {
-    return 2
-  }
-  return 1
 }
 
 function positiveInteger(value: number, fallback: number) {
