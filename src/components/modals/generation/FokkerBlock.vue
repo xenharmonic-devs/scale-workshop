@@ -20,7 +20,7 @@ interface ProductStep {
   denominator: number
 }
 
-const STEP_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+const STEP_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
 
 const modal = useModalStore()
 

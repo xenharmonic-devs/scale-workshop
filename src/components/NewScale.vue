@@ -148,13 +148,13 @@ defineExpose({ blur })
       <a href="#" @click="showStackModal = true"><li>Stack steps</li></a>
       <a href="#" @click="showCpsModal = true"><li>Combination product set</li></a>
       <a href="#" @click="showMosModal = true"><li>Moment of symmetry scale</li></a>
-      <a href="#" @click="showFokkerBlockModal = true"><li>Fokker block</li></a>
       <a href="#" @click="showHistoricalModal = true"><li>Historical temperament</li></a>
       <a href="#" @click="showEulerGenusModal = true"><li>Euler-Fokker genus</li></a>
       <a href="#" @click="showLatticeModal = true"><li>Parallelotope / Lattice</li></a>
       <a href="#" @click="showGeneratorSequenceModal = true"><li>Generator sequence</li></a>
       <a href="#" @click="showConcordanceShellModal = true"><li>Concordance shell</li></a>
       <a href="#" @click="showStrictVarietyThreeModal = true"><li>Strict Variety 3</li></a>
+      <a href="#" @click="showFokkerBlockModal = true"><li>Fokker block</li></a>
       <li class="divider"></li>
       <a href="#" @click="scalaFile!.click()"><li>Import .scl</li></a>
       <a href="#" @click="anamarkFile!.click()"><li>Import .tun</li></a>
