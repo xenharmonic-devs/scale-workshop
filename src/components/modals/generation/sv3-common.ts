@@ -46,25 +46,14 @@ export function formatCounts(counts: StepCounts) {
   return `${counts.L}L ${counts.M}M ${counts.s}s`
 }
 
-export function uniqueRotations(steps: string) {
-  return [...rotationSet(steps)]
+export function uniqueModes(steps: string) {
+  // ASCII order ~ brightness
+  return [...rotationSet(steps)].sort()
 }
 
 export function isChiralWord(steps: string) {
   const reversed = [...steps].reverse().join('')
   return !rotationSet(steps).has(reversed)
-}
-
-export function compareModesByBrightness(a: string, b: string) {
-  const aValues = [...a].map(brightnessValue)
-  const bValues = [...b].map(brightnessValue)
-  for (let i = 0; i < Math.min(aValues.length, bValues.length); ++i) {
-    const difference = bValues[i] - aValues[i]
-    if (difference) {
-      return difference
-    }
-  }
-  return 0
 }
 
 function countStep(steps: string, step: StepSymbol) {
@@ -77,14 +66,4 @@ function rotationSet(steps: string) {
     result.add(steps.slice(i) + steps.slice(0, i))
   }
   return result
-}
-
-function brightnessValue(step: string) {
-  if (step === 'L') {
-    return 3
-  }
-  if (step === 'M') {
-    return 2
-  }
-  return 1
 }

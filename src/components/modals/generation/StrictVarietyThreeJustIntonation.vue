@@ -2,15 +2,14 @@
 import { computed, watchEffect } from 'vue'
 import strictVarietyThreeJustIntonation from '@/assets/strict-variety-3-ji.json'
 import {
-  compareModesByBrightness,
   compareScaleOptions,
   countSteps,
   formatCounts,
   isChiralWord,
   type ScaleOption,
   type StepSymbol,
-  uniqueRotations
-} from '@/components/generation/sv3-common'
+  uniqueModes
+} from '@/components/modals/generation/sv3-common'
 import { useModalStore } from '@/stores/modal'
 import { expandCode } from '@/utils'
 
@@ -53,7 +52,7 @@ const orientedWord = computed(() => {
     ? [...steps].reverse().join('')
     : steps
 })
-const modes = computed(() => uniqueRotations(orientedWord.value).sort(compareModesByBrightness))
+const modes = computed(() => uniqueModes(orientedWord.value))
 const modeSet = computed(() => new Set(modes.value))
 const selectedMode = computed(
   () => modal.strictVarietyThreeJustIntonationMode || modes.value[0] || ''

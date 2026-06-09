@@ -4,7 +4,6 @@ import { computed, defineAsyncComponent, useTemplateRef, watchEffect } from 'vue
 import strictVarietyThreeHierarchy from '@/assets/strict-variety-3-hierarchy.json'
 import {
   compareCounts,
-  compareModesByBrightness,
   compareScaleOptions,
   countSteps,
   formatCounts,
@@ -13,8 +12,8 @@ import {
   type StrictVarietyThreeBranch,
   type StrictVarietyThreeEntry,
   type StrictVarietyThreeScale,
-  uniqueRotations
-} from '@/components/generation/sv3-common'
+  uniqueModes
+} from '@/components/modals/generation/sv3-common'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { OCTAVE } from '@/constants'
@@ -110,7 +109,7 @@ const orientedWord = computed(() => {
   const steps = selectedScale.value?.steps ?? ''
   return modal.strictVarietyThreeInvert && isChiral.value ? [...steps].reverse().join('') : steps
 })
-const modes = computed(() => uniqueRotations(orientedWord.value).sort(compareModesByBrightness))
+const modes = computed(() => uniqueModes(orientedWord.value))
 const modeSet = computed(() => new Set(modes.value))
 const selectedMode = computed(() => modal.strictVarietyThreeMode || modes.value[0] || '')
 const selectedCounts = computed(() => countSteps(selectedScale.value?.steps ?? ''))
