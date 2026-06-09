@@ -14,16 +14,25 @@ import { useModalStore } from '@/stores/modal'
 import { expandCode } from '@/utils'
 
 type JustIntonationStepSizes = Record<StepSymbol, string>
+type JustIntonationHierarchy = Record<string, Record<string, JustIntonationStepSizes[]>>
+type JustIntonationCache = Record<string, JustIntonationStepSizes[]>
+type CachedJustIntonationStepSizes = { _cache: string }
+type EncodedJustIntonationEntry = Record<
+  string,
+  JustIntonationStepSizes[] | CachedJustIntonationStepSizes
+>
+type EncodedJustIntonationHierarchy = Record<string, EncodedJustIntonationEntry> & {
+  _cache?: JustIntonationCache
+}
 
 type JustIntonationStepSizeOption = JustIntonationStepSizes & {
   index: number
   label: string
 }
 
-const justIntonationHierarchy = strictVarietyThreeJustIntonation as Record<
-  string,
-  Record<string, JustIntonationStepSizes[]>
->
+const justIntonationHierarchy = expandCachedJustIntonationHierarchy(
+  strictVarietyThreeJustIntonation as EncodedJustIntonationHierarchy
+)
 
 const emit = defineEmits(['update:source', 'update:scaleName'])
 
@@ -69,6 +78,39 @@ const stepSizeOptions = computed<JustIntonationStepSizeOption[]>(() =>
 const selectedStepSizes = computed<JustIntonationStepSizeOption | undefined>(
   () => stepSizeOptions.value[modal.strictVarietyThreeJustIntonationStepSizesIndex]
 )
+function expandCachedJustIntonationHierarchy(
+  encodedHierarchy: EncodedJustIntonationHierarchy
+): JustIntonationHierarchy {
+  const { _cache: cache = {}, ...encodedEquaves } = encodedHierarchy
+  const hierarchy: JustIntonationHierarchy = {}
+
+  for (const [equave, encodedEntry] of Object.entries(encodedEquaves)) {
+    hierarchy[equave] = {}
+
+    for (const [steps, encodedStepSizes] of Object.entries(encodedEntry)) {
+      if (isCachedJustIntonationStepSizes(encodedStepSizes)) {
+        const cachedStepSizes = cache[encodedStepSizes._cache]
+
+        if (!cachedStepSizes) {
+          throw new Error(`Missing strict variety 3 JI cache entry ${encodedStepSizes._cache}`)
+        }
+
+        hierarchy[equave][steps] = cachedStepSizes
+      } else {
+        hierarchy[equave][steps] = encodedStepSizes
+      }
+    }
+  }
+
+  return hierarchy
+}
+
+function isCachedJustIntonationStepSizes(
+  stepSizes: JustIntonationStepSizes[] | CachedJustIntonationStepSizes
+): stepSizes is CachedJustIntonationStepSizes {
+  return '_cache' in stepSizes
+}
+
 function compareEquaves(a: string, b: string) {
   if (a.includes('/')) {
     if (b.includes('/')) {
