@@ -1,32 +1,25 @@
 <script setup lang="ts">
 import { Fraction, lcm } from 'xen-dev-utils/fraction'
-import { computed, watchEffect } from 'vue'
+import { computed, defineAsyncComponent, useTemplateRef, watchEffect } from 'vue'
 import strictVarietyThreeHierarchy from '@/assets/strict-variety-3-hierarchy.json'
+import {
+  compareCounts,
+  compareScaleOptions,
+  countSteps,
+  formatCounts,
+  type ScaleOption,
+  type StepCounts,
+  type StrictVarietyThreeBranch,
+  type StrictVarietyThreeEntry,
+  type StrictVarietyThreeScale,
+  uniqueModes
+} from '@/components/modals/generation/sv3-common'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
+import StrictVarietyThreeJustIntonationLoading from '@/components/modals/generation/StrictVarietyThreeJustIntonationLoading.vue'
 import { OCTAVE } from '@/constants'
 import { useModalStore } from '@/stores/modal'
 import { expandCode, nameOfEd } from '@/utils'
-
-type StrictVarietyThreeScale = {
-  steps: string
-  chiral: boolean
-  condition?: string
-}
-
-type StrictVarietyThreeBranch =
-  | StrictVarietyThreeScale[]
-  | Record<string, StrictVarietyThreeScale[]>
-type StrictVarietyThreeEntry = StrictVarietyThreeScale[] | Record<string, StrictVarietyThreeBranch>
-
-type ScaleOption = StrictVarietyThreeScale & {
-  label: string
-  counts: StepCounts
-}
-
-type StepSymbol = 'L' | 'M' | 's'
-
-type StepCounts = Record<StepSymbol, number>
 
 type ParsedCondition = {
   negated: boolean
@@ -38,6 +31,15 @@ type ParsedCondition = {
 
 const hierarchy = strictVarietyThreeHierarchy as Record<string, StrictVarietyThreeEntry>
 
+type StrictVarietyThreeJustIntonationComponent = {
+  generate: (expand?: boolean) => void
+}
+
+const StrictVarietyThreeJustIntonation = defineAsyncComponent({
+  loader: () => import('@/components/modals/generation/StrictVarietyThreeJustIntonation.vue'),
+  loadingComponent: StrictVarietyThreeJustIntonationLoading,
+  delay: 0
+})
 const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 
 defineProps<{
@@ -45,8 +47,11 @@ defineProps<{
 }>()
 
 const modal = useModalStore()
+const justIntonationTab =
+  useTemplateRef<StrictVarietyThreeJustIntonationComponent>('justIntonationTab')
 
 const sizeKeys = computed(() => Object.keys(hierarchy).sort(compareSizeKeys))
+const sizeKeySet = computed(() => new Set(sizeKeys.value))
 const selectedSizeEntry = computed(() => hierarchy[modal.strictVarietyThreeSize])
 const selectedSizeEntryIsArray = computed(() => Array.isArray(selectedSizeEntry.value))
 const patternKeys = computed(() => {
@@ -56,6 +61,7 @@ const patternKeys = computed(() => {
   }
   return Object.keys(entry).sort(comparePatternKeys)
 })
+const patternKeySet = computed(() => new Set(patternKeys.value))
 const selectedPatternEntry = computed<StrictVarietyThreeBranch | undefined>(() => {
   const entry = selectedSizeEntry.value
   if (!entry || Array.isArray(entry)) {
@@ -71,6 +77,7 @@ const runKeys = computed(() => {
   }
   return Object.keys(patternEntry).sort(compareRunKeys)
 })
+const runKeySet = computed(() => new Set(runKeys.value))
 const selectedScales = computed<StrictVarietyThreeScale[]>(() => {
   const entry = selectedSizeEntry.value
   if (!entry) {
@@ -91,6 +98,7 @@ const selectedScales = computed<StrictVarietyThreeScale[]>(() => {
 const scaleOptions = computed<ScaleOption[]>(() =>
   selectedScales.value.map(toOption).sort(compareScaleOptions)
 )
+const scaleOptionStepSet = computed(() => new Set(scaleOptions.value.map((option) => option.steps)))
 const selectedScale = computed<StrictVarietyThreeScale | undefined>(() =>
   scaleOptions.value.find((option) => option.steps === modal.strictVarietyThreeSteps)
 )
@@ -104,7 +112,8 @@ const orientedWord = computed(() => {
   const steps = selectedScale.value?.steps ?? ''
   return modal.strictVarietyThreeInvert && isChiral.value ? [...steps].reverse().join('') : steps
 })
-const modes = computed(() => uniqueRotations(orientedWord.value).sort(compareModesByBrightness))
+const modes = computed(() => uniqueModes(orientedWord.value))
+const modeSet = computed(() => new Set(modes.value))
 const selectedMode = computed(() => modal.strictVarietyThreeMode || modes.value[0] || '')
 const selectedCounts = computed(() => countSteps(selectedScale.value?.steps ?? ''))
 
@@ -169,27 +178,31 @@ const conditionWarning = computed(() => {
 })
 
 watchEffect(() => {
-  if (!sizeKeys.value.includes(modal.strictVarietyThreeSize)) {
+  if (!sizeKeySet.value.has(modal.strictVarietyThreeSize)) {
     modal.strictVarietyThreeSize = sizeKeys.value[0] ?? ''
   }
-  if (patternKeys.value.length && !patternKeys.value.includes(modal.strictVarietyThreePattern)) {
+  if (patternKeys.value.length && !patternKeySet.value.has(modal.strictVarietyThreePattern)) {
     modal.strictVarietyThreePattern = patternKeys.value[0]
   }
-  if (runKeys.value.length && !runKeys.value.includes(modal.strictVarietyThreeRun)) {
+  if (runKeys.value.length && !runKeySet.value.has(modal.strictVarietyThreeRun)) {
     modal.strictVarietyThreeRun = runKeys.value[0]
   }
-  if (!scaleOptions.value.some((option) => option.steps === modal.strictVarietyThreeSteps)) {
+  if (!scaleOptionStepSet.value.has(modal.strictVarietyThreeSteps)) {
     modal.strictVarietyThreeSteps = scaleOptions.value[0]?.steps ?? ''
   }
   if (!isChiral.value) {
     modal.strictVarietyThreeInvert = false
   }
-  if (!modes.value.includes(modal.strictVarietyThreeMode)) {
+  if (!modeSet.value.has(modal.strictVarietyThreeMode)) {
     modal.strictVarietyThreeMode = modes.value[0] ?? ''
   }
 })
 
 function generate(expand = true) {
+  if (modal.strictVarietyThreeType === 'justIntonation') {
+    justIntonationTab.value?.generate(expand)
+    return
+  }
   const intervals = intervalSizes.value
   const source = `realizeWord('${selectedMode.value}', #{L: ${intervals.L}, M: ${intervals.M}, s: ${intervals.s}})`
   emit('update:scaleName', `SV3: ${formatCounts(selectedCounts.value)}`)
@@ -203,14 +216,6 @@ function toOption(entry: StrictVarietyThreeScale): ScaleOption {
     counts,
     label: selectedSizeEntryIsArray.value ? `${formatCounts(counts)}: ${entry.steps}` : entry.steps
   }
-}
-
-function compareScaleOptions(a: ScaleOption, b: ScaleOption) {
-  return compareCounts(a.counts, b.counts) || a.steps.localeCompare(b.steps)
-}
-
-function compareCounts(a: StepCounts, b: StepCounts) {
-  return a.L - b.L || a.M - b.M || a.s - b.s
 }
 
 function compareSizeKeys(a: string, b: string) {
@@ -235,55 +240,6 @@ function parsePatternCountsLabel(label: string): StepCounts {
     M: parseInt(label.match(/(\d+)M/)?.[1] ?? '0', 10),
     s: parseInt(label.match(/(\d+)s/)?.[1] ?? '0', 10)
   }
-}
-
-function countSteps(steps: string): StepCounts {
-  return {
-    L: countStep(steps, 'L'),
-    M: countStep(steps, 'M'),
-    s: countStep(steps, 's')
-  }
-}
-
-function countStep(steps: string, step: StepSymbol) {
-  return [...steps].filter((char) => char === step).length
-}
-
-function formatCounts(counts: StepCounts) {
-  return `${counts.L}L ${counts.M}M ${counts.s}s`
-}
-
-function uniqueRotations(steps: string) {
-  const result: string[] = []
-  for (let i = 0; i < steps.length; ++i) {
-    const rotation = steps.slice(i) + steps.slice(0, i)
-    if (!result.includes(rotation)) {
-      result.push(rotation)
-    }
-  }
-  return result
-}
-
-function compareModesByBrightness(a: string, b: string) {
-  const aValues = [...a].map(brightnessValue)
-  const bValues = [...b].map(brightnessValue)
-  for (let i = 0; i < Math.min(aValues.length, bValues.length); ++i) {
-    const difference = bValues[i] - aValues[i]
-    if (difference) {
-      return difference
-    }
-  }
-  return 0
-}
-
-function brightnessValue(step: string) {
-  if (step === 'L') {
-    return 3
-  }
-  if (step === 'M') {
-    return 2
-  }
-  return 1
 }
 
 function positiveInteger(value: number, fallback: number) {
@@ -349,124 +305,159 @@ function conditionWeight(counts: StepCounts) {
     <template #body>
       <div class="control-group">
         <div class="control radio-group">
-          <label>Scale size</label>
-          <span v-for="sizeKey of sizeKeys" :key="sizeKey">
+          <label>Type</label>
+          <span>
             <input
-              :id="`strict-variety-3-size-${sizeKey}`"
+              id="strict-variety-3-tab-equal-temperament"
               type="radio"
-              :value="sizeKey"
-              v-model="modal.strictVarietyThreeSize"
+              value="equalTemperament"
+              v-model="modal.strictVarietyThreeType"
             />
-            <label :for="`strict-variety-3-size-${sizeKey}`">{{ sizeKey }}</label>
+            <label for="strict-variety-3-tab-equal-temperament">Equal temperament</label>
+          </span>
+          <span>
+            <input
+              id="strict-variety-3-tab-just-intonation"
+              type="radio"
+              value="justIntonation"
+              v-model="modal.strictVarietyThreeType"
+            />
+            <label for="strict-variety-3-tab-just-intonation">Just intonation</label>
           </span>
         </div>
       </div>
 
-      <div v-if="!selectedSizeEntryIsArray" class="control-group">
-        <div class="control">
-          <label for="strict-variety-3-pattern">Pattern</label>
-          <select id="strict-variety-3-pattern" v-model="modal.strictVarietyThreePattern">
-            <option v-for="patternKey of patternKeys" :key="patternKey" :value="patternKey">
-              {{ patternKey }}
-            </option>
-          </select>
+      <template v-if="modal.strictVarietyThreeType === 'equalTemperament'">
+        <div class="control-group">
+          <div class="control radio-group">
+            <label>Scale size</label>
+            <span v-for="sizeKey of sizeKeys" :key="sizeKey">
+              <input
+                :id="`strict-variety-3-size-${sizeKey}`"
+                type="radio"
+                :value="sizeKey"
+                v-model="modal.strictVarietyThreeSize"
+              />
+              <label :for="`strict-variety-3-size-${sizeKey}`">{{ sizeKey }}</label>
+            </span>
+          </div>
         </div>
-      </div>
 
-      <div v-if="!selectedPatternEntryIsArray && runKeys.length" class="control-group">
-        <div class="control">
-          <label for="strict-variety-3-run">Runs of M</label>
-          <select id="strict-variety-3-run" v-model="modal.strictVarietyThreeRun">
-            <option v-for="runKey of runKeys" :key="runKey" :value="runKey">
-              {{ runKey }}
-            </option>
-          </select>
+        <div v-if="!selectedSizeEntryIsArray" class="control-group">
+          <div class="control">
+            <label for="strict-variety-3-pattern">Pattern</label>
+            <select id="strict-variety-3-pattern" v-model="modal.strictVarietyThreePattern">
+              <option v-for="patternKey of patternKeys" :key="patternKey" :value="patternKey">
+                {{ patternKey }}
+              </option>
+            </select>
+          </div>
         </div>
-      </div>
 
-      <div class="control-group">
-        <div class="control">
-          <label for="strict-variety-3-steps">Steps</label>
-          <select id="strict-variety-3-steps" v-model="modal.strictVarietyThreeSteps">
-            <option v-for="option of scaleOptions" :key="option.steps" :value="option.steps">
-              {{ option.label }}
-            </option>
-          </select>
+        <div v-if="!selectedPatternEntryIsArray && runKeys.length" class="control-group">
+          <div class="control">
+            <label for="strict-variety-3-run">Runs of M</label>
+            <select id="strict-variety-3-run" v-model="modal.strictVarietyThreeRun">
+              <option v-for="runKey of runKeys" :key="runKey" :value="runKey">
+                {{ runKey }}
+              </option>
+            </select>
+          </div>
         </div>
-        <div class="control checkbox-container">
-          <input
-            id="strict-variety-3-invert"
-            type="checkbox"
-            v-model="modal.strictVarietyThreeInvert"
-            :disabled="!isChiral"
-          />
-          <label for="strict-variety-3-invert" :class="{ disabled: !isChiral }">
-            Invert chiral scale
-          </label>
-        </div>
-        <div class="control">
-          <label for="strict-variety-3-mode">Mode</label>
-          <select id="strict-variety-3-mode" v-model="modal.strictVarietyThreeMode">
-            <option v-for="(mode, index) of modes" :key="mode" :value="mode">
-              {{ index + 1 }}: {{ mode }}
-            </option>
-          </select>
-        </div>
-      </div>
 
-      <div class="control-group">
-        <div class="control">
-          <label for="strict-variety-3-size-of-large-step">Size of large step</label>
-          <input
-            id="strict-variety-3-size-of-large-step"
-            type="number"
-            min="1"
-            step="any"
-            v-model.number="modal.strictVarietyThreeSizeOfLargeStep"
-          />
+        <div class="control-group">
+          <div class="control">
+            <label for="strict-variety-3-steps">Steps</label>
+            <select id="strict-variety-3-steps" v-model="modal.strictVarietyThreeSteps">
+              <option v-for="option of scaleOptions" :key="option.steps" :value="option.steps">
+                {{ option.label }}
+              </option>
+            </select>
+          </div>
+          <div class="control checkbox-container">
+            <input
+              id="strict-variety-3-invert"
+              type="checkbox"
+              v-model="modal.strictVarietyThreeInvert"
+              :disabled="!isChiral"
+            />
+            <label for="strict-variety-3-invert" :class="{ disabled: !isChiral }">
+              Invert chiral scale
+            </label>
+          </div>
+          <div class="control">
+            <label for="strict-variety-3-mode">Mode</label>
+            <select id="strict-variety-3-mode" v-model="modal.strictVarietyThreeMode">
+              <option v-for="(mode, index) of modes" :key="mode" :value="mode">
+                {{ index + 1 }}: {{ mode }}
+              </option>
+            </select>
+          </div>
         </div>
-        <div v-if="!derivesMediumFromCondition" class="control">
-          <label for="strict-variety-3-size-of-medium-step">Size of medium step</label>
-          <input
-            id="strict-variety-3-size-of-medium-step"
-            type="number"
-            min="1"
-            step="any"
-            v-model.number="modal.strictVarietyThreeSizeOfMediumStep"
-          />
+
+        <div class="control-group">
+          <div class="control">
+            <label for="strict-variety-3-size-of-large-step">Size of large step</label>
+            <input
+              id="strict-variety-3-size-of-large-step"
+              type="number"
+              min="1"
+              step="any"
+              v-model.number="modal.strictVarietyThreeSizeOfLargeStep"
+            />
+          </div>
+          <div v-if="!derivesMediumFromCondition" class="control">
+            <label for="strict-variety-3-size-of-medium-step">Size of medium step</label>
+            <input
+              id="strict-variety-3-size-of-medium-step"
+              type="number"
+              min="1"
+              step="any"
+              v-model.number="modal.strictVarietyThreeSizeOfMediumStep"
+            />
+          </div>
+          <div class="control">
+            <label for="strict-variety-3-size-of-small-step">Size of small step</label>
+            <input
+              id="strict-variety-3-size-of-small-step"
+              type="number"
+              min="1"
+              step="any"
+              v-model.number="modal.strictVarietyThreeSizeOfSmallStep"
+            />
+          </div>
+          <p v-if="derivesMediumFromCondition">
+            Derived size of medium step: {{ sizeOfMediumStep.toFraction() }}
+          </p>
+          <div class="control">
+            <label for="strict-variety-3-equave">Equave</label>
+            <ScaleLineInput
+              id="strict-variety-3-equave"
+              v-model="modal.equaveString"
+              :defaultValue="OCTAVE"
+              @update:value="modal.equave = $event"
+            />
+          </div>
         </div>
-        <div class="control">
-          <label for="strict-variety-3-size-of-small-step">Size of small step</label>
-          <input
-            id="strict-variety-3-size-of-small-step"
-            type="number"
-            min="1"
-            step="any"
-            v-model.number="modal.strictVarietyThreeSizeOfSmallStep"
-          />
-        </div>
-        <p v-if="derivesMediumFromCondition">
-          Derived size of medium step: {{ sizeOfMediumStep.toFraction() }}
-        </p>
-        <div class="control">
-          <label for="strict-variety-3-equave">Equave</label>
-          <ScaleLineInput
-            id="strict-variety-3-equave"
-            v-model="modal.equaveString"
-            :defaultValue="OCTAVE"
-            @update:value="modal.equave = $event"
-          />
-        </div>
-      </div>
-      <p v-if="conditionWarning" class="warning">{{ conditionWarning }}</p>
-      <p v-if="stepOrderingWarning" class="warning">{{ stepOrderingWarning }}</p>
+        <p v-if="conditionWarning" class="warning">{{ conditionWarning }}</p>
+        <p v-if="stepOrderingWarning" class="warning">{{ stepOrderingWarning }}</p>
+      </template>
+
+      <StrictVarietyThreeJustIntonation
+        v-else
+        ref="justIntonationTab"
+        @update:source="$emit('update:source', $event)"
+        @update:scaleName="$emit('update:scaleName', $event)"
+      />
     </template>
     <template #footer>
       <div class="btn-group">
         <button @click="() => generate(true)">OK</button>
         <button @click="$emit('cancel')">Cancel</button>
         <button @click="() => generate(false)">Raw</button>
-        <i>{{ hostEd }}{{ nameOfEd(modal.equave, modal.equaveString) }}</i>
+        <i v-if="modal.strictVarietyThreeType === 'equalTemperament'">
+          {{ hostEd }}{{ nameOfEd(modal.equave, modal.equaveString) }}
+        </i>
       </div>
     </template>
   </Modal>
