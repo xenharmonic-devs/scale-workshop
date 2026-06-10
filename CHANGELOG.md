@@ -1,6 +1,8 @@
 # Change log
 
-## 3.3.2 (Unreleased)
+## 3.4.0 (Unreleased)
+  * Feature: Generate Fokker blocks as MOS product words [#494](https://github.com/xenharmonic-devs/scale-workshop/issues/494)
+  * Feature: Add Strict variety 3 scale generation [#975](https://github.com/xenharmonic-devs/scale-workshop/issues/975)
   * Bug fix: Make it possible to set MIDI note for base frequency to zero [#973](https://github.com/xenharmonic-devs/scale-workshop/issues/973)
   * Maintenance: Clarify serialized Pinia store types so saved live-store data has concrete field types.
 

@@ -23,6 +23,9 @@ const EqualTemperamentModal = defineAsyncComponent(
 const EulerGenusModal = defineAsyncComponent(
   () => import('@/components/modals/generation/EulerGenus.vue')
 )
+const FokkerBlockModal = defineAsyncComponent(
+  () => import('@/components/modals/generation/FokkerBlock.vue')
+)
 const GeneratorSequenceModal = defineAsyncComponent(
   () => import('@/components/modals/generation/GeneratorSequence.vue')
 )
@@ -62,6 +65,7 @@ const showCpsModal = ref(false)
 const showEnumerateModal = ref(false)
 const showEqualTemperamentModal = ref(false)
 const showEulerGenusModal = ref(false)
+const showFokkerBlockModal = ref(false)
 const showGeneratorSequenceModal = ref(false)
 const showHarmonicModal = ref(false)
 const showHistoricalModal = ref(false)
@@ -80,6 +84,7 @@ function updateSourceAndHideModals(source: string) {
   showEnumerateModal.value = false
   showEqualTemperamentModal.value = false
   showEulerGenusModal.value = false
+  showFokkerBlockModal.value = false
   showGeneratorSequenceModal.value = false
   showHarmonicModal.value = false
   showHistoricalModal.value = false
@@ -149,6 +154,7 @@ defineExpose({ blur })
       <a href="#" @click="showGeneratorSequenceModal = true"><li>Generator sequence</li></a>
       <a href="#" @click="showConcordanceShellModal = true"><li>Concordance shell</li></a>
       <a href="#" @click="showStrictVarietyThreeModal = true"><li>Strict Variety 3</li></a>
+      <a href="#" @click="showFokkerBlockModal = true"><li>Fokker block</li></a>
       <li class="divider"></li>
       <a href="#" @click="scalaFile!.click()"><li>Import .scl</li></a>
       <a href="#" @click="anamarkFile!.click()"><li>Import .tun</li></a>
@@ -204,6 +210,13 @@ defineExpose({ blur })
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
       @cancel="showEulerGenusModal = false"
+    />
+    <FokkerBlockModal
+      v-if="showFokkerBlockModal"
+      :show="showFokkerBlockModal"
+      @update:scaleName="scale.name = $event"
+      @update:source="updateSourceAndHideModals"
+      @cancel="showFokkerBlockModal = false"
     />
     <GeneratorSequenceModal
       v-if="showGeneratorSequenceModal"
