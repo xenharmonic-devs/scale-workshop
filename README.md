@@ -62,7 +62,7 @@ Everything between `(*` and `*)` is ignored:
 
 ### How do I attach labels to the intervals?
 
-Use strings of characters surrounded by wither single or double quotes:
+Use strings of characters surrounded by either single or double quotes:
 
 ```ocaml
 9/8 "my tone"
