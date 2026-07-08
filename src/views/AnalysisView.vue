@@ -1,6 +1,7 @@
 <script setup lang="ts">
 /**
- * Analysis workspace view for interval matrices, chord wheels, and harmonic entropy plots.
+ * Analysis workspace view for interval matrices, chord wheels,
+ * harmonic entropy plots, and similar scale tables.
  */
 import { type Interval } from 'sonic-weave/interval'
 import {
@@ -25,6 +26,8 @@ import { Fraction, lcm, mmod } from 'xen-dev-utils/fraction'
 import { useScaleStore } from '@/stores/scale'
 import { OCTAVE, UNISON } from '@/constants'
 import { useHarmonicEntropyStore } from '@/stores/harmonic-entropy'
+import { useSimilarStore, SCALE_LIBRARY_BASE } from '@/stores/similar'
+import { stemBasename } from '@/similar-scales'
 import Values from 'values.js'
 
 const EPSILON = 1e-6
@@ -33,8 +36,9 @@ const audio = useAudioStore()
 const state = useStateStore()
 const scale = useScaleStore()
 const entropy = useHarmonicEntropyStore()
+const similar = useSimilarStore()
 
-const subtab = ref<'matrix' | 'wheels' | 'entropy'>('matrix')
+const subtab = ref<'matrix' | 'wheels' | 'entropy' | 'similar'>('matrix')
 const cellFormat = ref<'best' | 'fraction' | 'cents' | 'et' | 'decimal'>('best')
 const simplifyTolerance = ref(3.5)
 const fractionMaxHeight = ref(26)
@@ -308,9 +312,13 @@ const colors = computed(() =>
   centsValues.value.map((_, i) => scale.colorForIndex(scale.baseMidiNote + entropyMode.value + i))
 )
 
-watch(subtab, (newValue) => {
+watch(subtab, async (newValue) => {
   if (newValue === 'entropy') {
     void entropy.fetchTable()
+  }
+  if (newValue === 'similar') {
+    await similar.fetchLibrary()
+    similar.runComputation(scale.relativeIntervals.map((i) => i.totalCents(true)))
   }
 })
 </script>
@@ -332,6 +340,11 @@ watch(subtab, (newValue) => {
         <li>
           <a href="#" :class="{ active: subtab === 'entropy' }" @click="subtab = 'entropy'"
             >Harmonic entropy</a
+          >
+        </li>
+        <li>
+          <a href="#" :class="{ active: subtab === 'similar' }" @click="subtab = 'similar'"
+            >Similar scales</a
           >
         </li>
       </ul>
@@ -721,6 +734,99 @@ watch(subtab, (newValue) => {
         </table>
       </div>
     </main>
+    <main v-if="subtab === 'similar'" class="similar-scales">
+      <p v-if="similar.isFetching">Fetching scale library data…</p>
+      <p v-else-if="similar.fetchError" class="error">
+        Failed to load scale library: {{ similar.fetchError }}
+      </p>
+      <template v-else-if="similar.result">
+        <section>
+          <h2>Similar scales</h2>
+          <p v-if="!similar.result.similar.length">No similar scales found.</p>
+          <table v-else>
+            <thead>
+              <tr>
+                <th>File</th>
+                <th>Notes</th>
+                <th>Rotation</th>
+                <th>Max diff (¢)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="entry in similar.result.similar" :key="entry.stem">
+                <td>
+                  <a
+                    :href="`${SCALE_LIBRARY_BASE}/scales/${entry.stem}/`"
+                    target="_blank"
+                    rel="noopener"
+                    >{{ stemBasename(entry.stem) }}</a
+                  >
+                </td>
+                <td>{{ entry.notes }}</td>
+                <td>{{ entry.mode }}</td>
+                <td>{{ entry.maxDiff.toFixed(1) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section>
+          <h2>Parent scales</h2>
+          <p v-if="!similar.result.parents.length">No parent scales found.</p>
+          <table v-else>
+            <thead>
+              <tr>
+                <th>File</th>
+                <th>Notes</th>
+                <th>Max diff (¢)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="entry in similar.result.parents" :key="entry.stem">
+                <td>
+                  <a
+                    :href="`${SCALE_LIBRARY_BASE}/scales/${entry.stem}/`"
+                    target="_blank"
+                    rel="noopener"
+                    >{{ stemBasename(entry.stem) }}</a
+                  >
+                </td>
+                <td>{{ entry.notes }}</td>
+                <td>{{ entry.maxDiff.toFixed(1) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section>
+          <h2>Child scales</h2>
+          <p v-if="!similar.result.children.length">No child scales found.</p>
+          <table v-else>
+            <thead>
+              <tr>
+                <th>File</th>
+                <th>Notes</th>
+                <th>Max diff (¢)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="entry in similar.result.children" :key="entry.stem">
+                <td>
+                  <a
+                    :href="`${SCALE_LIBRARY_BASE}/scales/${entry.stem}/`"
+                    target="_blank"
+                    rel="noopener"
+                    >{{ stemBasename(entry.stem) }}</a
+                  >
+                </td>
+                <td>{{ entry.notes }}</td>
+                <td>{{ entry.maxDiff.toFixed(1) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </template>
+    </main>
   </div>
 </template>
 
@@ -833,6 +939,32 @@ main {
 .entropy-intervals table {
   border-collapse: collapse;
   text-align: center;
+}
+
+/* Similar scales */
+.similar-scales {
+  padding: 0.5rem 1rem;
+  overflow-y: auto;
+}
+.similar-scales section {
+  margin-bottom: 1.5rem;
+}
+.similar-scales table {
+  border-collapse: collapse;
+}
+.similar-scales th,
+.similar-scales td {
+  border: 1px solid var(--color-border);
+  padding: 0.2rem 0.6rem;
+}
+.similar-scales th {
+  font-weight: bold;
+}
+.similar-scales a {
+  color: var(--color-accent-text-btn);
+}
+.similar-scales .error {
+  color: var(--color-error);
 }
 
 /* Content layout (medium) */
