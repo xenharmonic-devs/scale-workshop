@@ -26,7 +26,7 @@ import { Fraction, lcm, mmod } from 'xen-dev-utils/fraction'
 import { useScaleStore } from '@/stores/scale'
 import { OCTAVE, UNISON } from '@/constants'
 import { useHarmonicEntropyStore } from '@/stores/harmonic-entropy'
-import { useSimilarStore, SCALE_LIBRARY_BASE } from '@/stores/similar'
+import { useSimilarStore } from '@/stores/similar'
 import { stemBasename } from '@/similar-scales'
 import Values from 'values.js'
 
@@ -756,7 +756,7 @@ watch(subtab, async (newValue) => {
               <tr v-for="entry in similar.result.similar" :key="entry.stem">
                 <td>
                   <a
-                    :href="`${SCALE_LIBRARY_BASE}/scales/${entry.stem}/`"
+                    :href="`https://scalelibrary.org/scales/${entry.stem}/`"
                     target="_blank"
                     rel="noopener"
                     >{{ stemBasename(entry.stem) }}</a
@@ -785,7 +785,7 @@ watch(subtab, async (newValue) => {
               <tr v-for="entry in similar.result.parents" :key="entry.stem">
                 <td>
                   <a
-                    :href="`${SCALE_LIBRARY_BASE}/scales/${entry.stem}/`"
+                    :href="`https://scalelibrary.org/scales/${entry.stem}/`"
                     target="_blank"
                     rel="noopener"
                     >{{ stemBasename(entry.stem) }}</a
@@ -813,7 +813,7 @@ watch(subtab, async (newValue) => {
               <tr v-for="entry in similar.result.children" :key="entry.stem">
                 <td>
                   <a
-                    :href="`${SCALE_LIBRARY_BASE}/scales/${entry.stem}/`"
+                    :href="`https://scalelibrary.org/scales/${entry.stem}/`"
                     target="_blank"
                     rel="noopener"
                     >{{ stemBasename(entry.stem) }}</a
