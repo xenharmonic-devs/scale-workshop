@@ -771,8 +771,8 @@ watch(subtab, async (newValue) => {
         </section>
 
         <section>
-          <h2>Parent scales</h2>
-          <p v-if="!similar.result.parents.length">No parent scales found.</p>
+          <h2>Child scales</h2>
+          <p v-if="!similar.result.children.length">No child scales found.</p>
           <table v-else>
             <thead>
               <tr>
@@ -782,7 +782,7 @@ watch(subtab, async (newValue) => {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="entry in similar.result.parents" :key="entry.stem">
+              <tr v-for="entry in similar.result.children" :key="entry.stem">
                 <td>
                   <a
                     :href="`https://scalelibrary.org/scales/${entry.stem}/`"
@@ -799,8 +799,8 @@ watch(subtab, async (newValue) => {
         </section>
 
         <section>
-          <h2>Child scales</h2>
-          <p v-if="!similar.result.children.length">No child scales found.</p>
+          <h2>Parent scales</h2>
+          <p v-if="!similar.result.parents.length">No parent scales found.</p>
           <table v-else>
             <thead>
               <tr>
@@ -810,7 +810,7 @@ watch(subtab, async (newValue) => {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="entry in similar.result.children" :key="entry.stem">
+              <tr v-for="entry in similar.result.parents" :key="entry.stem">
                 <td>
                   <a
                     :href="`https://scalelibrary.org/scales/${entry.stem}/`"

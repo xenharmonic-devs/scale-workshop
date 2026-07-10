@@ -1,7 +1,7 @@
 const CENTS_TOL = 25.0
 const SIMILAR_CAP = 10
-const MIN_CHILD_NOTES = 4
-const PARENT_SIZE_K = 10.0 / Math.log(2) // cents cost per doubling of parent size
+const MIN_PARENT_NOTES = 4
+const CHILD_SIZE_K = 10.0 / Math.log(2) // cents cost per doubling of child size
 
 export interface LibraryScale {
   stem: string
@@ -20,8 +20,8 @@ type ParentChildEntry = Omit<SimilarEntry, 'mode'>
 
 export interface SimilarResult {
   similar: SimilarEntry[]
-  parents: ParentChildEntry[]
   children: ParentChildEntry[]
+  parents: ParentChildEntry[]
 }
 
 function round1(x: number): number {
@@ -110,30 +110,31 @@ export function minModeDistance(
 }
 
 /**
- * Compute the error of the closest approximation of a child scale within a parent scale.
- * @param parentCents Cents of parent scale, excluding 0.0 and period.
+ * Compute the error of the closest approximation of a parent scale within a child scale.
+ * The parent is the smaller scale, the child is the larger scale.
  * @param childCents Cents of child scale, excluding 0.0 and period.
- * @param parentPeriod Period of parent scale, in cents.
+ * @param parentCents Cents of parent scale, excluding 0.0 and period.
  * @param childPeriod Period of child scale, in cents.
- * @returns The max abs cents diff between the child and its closest approximation in the parent.
+ * @param parentPeriod Period of parent scale, in cents.
+ * @returns The max abs cents diff between the parent and its closest approximation in the child.
  */
 export function maxNearestDistance(
-  parentCents: number[],
   childCents: number[],
-  parentPeriod: number,
-  childPeriod: number
+  parentCents: number[],
+  childPeriod: number,
+  parentPeriod: number
 ): number {
-  const fullParent = [0, ...parentCents, parentPeriod]
+  const fullChild = [0, ...childCents, childPeriod]
   let maxDist = 0
-  for (const childNote of childCents) {
+  for (const parentNote of parentCents) {
     let minDiff = Infinity
-    for (const parentNote of fullParent) {
-      const diff = Math.abs(childNote - parentNote)
+    for (const childNote of fullChild) {
+      const diff = Math.abs(parentNote - childNote)
       if (diff < minDiff) minDiff = diff
     }
     if (minDiff > maxDist) maxDist = minDiff
   }
-  return Math.max(maxDist, Math.abs(parentPeriod - childPeriod))
+  return Math.max(maxDist, Math.abs(childPeriod - parentPeriod))
 }
 
 /**
@@ -166,11 +167,11 @@ function dedupByModalClass(
 }
 
 /**
- * Compute similar, parent, and child scales for a given user scale.
+ * Compute similar, child, and parent scales for a given user scale.
  * @param queryCents Cents of user scale, excluding 0.0 and period.
  * @param queryPeriod Period of user scale, in cents.
  * @param library Library of scales to search for similar scales.
- * @returns Arrays of similar, parent, and child scales and their fitting data.
+ * @returns Arrays of similar, child, and parent scales and their fitting data.
  */
 export function computeSimilarScales(
   queryCents: number[],
@@ -208,45 +209,20 @@ export function computeSimilarScales(
     return { similar, parents: [], children: [] }
   }
 
-  // --- Parents ---
-  const parents: ParentChildEntry[] = []
-  const parentCandidates: Array<{ scale: LibraryScale; dist: number }> = []
-  for (const libScale of library) {
-    if (libScale.cents.length <= queryNotes) continue
-    const dist = maxNearestDistance(libScale.cents, queryCents, libScale.period, queryPeriod)
-    if (dist <= CENTS_TOL) {
-      parentCandidates.push({ scale: libScale, dist })
-    }
-  }
-  parentCandidates.sort((a, b) => {
-    const scoreA = a.dist + PARENT_SIZE_K * Math.log(a.scale.cents.length / queryNotes)
-    const scoreB = b.dist + PARENT_SIZE_K * Math.log(b.scale.cents.length / queryNotes)
-    if (scoreA !== scoreB) return scoreA - scoreB
-    return stemBasename(a.scale.stem).localeCompare(stemBasename(b.scale.stem))
-  })
-  for (const { scale, dist } of parentCandidates.slice(0, SIMILAR_CAP)) {
-    parents.push({
-      stem: scale.stem,
-      notes: scale.cents.length + 1,
-      maxDiff: round1(dist)
-    })
-  }
-
   // --- Children ---
   const children: ParentChildEntry[] = []
   const childCandidates: Array<{ scale: LibraryScale; dist: number }> = []
   for (const libScale of library) {
-    if (libScale.cents.length >= queryNotes) continue
-    if (libScale.cents.length < MIN_CHILD_NOTES) continue
-    const dist = maxNearestDistance(queryCents, libScale.cents, queryPeriod, libScale.period)
+    if (libScale.cents.length <= queryNotes) continue
+    const dist = maxNearestDistance(libScale.cents, queryCents, libScale.period, queryPeriod)
     if (dist <= CENTS_TOL) {
       childCandidates.push({ scale: libScale, dist })
     }
   }
   childCandidates.sort((a, b) => {
-    if (a.dist !== b.dist) return a.dist - b.dist
-    const nDiff = b.scale.cents.length - a.scale.cents.length // largest first
-    if (nDiff !== 0) return nDiff
+    const scoreA = a.dist + CHILD_SIZE_K * Math.log(a.scale.cents.length / queryNotes)
+    const scoreB = b.dist + CHILD_SIZE_K * Math.log(b.scale.cents.length / queryNotes)
+    if (scoreA !== scoreB) return scoreA - scoreB
     return stemBasename(a.scale.stem).localeCompare(stemBasename(b.scale.stem))
   })
   for (const { scale, dist } of childCandidates.slice(0, SIMILAR_CAP)) {
@@ -257,5 +233,30 @@ export function computeSimilarScales(
     })
   }
 
-  return { similar, parents, children }
+  // --- Parents ---
+  const parents: ParentChildEntry[] = []
+  const parentCandidates: Array<{ scale: LibraryScale; dist: number }> = []
+  for (const libScale of library) {
+    if (libScale.cents.length >= queryNotes) continue
+    if (libScale.cents.length < MIN_PARENT_NOTES) continue
+    const dist = maxNearestDistance(queryCents, libScale.cents, queryPeriod, libScale.period)
+    if (dist <= CENTS_TOL) {
+      parentCandidates.push({ scale: libScale, dist })
+    }
+  }
+  parentCandidates.sort((a, b) => {
+    if (a.dist !== b.dist) return a.dist - b.dist
+    const nDiff = b.scale.cents.length - a.scale.cents.length // largest first
+    if (nDiff !== 0) return nDiff
+    return stemBasename(a.scale.stem).localeCompare(stemBasename(b.scale.stem))
+  })
+  for (const { scale, dist } of parentCandidates.slice(0, SIMILAR_CAP)) {
+    parents.push({
+      stem: scale.stem,
+      notes: scale.cents.length + 1,
+      maxDiff: round1(dist)
+    })
+  }
+
+  return { similar, children, parents }
 }

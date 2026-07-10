@@ -39,17 +39,17 @@ describe('Minimum mode distance', () => {
 })
 
 describe('Maximum nearest-note distance', () => {
-  it('finds zero distance for a child which is a subset of the parent', () => {
-    const parent = [200.0, 400.0, 500.0, 700.0, 900.0, 1100.0]
-    const child = [200.0, 400.0, 700.0, 900.0]
-    const dist = maxNearestDistance(parent, child, 1200.0, 1200.0)
+  it('finds zero distance for a parent which is a subset of the child', () => {
+    const child = [200.0, 400.0, 500.0, 700.0, 900.0, 1100.0]
+    const parent = [200.0, 400.0, 700.0, 900.0]
+    const dist = maxNearestDistance(child, parent, 1200.0, 1200.0)
     expect(dist).toBeCloseTo(0)
   })
 
-  it('finds distance 15.6 for tempered major pentatonic as child of just major scale', () => {
-    const parent = [203.9, 386.3, 498.0, 702.0, 884.4, 1088.3]
-    const child = [200.0, 400.0, 700.0, 900.0]
-    const dist = maxNearestDistance(parent, child, 1200.0, 1200.0)
+  it('finds distance 15.6 for tempered major pentatonic as parent of just major scale', () => {
+    const child = [203.9, 386.3, 498.0, 702.0, 884.4, 1088.3]
+    const parent = [200.0, 400.0, 700.0, 900.0]
+    const dist = maxNearestDistance(child, parent, 1200.0, 1200.0)
     expect(dist).toBeCloseTo(15.6)
   })
 
@@ -60,9 +60,9 @@ describe('Maximum nearest-note distance', () => {
   })
 
   it('accounts for differences in period in dist, for different sized scales', () => {
-    const parent = [200.0, 400.0, 500.0, 700.0, 900.0, 1100.0]
-    const child = [200.0, 400.0, 700.0, 900.0]
-    const dist = maxNearestDistance(parent, child, 1200.0, 1190.0)
+    const child = [200.0, 400.0, 500.0, 700.0, 900.0, 1100.0]
+    const parent = [200.0, 400.0, 700.0, 900.0]
+    const dist = maxNearestDistance(child, parent, 1200.0, 1190.0)
     expect(dist).toBeCloseTo(10.0)
   })
 
@@ -99,7 +99,7 @@ describe('Canonical mode key', () => {
 })
 
 describe('Similar scales computation', () => {
-  it('finds one similar scale, parent, and child when expected', () => {
+  it('finds one similar scale, child, and parent when expected', () => {
     const queryCents = [200.0, 400.0, 500.0, 700.0, 900.0, 1100.0]
     const library = [
       { stem: 'just-major-pentatonic', cents: [203.9, 386.3, 702.0, 884.4], period: 1200.0 },
@@ -117,12 +117,12 @@ describe('Similar scales computation', () => {
     ]
     const result = computeSimilarScales(queryCents, 1200.0, library)
     expect(result.similar).toHaveLength(1)
-    expect(result.parents).toHaveLength(1)
     expect(result.children).toHaveLength(1)
+    expect(result.parents).toHaveLength(1)
 
     expect(result.similar[0].stem).toBe('just-major')
-    expect(result.parents[0].stem).toBe('12tet')
-    expect(result.children[0].stem).toBe('just-major-pentatonic')
+    expect(result.children[0].stem).toBe('12tet')
+    expect(result.parents[0].stem).toBe('just-major-pentatonic')
   })
 
   it('deduplicates modes when looking for similar scales', () => {
@@ -133,7 +133,7 @@ describe('Similar scales computation', () => {
     ]
     const result = computeSimilarScales(queryCents, 1200.0, library)
     expect(result.similar).toHaveLength(1)
-    expect(result.parents).toHaveLength(0)
     expect(result.children).toHaveLength(0)
+    expect(result.parents).toHaveLength(0)
   })
 })
