@@ -759,7 +759,8 @@ watch(subtab, async (newValue) => {
                     :href="`https://scalelibrary.org/scales/${entry.stem}/`"
                     target="_blank"
                     rel="noopener"
-                    >{{ stemBasename(entry.stem) }} 🔗</a
+                    class="external-link"
+                    >{{ stemBasename(entry.stem) }}</a
                   >
                 </td>
                 <td>{{ entry.notes }}</td>
@@ -788,7 +789,8 @@ watch(subtab, async (newValue) => {
                     :href="`https://scalelibrary.org/scales/${entry.stem}/`"
                     target="_blank"
                     rel="noopener"
-                    >{{ stemBasename(entry.stem) }} 🔗</a
+                    class="external-link"
+                    >{{ stemBasename(entry.stem) }}</a
                   >
                 </td>
                 <td>{{ entry.notes }}</td>
@@ -816,7 +818,8 @@ watch(subtab, async (newValue) => {
                     :href="`https://scalelibrary.org/scales/${entry.stem}/`"
                     target="_blank"
                     rel="noopener"
-                    >{{ stemBasename(entry.stem) }} 🔗</a
+                    class="external-link"
+                    >{{ stemBasename(entry.stem) }}</a
                   >
                 </td>
                 <td>{{ entry.notes }}</td>
@@ -965,6 +968,12 @@ main {
 }
 .similar-scales .error {
   color: var(--color-error);
+}
+
+a.external-link::after {
+  content: '🔗';
+  display: inline-block;
+  margin-left: 0.25rem;
 }
 
 /* Content layout (medium) */
