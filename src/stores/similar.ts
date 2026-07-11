@@ -1,9 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { computeSimilarScales, type LibraryScale, type SimilarResult } from '@/similar-scales'
-
-const SCALE_CENTS_URL =
-  'https://cdn.jsdelivr.net/npm/@narenratan/scale-library@1.3.0/scale-cents.json'
+import SCALE_CENTS_URL from '@narenratan/scale-library/scale-cents.json?url'
 
 /**
  * Scale library cache and similar-scales computation store.
