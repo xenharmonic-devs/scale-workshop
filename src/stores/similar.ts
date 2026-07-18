@@ -1,6 +1,10 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { computeSimilarScales, type LibraryScale, type SimilarResult } from '@/similar-scales'
+import {
+  computeSimilarScales,
+  type LibraryScale,
+  type SimilarResult
+} from '@narenratan/scale-library'
 import SCALE_CENTS_URL from '@narenratan/scale-library/scale-cents.json?url'
 
 /**
