@@ -27,7 +27,7 @@ import { useScaleStore } from '@/stores/scale'
 import { OCTAVE, UNISON } from '@/constants'
 import { useHarmonicEntropyStore } from '@/stores/harmonic-entropy'
 import { useSimilarStore } from '@/stores/similar'
-import { stemBasename } from '@/similar-scales'
+import { stemBasename } from '@narenratan/scale-library'
 import Values from 'values.js'
 
 const EPSILON = 1e-6
