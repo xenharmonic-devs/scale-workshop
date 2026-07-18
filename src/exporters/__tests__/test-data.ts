@@ -85,7 +85,7 @@ export function getTestData(appTitle: string, raw = false) {
   const scale = new Scale(ratios, 440, 69, 'Test Scale')
   const params: ExporterParams = {
     filename: 'test',
-    newline: process.platform === 'linux' ? UNIX_NEWLINE : WINDOWS_NEWLINE,
+    newline: process.platform === 'win32' ? WINDOWS_NEWLINE : UNIX_NEWLINE,
     scaleUrl: 'https://scaleworkshop.plainsound.org/',
     relativeIntervals,
     scale,

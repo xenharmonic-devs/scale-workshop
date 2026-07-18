@@ -4,7 +4,7 @@ import AbletonAsclExporter from '../ableton'
 import { getTestData } from './test-data'
 import { NEWLINE_TEST, UNIX_NEWLINE, WINDOWS_NEWLINE } from '../../constants'
 
-const NEWLINE = process.platform === 'linux' ? UNIX_NEWLINE : WINDOWS_NEWLINE
+const NEWLINE = process.platform === 'win32' ? WINDOWS_NEWLINE : UNIX_NEWLINE
 
 describe('Scala exporters', () => {
   it('can handle all line types', () => {
