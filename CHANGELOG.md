@@ -1,5 +1,14 @@
 # Change log
 
+## 3.5.2
+  * Fix MOS hardness and chroma calculation in *Rank-2 temperament* modal [#988](https://github.com/xenharmonic-devs/scale-workshop/issues/988)
+
+## 3.5.1
+  * Minor maintenance.
+
+## 3.5.0
+  * Feature: List similar scales according to [scalelibrary.org](https://scalelibrary.org/) on the Analysis tab.
+
 ## 3.4.0
   * Feature: Generate Fokker blocks as MOS product words [#494](https://github.com/xenharmonic-devs/scale-workshop/issues/494)
   * Feature: Add Strict variety 3 scale generation [#975](https://github.com/xenharmonic-devs/scale-workshop/issues/975)
