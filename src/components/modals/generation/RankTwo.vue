@@ -117,7 +117,7 @@ function chromaAndHardness(size: number) {
 }
 
 function setPreview(mosInfo: MosInfo) {
-  const { chroma, hardness } = chromaAndHardness(mosInfo.size)
+  const { chroma, hardness } = chromaAndHardness(mosInfo.size / rank2.safeNumPeriods)
   rank2.previewMosPattern = `${mosInfo.mosPattern}, L/s: ${hardness.toFixed(2)}, L-s: ${chroma.toFixed(1)}¢`
 }
 
