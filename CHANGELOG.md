@@ -1,5 +1,9 @@
 # Change log
 
+## 3.5.3
+  * Enumerate more "reasonable" SV3 JI scales.
+  * Minor maintenance.
+
 ## 3.5.2
   * Fix MOS hardness and chroma calculation in *Rank-2 temperament* modal [#988](https://github.com/xenharmonic-devs/scale-workshop/issues/988)
 
