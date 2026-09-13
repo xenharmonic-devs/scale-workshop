@@ -11,6 +11,7 @@ import {
   PingPongDelay
 } from '../synth'
 import { VirtualSynth } from '../virtual-synth'
+import { HARMONIUM_ENVELOPE } from '../harmonium-spectrum'
 import {
   AperiodicSynth,
   Synth,
@@ -326,6 +327,16 @@ export const useAudioStore = defineStore<'audio', AudioStore>('audio', () => {
   watch(aperiodicWaveform, (newValue) => {
     if (APERIODIC_WAVEFORMS.includes(newValue)) {
       aperiodicVoiceParams.aperiodicWave = APERIODIC_WAVES[newValue].value
+    }
+    if (newValue === 'harmonium') {
+      // A harmonium is a wind instrument: the reed speaks over ~120 ms and then
+      // holds at full level for as long as the key is down, with no decay.  The
+      // app's default envelope decays to 80 %, which reads as a struck
+      // instrument and undoes the point of the measured spectrum.
+      attackTime.value = HARMONIUM_ENVELOPE.attackTime
+      decayTime.value = HARMONIUM_ENVELOPE.decayTime
+      sustainLevel.value = HARMONIUM_ENVELOPE.sustainLevel
+      releaseTime.value = HARMONIUM_ENVELOPE.releaseTime
     }
   })
 
