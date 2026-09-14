@@ -2,7 +2,7 @@ import { sum } from 'xen-dev-utils/core'
 import { centsToValue, valueToCents } from 'xen-dev-utils/conversion'
 import { AperiodicWave } from 'sw-synth'
 import { ceilPow2 } from './utils'
-import { HARMONIUM_SPECTRUM, HARMONIUM_AMPLITUDES } from './harmonium-spectrum'
+import { HARMONIUM_SPECTRUM, HARMONIUM_AMPLITUDES, HARMONIUM_GAIN } from './harmonium-spectrum'
 import { computed, type ComputedRef } from 'vue'
 
 import TIMBRES from '@/timbres.json'
@@ -370,10 +370,18 @@ function initializeAperiodic(audioContext: BaseAudioContext) {
     // ear: three free-reed ranks, including a 4' rank tuned 2.48 cents wide of
     // the octave and a third rank a quarter-tone flat.  See
     // `harmonium-spectrum.ts` for what the analysis found.
+    //
+    // The measured amplitudes are normalised to a peak of 1, but they are
+    // partials of three ranks and sum to far more than that, so played as-is
+    // the timbre is about 9.5 dB louder than a plain semisine and peaks well
+    // past unity.  HARMONIUM_GAIN brings it a little under semisine in
+    // loudness while keeping the peak below it: a spectrum this dense reads as
+    // louder than a sine at matched RMS.
+    const amplitudes = HARMONIUM_AMPLITUDES.map((a) => a * HARMONIUM_GAIN)
     return new AperiodicWave(
       audioContext,
       HARMONIUM_SPECTRUM,
-      HARMONIUM_AMPLITUDES,
+      amplitudes,
       maxNumberOfVoices,
       tolerance
     )

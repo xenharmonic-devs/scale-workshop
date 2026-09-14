@@ -20,6 +20,9 @@
  * Ratios are relative to the 8' fundamental; amplitudes are normalised to a
  * peak of 1.  Partials more than 72 dB below the peak are omitted.
  *
+ * These are the measured values.  Playback loudness is a separate concern --
+ * see HARMONIUM_GAIN in synth.ts.
+ *
  * Generated -- do not hand-edit.
  */
 
@@ -58,20 +61,11 @@ export const HARMONIUM_AMPLITUDES = [
 ]
 
 /**
- * Envelope matching the measured instrument.
+ * Playback gain for the measured amplitudes above.
  *
- * Attack is the reed's speech time (~115 ms measured).  Decay is zero and
- * sustain is full because a harmonium is blown, not struck -- air keeps
- * flowing and the reed keeps sounding at level until the key is released.
- * Release covers the measured 14 ms damping plus its short cabinet tail.
- *
- * Note that Scale Workshop applies one envelope to the whole timbre, whereas
- * the real instrument staggers its ranks -- the 4' speaks about 78 ms before
- * the 8'.  That bloom cannot be reproduced here.
+ * Chosen by rendering the timbre against a plain semisine: at this value it
+ * sits about 3.7 dB under semisine in RMS and stays below it in peak amplitude
+ * across the range.  Slightly quieter is deliberate -- 139 partials spread over
+ * three ranks read as louder than a single sine at equal RMS.
  */
-export const HARMONIUM_ENVELOPE = {
-  attackTime: 0.12,
-  decayTime: 0,
-  sustainLevel: 1,
-  releaseTime: 0.1
-}
+export const HARMONIUM_GAIN = 0.22
