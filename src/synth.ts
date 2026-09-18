@@ -2,6 +2,7 @@ import { sum } from 'xen-dev-utils/core'
 import { centsToValue, valueToCents } from 'xen-dev-utils/conversion'
 import { AperiodicWave } from 'sw-synth'
 import { ceilPow2 } from './utils'
+import { HARMONIUM_SPECTRUM, HARMONIUM_AMPLITUDES, HARMONIUM_GAIN } from './harmonium-spectrum'
 import { computed, type ComputedRef } from 'vue'
 
 import TIMBRES from '@/timbres.json'
@@ -365,55 +366,22 @@ function initializeAperiodic(audioContext: BaseAudioContext) {
   })
 
   APERIODIC_WAVES['harmonium'] = computed(() => {
-    const harmonics = 60
-    const dutyCycle = 0.43
-    const targetFundamentalHz = 330
-    const soloDetuneHz = 0.18
-    const nearDetuneHz = 0.55
-    const wideDetuneHz = 1.1
-    const shimmerOffsets = [
-      0,
-      soloDetuneHz,
-      -soloDetuneHz,
-      nearDetuneHz,
-      -nearDetuneHz,
-      wideDetuneHz,
-      -wideDetuneHz
-    ]
-    const shimmerWeights = [1, 0.3, 0.3, 0.7, 0.7, 0.4, 0.4]
-    const spectrum: number[] = []
-    const amplitudes: number[] = []
-
-    for (let n = 1; n <= harmonics; ++n) {
-      const pwm = Math.abs((2 / (n * Math.PI)) * Math.sin(n * Math.PI * dutyCycle))
-      const lowpass = Math.exp(-Math.max(0, n - 3) / 28)
-      const brightnessTrim = 1 / (1 + 0.009 * n ** 1.32)
-      const oddBias = n % 2 ? 1.15 : 0.9
-      const fundamentalBoost = n === 1 ? 3.4 : n === 2 ? 1.8 : n === 3 ? 1.4 : 1
-      const baseAmplitude = pwm * lowpass * brightnessTrim * oddBias * fundamentalBoost
-
-      shimmerOffsets.forEach((offsetHz, i) => {
-        const ratio = n * (1 + offsetHz / (targetFundamentalHz * n))
-        spectrum.push(ratio)
-        amplitudes.push(baseAmplitude * shimmerWeights[i])
-      })
-
-      if (n <= 8) {
-        shimmerOffsets.forEach((offsetHz, i) => {
-          const ratio = 2 * n * (1 + offsetHz / (targetFundamentalHz * 2 * n))
-          spectrum.push(ratio)
-          amplitudes.push(baseAmplitude * 0.18 * shimmerWeights[i])
-        })
-      }
-    }
-
-    const normalization = 1.4 / sum(amplitudes)
-    const normalizedAmplitudes = amplitudes.map((a) => a * normalization)
-
+    // Measured from a recording of a real harmonium rather than modelled by
+    // ear: three free-reed ranks, including a 4' rank tuned 2.48 cents wide of
+    // the octave and a third rank a quarter-tone flat.  See
+    // `harmonium-spectrum.ts` for what the analysis found.
+    //
+    // The measured amplitudes are normalised to a peak of 1, but they are
+    // partials of three ranks and sum to far more than that, so played as-is
+    // the timbre is about 9.5 dB louder than a plain semisine and peaks well
+    // past unity.  HARMONIUM_GAIN brings it a little under semisine in
+    // loudness while keeping the peak below it: a spectrum this dense reads as
+    // louder than a sine at matched RMS.
+    const amplitudes = HARMONIUM_AMPLITUDES.map((a) => a * HARMONIUM_GAIN)
     return new AperiodicWave(
       audioContext,
-      spectrum,
-      normalizedAmplitudes,
+      HARMONIUM_SPECTRUM,
+      amplitudes,
       maxNumberOfVoices,
       tolerance
     )
