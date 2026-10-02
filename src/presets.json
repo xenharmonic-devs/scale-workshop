@@ -38,7 +38,7 @@
   },
   "22shruti": {
     "name": "22 Shruti",
-    "source": "rank2(3/2 white, 4)\nmergeOffset([10/9 yellow, 16/15 green, 256/243 white, 9/8 white], 'wrap')\n",
+    "source": "rank2(3/2 white, 4)\nmergeOffset([10/9 yellow, 16/15 green, 256/243 white, 9/8 white], 'wrap')\n£ [\"Re₁\", \"Re₂\", \"Re₃\", \"Re₄\", \"Ga₁\", \"Ga₂\", \"Ga₃\", \"Ga₄\", \"Ma₁\", \"Ma₂\", \"Ma₃\", \"Ma₄\", \"Pa\", \"Dha₁\", \"Dha₂\", \"Dha₃\", \"Dha₄\", \"Ni₁\", \"Ni₂\", \"Ni₃\", \"Ni₄\", \"Sa\"]\n",
     "categories": ["traditional", "just intonation"]
   },
   "hirajoshi": {
