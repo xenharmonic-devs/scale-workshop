@@ -60,6 +60,10 @@ const RepeatModal = defineAsyncComponent(
   () => import('@/components/modals/modification/RepeatScale.vue')
 )
 
+const ReorderModal = defineAsyncComponent(
+  () => import('@/components/modals/modification/ReorderSteps.vue')
+)
+
 const RotateModal = defineAsyncComponent(
   () => import('@/components/modals/modification/RotateScale.vue')
 )
@@ -90,6 +94,7 @@ const showInterpolateModal = ref(false)
 const showMergeOffsetsModal = ref(false)
 const showRandomModal = ref(false)
 const showRepeatModal = ref(false)
+const showReorderModal = ref(false)
 const showRotateModal = ref(false)
 const showStretchModal = ref(false)
 const showSubsetModal = ref(false)
@@ -108,6 +113,7 @@ function closeModals() {
   showMergeOffsetsModal.value = false
   showRandomModal.value = false
   showRepeatModal.value = false
+  showReorderModal.value = false
   showRotateModal.value = false
   showStretchModal.value = false
   showSubsetModal.value = false
@@ -171,6 +177,7 @@ defineExpose({ blur })
       >
       <a href="#" @click="retrovert"><li>Retrovert (negative harmony)</li></a>
       <a href="#" @click="clickRotate"><li>Rotate mode</li></a>
+      <a href="#" @click.prevent="showReorderModal = true"><li>Reorder steps</li></a>
       <a href="#" @click="showRepeatModal = true"><li>Repeat</li></a>
       <a href="#" @click="clickSubset"><li>Subset</li></a>
       <a href="#" @click="showStretchModal = true"><li>Stretch/compress</li></a>
@@ -270,6 +277,12 @@ defineExpose({ blur })
       :show="showRotateModal"
       @done="closeModals"
       @cancel="showRotateModal = false"
+    />
+    <ReorderModal
+      v-if="showReorderModal"
+      :show="showReorderModal"
+      @done="closeModals"
+      @cancel="showReorderModal = false"
     />
     <StretchModal
       v-if="showStretchModal"
