@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount, type VueWrapper } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import { createPinia, setActivePinia } from 'pinia'
 import { stepString } from 'sonic-weave/words'
 import { Interval } from 'sonic-weave/interval'
@@ -126,6 +127,41 @@ describe('Reorder steps', () => {
       wrapper.findAll('.before-state g text')[0].attributes('y')
     )
     expect(wrapper.find('.equave-marker').exists()).toBe(false)
+  })
+
+  it('stretches the rulers to the height the layout gives them', async () => {
+    let size = { width: 288, height: 720 }
+    const rect = vi
+      .spyOn(Element.prototype, 'getBoundingClientRect')
+      .mockImplementation(() => ({ ...size }) as DOMRect)
+    let resized = () => {}
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        constructor(callback: () => void) {
+          resized = callback
+        }
+        observe() {}
+        disconnect() {}
+      }
+    )
+    open('200.\n700.\n1200.')
+    await nextTick()
+    const svg = () => wrapper.get('svg')
+    const lastTickY = () => {
+      const ticks = wrapper.findAll('.after-state g line')
+      return Number(ticks[ticks.length - 1].attributes('y1'))
+    }
+    // 720 px tall at 288 px wide is 820 units at the ruler's fixed 328 unit width.
+    expect(svg().attributes('viewBox')).toBe('0 0 328 820')
+    expect(lastTickY()).toBe(790)
+
+    size = { width: 288, height: 360 }
+    resized()
+    await nextTick()
+    expect(svg().attributes('viewBox')).toBe('0 0 328 410')
+    expect(lastTickY()).toBe(380)
+    rect.mockRestore()
   })
 
   it.each(['rank2(700.750, 4, 0, 1201.234, 1)', 'tet(5)', '200.\n700.\n1200.'])(
