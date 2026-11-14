@@ -241,6 +241,37 @@ describe('Reorder steps', () => {
     expect(scale.sourceText).toBe('200.\n700.\n1200.')
   })
 
+  it('reverses the step order from the heading row', async () => {
+    const scale = open('9/8\n5/4\n3/2\n2/1')
+    const reverse = wrapper.get('.steps-header button')
+    const word = wrapper.get('.step-string code').text()
+    expect(reverse.text()).toBe('Reverse')
+
+    await reverse.trigger('click')
+    expect(wrapper.get('.step-string code').text()).toBe([...word].reverse().join(''))
+    expect(wrapper.findAll('li strong')[0].text()).toBe(`1. ${word[word.length - 1]}`)
+    expect(scale.sourceText).toBe('9/8\n5/4\n3/2\n2/1')
+
+    // A second press restores the order it reversed.
+    await reverse.trigger('click')
+    expect(wrapper.get('.step-string code').text()).toBe(word)
+
+    await reverse.trigger('click')
+    await wrapper.get('.modal-footer button').trigger('click')
+    expect(scale.error).toBe('')
+    // 9/8, 10/9, 6/5, 4/3 reversed stack to 4/3, 8/5, 16/9, 2/1.
+    expect(
+      scale.relativeIntervals.map((interval, i) =>
+        interval.value.equals(Interval.fromFraction(['4/3', '8/5', '16/9', '2'][i]).value)
+      )
+    ).toEqual([true, true, true, true])
+  })
+
+  it('disables Reverse when there is only one step', () => {
+    open('2/1')
+    expect(wrapper.get('.steps-header button').attributes('disabled')).toBeDefined()
+  })
+
   it.each([0, 2])(
     'materializes the displayed default scale when applying button %i',
     async (button) => {

@@ -126,6 +126,10 @@ function move(from: number, to: number) {
   steps.value = reordered
 }
 
+function reverse() {
+  steps.value = [...steps.value].reverse()
+}
+
 function startDrag(event: PointerEvent, id: number) {
   if (event.button !== 0 || !list.value) return
   if (
@@ -187,7 +191,10 @@ function modify(expand = true) {
       <p>Drag the unstacked steps into a new order, or use the arrow buttons.</p>
       <div class="reorder-preview">
         <div class="step-list">
-          <h3>Steps</h3>
+          <div class="steps-header">
+            <h3>Steps</h3>
+            <button :disabled="steps.length < 2" @click="reverse">Reverse</button>
+          </div>
           <ol
             ref="list"
             aria-label="Unstacked steps"
@@ -380,6 +387,17 @@ h3,
 figcaption {
   font-size: 1rem;
   margin: 0 0 0.5rem;
+}
+.steps-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.steps-header h3 {
+  margin: 0;
 }
 .step-list {
   display: flex;
