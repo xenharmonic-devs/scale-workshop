@@ -130,6 +130,34 @@ function reverse() {
   steps.value = [...steps.value].reverse()
 }
 
+type Steps = typeof steps.value
+
+function sameSizes(a: Steps, b: Steps) {
+  return a.every((step, i) => step.interval.value.equals(b[i].interval.value))
+}
+
+// With every step the same size, every order sounds the same.
+const canShuffle = computed(() =>
+  steps.value.some((step) => !step.interval.value.equals(steps.value[0].interval.value))
+)
+
+function shuffle() {
+  if (!canShuffle.value) return
+  // Trading two steps of the same size changes nothing audible, so draw
+  // again until the step sizes come out in a different order.
+  for (let attempt = 0; attempt < 100; ++attempt) {
+    const shuffled = [...steps.value]
+    for (let i = shuffled.length - 1; i > 0; --i) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
+    if (!sameSizes(shuffled, steps.value)) {
+      steps.value = shuffled
+      return
+    }
+  }
+}
+
 function startDrag(event: PointerEvent, id: number) {
   if (event.button !== 0 || !list.value) return
   if (
@@ -193,7 +221,10 @@ function modify(expand = true) {
         <div class="step-list">
           <div class="steps-header">
             <h3>Steps</h3>
-            <button :disabled="steps.length < 2" @click="reverse">Reverse</button>
+            <span class="step-actions">
+              <button :disabled="!canShuffle" @click="shuffle">Shuffle</button>
+              <button :disabled="steps.length < 2" @click="reverse">Reverse</button>
+            </span>
           </div>
           <ol
             ref="list"
@@ -398,6 +429,10 @@ figcaption {
 }
 .steps-header h3 {
   margin: 0;
+}
+.step-actions {
+  display: flex;
+  gap: 0.25rem;
 }
 .step-list {
   display: flex;

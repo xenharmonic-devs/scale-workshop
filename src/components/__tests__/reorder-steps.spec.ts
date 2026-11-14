@@ -33,6 +33,16 @@ describe('Reorder steps', () => {
     return stepString(useScaleStore().relativeIntervals.map((interval) => interval.value))
   }
 
+  function headerButton(label: string) {
+    const button = wrapper.findAll('.steps-header button').find((b) => b.text() === label)
+    if (!button) throw new Error(`No ${label} button in the Steps heading row`)
+    return button
+  }
+
+  function previewWord() {
+    return wrapper.get('.step-string code').text()
+  }
+
   it('previews reordered steps without changing the scale until OK', async () => {
     const scale = open('200.\n700.\n1200.')
     expect(wrapper.get('.step-string').text()).toBe('stepString: sLL')
@@ -243,7 +253,7 @@ describe('Reorder steps', () => {
 
   it('reverses the step order from the heading row', async () => {
     const scale = open('9/8\n5/4\n3/2\n2/1')
-    const reverse = wrapper.get('.steps-header button')
+    const reverse = headerButton('Reverse')
     const word = wrapper.get('.step-string code').text()
     expect(reverse.text()).toBe('Reverse')
 
@@ -269,7 +279,48 @@ describe('Reorder steps', () => {
 
   it('disables Reverse when there is only one step', () => {
     open('2/1')
-    expect(wrapper.get('.steps-header button').attributes('disabled')).toBeDefined()
+    expect(headerButton('Reverse').attributes('disabled')).toBeDefined()
+  })
+
+  it('shuffles the steps into a different order of sizes on every press', async () => {
+    // Three equal steps and one other: most draws only trade equal steps,
+    // which must not count as a shuffle.
+    const scale = open('200.\n400.\n600.\n1200.')
+    const sorted = (text: string) => [...text].sort().join('')
+    let previous = previewWord()
+    for (let press = 0; press < 20; ++press) {
+      await headerButton('Shuffle').trigger('click')
+      const current = previewWord()
+      expect(current).not.toBe(previous)
+      expect(sorted(current)).toBe(sorted(previous))
+      previous = current
+    }
+    expect(scale.sourceText).toBe('200.\n400.\n600.\n1200.')
+
+    await wrapper.get('.modal-footer button').trigger('click')
+    expect(scale.error).toBe('')
+    expect(word()).toBe(previous)
+  })
+
+  it('uses the random draw to pick the order', async () => {
+    // Fisher-Yates with every draw at the top of its range keeps the order,
+    // so the first draw is retried; a draw of 0 then rotates the steps.
+    const random = vi
+      .spyOn(Math, 'random')
+      .mockReturnValueOnce(0.999)
+      .mockReturnValueOnce(0.999)
+      .mockReturnValue(0)
+    open('9/8\n5/4\n2/1')
+    const before = previewWord()
+    await headerButton('Shuffle').trigger('click')
+    expect(previewWord()).toBe(before[1] + before[2] + before[0])
+    random.mockRestore()
+  })
+
+  it('disables Shuffle when every step is the same size', () => {
+    open('')
+    expect(headerButton('Shuffle').attributes('disabled')).toBeDefined()
+    expect(headerButton('Reverse').attributes('disabled')).toBeUndefined()
   })
 
   it.each([0, 2])(
