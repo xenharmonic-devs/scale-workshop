@@ -127,6 +127,7 @@ function move(from: number, to: number) {
 }
 
 function reverse() {
+  if (!canReverse.value) return
   steps.value = [...steps.value].reverse()
 }
 
@@ -135,6 +136,9 @@ type Steps = typeof steps.value
 function sameSizes(a: Steps, b: Steps) {
   return a.every((step, i) => step.interval.value.equals(b[i].interval.value))
 }
+
+// A symmetrical order of sizes reads the same reversed.
+const canReverse = computed(() => !sameSizes([...steps.value].reverse(), steps.value))
 
 // With every step the same size, every order sounds the same.
 const canShuffle = computed(() =>
@@ -223,7 +227,7 @@ function modify(expand = true) {
             <h3>Steps</h3>
             <span class="step-actions">
               <button :disabled="!canShuffle" @click="shuffle">Shuffle</button>
-              <button :disabled="steps.length < 2" @click="reverse">Reverse</button>
+              <button :disabled="!canReverse" @click="reverse">Reverse</button>
             </span>
           </div>
           <ol

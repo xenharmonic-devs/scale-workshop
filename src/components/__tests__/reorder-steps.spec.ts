@@ -317,9 +317,21 @@ describe('Reorder steps', () => {
     random.mockRestore()
   })
 
-  it('disables Shuffle when every step is the same size', () => {
+  it('disables Shuffle and Reverse when every step is the same size', () => {
     open('')
     expect(headerButton('Shuffle').attributes('disabled')).toBeDefined()
+    expect(headerButton('Reverse').attributes('disabled')).toBeDefined()
+  })
+
+  it('disables Reverse while the order of sizes is symmetrical', async () => {
+    // Pythagorean Dorian: LsLLLsL reads the same reversed.
+    open('9/8\n32/27\n4/3\n3/2\n27/16\n16/9\n2/1')
+    expect(previewWord()).toBe('LsLLLsL')
+    expect(headerButton('Reverse').attributes('disabled')).toBeDefined()
+    expect(headerButton('Shuffle').attributes('disabled')).toBeUndefined()
+
+    await wrapper.get('[aria-label="Move step 1 down"]').trigger('click')
+    expect(previewWord()).toBe('sLLLLsL')
     expect(headerButton('Reverse').attributes('disabled')).toBeUndefined()
   })
 
