@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount, type VueWrapper } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import { createPinia, setActivePinia } from 'pinia'
 import { stepString } from 'sonic-weave/words'
 import { Interval } from 'sonic-weave/interval'
@@ -30,6 +31,16 @@ describe('Reorder steps', () => {
 
   function word() {
     return stepString(useScaleStore().relativeIntervals.map((interval) => interval.value))
+  }
+
+  function headerButton(label: string) {
+    const button = wrapper.findAll('.steps-header button').find((b) => b.text() === label)
+    if (!button) throw new Error(`No ${label} button in the Steps heading row`)
+    return button
+  }
+
+  function previewWord() {
+    return wrapper.get('.step-string code').text()
   }
 
   it('previews reordered steps without changing the scale until OK', async () => {
@@ -128,6 +139,41 @@ describe('Reorder steps', () => {
     expect(wrapper.find('.equave-marker').exists()).toBe(false)
   })
 
+  it('stretches the rulers to the height the layout gives them', async () => {
+    let size = { width: 288, height: 720 }
+    const rect = vi
+      .spyOn(Element.prototype, 'getBoundingClientRect')
+      .mockImplementation(() => ({ ...size }) as DOMRect)
+    let resized = () => {}
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        constructor(callback: () => void) {
+          resized = callback
+        }
+        observe() {}
+        disconnect() {}
+      }
+    )
+    open('200.\n700.\n1200.')
+    await nextTick()
+    const svg = () => wrapper.get('svg')
+    const lastTickY = () => {
+      const ticks = wrapper.findAll('.after-state g line')
+      return Number(ticks[ticks.length - 1].attributes('y1'))
+    }
+    // 720 px tall at 288 px wide is 820 units at the ruler's fixed 328 unit width.
+    expect(svg().attributes('viewBox')).toBe('0 0 328 820')
+    expect(lastTickY()).toBe(790)
+
+    size = { width: 288, height: 360 }
+    resized()
+    await nextTick()
+    expect(svg().attributes('viewBox')).toBe('0 0 328 410')
+    expect(lastTickY()).toBe(380)
+    rect.mockRestore()
+  })
+
   it.each(['rank2(700.750, 4, 0, 1201.234, 1)', 'tet(5)', '200.\n700.\n1200.'])(
     'omits the redundant equave label for logarithmic scales: %s',
     (source) => {
@@ -203,6 +249,90 @@ describe('Reorder steps', () => {
     await wrapper.findAll('.modal-footer button')[1].trigger('click')
     expect(wrapper.emitted('cancel')).toHaveLength(1)
     expect(scale.sourceText).toBe('200.\n700.\n1200.')
+  })
+
+  it('reverses the step order from the heading row', async () => {
+    const scale = open('9/8\n5/4\n3/2\n2/1')
+    const reverse = headerButton('Reverse')
+    const word = wrapper.get('.step-string code').text()
+    expect(reverse.text()).toBe('Reverse')
+
+    await reverse.trigger('click')
+    expect(wrapper.get('.step-string code').text()).toBe([...word].reverse().join(''))
+    expect(wrapper.findAll('li strong')[0].text()).toBe(`1. ${word[word.length - 1]}`)
+    expect(scale.sourceText).toBe('9/8\n5/4\n3/2\n2/1')
+
+    // A second press restores the order it reversed.
+    await reverse.trigger('click')
+    expect(wrapper.get('.step-string code').text()).toBe(word)
+
+    await reverse.trigger('click')
+    await wrapper.get('.modal-footer button').trigger('click')
+    expect(scale.error).toBe('')
+    // 9/8, 10/9, 6/5, 4/3 reversed stack to 4/3, 8/5, 16/9, 2/1.
+    expect(
+      scale.relativeIntervals.map((interval, i) =>
+        interval.value.equals(Interval.fromFraction(['4/3', '8/5', '16/9', '2'][i]).value)
+      )
+    ).toEqual([true, true, true, true])
+  })
+
+  it('disables Reverse when there is only one step', () => {
+    open('2/1')
+    expect(headerButton('Reverse').attributes('disabled')).toBeDefined()
+  })
+
+  it('shuffles the steps into a different order of sizes on every press', async () => {
+    // Three equal steps and one other: most draws only trade equal steps,
+    // which must not count as a shuffle.
+    const scale = open('200.\n400.\n600.\n1200.')
+    const sorted = (text: string) => [...text].sort().join('')
+    let previous = previewWord()
+    for (let press = 0; press < 20; ++press) {
+      await headerButton('Shuffle').trigger('click')
+      const current = previewWord()
+      expect(current).not.toBe(previous)
+      expect(sorted(current)).toBe(sorted(previous))
+      previous = current
+    }
+    expect(scale.sourceText).toBe('200.\n400.\n600.\n1200.')
+
+    await wrapper.get('.modal-footer button').trigger('click')
+    expect(scale.error).toBe('')
+    expect(word()).toBe(previous)
+  })
+
+  it('uses the random draw to pick the order', async () => {
+    // Fisher-Yates with every draw at the top of its range keeps the order,
+    // so the first draw is retried; a draw of 0 then rotates the steps.
+    const random = vi
+      .spyOn(Math, 'random')
+      .mockReturnValueOnce(0.999)
+      .mockReturnValueOnce(0.999)
+      .mockReturnValue(0)
+    open('9/8\n5/4\n2/1')
+    const before = previewWord()
+    await headerButton('Shuffle').trigger('click')
+    expect(previewWord()).toBe(before[1] + before[2] + before[0])
+    random.mockRestore()
+  })
+
+  it('disables Shuffle and Reverse when every step is the same size', () => {
+    open('')
+    expect(headerButton('Shuffle').attributes('disabled')).toBeDefined()
+    expect(headerButton('Reverse').attributes('disabled')).toBeDefined()
+  })
+
+  it('disables Reverse while the order of sizes is symmetrical', async () => {
+    // Pythagorean Dorian: LsLLLsL reads the same reversed.
+    open('9/8\n32/27\n4/3\n3/2\n27/16\n16/9\n2/1')
+    expect(previewWord()).toBe('LsLLLsL')
+    expect(headerButton('Reverse').attributes('disabled')).toBeDefined()
+    expect(headerButton('Shuffle').attributes('disabled')).toBeUndefined()
+
+    await wrapper.get('[aria-label="Move step 1 down"]').trigger('click')
+    expect(previewWord()).toBe('sLLLLsL')
+    expect(headerButton('Reverse').attributes('disabled')).toBeUndefined()
   })
 
   it.each([0, 2])(

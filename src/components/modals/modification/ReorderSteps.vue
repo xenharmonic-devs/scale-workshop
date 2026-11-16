@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, shallowRef, useId } from 'vue'
+import { computed, ref, shallowRef, useId, watch } from 'vue'
 import { parseAST } from 'sonic-weave/parser'
 import { stepString } from 'sonic-weave/words'
 import Modal from '@/components/ModalDialog.vue'
@@ -80,12 +80,42 @@ function makePreview(orderedSteps: typeof steps.value, state: string) {
 // Keep the opening order fixed while both rulers use the same cents range.
 const before = makePreview(steps.value, 'before')
 const preview = computed(() => makePreview(steps.value, 'after'))
+// The ruler is drawn at a fixed width, and its height follows the space the
+// layout gives the SVG, so the rulers run the full height of the step list
+// instead of being letterboxed inside a fixed aspect ratio.
+const RULER_WIDTH = 328
+const MIN_RULER_HEIGHT = 200
+const rulerSvg = ref<SVGSVGElement | null>(null)
+const rulerHeight = ref(600)
+
+function measureRuler() {
+  const element = rulerSvg.value
+  if (!element) return
+  const { width, height } = element.getBoundingClientRect()
+  if (width > 0 && height > 0) {
+    rulerHeight.value = Math.max(MIN_RULER_HEIGHT, (height * RULER_WIDTH) / width)
+  }
+}
+
+watch(rulerSvg, (element, _, onCleanup) => {
+  if (!element || typeof ResizeObserver === 'undefined') return
+  measureRuler()
+  const observer = new ResizeObserver(measureRuler)
+  observer.observe(element)
+  onCleanup(() => observer.disconnect())
+})
+
 const ruler = computed(() => {
   const states = [before, preview.value]
   const positions = states.flatMap((state) => state.ticks)
   const min = Math.min(...positions)
   const range = Math.max(...positions) - min || 1
-  return { states, y: (position: number) => 30 + ((position - min) / range) * 540 }
+  const height = rulerHeight.value
+  return {
+    states,
+    height,
+    y: (position: number) => 30 + ((position - min) / range) * (height - 60)
+  }
 })
 
 function move(from: number, to: number) {
@@ -94,6 +124,42 @@ function move(from: number, to: number) {
   const [step] = reordered.splice(from, 1)
   reordered.splice(to, 0, step)
   steps.value = reordered
+}
+
+function reverse() {
+  if (!canReverse.value) return
+  steps.value = [...steps.value].reverse()
+}
+
+type Steps = typeof steps.value
+
+function sameSizes(a: Steps, b: Steps) {
+  return a.every((step, i) => step.interval.value.equals(b[i].interval.value))
+}
+
+// A symmetrical order of sizes reads the same reversed.
+const canReverse = computed(() => !sameSizes([...steps.value].reverse(), steps.value))
+
+// With every step the same size, every order sounds the same.
+const canShuffle = computed(() =>
+  steps.value.some((step) => !step.interval.value.equals(steps.value[0].interval.value))
+)
+
+function shuffle() {
+  if (!canShuffle.value) return
+  // Trading two steps of the same size changes nothing audible, so draw
+  // again until the step sizes come out in a different order.
+  for (let attempt = 0; attempt < 100; ++attempt) {
+    const shuffled = [...steps.value]
+    for (let i = shuffled.length - 1; i > 0; --i) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
+    if (!sameSizes(shuffled, steps.value)) {
+      steps.value = shuffled
+      return
+    }
+  }
 }
 
 function startDrag(event: PointerEvent, id: number) {
@@ -157,7 +223,13 @@ function modify(expand = true) {
       <p>Drag the unstacked steps into a new order, or use the arrow buttons.</p>
       <div class="reorder-preview">
         <div class="step-list">
-          <h3>Steps</h3>
+          <div class="steps-header">
+            <h3>Steps</h3>
+            <span class="step-actions">
+              <button :disabled="!canShuffle" @click="shuffle">Shuffle</button>
+              <button :disabled="!canReverse" @click="reverse">Reverse</button>
+            </span>
+          </div>
           <ol
             ref="list"
             aria-label="Unstacked steps"
@@ -211,7 +283,8 @@ function modify(expand = true) {
         <figure>
           <figcaption>Scale preview (¢)</figcaption>
           <svg
-            viewBox="0 0 328 600"
+            ref="rulerSvg"
+            :viewBox="`0 0 ${RULER_WIDTH} ${ruler.height}`"
             role="img"
             aria-label="Scale ruler before and after reordering"
           >
@@ -225,7 +298,7 @@ function modify(expand = true) {
               <text x="80" y="14" text-anchor="middle" class="ruler-heading">
                 {{ state.state === 'before' ? 'Before' : 'After' }}
               </text>
-              <line x1="80" x2="80" y1="20" y2="580" class="ruler-line" />
+              <line x1="80" x2="80" y1="20" :y2="ruler.height - 20" class="ruler-line" />
               <g v-for="(tick, index) of state.ticks" :key="index">
                 <line x1="76" x2="84" :y1="ruler.y(tick)" :y2="ruler.y(tick)" class="ruler-line" />
                 <text x="125" :y="ruler.y(tick) + 4">{{ tick.toFixed(1) }}</text>
@@ -349,6 +422,21 @@ h3,
 figcaption {
   font-size: 1rem;
   margin: 0 0 0.5rem;
+}
+.steps-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.steps-header h3 {
+  margin: 0;
+}
+.step-actions {
+  display: flex;
+  gap: 0.25rem;
 }
 .step-list {
   display: flex;
