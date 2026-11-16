@@ -11,7 +11,7 @@ import { useStateStore } from '@/stores/state'
 import { debounce } from '@/utils'
 import { useScaleUpload } from '@/upload-scale'
 import { getSourceVisitor } from 'sonic-weave/parser'
-import { defineAsyncComponent, defineComponent, h, onMounted, ref, watch } from 'vue'
+import { defineAsyncComponent, defineComponent, h, nextTick, onMounted, ref, watch } from 'vue'
 
 // The prop lets the router trigger auto-scrolling
 const props = defineProps<{
@@ -82,6 +82,12 @@ const ExporterButtonsAsync = defineAsyncComponent({
 
 const updateScale = debounce(scale.computeScale)
 
+async function focusScaleData() {
+  // Wait for the modal's focus trap and opener restoration to finish.
+  await nextTick()
+  controls.value?.focus()
+}
+
 watch(
   () => props.shown,
   (shown) => {
@@ -125,12 +131,12 @@ onMounted(() => {
           <template v-if="isAuxiliaryPanelsRequested">
             <NewScaleAsync
               ref="newScale"
-              @done="controls!.focus()"
+              @done="focusScaleData"
               @mouseenter="modifyScale?.blur?.()"
             />
             <ModifyScaleAsync
               ref="modifyScale"
-              @done="controls!.focus()"
+              @done="focusScaleData"
               @mouseenter="newScale?.blur?.()"
             />
           </template>
