@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch, nextTick } from 'vue'
+import { onMounted, onUnmounted, ref, watch, nextTick, useId } from 'vue'
 
 const props = defineProps({
   show: {
@@ -15,60 +15,101 @@ const props = defineProps({
 const emit = defineEmits(['confirm', 'cancel'])
 
 const body = ref<HTMLDivElement | null>(null)
+const container = ref<HTMLDivElement | null>(null)
+const headerId = useId()
+let opener: HTMLElement | null = null
 
-function cancelOnEsc(event: KeyboardEvent) {
-  if (!props.show) {
-    return
-  }
-  if (event.code === 'Escape') {
+function isActive() {
+  const dialogs = [...document.querySelectorAll<HTMLElement>('[data-modal-active="true"]')]
+  return props.show && dialogs[dialogs.length - 1] === container.value
+}
+
+function focusableElements(root: HTMLElement) {
+  return [
+    ...root.querySelectorAll<HTMLElement>(
+      'a[href], button, input, select, textarea, [tabindex], [contenteditable="true"]'
+    )
+  ].filter(
+    (element) =>
+      element.tabIndex >= 0 &&
+      !element.matches(':disabled') &&
+      !element.closest('[inert]') &&
+      element.getClientRects().length > 0 &&
+      getComputedStyle(element).visibility !== 'hidden'
+  )
+}
+
+function focusFirst() {
+  if (!container.value) return
+  const first =
+    (body.value && focusableElements(body.value)[0]) ||
+    focusableElements(container.value)[0] ||
+    container.value
+  first.focus()
+}
+
+function restoreFocus() {
+  const target = opener
+  opener = null
+  if (!target?.isConnected) return
+  // Submenu items may be hidden once the modal takes focus.
+  const fallback = target.closest('.btn-dropdown-group')?.querySelector<HTMLElement>('a.btn')
+  if (target.getClientRects().length) target.focus()
+  else fallback?.focus()
+}
+
+function onKeydown(event: KeyboardEvent) {
+  if (!isActive() || !container.value) return
+  if (event.key === 'Escape') {
+    event.preventDefault()
+    event.stopImmediatePropagation()
     emit('cancel')
+  } else if (event.key === 'Tab') {
+    const elements = focusableElements(container.value)
+    const first = elements[0]
+    const last = elements[elements.length - 1]
+    if (
+      !first ||
+      !container.value.contains(document.activeElement) ||
+      (event.shiftKey &&
+        (document.activeElement === first || document.activeElement === container.value)) ||
+      (!event.shiftKey && document.activeElement === last)
+    ) {
+      event.preventDefault()
+      ;(event.shiftKey ? last : first)?.focus()
+      if (!first) container.value.focus()
+    }
   }
+}
+
+function onFocusIn(event: FocusEvent) {
+  if (isActive() && !container.value?.contains(event.target as Node)) focusFirst()
 }
 
 onMounted(() => {
-  window.addEventListener('keydown', cancelOnEsc)
+  window.addEventListener('keydown', onKeydown, true)
+  document.addEventListener('focusin', onFocusIn)
 })
 
 onUnmounted(() => {
-  window.removeEventListener('keydown', cancelOnEsc)
+  window.removeEventListener('keydown', onKeydown, true)
+  document.removeEventListener('focusin', onFocusIn)
+  restoreFocus()
 })
-
-/**
- * Focus the first focusable child element.
- * @param element The modal body (or its child).
- * @returns `true` if a focusable element was found.
- */
-function focusFirst(element: Element) {
-  if (
-    element instanceof HTMLInputElement ||
-    element instanceof HTMLTextAreaElement ||
-    element instanceof HTMLSelectElement
-  ) {
-    element.focus()
-    return true
-  }
-
-  for (const child of element.children) {
-    if (focusFirst(child)) {
-      return true
-    }
-  }
-
-  return false
-}
 
 watch(
   () => props.show,
-  (newValue) => {
-    if (newValue) {
+  (show) => {
+    if (show) {
+      opener = document.activeElement instanceof HTMLElement ? document.activeElement : null
       nextTick(() => {
-        if (body.value) {
-          focusFirst(body.value)
-        }
+        if (isActive()) focusFirst()
       })
+    } else {
+      restoreFocus()
     }
   },
-  { immediate: true } // Needed to make async components work.
+  { immediate: true, flush: 'post' }
 )
 </script>
 
@@ -76,8 +117,16 @@ watch(
   <Transition name="modal">
     <div v-if="show" :class="{ 'modal-mask': true, right }" @mousedown.self="$emit('cancel')">
       <div class="modal-wrapper">
-        <div class="modal-container">
-          <div class="modal-header">
+        <div
+          ref="container"
+          class="modal-container"
+          role="dialog"
+          aria-modal="true"
+          :aria-labelledby="headerId"
+          :data-modal-active="show"
+          tabindex="-1"
+        >
+          <div class="modal-header" :id="headerId">
             <slot name="header">default header</slot>
           </div>
 

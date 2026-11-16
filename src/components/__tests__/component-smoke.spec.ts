@@ -11,6 +11,7 @@ import type { Scale } from '@/scale'
 describe('component smoke tests', () => {
   it('mounts modal dialog and emits cancel on Escape', async () => {
     const wrapper = mount(ModalDialog, {
+      attachTo: document.body,
       props: { show: true },
       slots: {
         body: '<input id="first-input" />'
@@ -22,8 +23,12 @@ describe('component smoke tests', () => {
       }
     })
 
-    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape' }))
-    expect(wrapper.emitted('cancel')).toHaveLength(1)
+    try {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape' }))
+      expect(wrapper.emitted('cancel')).toHaveLength(1)
+    } finally {
+      wrapper.unmount()
+    }
   })
 
   it('emits confirm when the default OK button is clicked', async () => {
