@@ -13,6 +13,7 @@ const modal = useModalStore()
 const scale = useScaleStore()
 
 function modify(expand = true) {
+  scale.materializeDefaultScale()
   const divisions = Math.max(1, Math.round(Number(modal.interpolationDivisions) || 1))
   const method = modal.interpolateLinearly ? 'interpolateLinear' : 'interpolate'
   scale.sourceText += `\n${method}(${divisions})`

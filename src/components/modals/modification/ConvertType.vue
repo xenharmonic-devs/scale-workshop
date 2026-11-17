@@ -23,6 +23,7 @@ onMounted(() => {
 })
 
 function modify(expand = false) {
+  scale.materializeDefaultScale()
   scale.sourceText += '\n'
   if (modal.type === 'decimal') {
     scale.sourceText += `interval => decimal(interval, ${myDecimalFractionDigits.value}) lest interval`

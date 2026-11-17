@@ -4,7 +4,7 @@ import { useScaleStore } from '@/stores/scale'
 import DropdownGroup from '@/components/DropdownGroup.vue'
 import { importFile, type ImporterKey } from '@/importers'
 
-const emit = defineEmits(['done', 'mouseenter'])
+const emit = defineEmits(['done', 'cancel', 'mouseenter'])
 
 const scale = useScaleStore()
 
@@ -77,8 +77,7 @@ const showStackModal = ref(false)
 const showStrictVarietyThreeModal = ref(false)
 const showSubharmonicModal = ref(false)
 
-function updateSourceAndHideModals(source: string) {
-  scale.sourceText = source
+function hideModals() {
   showConcordanceShellModal.value = false
   showCpsModal.value = false
   showEnumerateModal.value = false
@@ -95,6 +94,16 @@ function updateSourceAndHideModals(source: string) {
   showStackModal.value = false
   showStrictVarietyThreeModal.value = false
   showSubharmonicModal.value = false
+}
+
+function cancelModals() {
+  hideModals()
+  emit('cancel')
+}
+
+function updateSourceAndHideModals(source: string) {
+  scale.sourceText = source
+  hideModals()
   scale.computeScale()
   emit('done')
 }
@@ -195,56 +204,56 @@ defineExpose({ blur })
       :show="showEnumerateModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
-      @cancel="showEnumerateModal = false"
+      @cancel="cancelModals"
     />
     <EqualTemperamentModal
       v-if="showEqualTemperamentModal"
       :show="showEqualTemperamentModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
-      @cancel="showEqualTemperamentModal = false"
+      @cancel="cancelModals"
     />
     <EulerGenusModal
       v-if="showEulerGenusModal"
       :show="showEulerGenusModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
-      @cancel="showEulerGenusModal = false"
+      @cancel="cancelModals"
     />
     <FokkerBlockModal
       v-if="showFokkerBlockModal"
       :show="showFokkerBlockModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
-      @cancel="showFokkerBlockModal = false"
+      @cancel="cancelModals"
     />
     <GeneratorSequenceModal
       v-if="showGeneratorSequenceModal"
       :show="showGeneratorSequenceModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
-      @cancel="showGeneratorSequenceModal = false"
+      @cancel="cancelModals"
     />
     <ConcordanceShellModal
       v-if="showConcordanceShellModal"
       :show="showConcordanceShellModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
-      @cancel="showConcordanceShellModal = false"
+      @cancel="cancelModals"
     />
     <CpsModal
       v-if="showCpsModal"
       :show="showCpsModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
-      @cancel="showCpsModal = false"
+      @cancel="cancelModals"
     />
     <HarmonicSeriesModal
       v-if="showHarmonicModal"
       :show="showHarmonicModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
-      @cancel="showHarmonicModal = false"
+      @cancel="cancelModals"
     />
     <HistoricalModal
       v-if="showHistoricalModal"
@@ -253,21 +262,21 @@ defineExpose({ blur })
       @update:source="updateSourceAndHideModals"
       @update:baseFrequency="updateBaseFrequency"
       @update:baseMidiNote="scale.baseMidiNote = $event"
-      @cancel="showHistoricalModal = false"
+      @cancel="cancelModals"
     />
     <LatticeModal
       v-if="showLatticeModal"
       :show="showLatticeModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
-      @cancel="showLatticeModal = false"
+      @cancel="cancelModals"
     />
     <MosModal
       v-if="showMosModal"
       :show="showMosModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
-      @cancel="showMosModal = false"
+      @cancel="cancelModals"
     />
     <PresetModal
       v-if="showPresetModal"
@@ -276,35 +285,35 @@ defineExpose({ blur })
       @update:baseFrequency="updateBaseFrequency"
       @update:baseMidiNote="scale.baseMidiNote = $event"
       @update:source="updateSourceAndHideModals"
-      @cancel="showPresetModal = false"
+      @cancel="cancelModals"
     />
     <RankTwoModal
       v-if="showRankTwoModal"
       :show="showRankTwoModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
-      @cancel="showRankTwoModal = false"
+      @cancel="cancelModals"
     />
     <StackModal
       v-if="showStackModal"
       :show="showStackModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
-      @cancel="showStackModal = false"
+      @cancel="cancelModals"
     />
     <StrictVarietyThreeModal
       v-if="showStrictVarietyThreeModal"
       :show="showStrictVarietyThreeModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
-      @cancel="showStrictVarietyThreeModal = false"
+      @cancel="cancelModals"
     />
     <SubharmonicSeriesModal
       v-if="showSubharmonicModal"
       :show="showSubharmonicModal"
       @update:scaleName="scale.name = $event"
       @update:source="updateSourceAndHideModals"
-      @cancel="showSubharmonicModal = false"
+      @cancel="cancelModals"
     />
   </Teleport>
 </template>

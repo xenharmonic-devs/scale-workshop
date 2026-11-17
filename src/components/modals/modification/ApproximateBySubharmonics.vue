@@ -25,6 +25,7 @@ const error = computed(() => {
 })
 
 function modify(expand = true) {
+  scale.materializeDefaultScale()
   scale.sourceText += `\ntoSubharmonics(${modal.largeInteger})`
   if (expand) {
     const { visitor, defaults } = scale.getUserScopeVisitor()
