@@ -42,6 +42,8 @@ describe("Scale generation/modification", () => {
     cy.get("a").contains("Equal temperament").click();
     cy.get("button").contains("OK").click();
     cy.get("#scale-data").should("contain.value", "1\\5");
+    cy.get("#scale-data").should("be.focused");
+    cy.contains(".btn-dropdown-group", "New scale").find("ul").should("not.be.visible");
 
     cy.get("a").contains("Modify scale").click();
     cy.get("a").contains("Approximate by ratios").click();
@@ -50,6 +52,8 @@ describe("Scale generation/modification", () => {
     }
     cy.get("button").contains("Done").click();
     cy.get("#scale-data").should("contain.value", "8/7");
+    cy.get("#scale-data").should("be.focused");
+    cy.contains(".btn-dropdown-group", "Modify scale").find("ul").should("not.be.visible");
   });
 
   it("generates and displays 5 equal divisions of 1234.5 cents", () => {
