@@ -1,38 +1,54 @@
 <script setup lang="ts">
-import { computed, ref, shallowRef, useId, watch } from 'vue'
-import { parseAST } from 'sonic-weave/parser'
+import { computed, ref, shallowRef, toRaw, useId, watch } from 'vue'
+import { linear, logarithmic } from 'sonic-weave/stdlib'
+import type { Interval } from 'sonic-weave/interval'
 import { stepString } from 'sonic-weave/words'
 import Modal from '@/components/ModalDialog.vue'
 import { useScaleStore } from '@/stores/scale'
 
-defineProps<{ show: boolean }>()
+const props = defineProps<{ show: boolean }>()
 const emit = defineEmits(['done', 'cancel'])
 const scale = useScaleStore()
 
-// Use the same unstacking operation as the source that will be applied.
-const { visitor, defaults } = scale.getUserScopeVisitor()
-const usedDefaultScale = !visitor.currentScale.length
-if (usedDefaultScale) {
-  visitor.currentScale.push(...scale.relativeIntervals)
+type Step = {
+  id: number
+  interval: Interval
+  cents: number
+  letter: string
+  color: string
 }
-// Absolute pitches must use the declared unison, just as in computeScale().
-visitor.executeProgram(parseAST('relative(£)'))
+
 const patternPrefix = useId()
-const equaveInterval = visitor.currentScale[visitor.currentScale.length - 1]
-const equaveText = equaveInterval.domain === 'linear' ? equaveInterval.str(visitor.rootContext) : ''
-const equaveLabel = /^\d+$/.test(equaveText) ? `${equaveText}/1` : equaveText
-const originalWord = stepString(visitor.currentScale.map((interval) => interval.value))
-visitor.executeProgram(parseAST('unstack()'))
-const letters = [...new Set(originalWord)].sort()
-const steps = shallowRef(
-  visitor.currentScale.map((interval, id) => ({
-    id,
-    interval,
-    cents: interval.totalCents(),
-    letter: originalWord[id],
-    color: `hsl(${(letters.indexOf(originalWord[id]) * 137.508 + 25) % 360}, 65%, 55%)`
-  }))
-)
+const equaveLabel = ref('')
+const steps = shallowRef<Step[]>([])
+
+function initialize() {
+  endDrag()
+  // The store has already resolved absolute pitches against the declared unison.
+  // SonicWeave's native Set operations require objects without reactive proxies.
+  const intervals = toRaw(scale.relativeIntervals)
+  const equave = intervals[intervals.length - 1]
+  const equaveText = equave.domain === 'linear' ? equave.str() : ''
+  equaveLabel.value = /^\d+$/.test(equaveText) ? `${equaveText}/1` : equaveText
+  const word = stepString(intervals.map((interval) => interval.value))
+  const letters = [...new Set(word)].sort()
+  steps.value = intervals.map((interval, id) => {
+    if (id) {
+      interval =
+        interval.domain === 'linear'
+          ? interval.div(linear(intervals[id - 1]))
+          : interval.sub(logarithmic(intervals[id - 1]))
+    }
+    return {
+      id,
+      interval,
+      cents: interval.totalCents(),
+      letter: word[id],
+      color: `hsl(${(letters.indexOf(word[id]) * 137.508 + 25) % 360}, 65%, 55%)`
+    }
+  })
+  before.value = makePreview(steps.value, 'before')
+}
 
 const list = ref<HTMLOListElement | null>(null)
 const dragging = ref<number | null>(null)
@@ -40,13 +56,20 @@ let pointerId: number | null = null
 
 function makePreview(orderedSteps: typeof steps.value, state: string) {
   let cents = 0
-  let value = orderedSteps[0].interval.value.pow(0)
-  const values: (typeof value)[] = []
+  let interval: Interval | undefined
+  const values: Interval['value'][] = []
   const spans = orderedSteps.map((step, index) => {
     const start = cents
     cents += step.cents
-    value = value.mul(step.interval.value)
-    values.push(value)
+    if (interval) {
+      interval =
+        step.interval.domain === 'linear'
+          ? step.interval.mul(linear(interval))
+          : step.interval.add(logarithmic(interval))
+    } else {
+      interval = step.interval
+    }
+    values.push(interval.value)
     return { ...step, index, start, end: cents }
   })
   const positions = [0, ...spans.map((span) => span.end)]
@@ -78,7 +101,14 @@ function makePreview(orderedSteps: typeof steps.value, state: string) {
 }
 
 // Keep the opening order fixed while both rulers use the same cents range.
-const before = makePreview(steps.value, 'before')
+const before = shallowRef(makePreview([], 'before'))
+watch(
+  [() => props.show, () => scale.relativeIntervals],
+  ([show]) => {
+    if (show) initialize()
+  },
+  { immediate: true }
+)
 const preview = computed(() => makePreview(steps.value, 'after'))
 // The ruler is drawn at a fixed width, and its height follows the space the
 // layout gives the SVG, so the rulers run the full height of the step list
@@ -106,7 +136,7 @@ watch(rulerSvg, (element, _, onCleanup) => {
 })
 
 const ruler = computed(() => {
-  const states = [before, preview.value]
+  const states = [before.value, preview.value]
   const positions = states.flatMap((state) => state.ticks)
   const min = Math.min(...positions)
   const range = Math.max(...positions) - min || 1
@@ -134,7 +164,7 @@ function reverse() {
 type Steps = typeof steps.value
 
 function sameSizes(a: Steps, b: Steps) {
-  return a.every((step, i) => step.interval.value.equals(b[i].interval.value))
+  return a.every((step, i) => step.interval.equals(b[i].interval))
 }
 
 // A symmetrical order of sizes reads the same reversed.
@@ -142,7 +172,7 @@ const canReverse = computed(() => !sameSizes([...steps.value].reverse(), steps.v
 
 // With every step the same size, every order sounds the same.
 const canShuffle = computed(() =>
-  steps.value.some((step) => !step.interval.value.equals(steps.value[0].interval.value))
+  steps.value.some((step) => !step.interval.equals(steps.value[0].interval))
 )
 
 function shuffle() {
@@ -201,15 +231,11 @@ function endDrag() {
 }
 
 function modify(expand = true) {
-  // An empty source displays 12-TET; materialize it before permuting its steps.
-  const source = usedDefaultScale ? `${scale.sourceText}\ntet(12)` : scale.sourceText
   const permutation = steps.value.map((step) => step.id).join(', ')
-  const result = `${source}\nrelative(£)\nunstack()\n£[[${permutation}]]\nstack()`
+  scale.sourceText += `\nrelative(£)\nunstack()\n£[[${permutation}]]\nstack()`
   if (expand) {
-    visitor.executeProgram(parseAST(`£[[${permutation}]]\nstack()`))
+    const { visitor, defaults } = scale.getUserScopeVisitor()
     scale.sourceText = visitor.expand(defaults)
-  } else {
-    scale.sourceText = result
   }
   scale.computeScale()
   emit('done')
@@ -257,7 +283,7 @@ function modify(expand = true) {
               <span class="step-description">
                 <strong>{{ index + 1 }}. {{ step.letter }}</strong>
                 <span class="step-details">
-                  <span>{{ step.interval.str(visitor.rootContext) }}</span>
+                  <span>{{ step.interval.str() }}</span>
                   <small>{{ step.cents.toFixed(scale.centsFractionDigits) }} ¢</small>
                 </span>
               </span>
