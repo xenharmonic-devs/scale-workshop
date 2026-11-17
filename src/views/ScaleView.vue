@@ -132,11 +132,13 @@ onMounted(() => {
             <NewScaleAsync
               ref="newScale"
               @done="focusScaleData"
+              @cancel="focusScaleData"
               @mouseenter="modifyScale?.blur?.()"
             />
             <ModifyScaleAsync
               ref="modifyScale"
               @done="focusScaleData"
+              @cancel="focusScaleData"
               @mouseenter="newScale?.blur?.()"
             />
           </template>

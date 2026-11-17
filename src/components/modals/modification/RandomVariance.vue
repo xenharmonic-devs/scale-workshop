@@ -14,6 +14,7 @@ const modal = useModalStore()
 const scale = useScaleStore()
 
 function modify(expand = true) {
+  scale.materializeDefaultScale()
   scale.sourceText += `\nrandomVariance(${centString(modal.varianceAmount)}, ${modal.varyEquave})\ncents(£, ${scale.centsFractionDigits})`
   if (expand) {
     const { visitor, defaults } = scale.getUserScopeVisitor()

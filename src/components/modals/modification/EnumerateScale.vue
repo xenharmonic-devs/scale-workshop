@@ -11,6 +11,7 @@ const emit = defineEmits(['done', 'cancel'])
 const scale = useScaleStore()
 
 function overtonal() {
+  scale.materializeDefaultScale()
   scale.sourceText += ';elevate();simplify;map(repr)'
   const { visitor, defaults } = scale.getUserScopeVisitor()
   const overtones = visitor.currentScale.map((i) => i.label)
@@ -25,6 +26,7 @@ function overtonal() {
 }
 
 function undertonal() {
+  scale.materializeDefaultScale()
   scale.sourceText += ';reflect();elevate();simplify;map(repr)'
   const { visitor, defaults } = scale.getUserScopeVisitor()
   const undertones = visitor.currentScale.map((i) => i.label)
@@ -39,6 +41,7 @@ function undertonal() {
 }
 
 function retroversion() {
+  scale.materializeDefaultScale()
   scale.sourceText += ';retrovert();elevate();simplify;map(repr)'
   const { visitor, defaults } = scale.getUserScopeVisitor()
   const tones = visitor.currentScale.map((i) => i.label)
@@ -53,6 +56,7 @@ function retroversion() {
 }
 
 function revposition() {
+  scale.materializeDefaultScale()
   scale.sourceText += ';revpose();elevate();simplify;map(repr)'
   const { visitor, defaults } = scale.getUserScopeVisitor()
   const tones = visitor.currentScale.map((i) => i.label)

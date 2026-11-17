@@ -115,7 +115,11 @@ watch(
 
 <template>
   <Transition name="modal">
-    <div v-if="show" :class="{ 'modal-mask': true, right }" @mousedown.self="$emit('cancel')">
+    <div
+      v-if="show"
+      :class="{ 'modal-mask': true, right }"
+      @mousedown.self.prevent="$emit('cancel')"
+    >
       <div class="modal-wrapper">
         <div
           ref="container"
