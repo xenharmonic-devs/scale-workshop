@@ -18,6 +18,7 @@ import { useMidiStore } from './stores/midi'
 import { useScaleStore } from './stores/scale'
 import { clamp } from 'xen-dev-utils/core'
 import ScaleView from '@/views/ScaleView.vue'
+import ExportMenu from '@/components/ExportMenu.vue'
 
 // === Pinia-managed state ===
 const state = useStateStore()
@@ -639,6 +640,7 @@ function panic() {
       <li><RouterLink to="/midi">MIDI I/O</RouterLink></li>
       <li><RouterLink to="/prefs">Preferences</RouterLink></li>
     </ul>
+    <ExportMenu />
     <div id="app-tray" class="hidden-sm">
       <ul>
         <template v-if="state.typingActive">

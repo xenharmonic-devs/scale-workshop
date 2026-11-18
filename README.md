@@ -132,11 +132,11 @@ Use the ↺ button near the "Scale data" header to undo and the ↻ button to re
 
 ### How can I share my tunings with a collaborator?
 
-Use *Export current settings > Share scale* found on the third column of the *Build Scale* tab. The given URL can be copied and pasted to another person. When they open the link they will see a Scale Workshop page with your scale already tuned in.
+Use *Export > Share scale* found in the top bar. The given URL can be copied and pasted to another person. When they open the link they will see a Scale Workshop page with your scale already tuned in.
 
 ### How can I save my work for later?
 
-Share the scale URL to yourself through *Export current settings > Share scale*. **Warning**: Compared to Scale Workshop 2 bookmarking the current URL doesn't work anymore and only takes you to the front page.
+Share the scale URL to yourself through *Export > Share scale*. **Warning**: Compared to Scale Workshop 2 bookmarking the current URL doesn't work anymore and only takes you to the front page.
 
 ### When I export a tuning, I get nothing, why?
 
