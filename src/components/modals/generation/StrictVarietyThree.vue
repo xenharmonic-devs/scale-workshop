@@ -214,7 +214,7 @@ function build(expand: boolean): GeneratorResult | undefined {
 }
 
 useGeneratorPreview(
-  () => build(true),
+  () => build(false),
   (result) => emit('preview', result)
 )
 
@@ -320,7 +320,7 @@ function conditionWeight(counts: StepCounts) {
 </script>
 
 <template>
-  <Modal :show="show" docked @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate Strict Variety 3 scale</h2>
     </template>

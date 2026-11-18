@@ -36,7 +36,7 @@ function build(expand: boolean): GeneratorResult {
 
 // Wait for a chord rather than wiping the scale.
 useGeneratorPreview(
-  () => (modal.chord.trim() ? build(true) : undefined),
+  () => (modal.chord.trim() ? build(false) : undefined),
   (result) => emit('preview', result)
 )
 
@@ -56,7 +56,7 @@ function generate(expand = true) {
 </script>
 
 <template>
-  <Modal :show="show" docked @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Enumerate chord</h2>
     </template>

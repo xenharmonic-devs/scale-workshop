@@ -57,7 +57,7 @@ function build(shell: boolean, expand: boolean): GeneratorResult | undefined {
 }
 
 useGeneratorPreview(
-  () => build(true, true),
+  () => build(modal.concordanceOutput === 'shell', false),
   (result) => emit('preview', result)
 )
 
@@ -72,12 +72,28 @@ function generate(shell = true, expand = true) {
 </script>
 
 <template>
-  <Modal :show="show" docked @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate VAO / concordance shell</h2>
     </template>
     <template #body>
       <div class="control-group">
+        <div class="control radio-group">
+          <label>Output</label>
+          <span>
+            <input
+              type="radio"
+              id="vao-output-shell"
+              value="shell"
+              v-model="modal.concordanceOutput"
+            />
+            <label for="vao-output-shell">Shell</label>
+          </span>
+          <span>
+            <input type="radio" id="vao-output-vao" value="vao" v-model="modal.concordanceOutput" />
+            <label for="vao-output-vao">VAO</label>
+          </span>
+        </div>
         <div class="control">
           <label for="denominator">Denominator</label>
           <input

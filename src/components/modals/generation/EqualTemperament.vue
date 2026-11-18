@@ -85,7 +85,7 @@ function buildPreview() {
   } else if (!modal.degrees.length || modal.degrees.some((steps) => Number.isNaN(steps))) {
     return undefined
   }
-  return build(true)
+  return build(false)
 }
 
 useGeneratorPreview(buildPreview, (result) => emit('preview', result))
@@ -98,7 +98,7 @@ function generate(expand = true) {
 </script>
 
 <template>
-  <Modal :show="show" docked @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate equal temperament</h2>
     </template>

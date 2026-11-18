@@ -42,7 +42,7 @@ function build(expand: boolean): GeneratorResult {
 
 // Wait for factors rather than wiping the scale with an empty product set.
 useGeneratorPreview(
-  () => (modal.factorsString.trim() ? build(true) : undefined),
+  () => (modal.factorsString.trim() ? build(false) : undefined),
   (result) => emit('preview', result)
 )
 
@@ -62,7 +62,7 @@ function generate(expand = true) {
 </script>
 
 <template>
-  <Modal :show="show" docked @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate combination product set</h2>
     </template>

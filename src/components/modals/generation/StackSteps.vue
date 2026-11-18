@@ -34,7 +34,7 @@ function build(expand: boolean): GeneratorResult | undefined {
 }
 
 useGeneratorPreview(
-  () => build(true),
+  () => build(false),
   (result) => emit('preview', result)
 )
 
@@ -46,7 +46,7 @@ function generate(expand = true) {
 </script>
 
 <template>
-  <Modal :show="show" docked @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Stack relative scale steps</h2>
     </template>

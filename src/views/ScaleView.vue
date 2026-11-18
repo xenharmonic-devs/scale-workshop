@@ -5,6 +5,7 @@
  */
 import ScaleControls from '@/components/ScaleControls.vue'
 import TuningTable from '@/components/TuningTable.vue'
+import RackPanel from '@/components/rack/RackPanel.vue'
 import { setNumberOfComponents } from 'sonic-weave/monzo'
 import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
 import { useScaleStore } from '@/stores/scale'
@@ -96,8 +97,11 @@ onMounted(() => {
 <template>
   <main>
     <div class="columns-container">
-      <!-- Docked dialogs (ModalDialog with `docked`) are teleported in here. -->
-      <div id="side-panel" class="column side-panel"></div>
+      <div class="column side-panel">
+        <RackPanel />
+        <!-- Docked dialogs (ModalDialog with `docked`, i.e. Modify scale's cards) go in here. -->
+        <div id="side-panel"></div>
+      </div>
       <div class="column scale-builder">
         <textarea
           id="scale-name"
@@ -193,6 +197,9 @@ div.column {
 div.side-panel {
   grid-area: side;
   padding: 1rem;
+}
+#side-panel:not(:empty) {
+  margin-top: 1rem;
 }
 div.scale-builder {
   grid-area: builder;

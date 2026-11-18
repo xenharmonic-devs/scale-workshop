@@ -35,7 +35,7 @@ function build(expand: boolean): GeneratorResult {
 }
 
 useGeneratorPreview(
-  () => build(true),
+  () => build(false),
   (result) => emit('preview', result)
 )
 
@@ -47,7 +47,7 @@ function generate(expand = true) {
 </script>
 
 <template>
-  <Modal :show="show" docked @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate harmonic series segment</h2>
     </template>

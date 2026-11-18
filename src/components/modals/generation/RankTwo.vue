@@ -174,7 +174,7 @@ function build(expand: boolean): GeneratorResult {
 useGeneratorPreview(
   () =>
     rank2.method === 'circle' || (rank2.method === 'generator' && rank2.generatorString.trim())
-      ? build(true)
+      ? build(false)
       : undefined,
   (result) => emit('preview', result)
 )
@@ -190,7 +190,7 @@ function generate(expand = true) {
 </script>
 
 <template>
-  <Modal :show="show" docked @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate rank 2 temperament</h2>
     </template>

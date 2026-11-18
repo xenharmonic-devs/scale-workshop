@@ -7,6 +7,12 @@ import palette from '@/character-palette.json'
 
 const scale = useScaleStore()
 
+/**
+ * Scale data is output only for now: the Build Scale rack writes it. Hand edits (and the
+ * character palette that helps with them) come back with custom editing later.
+ */
+const SCALE_DATA_EDITABLE = false
+
 const updateScale = debounce(scale.computeScale)
 
 const sourceEditor = ref<HTMLTextAreaElement | null>(null)
@@ -106,6 +112,7 @@ defineExpose({ focus, clearPaletteInfo })
         aria-label="Scale data editor"
         ref="sourceEditor"
         rows="20"
+        :readonly="!SCALE_DATA_EDITABLE"
         v-model="scale.sourceText"
         @input="updateScale()"
         @focus="clearPaletteInfo"
@@ -114,18 +121,20 @@ defineExpose({ focus, clearPaletteInfo })
     <ScaleRule :scale="scale.scale" orientation="horizontal" />
     <p v-if="scale.error" class="error">{{ scale.error }}</p>
     <p v-else-if="scale.warning" class="warning">{{ scale.warning }}</p>
-    <h3>Character palette</h3>
-    <div class="control">
-      <button
-        v-for="(_, character) of palette"
-        :key="character"
-        @click="insertFromPalette"
-        @mouseenter="updatePaletteInfo"
-      >
-        {{ character }}
-      </button>
-    </div>
-    <p class="info" v-html="paletteInfo"></p>
+    <template v-if="SCALE_DATA_EDITABLE">
+      <h3>Character palette</h3>
+      <div class="control">
+        <button
+          v-for="(_, character) of palette"
+          :key="character"
+          @click="insertFromPalette"
+          @mouseenter="updatePaletteInfo"
+        >
+          {{ character }}
+        </button>
+      </div>
+      <p class="info" v-html="paletteInfo"></p>
+    </template>
   </div>
   <div class="control-group">
     <div class="control radio-group">

@@ -153,6 +153,8 @@ export const useModalStore = defineStore('modal', () => {
   const numPeriods = ref(1)
   const size = ref(5)
   const generatorsString = ref('')
+  // What the Generator sequence card produces: the scale itself, or a stacked lattice view of it.
+  const generatorSequenceOutput = ref<'scale' | 'lattice'>('scale')
   const [generators, generatorsError] = computedAndError(() => {
     let source = generatorsString.value
     // Enumerated chords mean something different in the context of GS
@@ -532,6 +534,8 @@ export const useModalStore = defineStore('modal', () => {
   const mediumInteger = ref(32)
   const errorModel = ref<'rooted' | 'free'>('rooted')
   const vaoIndex = ref(0)
+  // What the Concordance shell card produces: the shell (VAO reduced into an EDO) or the bare VAO.
+  const concordanceOutput = ref<'shell' | 'vao'>('shell')
   const vaos = computed(() => {
     if (errorModel.value === 'rooted') {
       return [
@@ -627,6 +631,7 @@ export const useModalStore = defineStore('modal', () => {
     numPeriods,
     size,
     generatorsString,
+    generatorSequenceOutput,
     generators,
     generatorsError,
     constantStructureSizes,
@@ -679,6 +684,7 @@ export const useModalStore = defineStore('modal', () => {
     // Concordance shell
     mediumInteger,
     vaoIndex,
+    concordanceOutput,
     vaos,
     errorModel,
 

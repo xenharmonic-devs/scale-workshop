@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import ModifyScale from '@/components/ModifyScale.vue'
-import NewScale from '@/components/NewScale.vue'
 import { useScaleStore } from '@/stores/scale'
 import { useModalStore } from '@/stores/modal'
 import { useSessionIdStore } from '@/stores/session-id'
@@ -130,20 +129,6 @@ describe('default scale modification', () => {
     scale.computeScale()
     expect(scale.error).toBe('')
     expect(scale.labels[0]).toBe(sharp)
-  })
-
-  it('reports generation dialog cancellation separately from completion', async () => {
-    const scale = useScaleStore()
-    scale.sourceText = 'tet(7)'
-    scale.computeScale()
-    const original = JSON.stringify(scale)
-    wrapper = mount(NewScale, { attachTo: document.body })
-    await select('Equal temperament')
-    await button('Cancel')
-    expect(wrapper.emitted('cancel')).toHaveLength(1)
-    expect(wrapper.emitted('done')).toBeUndefined()
-    expect(document.querySelector('[role="dialog"]')).toBeNull()
-    expect(JSON.stringify(scale)).toBe(original)
   })
 
   it('materializes for immediate actions', async () => {

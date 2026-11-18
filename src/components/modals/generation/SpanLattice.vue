@@ -92,7 +92,7 @@ function build(expand: boolean): GeneratorResult {
 
 // Wait for a basis rather than collapsing the scale to the unison.
 useGeneratorPreview(
-  () => (lattice.basisString.trim() ? build(true) : undefined),
+  () => (lattice.basisString.trim() ? build(false) : undefined),
   (result) => emit('preview', result)
 )
 
@@ -104,7 +104,7 @@ function generate(expand = true) {
 </script>
 
 <template>
-  <Modal :show="show" docked @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate parallelotope</h2>
     </template>

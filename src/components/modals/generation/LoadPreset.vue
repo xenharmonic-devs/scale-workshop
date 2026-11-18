@@ -36,7 +36,7 @@ function build(expand: boolean): GeneratorResult | undefined {
 
 // Selecting a preset in the list previews it.
 useGeneratorPreview(
-  () => build(true),
+  () => build(false),
   (result) => emit('preview', result)
 )
 
@@ -53,7 +53,7 @@ function confirm(expand = true) {
 </script>
 
 <template>
-  <Modal :show="show" docked @confirm="confirm" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded @confirm="confirm" @cancel="$emit('cancel')">
     <template #header>
       <h2>Load preset scale</h2>
     </template>

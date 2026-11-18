@@ -168,6 +168,15 @@ export function axisOffset(steps: number, deltas: number[]) {
 /**
  * Expands SonicWeave source code against default context bindings.
  */
+/**
+ * Runs SonicWeave source and returns the scale it leaves behind. Throws on errors.
+ */
+export function evaluateCode(source: string) {
+  const visitor = getSourceVisitor()
+  visitor.executeProgram(parseAST(source))
+  return visitor.currentScale
+}
+
 export function expandCode(source: string) {
   const visitor = getSourceVisitor()
   const defaults = visitor.rootContext!.clone()

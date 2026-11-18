@@ -5,6 +5,9 @@
  * By default it is a centered overlay that traps focus. With `docked` it instead renders
  * inline inside the Build Scale side panel (`DOCK_TARGET`) as a non-blocking panel: no
  * backdrop, no focus trap, full panel width. Escape still cancels while focus is inside it.
+ *
+ * With `embedded` it renders only its body, in place: a rack card supplies the title and the
+ * open/close control, and every change applies live, so there is no footer and no Escape.
  */
 import { onMounted, onUnmounted, ref, watch, nextTick, useId } from 'vue'
 
@@ -23,6 +26,10 @@ const props = defineProps({
     type: Boolean
   },
   docked: {
+    default: false,
+    type: Boolean
+  },
+  embedded: {
     default: false,
     type: Boolean
   }
@@ -85,6 +92,7 @@ function restoreFocus() {
 }
 
 function onKeydown(event: KeyboardEvent) {
+  if (props.embedded) return
   // A TextSlider mid-edit uses Escape to cancel the edit, not the dialog.
   if (event.key === 'Escape' && (event.target as HTMLElement | null)?.dataset?.editing) return
   if (props.docked) {
@@ -137,6 +145,9 @@ onUnmounted(() => {
 watch(
   () => props.show,
   (show) => {
+    if (props.embedded) {
+      return
+    }
     if (show) {
       opener = document.activeElement instanceof HTMLElement ? document.activeElement : null
       nextTick(() => {
@@ -157,7 +168,10 @@ watch(
 </script>
 
 <template>
-  <Teleport :to="docked ? DOCK_TARGET : 'body'" :disabled="!docked">
+  <div v-if="embedded" v-show="show" v-bind="$attrs" class="modal-embedded">
+    <slot name="body"></slot>
+  </div>
+  <Teleport v-else :to="docked ? DOCK_TARGET : 'body'" :disabled="!docked">
     <Transition name="modal">
       <div
         v-if="show"

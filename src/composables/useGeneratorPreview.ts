@@ -1,4 +1,5 @@
 import { watch } from 'vue'
+import { evaluateCode } from '@/utils'
 
 /** What a generator card produces: the scale it would create with its current settings. */
 export type GeneratorResult = {
@@ -22,9 +23,10 @@ function sameResult(a: GeneratorResult, b?: GeneratorResult) {
  * Live preview for a generator card: calls `emitPreview` when the card opens and whenever the
  * reactive state read by `build` changes.
  *
- * `build` returns `undefined` (or throws) while the settings are mid-edit and don't describe a
- * scale yet, e.g. a half-typed interval. Those are skipped so the scale keeps the last good
- * preview instead of filling with errors while typing.
+ * `build` returns the card's readable (unexpanded) code, or `undefined` while the settings are
+ * mid-edit and don't describe a scale yet. The code is run once here, and results that throw or
+ * produce no notes are skipped too, so the scale keeps the last good result instead of filling
+ * with errors (or falling back to 12-TET) while typing.
  */
 export function useGeneratorPreview(
   build: () => GeneratorResult | undefined,
@@ -34,7 +36,8 @@ export function useGeneratorPreview(
   watch(
     () => {
       try {
-        return build()
+        const result = build()
+        return result && evaluateCode(result.source).length ? result : undefined
       } catch {
         return undefined
       }

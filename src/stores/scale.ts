@@ -746,16 +746,43 @@ export const useScaleStore = defineStore('scale', () => {
     history.truncate()
   }
 
+  /**
+   * Lets another store (the Build Scale rack) keep its own state in each undo step, next to the
+   * scale data it produced, so undo restores both together.
+   */
+  type UndoExtension = {
+    serialize: () => unknown
+    restore: (data: unknown, sourceText: string) => void
+  }
+  let undoExtension: UndoExtension | null = null
+  // Can't appear in SonicWeave source, so a plain-text step is never mistaken for an extended one.
+  const EXTENDED_STEP = '\u0000undo-extension\u0000'
+
+  function setUndoExtension(extension: UndoExtension) {
+    undoExtension = extension
+  }
+
   function serialize() {
     // We could store the whole state using toJSON() here, but lets see if sourceText is enough...
+    if (undoExtension) {
+      const extension = undoExtension.serialize()
+      return EXTENDED_STEP + JSON.stringify({ sourceText: sourceText.value, extension })
+    }
     return sourceText.value
   }
 
   function restore(body: string) {
     // We could restore the whole state using something like this:
     // const data = JSON.parse(body, (key, value) => Interval.reviver(key, Scale.reviver(key, value)))
-
-    sourceText.value = body
+    let text = body
+    if (body.startsWith(EXTENDED_STEP)) {
+      const data = JSON.parse(body.slice(EXTENDED_STEP.length))
+      text = data.sourceText
+      undoExtension?.restore(data.extension, text)
+    } else {
+      undoExtension?.restore(null, text)
+    }
+    sourceText.value = text
     computeScale(false)
   }
 
@@ -810,6 +837,7 @@ export const useScaleStore = defineStore('scale', () => {
     labelForIndex,
     toJSON,
     fromJSON,
+    setUndoExtension,
     computeRawScale,
     // Mini-stores
     history

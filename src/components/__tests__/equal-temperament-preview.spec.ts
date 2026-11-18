@@ -10,10 +10,6 @@ let wrapper: VueWrapper | undefined
 beforeEach(() => {
   setActivePinia(createPinia())
   useSessionIdStore().loading = true
-  // The card docks into the Build Scale side panel.
-  const panel = document.createElement('div')
-  panel.id = 'side-panel'
-  document.body.append(panel)
 })
 
 afterEach(() => {
@@ -32,11 +28,11 @@ describe('Equal temperament live preview', () => {
   it('previews the current settings on open', async () => {
     const card = await open()
     expect(card.emitted('preview')).toEqual([
-      [{ source: '1\\5\n2\\5\n3\\5\n4\\5\n5\\5', name: '5 equal divisions of 2/1' }]
+      [{ source: 'tet(5)', name: '5 equal divisions of 2/1' }]
     ])
   })
 
-  it('previews the expanded scale when the divisions change', async () => {
+  it('previews the readable code when the divisions change', async () => {
     const card = await open()
     const modal = useModalStore()
     modal.divisions = 3
@@ -45,7 +41,7 @@ describe('Equal temperament live preview', () => {
 
     const previews = card.emitted('preview')!
     expect(previews[previews.length - 1]).toEqual([
-      { source: '1\\3\n2\\3\n3\\3', name: '3 equal divisions of 2/1' }
+      { source: 'tet(3)', name: '3 equal divisions of 2/1' }
     ])
   })
 
@@ -59,17 +55,16 @@ describe('Equal temperament live preview', () => {
     expect(card.emitted('preview')!.length).toBe(before)
   })
 
-  it('still emits the final result on OK', async () => {
+  it('lists the degrees when they are not a plain equal division', async () => {
     const card = await open()
     const modal = useModalStore()
-    modal.divisions = 2
-    modal.updateFromDivisions()
+    modal.degreesString = '1 3 5'
+    modal.simpleEd = false
     await flushPromises()
 
-    const ok = [...document.querySelectorAll('button')].find((b) => b.textContent === 'OK')!
-    ok.click()
-
-    expect(card.emitted('update:scaleName')).toEqual([['2 equal divisions of 2/1']])
-    expect(card.emitted('update:source')).toEqual([['1\\2\n2\\2']])
+    const previews = card.emitted('preview')!
+    expect(previews[previews.length - 1]).toEqual([
+      { source: '1\\5\n3\\5\n5\\5', name: '5 equal divisions of 2/1' }
+    ])
   })
 })

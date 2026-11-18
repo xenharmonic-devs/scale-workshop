@@ -108,7 +108,7 @@ function build(kind: Kind): GeneratorResult {
 }
 
 useGeneratorPreview(
-  () => build('expanded'),
+  () => build(modal.generatorSequenceOutput === 'lattice' ? 'lattice' : 'raw'),
   (result) => emit('preview', result)
 )
 
@@ -120,12 +120,33 @@ function generate(kind: Kind = 'expanded') {
 </script>
 
 <template>
-  <Modal :show="show" docked @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generator sequence</h2>
     </template>
     <template #body>
       <div class="control-group">
+        <div class="control radio-group">
+          <label>Output</label>
+          <span>
+            <input
+              type="radio"
+              id="gs-output-scale"
+              value="scale"
+              v-model="modal.generatorSequenceOutput"
+            />
+            <label for="gs-output-scale">Scale</label>
+          </span>
+          <span>
+            <input
+              type="radio"
+              id="gs-output-lattice"
+              value="lattice"
+              v-model="modal.generatorSequenceOutput"
+            />
+            <label for="gs-output-lattice">Lattice</label>
+          </span>
+        </div>
         <div class="control">
           <label for="generators">Generators</label>
           <input

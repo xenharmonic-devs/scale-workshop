@@ -144,7 +144,7 @@ function edoClick(info: EdoMapEntry) {
 </script>
 
 <template>
-  <Modal :show="show" docked @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate MOS scale</h2>
     </template>
