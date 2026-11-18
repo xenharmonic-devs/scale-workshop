@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
 import {
   daughterMos,
   mos,
@@ -25,11 +26,11 @@ defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
+const emit = defineEmits(['preview', 'update:source', 'update:scaleName', 'cancel'])
 
 const modal = useModalStore()
 
-function generate() {
+function build(): GeneratorResult {
   let name: string
   let steps: number[]
   let colors: string[] = []
@@ -97,7 +98,6 @@ function generate() {
   } else {
     name = `MOS ${modal.safeNumLarge}L ${modal.safeNumSmall}s`
   }
-  emit('update:scaleName', name)
 
   const projector = modal.equave.compare(OCTAVE) ? `<${modal.equave.toString()}>` : ''
   const divisions = Math.abs(steps[steps.length - 1])
@@ -106,7 +106,14 @@ function generate() {
     const color = colors[i] ? ' ' + colors[i] : ''
     source += `${steps[i]}\\${divisions}${projector}${color}\n`
   }
+  return { source, name }
+}
 
+useGeneratorPreview(build, (result) => emit('preview', result))
+
+function generate() {
+  const { source, name } = build()
+  emit('update:scaleName', name)
   emit('update:source', source)
 }
 
@@ -137,7 +144,7 @@ function edoClick(info: EdoMapEntry) {
 </script>
 
 <template>
-  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" docked @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate MOS scale</h2>
     </template>

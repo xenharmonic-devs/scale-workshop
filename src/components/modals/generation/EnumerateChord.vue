@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
 import Modal from '@/components/ModalDialog.vue'
 import { expandCode } from '@/utils'
 import { useModalStore } from '@/stores/modal'
@@ -7,36 +8,43 @@ defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
+const emit = defineEmits(['preview', 'update:source', 'update:scaleName', 'cancel'])
 
 const modal = useModalStore()
 
+function build(expand: boolean): GeneratorResult {
+  const chordParts = modal.chordIntervals.map((i) => i.toString())
+  let source = chordParts.join(':')
+  const equalDivisions = Math.max(1, Math.round(modal.equalDivisions))
+  let chordTitle = modal.chord
+  if (modal.retrovertChord) {
+    if (chordParts.length === 1) {
+      source = `retrovert(${source})`
+    } else {
+      const retrovertChord = [...chordParts].reverse().join(':')
+      source = `/${retrovertChord}`
+      chordTitle = `/${retrovertChord}`
+    }
+  }
+  let name = `Chord ${chordTitle}`
+  if (equalDivisions !== 1) {
+    source += `\ninterpolate(${equalDivisions})`
+    name = `Chord ${equalDivisions}ED(${chordTitle})`
+  }
+  return { source: expand ? expandCode(source) : source, name }
+}
+
+// Wait for a chord rather than wiping the scale.
+useGeneratorPreview(
+  () => (modal.chord.trim() ? build(true) : undefined),
+  (result) => emit('preview', result)
+)
+
 function generate(expand = true) {
   try {
-    const chordParts = modal.chordIntervals.map((i) => i.toString())
-    let source = chordParts.join(':')
-    const equalDivisions = Math.max(1, Math.round(modal.equalDivisions))
-    let chordTitle = modal.chord
-    if (modal.retrovertChord) {
-      if (chordParts.length === 1) {
-        source = `retrovert(${source})`
-      } else {
-        const retrovertChord = [...chordParts].reverse().join(':')
-        source = `/${retrovertChord}`
-        chordTitle = `/${retrovertChord}`
-      }
-    }
-    let name = `Chord ${chordTitle}`
-    if (equalDivisions !== 1) {
-      source += `\ninterpolate(${equalDivisions})`
-      name = `Chord ${equalDivisions}ED(${chordTitle})`
-    }
+    const { source, name } = build(expand)
     emit('update:scaleName', name)
-    if (expand) {
-      emit('update:source', expandCode(source))
-    } else {
-      emit('update:source', source)
-    }
+    emit('update:source', source)
   } catch (error) {
     if (error instanceof Error) {
       alert(error.message)
@@ -48,7 +56,7 @@ function generate(expand = true) {
 </script>
 
 <template>
-  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" docked @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Enumerate chord</h2>
     </template>

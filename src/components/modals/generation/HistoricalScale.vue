@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
 import Modal from '@/components/ModalDialog.vue'
 import NumericSlider from '@/components/NumericSlider.vue'
 import { mmod } from 'xen-dev-utils/fraction'
@@ -18,6 +19,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits([
+  'preview',
   'update:scaleName',
   'update:source',
   'update:baseFrequency',
@@ -104,15 +106,18 @@ function onWellCommaInput(event: Event, i: number) {
   historical.selectedWellPreset = 'none'
 }
 
-function generate(expand = true) {
+function build(expand: boolean): GeneratorResult {
   let source: string
+  let name: string
+  let baseFrequency: number | undefined
+  let baseMidiNote: number | undefined
   if (historical.method === 'simple') {
     source = `rank2(${temperedGenerator.value.toString()}, ${historical.up}, ${historical.down})`
 
     if (historical.selectedPreset in historical.presets) {
-      emit('update:scaleName', historical.presets[historical.selectedPreset].name)
+      name = historical.presets[historical.selectedPreset].name
     } else {
-      emit('update:scaleName', `Rank 2 temperament (${historical.generatorString})`)
+      name = `Rank 2 temperament (${historical.generatorString})`
     }
   } else if (historical.method === 'target') {
     source = `rank2(${temperedGenerator.value.toString()}, ${historical.up}, ${historical.down}, ${historical.period.toString()})`
@@ -121,7 +126,7 @@ function generate(expand = true) {
     if (historical.format === 'cents') {
       genString = temperedGenerator.value.totalCents().toFixed(scale.centsFractionDigits)
     }
-    emit('update:scaleName', `Rank 2 temperament (${genString}, ${historical.periodString})`)
+    name = `Rank 2 temperament (${genString}, ${historical.periodString})`
   } else {
     const commaFractions = historical.wellCommaFractions
       .slice(0, -1)
@@ -129,9 +134,9 @@ function generate(expand = true) {
       .join(', ')
     source = `wellTemperament([${commaFractions}], ${historical.wellComma.toString()}, ${historical.down})`
     if (historical.selectedWellPreset in historical.wellPresets) {
-      emit('update:scaleName', historical.wellPresets[historical.selectedWellPreset].name)
+      name = historical.wellPresets[historical.selectedWellPreset].name
     } else {
-      emit('update:scaleName', 'Custom Well Temperament')
+      name = 'Custom Well Temperament'
     }
   }
   if (historical.format === 'cents') {
@@ -143,8 +148,8 @@ function generate(expand = true) {
     historical.down >= 1 &&
     (historical.method === 'simple' || historical.method === 'well temperament')
   ) {
-    emit('update:baseFrequency', FREQUENCY_C)
-    emit('update:baseMidiNote', MIDI_NOTE_C)
+    baseFrequency = FREQUENCY_C
+    baseMidiNote = MIDI_NOTE_C
     source += `\n[${KEY_COLORS_C.join(', ')}]`
     const labels: string[] = []
     for (let i = 0; i < historical.size; ++i) {
@@ -157,11 +162,28 @@ function generate(expand = true) {
   if (expand) {
     source = expandCode(source)
   }
+  return { source, name, baseFrequency, baseMidiNote }
+}
+
+useGeneratorPreview(
+  () => build(true),
+  (result) => emit('preview', result)
+)
+
+function generate(expand = true) {
+  const { source, name, baseFrequency, baseMidiNote } = build(expand)
+  emit('update:scaleName', name)
+  if (baseFrequency !== undefined) {
+    emit('update:baseFrequency', baseFrequency)
+  }
+  if (baseMidiNote !== undefined) {
+    emit('update:baseMidiNote', baseMidiNote)
+  }
   emit('update:source', source)
 }
 </script>
 <template>
-  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" docked @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate historical temperament</h2>
     </template>

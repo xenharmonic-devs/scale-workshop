@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
 import { Interval, intervalValueAs } from 'sonic-weave/interval'
 import { FIFTH, OCTAVE } from '@/constants'
 import { ref, watch } from 'vue'
@@ -21,7 +22,7 @@ defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['update:scaleName', 'update:source', 'cancel'])
+const emit = defineEmits(['preview', 'update:scaleName', 'update:source', 'cancel'])
 
 const commasInput = ref<HTMLInputElement | null>(null)
 const valsInput = ref<HTMLInputElement | null>(null)
@@ -121,10 +122,18 @@ function setPreview(mosInfo: MosInfo) {
   rank2.previewMosPattern = `${mosInfo.mosPattern}, L/s: ${hardness.toFixed(2)}, L-s: ${chroma.toFixed(1)}¢`
 }
 
-function generate(expand = true) {
-  if (rank2.method === 'circle') {
-    consolidateCircle()
-  }
+/**
+ * Doesn't touch the store, so it can run for the live preview. In circle mode it reads the
+ * fine-tuned values that `consolidateCircle()` would otherwise write back first.
+ */
+function build(expand: boolean): GeneratorResult {
+  const circle = rank2.method === 'circle'
+  const generator = circle
+    ? parseCents(rank2.circleGeneratorCents, scale.centsFractionDigits)
+    : rank2.generator
+  const period = circle
+    ? parseCents(rank2.circlePeriodCents, scale.centsFractionDigits)
+    : rank2.period
   let size = rank2.safeSize
   let up = rank2.safeUp
   let down = rank2.down
@@ -152,18 +161,36 @@ function generate(expand = true) {
     }
     labelString = `\n[${colors.join(', ')}]`
   }
-  const source = `rank2(${rank2.generator.toString()}, ${up}, ${down}, ${rank2.period.toString()}, ${n})${labelString}`
-  emit('update:scaleName', `Rank 2 temperament (${rank2.generatorString}, ${rank2.periodString})`)
-  if (expand) {
-    emit('update:source', expandCode(source))
-  } else {
-    emit('update:source', source)
+  const source = `rank2(${generator.toString()}, ${up}, ${down}, ${period.toString()}, ${n})${labelString}`
+  const generatorString = circle ? generator.toString() : rank2.generatorString
+  const periodString = circle ? period.toString() : rank2.periodString
+  return {
+    source: expand ? expandCode(source) : source,
+    name: `Rank 2 temperament (${generatorString}, ${periodString})`
   }
+}
+
+// Vals and commas only give a scale once a MOS size is picked (which switches to generator mode).
+useGeneratorPreview(
+  () =>
+    rank2.method === 'circle' || (rank2.method === 'generator' && rank2.generatorString.trim())
+      ? build(true)
+      : undefined,
+  (result) => emit('preview', result)
+)
+
+function generate(expand = true) {
+  if (rank2.method === 'circle') {
+    consolidateCircle()
+  }
+  const { source, name } = build(expand)
+  emit('update:scaleName', name)
+  emit('update:source', source)
 }
 </script>
 
 <template>
-  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" docked @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate rank 2 temperament</h2>
     </template>
@@ -478,7 +505,7 @@ function generate(expand = true) {
 
 p.warning {
   height: 3em;
-  width: 29em;
+  max-width: 29em;
   overflow-y: hidden;
 }
 

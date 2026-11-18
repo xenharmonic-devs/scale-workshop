@@ -57,7 +57,7 @@ describe('useLivePreview', () => {
     const { scale, preview } = setup()
     const undoStates = scale.history.states.length
 
-    preview.preview('1\\5\n2\\5\n3\\5\n4\\5\n5\\5', '5 equal divisions of 2/1')
+    preview.preview({ source: '1\\5\n2\\5\n3\\5\n4\\5\n5\\5', name: '5 equal divisions of 2/1' })
     expect(scale.sourceText).toBe('9/8\n5/4\n2')
 
     flushFrames()
@@ -71,9 +71,9 @@ describe('useLivePreview', () => {
     const { scale, preview } = setup()
     const computeScale = vi.spyOn(scale, 'computeScale')
 
-    preview.preview('tet(5)', 'five')
-    preview.preview('tet(6)', 'six')
-    preview.preview('tet(7)', 'seven')
+    preview.preview({ source: 'tet(5)', name: 'five' })
+    preview.preview({ source: 'tet(6)', name: 'six' })
+    preview.preview({ source: 'tet(7)', name: 'seven' })
     flushFrames()
 
     expect(computeScale).toHaveBeenCalledTimes(1)
@@ -84,9 +84,9 @@ describe('useLivePreview', () => {
   it('reverts to the scale from before the first preview', () => {
     const { scale, preview } = setup()
 
-    preview.preview('tet(5)', 'five')
+    preview.preview({ source: 'tet(5)', name: 'five' })
     flushFrames()
-    preview.preview('tet(6)', 'six')
+    preview.preview({ source: 'tet(6)', name: 'six' })
     flushFrames()
     preview.revert()
 
@@ -98,7 +98,7 @@ describe('useLivePreview', () => {
   it('drops a pending preview on revert', () => {
     const { scale, preview } = setup()
 
-    preview.preview('tet(5)', 'five')
+    preview.preview({ source: 'tet(5)', name: 'five' })
     preview.revert()
     flushFrames()
 
@@ -108,9 +108,9 @@ describe('useLivePreview', () => {
   it('leaves a single undo step back to the original scale after commit', () => {
     const { scale, preview } = setup()
 
-    preview.preview('tet(5)', 'five')
+    preview.preview({ source: 'tet(5)', name: 'five' })
     flushFrames()
-    preview.preview('tet(6)', 'six')
+    preview.preview({ source: 'tet(6)', name: 'six' })
     flushFrames()
 
     preview.commit()
@@ -121,10 +121,26 @@ describe('useLivePreview', () => {
     expect(scale.sourceText).toBe('9/8\n5/4\n2')
   })
 
+  it('applies and reverts the base frequency and MIDI note of a preset', () => {
+    const { scale, preview } = setup()
+    scale.autoFrequency = true
+    scale.baseMidiNote = 69
+
+    preview.preview({ source: 'tet(5)', name: 'five', baseFrequency: 300, baseMidiNote: 60 })
+    flushFrames()
+    expect(scale.autoFrequency).toBe(false)
+    expect(scale.userBaseFrequency).toBe(300)
+    expect(scale.baseMidiNote).toBe(60)
+
+    preview.revert()
+    expect(scale.autoFrequency).toBe(true)
+    expect(scale.baseMidiNote).toBe(69)
+  })
+
   it('does nothing on revert after a commit', () => {
     const { scale, preview } = setup()
 
-    preview.preview('tet(5)', 'five')
+    preview.preview({ source: 'tet(5)', name: 'five' })
     flushFrames()
     preview.commit()
     preview.revert()

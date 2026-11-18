@@ -32,7 +32,7 @@ describe('Equal temperament live preview', () => {
   it('previews the current settings on open', async () => {
     const card = await open()
     expect(card.emitted('preview')).toEqual([
-      ['1\\5\n2\\5\n3\\5\n4\\5\n5\\5', '5 equal divisions of 2/1']
+      [{ source: '1\\5\n2\\5\n3\\5\n4\\5\n5\\5', name: '5 equal divisions of 2/1' }]
     ])
   })
 
@@ -44,7 +44,9 @@ describe('Equal temperament live preview', () => {
     await flushPromises()
 
     const previews = card.emitted('preview')!
-    expect(previews[previews.length - 1]).toEqual(['1\\3\n2\\3\n3\\3', '3 equal divisions of 2/1'])
+    expect(previews[previews.length - 1]).toEqual([
+      { source: '1\\3\n2\\3\n3\\3', name: '3 equal divisions of 2/1' }
+    ])
   })
 
   it('skips previews while the degree list is mid-edit', async () => {

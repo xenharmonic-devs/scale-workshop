@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
 import Modal from '@/components/ModalDialog.vue'
 import { clamp } from 'xen-dev-utils/core'
 import { useModalStore } from '@/stores/modal'
@@ -8,11 +9,11 @@ defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
+const emit = defineEmits(['preview', 'update:source', 'update:scaleName', 'cancel'])
 
 const modal = useModalStore()
 
-function generate(expand = true) {
+function build(expand: boolean): GeneratorResult {
   const denominator = Math.max(1, Math.round(modal.lowInteger))
   const greatestNumerator = clamp(
     denominator + 1,
@@ -30,13 +31,23 @@ function generate(expand = true) {
   if (expand) {
     source = expandCode(source)
   }
+  return { source, name }
+}
+
+useGeneratorPreview(
+  () => build(true),
+  (result) => emit('preview', result)
+)
+
+function generate(expand = true) {
+  const { source, name } = build(expand)
   emit('update:scaleName', name)
   emit('update:source', source)
 }
 </script>
 
 <template>
-  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" docked @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate harmonic series segment</h2>
     </template>

@@ -79,10 +79,7 @@ const showStackModal = ref(false)
 const showStrictVarietyThreeModal = ref(false)
 const showSubharmonicModal = ref(false)
 
-function updateSourceAndHideModals(source: string) {
-  // Keep the result. The computeScale() below pushes one undo step back to the pre-card scale.
-  livePreview.commit()
-  scale.sourceText = source
+function hideModals() {
   showConcordanceShellModal.value = false
   showCpsModal.value = false
   showEnumerateModal.value = false
@@ -99,13 +96,23 @@ function updateSourceAndHideModals(source: string) {
   showStackModal.value = false
   showStrictVarietyThreeModal.value = false
   showSubharmonicModal.value = false
-  scale.computeScale()
-  emit('done')
 }
 
-function cancelEqualTemperament() {
+/**
+ * Cancel, or opening another card (they share the side panel): undo the live preview and close.
+ */
+function closeGenerators() {
   livePreview.revert()
-  showEqualTemperamentModal.value = false
+  hideModals()
+}
+
+function updateSourceAndHideModals(source: string) {
+  // Keep the result. The computeScale() below pushes one undo step back to the pre-card scale.
+  livePreview.commit()
+  scale.sourceText = source
+  hideModals()
+  scale.computeScale()
+  emit('done')
 }
 
 function clearScale() {
@@ -151,28 +158,140 @@ defineExpose({ blur })
 <template>
   <DropdownGroup ref="element" title="New scale" @mouseenter="$emit('mouseenter')">
     <ul>
-      <a href="#" @click="showEqualTemperamentModal = true"><li>Equal temperament</li></a>
-      <a href="#" @click="showRankTwoModal = true"><li>Rank-2 temperament</li></a>
-      <a href="#" @click="showHarmonicModal = true"><li>Harmonic series segment</li></a>
-      <a href="#" @click="showSubharmonicModal = true"><li>Subharmonic series segment</li></a>
-      <a href="#" @click="showEnumerateModal = true"><li>Enumerate chord</li></a>
-      <a href="#" @click="showStackModal = true"><li>Stack steps</li></a>
-      <a href="#" @click="showCpsModal = true"><li>Combination product set</li></a>
-      <a href="#" @click="showMosModal = true"><li>Moment of symmetry scale</li></a>
-      <a href="#" @click="showHistoricalModal = true"><li>Historical temperament</li></a>
-      <a href="#" @click="showEulerGenusModal = true"><li>Euler-Fokker genus</li></a>
-      <a href="#" @click="showLatticeModal = true"><li>Parallelotope / Lattice</li></a>
-      <a href="#" @click="showGeneratorSequenceModal = true"><li>Generator sequence</li></a>
-      <a href="#" @click="showConcordanceShellModal = true"><li>Concordance shell</li></a>
-      <a href="#" @click="showStrictVarietyThreeModal = true"><li>Strict Variety 3</li></a>
-      <a href="#" @click="showFokkerBlockModal = true"><li>Fokker block</li></a>
+      <a
+        href="#"
+        @click="
+          closeGenerators()
+          showEqualTemperamentModal = true
+        "
+        ><li>Equal temperament</li></a
+      >
+      <a
+        href="#"
+        @click="
+          closeGenerators()
+          showRankTwoModal = true
+        "
+        ><li>Rank-2 temperament</li></a
+      >
+      <a
+        href="#"
+        @click="
+          closeGenerators()
+          showHarmonicModal = true
+        "
+        ><li>Harmonic series segment</li></a
+      >
+      <a
+        href="#"
+        @click="
+          closeGenerators()
+          showSubharmonicModal = true
+        "
+        ><li>Subharmonic series segment</li></a
+      >
+      <a
+        href="#"
+        @click="
+          closeGenerators()
+          showEnumerateModal = true
+        "
+        ><li>Enumerate chord</li></a
+      >
+      <a
+        href="#"
+        @click="
+          closeGenerators()
+          showStackModal = true
+        "
+        ><li>Stack steps</li></a
+      >
+      <a
+        href="#"
+        @click="
+          closeGenerators()
+          showCpsModal = true
+        "
+        ><li>Combination product set</li></a
+      >
+      <a
+        href="#"
+        @click="
+          closeGenerators()
+          showMosModal = true
+        "
+        ><li>Moment of symmetry scale</li></a
+      >
+      <a
+        href="#"
+        @click="
+          closeGenerators()
+          showHistoricalModal = true
+        "
+        ><li>Historical temperament</li></a
+      >
+      <a
+        href="#"
+        @click="
+          closeGenerators()
+          showEulerGenusModal = true
+        "
+        ><li>Euler-Fokker genus</li></a
+      >
+      <a
+        href="#"
+        @click="
+          closeGenerators()
+          showLatticeModal = true
+        "
+        ><li>Parallelotope / Lattice</li></a
+      >
+      <a
+        href="#"
+        @click="
+          closeGenerators()
+          showGeneratorSequenceModal = true
+        "
+        ><li>Generator sequence</li></a
+      >
+      <a
+        href="#"
+        @click="
+          closeGenerators()
+          showConcordanceShellModal = true
+        "
+        ><li>Concordance shell</li></a
+      >
+      <a
+        href="#"
+        @click="
+          closeGenerators()
+          showStrictVarietyThreeModal = true
+        "
+        ><li>Strict Variety 3</li></a
+      >
+      <a
+        href="#"
+        @click="
+          closeGenerators()
+          showFokkerBlockModal = true
+        "
+        ><li>Fokker block</li></a
+      >
       <li class="divider"></li>
       <a href="#" @click="scalaFile!.click()"><li>Import .scl</li></a>
       <a href="#" @click="anamarkFile!.click()"><li>Import .tun</li></a>
       <a href="#" @click="xendevsFile!.click()"><li>Import .swi</li></a>
       <li class="divider"></li>
       <a href="#" @click="clearScale"><li>Clear scale</li></a>
-      <a href="#" @click="showPresetModal = true"><li>Load preset scale</li></a>
+      <a
+        href="#"
+        @click="
+          closeGenerators()
+          showPresetModal = true
+        "
+        ><li>Load preset scale</li></a
+      >
     </ul>
   </DropdownGroup>
 
@@ -205,8 +324,9 @@ defineExpose({ blur })
       v-if="showEnumerateModal"
       :show="showEnumerateModal"
       @update:scaleName="scale.name = $event"
+      @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="showEnumerateModal = false"
+      @cancel="closeGenerators"
     />
     <EqualTemperamentModal
       v-if="showEqualTemperamentModal"
@@ -214,72 +334,81 @@ defineExpose({ blur })
       @update:scaleName="scale.name = $event"
       @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="cancelEqualTemperament"
+      @cancel="closeGenerators"
     />
     <EulerGenusModal
       v-if="showEulerGenusModal"
       :show="showEulerGenusModal"
       @update:scaleName="scale.name = $event"
+      @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="showEulerGenusModal = false"
+      @cancel="closeGenerators"
     />
     <FokkerBlockModal
       v-if="showFokkerBlockModal"
       :show="showFokkerBlockModal"
       @update:scaleName="scale.name = $event"
+      @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="showFokkerBlockModal = false"
+      @cancel="closeGenerators"
     />
     <GeneratorSequenceModal
       v-if="showGeneratorSequenceModal"
       :show="showGeneratorSequenceModal"
       @update:scaleName="scale.name = $event"
+      @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="showGeneratorSequenceModal = false"
+      @cancel="closeGenerators"
     />
     <ConcordanceShellModal
       v-if="showConcordanceShellModal"
       :show="showConcordanceShellModal"
       @update:scaleName="scale.name = $event"
+      @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="showConcordanceShellModal = false"
+      @cancel="closeGenerators"
     />
     <CpsModal
       v-if="showCpsModal"
       :show="showCpsModal"
       @update:scaleName="scale.name = $event"
+      @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="showCpsModal = false"
+      @cancel="closeGenerators"
     />
     <HarmonicSeriesModal
       v-if="showHarmonicModal"
       :show="showHarmonicModal"
       @update:scaleName="scale.name = $event"
+      @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="showHarmonicModal = false"
+      @cancel="closeGenerators"
     />
     <HistoricalModal
       v-if="showHistoricalModal"
       :show="showHistoricalModal"
       @update:scaleName="scale.name = $event"
+      @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
       @update:baseFrequency="updateBaseFrequency"
       @update:baseMidiNote="scale.baseMidiNote = $event"
-      @cancel="showHistoricalModal = false"
+      @cancel="closeGenerators"
     />
     <LatticeModal
       v-if="showLatticeModal"
       :show="showLatticeModal"
       @update:scaleName="scale.name = $event"
+      @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="showLatticeModal = false"
+      @cancel="closeGenerators"
     />
     <MosModal
       v-if="showMosModal"
       :show="showMosModal"
       @update:scaleName="scale.name = $event"
+      @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="showMosModal = false"
+      @cancel="closeGenerators"
     />
     <PresetModal
       v-if="showPresetModal"
@@ -287,36 +416,41 @@ defineExpose({ blur })
       @update:scaleName="scale.name = $event"
       @update:baseFrequency="updateBaseFrequency"
       @update:baseMidiNote="scale.baseMidiNote = $event"
+      @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="showPresetModal = false"
+      @cancel="closeGenerators"
     />
     <RankTwoModal
       v-if="showRankTwoModal"
       :show="showRankTwoModal"
       @update:scaleName="scale.name = $event"
+      @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="showRankTwoModal = false"
+      @cancel="closeGenerators"
     />
     <StackModal
       v-if="showStackModal"
       :show="showStackModal"
       @update:scaleName="scale.name = $event"
+      @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="showStackModal = false"
+      @cancel="closeGenerators"
     />
     <StrictVarietyThreeModal
       v-if="showStrictVarietyThreeModal"
       :show="showStrictVarietyThreeModal"
       @update:scaleName="scale.name = $event"
+      @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="showStrictVarietyThreeModal = false"
+      @cancel="closeGenerators"
     />
     <SubharmonicSeriesModal
       v-if="showSubharmonicModal"
       :show="showSubharmonicModal"
       @update:scaleName="scale.name = $event"
+      @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="showSubharmonicModal = false"
+      @cancel="closeGenerators"
     />
   </Teleport>
 </template>

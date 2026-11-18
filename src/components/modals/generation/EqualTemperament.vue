@@ -5,21 +5,21 @@ import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import TextSlider from '@/components/TextSlider.vue'
 import { MAX_EQUAL_TEMPERAMENT_SIZE, useModalStore } from '@/stores/modal'
 import { useScaleStore } from '@/stores/scale'
-import { watch } from 'vue'
 import { vAutoGrow } from '@/directives/auto-grow'
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
 
 defineProps<{
   show: boolean
 }>()
 
 /**
- * - `preview` (source, name): live update when the card opens and on every change in it. The
- *   parent applies it to the scale without an undo step.
+ * - `preview`: live update when the card opens and on every change in it. The parent applies it
+ *   to the scale without an undo step.
  * - `update:scaleName` + `update:source`: the final result on OK / Raw.
  * - `cancel`: the parent reverts any previewed changes.
  */
 const emit = defineEmits<{
-  preview: [source: string, name: string]
+  preview: [result: GeneratorResult]
   'update:source': [source: string]
   'update:scaleName': [name: string]
   cancel: []
@@ -88,17 +88,7 @@ function buildPreview() {
   return build(true)
 }
 
-// Immediate: opening the card already applies its current settings (Cancel undoes that too).
-watch(
-  buildPreview,
-  (next, previous) => {
-    if (!next || (next.source === previous?.source && next.name === previous?.name)) {
-      return
-    }
-    emit('preview', next.source, next.name)
-  },
-  { immediate: true }
-)
+useGeneratorPreview(buildPreview, (result) => emit('preview', result))
 
 function generate(expand = true) {
   const { source, name } = build(expand)

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { OCTAVE } from '@/constants'
@@ -11,12 +12,15 @@ defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
+const emit = defineEmits(['preview', 'update:source', 'update:scaleName', 'cancel'])
 
 const modal = useModalStore()
 
-function generate(shell = true, expand = true) {
+function build(shell: boolean, expand: boolean): GeneratorResult | undefined {
   const selectedVao = modal.vaos[modal.vaoIndex]
+  if (!selectedVao) {
+    return undefined
+  }
   let source = ''
   if (shell) {
     const data: [number, string][] = []
@@ -49,13 +53,26 @@ function generate(shell = true, expand = true) {
   if (expand) {
     source = expandCode(source)
   }
-  emit('update:scaleName', `VAO ${selectedVao.harmonics.join(':')}`)
-  emit('update:source', source)
+  return { source, name: `VAO ${selectedVao.harmonics.join(':')}` }
+}
+
+useGeneratorPreview(
+  () => build(true, true),
+  (result) => emit('preview', result)
+)
+
+function generate(shell = true, expand = true) {
+  const result = build(shell, expand)
+  if (!result) {
+    return
+  }
+  emit('update:scaleName', result.name)
+  emit('update:source', result.source)
 }
 </script>
 
 <template>
-  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" docked @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate VAO / concordance shell</h2>
     </template>

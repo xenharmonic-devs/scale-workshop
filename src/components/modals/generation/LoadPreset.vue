@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
 import Modal from '@/components/ModalDialog.vue'
 import { presets, presetsByGroup } from '@/presets'
 import { expandCode } from '@/utils'
@@ -9,6 +10,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits([
+  'preview',
   'update:source',
   'update:scaleName',
   'update:baseFrequency',
@@ -17,30 +19,48 @@ const emit = defineEmits([
 ])
 
 const presetGroups = presetsByGroup()
-const presetSelect = ref<HTMLSelectElement | null>(null)
+const selectedId = ref('')
+
+function build(expand: boolean): GeneratorResult | undefined {
+  const preset = presets[selectedId.value]
+  if (!preset) {
+    return undefined
+  }
+  return {
+    source: expand ? expandCode(preset.source) : preset.source,
+    name: preset.name,
+    baseFrequency: preset.baseFrequency,
+    baseMidiNote: preset.baseMidiNote
+  }
+}
+
+// Selecting a preset in the list previews it.
+useGeneratorPreview(
+  () => build(true),
+  (result) => emit('preview', result)
+)
 
 function confirm(expand = true) {
-  const preset = presets[presetSelect.value!.value]
-  emit('update:scaleName', preset.name)
-  emit('update:baseFrequency', preset.baseFrequency)
-  emit('update:baseMidiNote', preset.baseMidiNote)
-  if (expand) {
-    emit('update:source', expandCode(preset.source))
-  } else {
-    emit('update:source', preset.source)
+  const result = build(expand)
+  if (!result) {
+    return
   }
+  emit('update:scaleName', result.name)
+  emit('update:baseFrequency', result.baseFrequency)
+  emit('update:baseMidiNote', result.baseMidiNote)
+  emit('update:source', result.source)
 }
 </script>
 
 <template>
-  <Modal :show="show" @confirm="confirm" @cancel="$emit('cancel')">
+  <Modal :show="show" docked @confirm="confirm" @cancel="$emit('cancel')">
     <template #header>
       <h2>Load preset scale</h2>
     </template>
     <template #body>
       <div class="control-group">
         <div class="control">
-          <select ref="presetSelect" size="10" class="control">
+          <select v-model="selectedId" size="10" class="control">
             <optgroup v-for="group of presetGroups" :key="group.name" :label="group.name">
               <option v-for="preset of group.members" :key="preset.id" :value="preset.id">
                 {{ preset.title }}

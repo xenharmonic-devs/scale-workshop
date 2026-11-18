@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { arrayToString, debounce, expandCode } from '@/utils'
@@ -10,7 +11,7 @@ defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
+const emit = defineEmits(['preview', 'update:source', 'update:scaleName', 'cancel'])
 
 const modal = useModalStore()
 
@@ -62,7 +63,9 @@ watch(selectedPreset, (newValue) => {
   updateCS()
 })
 
-function generate(kind: 'expanded' | 'raw' | 'lattice' = 'expanded') {
+type Kind = 'expanded' | 'raw' | 'lattice'
+
+function build(kind: Kind): GeneratorResult {
   let name = `Generator sequence ${modal.generatorsString}`
   if (!modal.period.equals(OCTAVE) || modal.numPeriods !== 1) {
     name += ` over ${modal.periodString}`
@@ -101,17 +104,23 @@ function generate(kind: 'expanded' | 'raw' | 'lattice' = 'expanded') {
     }
     source += ')'
   }
+  return { source: kind === 'expanded' ? expandCode(source) : source, name }
+}
+
+useGeneratorPreview(
+  () => build('expanded'),
+  (result) => emit('preview', result)
+)
+
+function generate(kind: Kind = 'expanded') {
+  const { source, name } = build(kind)
   emit('update:scaleName', name)
-  if (kind === 'expanded') {
-    emit('update:source', expandCode(source))
-  } else {
-    emit('update:source', source)
-  }
+  emit('update:source', source)
 }
 </script>
 
 <template>
-  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" docked @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generator sequence</h2>
     </template>
