@@ -641,9 +641,9 @@ function panic() {
       <li><RouterLink to="/midi">MIDI I/O</RouterLink></li>
       <li><RouterLink to="/prefs">Preferences</RouterLink></li>
     </ul>
-    <ExportMenu />
-    <div id="app-tray" class="hidden-sm">
-      <ul>
+    <div id="app-tray">
+      <ExportMenu />
+      <ul class="hidden-sm">
         <template v-if="state.typingActive">
           <li title="Type on your computer keyboard to hear the synth">
             <span class="typing-info active">Key</span>
@@ -754,14 +754,16 @@ nav a:first-of-type {
 
 /* Status indicator tray */
 #app-tray {
-  width: 100%;
-  text-align: right;
+  flex: 1 0 auto;
+  display: flex;
+  justify-content: flex-end;
   cursor: default;
 }
 
 #app-tray ul {
-  display: inline-block;
+  margin: 0;
   padding: 0.75rem 1rem;
+  white-space: nowrap;
   background-color: var(--color-accent-deeper);
 }
 

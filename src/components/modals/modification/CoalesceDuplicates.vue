@@ -14,6 +14,7 @@ const modal = useModalStore()
 const scale = useScaleStore()
 
 function modify(expand = true) {
+  scale.materializeDefaultScale()
   scale.sourceText += `\ncoalesce(${centString(modal.tolerance)}, '${modal.coalescingAction}', ${modal.preserveBoundary})`
   if (expand) {
     const { visitor, defaults } = scale.getUserScopeVisitor()

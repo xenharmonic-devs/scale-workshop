@@ -51,6 +51,7 @@ const degrees = computed(() => {
 })
 
 function modify(expand = true) {
+  scale.materializeDefaultScale()
   const subset = [...modal.selected.values()]
   subset.sort((a, b) => a - b)
   scale.sourceText += `\nsubset(${arrayToString(subset)})`

@@ -13,6 +13,7 @@ const scale = useScaleStore()
 const modal = useModalStore()
 
 function modify() {
+  scale.materializeDefaultScale()
   if (modal.simplify) {
     scale.sourceText += ';simplify'
   }

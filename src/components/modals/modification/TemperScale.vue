@@ -27,6 +27,7 @@ watch(
 )
 
 function modify(expand = true) {
+  scale.materializeDefaultScale()
   if (temper.method === 'vals') {
     if (temper.edoAvailable && temper.convertToEdoSteps) {
       scale.sourceText += `\n${temper.vals[0].toString()}`

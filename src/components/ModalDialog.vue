@@ -30,6 +30,16 @@ const props = defineProps({
 
 const emit = defineEmits(['confirm', 'cancel'])
 
+// Clicking the backdrop of a centered dialog cancels it, without starting a text selection.
+// Docked cards have no backdrop.
+function onBackdropMousedown(event: MouseEvent) {
+  if (props.docked) {
+    return
+  }
+  event.preventDefault()
+  emit('cancel')
+}
+
 const body = ref<HTMLDivElement | null>(null)
 const container = ref<HTMLDivElement | null>(null)
 const headerId = useId()
@@ -153,7 +163,7 @@ watch(
         v-if="show"
         v-bind="$attrs"
         :class="{ 'modal-mask': !docked, 'modal-dock': docked, right }"
-        @mousedown.self="!docked && $emit('cancel')"
+        @mousedown.self="onBackdropMousedown"
       >
         <div class="modal-wrapper">
           <div

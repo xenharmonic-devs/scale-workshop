@@ -30,6 +30,7 @@ const equalizedScaleData = computed(() => {
 })
 
 function modify(expand = true) {
+  scale.materializeDefaultScale()
   if (modal.errorModel === 'rooted') {
     scale.sourceText += `\nequalize(${modal.safeLargeDivisions})`
     if (expand) {

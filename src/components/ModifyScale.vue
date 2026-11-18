@@ -7,7 +7,7 @@ import DropdownGroup from '@/components/DropdownGroup.vue'
 import { capitalizeFirstLetter } from '@/utils'
 import { claimDock } from '@/composables/useDock'
 
-const emit = defineEmits(['done', 'mouseenter'])
+const emit = defineEmits(['done', 'cancel', 'mouseenter'])
 
 const scale = useScaleStore()
 const modal = useModalStore()
@@ -121,6 +121,11 @@ function hideModals() {
   showTemperModal.value = false
 }
 
+function cancelModals() {
+  hideModals()
+  emit('cancel')
+}
+
 function closeModals() {
   hideModals()
   emit('done')
@@ -165,16 +170,19 @@ function expandAndQuit() {
 }
 
 function sort() {
+  scale.materializeDefaultScale()
   scale.sourceText += ';sort()'
   expandAndQuit()
 }
 
 function reduce() {
+  scale.materializeDefaultScale()
   scale.sourceText += ';reduce()'
   expandAndQuit()
 }
 
 function retrovert() {
+  scale.materializeDefaultScale()
   scale.sourceText += ';retrovert()'
   expandAndQuit()
 }
@@ -237,103 +245,103 @@ defineExpose({ blur })
       v-if="showApproximateByHarmonicsModal"
       :show="showApproximateByHarmonicsModal"
       @done="closeModals"
-      @cancel="showApproximateByHarmonicsModal = false"
+      @cancel="cancelModals"
     />
     <ApproximateByRatiosModal
       v-if="showApproximateByRatiosModal"
       :show="showApproximateByRatiosModal"
       @done="closeModals"
-      @cancel="showApproximateByRatiosModal = false"
+      @cancel="cancelModals"
     />
     <ApproximateBySubharmonicsModal
       v-if="showApproximateBySubharmonicsModal"
       :show="showApproximateBySubharmonicsModal"
       @done="closeModals"
-      @cancel="showApproximateBySubharmonicsModal = false"
+      @cancel="cancelModals"
     />
     <CoalesceModal
       v-if="showCoalesceModal"
       :show="showCoalesceModal"
       @done="closeModals"
-      @cancel="showCoalesceModal = false"
+      @cancel="cancelModals"
     />
     <ConvertModal
       v-if="showConvertModal"
       :show="showConvertModal"
       @done="closeModals"
-      @cancel="showConvertModal = false"
+      @cancel="cancelModals"
     />
     <EnumerateModal
       v-if="showEnumerateModal"
       :show="showEnumerateModal"
       @done="closeModals"
-      @cancel="showEnumerateModal = false"
+      @cancel="cancelModals"
     />
     <EqualizeModal
       v-if="showEqualizeModal"
       :show="showEqualizeModal"
       @done="closeModals"
-      @cancel="showEqualizeModal = false"
+      @cancel="cancelModals"
     />
     <ExpandModal
       v-if="showExpandModal"
       :show="showExpandModal"
       @done="closeModals"
-      @cancel="showExpandModal = false"
+      @cancel="cancelModals"
     />
     <InterpolateModal
       v-if="showInterpolateModal"
       :show="showInterpolateModal"
       @done="closeModals"
-      @cancel="showInterpolateModal = false"
+      @cancel="cancelModals"
     />
     <MergeOffsetsModal
       v-if="showMergeOffsetsModal"
       :show="showMergeOffsetsModal"
       @done="closeModals"
-      @cancel="showMergeOffsetsModal = false"
+      @cancel="cancelModals"
     />
     <RandomModal
       v-if="showRandomModal"
       :show="showRandomModal"
       @done="closeModals"
-      @cancel="showRandomModal = false"
+      @cancel="cancelModals"
     />
     <RepeatModal
       v-if="showRepeatModal"
       :show="showRepeatModal"
       @done="closeModals"
-      @cancel="showRepeatModal = false"
+      @cancel="cancelModals"
     />
     <RotateModal
       v-if="showRotateModal"
       :show="showRotateModal"
       @done="closeModals"
-      @cancel="showRotateModal = false"
+      @cancel="cancelModals"
     />
     <ReorderModal
       v-if="showReorderModal"
       :show="showReorderModal"
       @done="closeModals"
-      @cancel="showReorderModal = false"
+      @cancel="cancelModals"
     />
     <StretchModal
       v-if="showStretchModal"
       :show="showStretchModal"
       @done="closeModals"
-      @cancel="showStretchModal = false"
+      @cancel="cancelModals"
     />
     <SubsetModal
       v-if="showSubsetModal"
       :show="showSubsetModal"
       @done="closeModals"
-      @cancel="showSubsetModal = false"
+      @cancel="cancelModals"
     />
     <TemperModal
       v-if="showTemperModal"
       :show="showTemperModal"
       @done="closeModals"
-      @cancel="showTemperModal = false"
+      @cancel="cancelModals"
     />
   </Teleport>
 </template>

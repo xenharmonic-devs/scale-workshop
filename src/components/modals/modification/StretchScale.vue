@@ -16,6 +16,7 @@ const modal = useModalStore()
 const scale = useScaleStore()
 
 function modify(expand = true) {
+  scale.materializeDefaultScale()
   scale.sourceText += `\nstretch(${decimalString(modal.stretchAmount)})\ncents(£, ${scale.centsFractionDigits})`
   if (expand) {
     const { visitor, defaults } = scale.getUserScopeVisitor()

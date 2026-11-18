@@ -6,7 +6,7 @@ import { importFile, type ImporterKey } from '@/importers'
 import { useLivePreview } from '@/composables/useLivePreview'
 import { claimDock } from '@/composables/useDock'
 
-const emit = defineEmits(['done', 'mouseenter'])
+const emit = defineEmits(['done', 'cancel', 'mouseenter'])
 
 const scale = useScaleStore()
 const livePreview = useLivePreview()
@@ -133,6 +133,12 @@ function openGenerator(card: keyof typeof generatorCards) {
   generatorCards[card].value = true
 }
 
+/** Cancel: also tells the parent, which closes the New scale dropdown. */
+function cancelModals() {
+  closeGenerators()
+  emit('cancel')
+}
+
 function updateSourceAndHideModals(source: string) {
   // Keep the result. The computeScale() below pushes one undo step back to the pre-card scale.
   livePreview.commit()
@@ -247,7 +253,7 @@ defineExpose({ blur })
       @update:scaleName="scale.name = $event"
       @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="closeGenerators"
+      @cancel="cancelModals"
     />
     <EqualTemperamentModal
       v-if="showEqualTemperamentModal"
@@ -255,7 +261,7 @@ defineExpose({ blur })
       @update:scaleName="scale.name = $event"
       @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="closeGenerators"
+      @cancel="cancelModals"
     />
     <EulerGenusModal
       v-if="showEulerGenusModal"
@@ -263,7 +269,7 @@ defineExpose({ blur })
       @update:scaleName="scale.name = $event"
       @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="closeGenerators"
+      @cancel="cancelModals"
     />
     <FokkerBlockModal
       v-if="showFokkerBlockModal"
@@ -271,7 +277,7 @@ defineExpose({ blur })
       @update:scaleName="scale.name = $event"
       @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="closeGenerators"
+      @cancel="cancelModals"
     />
     <GeneratorSequenceModal
       v-if="showGeneratorSequenceModal"
@@ -279,7 +285,7 @@ defineExpose({ blur })
       @update:scaleName="scale.name = $event"
       @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="closeGenerators"
+      @cancel="cancelModals"
     />
     <ConcordanceShellModal
       v-if="showConcordanceShellModal"
@@ -287,7 +293,7 @@ defineExpose({ blur })
       @update:scaleName="scale.name = $event"
       @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="closeGenerators"
+      @cancel="cancelModals"
     />
     <CpsModal
       v-if="showCpsModal"
@@ -295,7 +301,7 @@ defineExpose({ blur })
       @update:scaleName="scale.name = $event"
       @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="closeGenerators"
+      @cancel="cancelModals"
     />
     <HarmonicSeriesModal
       v-if="showHarmonicModal"
@@ -303,7 +309,7 @@ defineExpose({ blur })
       @update:scaleName="scale.name = $event"
       @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="closeGenerators"
+      @cancel="cancelModals"
     />
     <HistoricalModal
       v-if="showHistoricalModal"
@@ -313,7 +319,7 @@ defineExpose({ blur })
       @update:source="updateSourceAndHideModals"
       @update:baseFrequency="updateBaseFrequency"
       @update:baseMidiNote="scale.baseMidiNote = $event"
-      @cancel="closeGenerators"
+      @cancel="cancelModals"
     />
     <LatticeModal
       v-if="showLatticeModal"
@@ -321,7 +327,7 @@ defineExpose({ blur })
       @update:scaleName="scale.name = $event"
       @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="closeGenerators"
+      @cancel="cancelModals"
     />
     <MosModal
       v-if="showMosModal"
@@ -329,7 +335,7 @@ defineExpose({ blur })
       @update:scaleName="scale.name = $event"
       @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="closeGenerators"
+      @cancel="cancelModals"
     />
     <PresetModal
       v-if="showPresetModal"
@@ -339,7 +345,7 @@ defineExpose({ blur })
       @update:baseMidiNote="scale.baseMidiNote = $event"
       @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="closeGenerators"
+      @cancel="cancelModals"
     />
     <RankTwoModal
       v-if="showRankTwoModal"
@@ -347,7 +353,7 @@ defineExpose({ blur })
       @update:scaleName="scale.name = $event"
       @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="closeGenerators"
+      @cancel="cancelModals"
     />
     <StackModal
       v-if="showStackModal"
@@ -355,7 +361,7 @@ defineExpose({ blur })
       @update:scaleName="scale.name = $event"
       @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="closeGenerators"
+      @cancel="cancelModals"
     />
     <StrictVarietyThreeModal
       v-if="showStrictVarietyThreeModal"
@@ -363,7 +369,7 @@ defineExpose({ blur })
       @update:scaleName="scale.name = $event"
       @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="closeGenerators"
+      @cancel="cancelModals"
     />
     <SubharmonicSeriesModal
       v-if="showSubharmonicModal"
@@ -371,7 +377,7 @@ defineExpose({ blur })
       @update:scaleName="scale.name = $event"
       @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="closeGenerators"
+      @cancel="cancelModals"
     />
   </Teleport>
 </template>

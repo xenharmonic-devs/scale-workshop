@@ -13,6 +13,7 @@ const modal = useModalStore()
 const scale = useScaleStore()
 
 function modify(expand = true) {
+  scale.materializeDefaultScale()
   scale.sourceText += `\nrepeat(${modal.numRepeats})`
   if (expand) {
     const { visitor, defaults } = scale.getUserScopeVisitor()

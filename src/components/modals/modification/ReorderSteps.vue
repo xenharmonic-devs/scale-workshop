@@ -231,6 +231,7 @@ function endDrag() {
 }
 
 function modify(expand = true) {
+  scale.materializeDefaultScale()
   const permutation = steps.value.map((step) => step.id).join(', ')
   scale.sourceText += `\nrelative(£)\nunstack()\n£[[${permutation}]]\nstack()`
   if (expand) {

@@ -35,6 +35,7 @@ watch(
 )
 
 function modify(expand = true) {
+  scale.materializeDefaultScale()
   scale.sourceText += `\nmergeOffset(${arrayToString(modal.offsets as Interval[])}, '${modal.overflowType}')`
   if (expand) {
     const { visitor, defaults } = scale.getUserScopeVisitor()
