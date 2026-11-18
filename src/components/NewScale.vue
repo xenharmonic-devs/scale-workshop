@@ -3,10 +3,12 @@ import { defineAsyncComponent, ref } from 'vue'
 import { useScaleStore } from '@/stores/scale'
 import DropdownGroup from '@/components/DropdownGroup.vue'
 import { importFile, type ImporterKey } from '@/importers'
+import { useLivePreview } from '@/composables/useLivePreview'
 
 const emit = defineEmits(['done', 'mouseenter'])
 
 const scale = useScaleStore()
+const livePreview = useLivePreview()
 
 const ConcordanceShellModal = defineAsyncComponent(
   () => import('@/components/modals/generation/ConcordanceShell.vue')
@@ -78,6 +80,8 @@ const showStrictVarietyThreeModal = ref(false)
 const showSubharmonicModal = ref(false)
 
 function updateSourceAndHideModals(source: string) {
+  // Keep the result. The computeScale() below pushes one undo step back to the pre-card scale.
+  livePreview.commit()
   scale.sourceText = source
   showConcordanceShellModal.value = false
   showCpsModal.value = false
@@ -99,7 +103,13 @@ function updateSourceAndHideModals(source: string) {
   emit('done')
 }
 
+function cancelEqualTemperament() {
+  livePreview.revert()
+  showEqualTemperamentModal.value = false
+}
+
 function clearScale() {
+  livePreview.commit()
   scale.name = ''
   scale.sourceText = ''
   scale.computeScale()
@@ -108,6 +118,7 @@ function clearScale() {
 
 async function doImport(importerKey: ImporterKey, event: Event) {
   const result = await importFile(importerKey, event)
+  livePreview.commit()
   scale.sourceText = result.sourceText
   if (result.baseFrequency !== undefined) {
     scale.userBaseFrequency = result.baseFrequency
@@ -201,8 +212,9 @@ defineExpose({ blur })
       v-if="showEqualTemperamentModal"
       :show="showEqualTemperamentModal"
       @update:scaleName="scale.name = $event"
+      @preview="livePreview.preview"
       @update:source="updateSourceAndHideModals"
-      @cancel="showEqualTemperamentModal = false"
+      @cancel="cancelEqualTemperament"
     />
     <EulerGenusModal
       v-if="showEulerGenusModal"

@@ -129,7 +129,7 @@ watch(
       nextTick(() => {
         if (props.docked) {
           // On small screens the side panel sits below the fold.
-          container.value?.scrollIntoView({ block: 'nearest' })
+          container.value?.scrollIntoView?.({ block: 'nearest' })
           focusFirst()
         } else if (isActive()) {
           focusFirst()

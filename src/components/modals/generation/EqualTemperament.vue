@@ -5,12 +5,24 @@ import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import TextSlider from '@/components/TextSlider.vue'
 import { MAX_EQUAL_TEMPERAMENT_SIZE, useModalStore } from '@/stores/modal'
 import { useScaleStore } from '@/stores/scale'
+import { watch } from 'vue'
 
 defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
+/**
+ * - `preview` (source, name): live update when the card opens and on every change in it. The
+ *   parent applies it to the scale without an undo step.
+ * - `update:scaleName` + `update:source`: the final result on OK / Raw.
+ * - `cancel`: the parent reverts any previewed changes.
+ */
+const emit = defineEmits<{
+  preview: [source: string, name: string]
+  'update:source': [source: string]
+  'update:scaleName': [name: string]
+  cancel: []
+}>()
 
 const scale = useScaleStore()
 const modal = useModalStore()
@@ -23,39 +35,74 @@ function setDivisions(value: number) {
   modal.updateFromDivisions()
 }
 
-function generate(expand = true) {
+/**
+ * SonicWeave source and scale name for the card's current settings.
+ * @param expand List every degree instead of the compact `tet(...)` form.
+ */
+function build(expand: boolean) {
   if (modal.singleStepOnly) {
     const stepCents = modal.equave.value.totalCents() / modal.divisions
     const line = stepCents.toFixed(scale.centsFractionDigits)
-    emit('update:scaleName', `${line} cET`)
-    emit('update:source', line)
+    return { source: line, name: `${line} cET` }
+  }
+  const name = `${modal.divisions} equal divisions of ${modal.equaveString}`
+  let source: string
+  if (modal.equave.equals(OCTAVE)) {
+    const edo = modal.divisions
+    if (expand || !modal.simpleEd) {
+      source = modal.degrees.map((steps) => `${steps}\\${edo}`).join('\n')
+    } else {
+      source = `tet(${edo})`
+    }
   } else {
-    emit('update:scaleName', `${modal.divisions} equal divisions of ${modal.equaveString}`)
-    let source: string
-    if (modal.equave.equals(OCTAVE)) {
-      const edo = modal.divisions
-      if (expand || !modal.simpleEd) {
-        source = modal.degrees.map((steps) => `${steps}\\${edo}`).join('\n')
-      } else {
-        source = `tet(${edo})`
+    const ed = modal.divisions
+    if (expand || !modal.simpleEd) {
+      try {
+        // Prefer restricted 7\13<3> form
+        const ji = modal.equave.toFraction().toFraction()
+        source = modal.degrees.map((steps) => `${steps}\\${ed}<${ji}>`).join('\n')
+      } catch {
+        // Fall back to generic 7\13 ed 1912.3456 form
+        source = modal.degrees.map((steps) => `${steps}\\${ed} ed ${modal.equave}`).join('\n')
       }
     } else {
-      const ed = modal.divisions
-      if (expand || !modal.simpleEd) {
-        try {
-          // Prefer restricted 7\13<3> form
-          const ji = modal.equave.toFraction().toFraction()
-          source = modal.degrees.map((steps) => `${steps}\\${ed}<${ji}>`).join('\n')
-        } catch {
-          // Fall back to generic 7\13 ed 1912.3456 form
-          source = modal.degrees.map((steps) => `${steps}\\${ed} ed ${modal.equave}`).join('\n')
-        }
-      } else {
-        source = `tet(${ed}, ${modal.equave})`
-      }
+      source = `tet(${ed}, ${modal.equave})`
     }
-    emit('update:source', source)
   }
+  return { source, name }
+}
+
+/**
+ * The live preview, or `undefined` while the settings are mid-edit and don't describe a scale
+ * yet (e.g. a half-typed degree list), so the scale isn't flooded with errors while typing.
+ */
+function buildPreview() {
+  if (modal.singleStepOnly) {
+    if (!Number.isFinite(modal.equave.value.totalCents() / modal.divisions)) {
+      return undefined
+    }
+  } else if (!modal.degrees.length || modal.degrees.some((steps) => Number.isNaN(steps))) {
+    return undefined
+  }
+  return build(true)
+}
+
+// Immediate: opening the card already applies its current settings (Cancel undoes that too).
+watch(
+  buildPreview,
+  (next, previous) => {
+    if (!next || (next.source === previous?.source && next.name === previous?.name)) {
+      return
+    }
+    emit('preview', next.source, next.name)
+  },
+  { immediate: true }
+)
+
+function generate(expand = true) {
+  const { source, name } = build(expand)
+  emit('update:scaleName', name)
+  emit('update:source', source)
 }
 </script>
 
