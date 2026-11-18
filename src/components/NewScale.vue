@@ -4,6 +4,7 @@ import { useScaleStore } from '@/stores/scale'
 import DropdownGroup from '@/components/DropdownGroup.vue'
 import { importFile, type ImporterKey } from '@/importers'
 import { useLivePreview } from '@/composables/useLivePreview'
+import { claimDock } from '@/composables/useDock'
 
 const emit = defineEmits(['done', 'mouseenter'])
 
@@ -127,6 +128,7 @@ const generatorCards = {
 
 /** One call, so the formatter can't split it into two statements without a separator. */
 function openGenerator(card: keyof typeof generatorCards) {
+  claimDock(closeGenerators)
   closeGenerators()
   generatorCards[card].value = true
 }

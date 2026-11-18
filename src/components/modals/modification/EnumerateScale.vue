@@ -68,7 +68,7 @@ function revposition() {
 </script>
 
 <template>
-  <Modal :show="show" @confirm="$emit('done')" @cancel="$emit('cancel')">
+  <Modal :show="show" docked @confirm="$emit('done')" @cancel="$emit('cancel')">
     <template #header>
       <h2>Enumerate</h2>
     </template>

@@ -27,7 +27,7 @@ function modify() {
 </script>
 
 <template>
-  <Modal :show="show" @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" docked @confirm="modify" @cancel="$emit('cancel')">
     <template #header>
       <h2>Expand</h2>
     </template>

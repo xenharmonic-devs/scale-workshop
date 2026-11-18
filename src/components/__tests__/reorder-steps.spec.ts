@@ -8,6 +8,10 @@ import ReorderSteps from '@/components/modals/modification/ReorderSteps.vue'
 import { useScaleStore } from '@/stores/scale'
 import { useSessionIdStore } from '@/stores/session-id'
 
+// The card docks into the Build Scale side panel through a Teleport. Render it in place so the
+// wrapper's queries can reach it.
+const MOUNT_OPTIONS = { props: { show: true }, global: { stubs: { teleport: true } } }
+
 describe('Reorder steps', () => {
   let wrapper: VueWrapper
 
@@ -25,7 +29,7 @@ describe('Reorder steps', () => {
     const scale = useScaleStore()
     scale.sourceText = source
     scale.computeScale()
-    wrapper = mount(ReorderSteps, { props: { show: true } })
+    wrapper = mount(ReorderSteps, MOUNT_OPTIONS)
     return scale
   }
 
@@ -51,7 +55,7 @@ describe('Reorder steps', () => {
     const expectedWord = word()
     const random = vi.spyOn(Math, 'random')
     const getVisitor = vi.spyOn(scale, 'getUserScopeVisitor')
-    wrapper = mount(ReorderSteps, { props: { show: true } })
+    wrapper = mount(ReorderSteps, MOUNT_OPTIONS)
     expect(previewWord()).toBe(expectedWord)
     await wrapper.get('[aria-label="Move step 1 down"]').trigger('click')
     expect(random).not.toHaveBeenCalled()

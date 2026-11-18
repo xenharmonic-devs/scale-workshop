@@ -243,7 +243,7 @@ function modify(expand = true) {
 </script>
 
 <template>
-  <Modal class="reorder-steps" :show="show" @confirm="modify" @cancel="$emit('cancel')">
+  <Modal class="reorder-steps" :show="show" docked @confirm="modify" @cancel="$emit('cancel')">
     <template #header><h2>Reorder steps</h2></template>
     <template #body>
       <p>Drag the unstacked steps into a new order, or use the arrow buttons.</p>
@@ -424,25 +424,20 @@ function modify(expand = true) {
 </template>
 
 <style scoped>
-.reorder-steps :deep(.modal-container) {
-  width: min(50rem, calc(100vw - 2rem));
-  min-width: 0;
-  max-width: 50rem;
-  box-sizing: border-box;
-  height: min(54rem, calc(100dvh - 2rem));
-}
-.reorder-steps :deep(.modal-body) {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
+/* Docked in the narrow side panel: the step list sits above the ruler. */
 .reorder-preview {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 18rem;
-  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.5rem;
   margin-top: 1rem;
-  flex: 1;
-  min-height: 12rem;
+}
+.step-list ol {
+  height: min(52dvh, 28rem);
+  flex: none;
+}
+figure svg {
+  height: 28rem;
+  flex: none;
 }
 h3,
 figcaption {
@@ -560,20 +555,6 @@ text {
   font-size: 13px;
 }
 @media (max-width: 600px) {
-  .reorder-preview {
-    grid-template-columns: minmax(0, 1fr);
-    flex: none;
-    gap: 0.5rem;
-  }
-  .step-list ol {
-    height: min(52dvh, 28rem);
-    max-height: none;
-    flex: none;
-  }
-  figure svg {
-    height: 28rem;
-    flex: none;
-  }
   li {
     cursor: default;
     touch-action: pan-y;

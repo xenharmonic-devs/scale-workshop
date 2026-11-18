@@ -10,6 +10,9 @@ import { onMounted, onUnmounted, ref, watch, nextTick, useId } from 'vue'
 
 const DOCK_TARGET = '#side-panel'
 
+// The root is a Teleport, which can't take attributes, so pass them (e.g. a class) to the dialog.
+defineOptions({ inheritAttrs: false })
+
 const props = defineProps({
   show: {
     default: true,
@@ -148,6 +151,7 @@ watch(
     <Transition name="modal">
       <div
         v-if="show"
+        v-bind="$attrs"
         :class="{ 'modal-mask': !docked, 'modal-dock': docked, right }"
         @mousedown.self="!docked && $emit('cancel')"
       >

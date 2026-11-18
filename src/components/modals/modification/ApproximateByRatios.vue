@@ -133,7 +133,7 @@ function cancel() {
 </script>
 
 <template>
-  <Modal :show="show" @confirm="modify(true)" @cancel="cancel">
+  <Modal :show="show" docked @confirm="modify(true)" @cancel="cancel">
     <template #header>
       <h2>Approximate by ratios</h2>
     </template>

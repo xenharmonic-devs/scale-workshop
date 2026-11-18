@@ -25,7 +25,7 @@ function modify(expand = true) {
 </script>
 
 <template>
-  <Modal :show="show" @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" docked @confirm="modify" @cancel="$emit('cancel')">
     <template #header>
       <h2>Random variance</h2>
     </template>

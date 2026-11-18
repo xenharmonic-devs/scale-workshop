@@ -44,7 +44,7 @@ function modify(expand = true) {
 </script>
 
 <template>
-  <Modal :show="show" @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" docked @confirm="modify" @cancel="$emit('cancel')">
     <template #header>
       <h2>Approximate by harmonics</h2>
     </template>

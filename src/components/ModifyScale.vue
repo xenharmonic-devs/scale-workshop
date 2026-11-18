@@ -5,6 +5,7 @@ import { useModalStore } from '@/stores/modal'
 import { useApproximateByRatiosStore } from '@/stores/approximate-by-ratios'
 import DropdownGroup from '@/components/DropdownGroup.vue'
 import { capitalizeFirstLetter } from '@/utils'
+import { claimDock } from '@/composables/useDock'
 
 const emit = defineEmits(['done', 'mouseenter'])
 
@@ -100,7 +101,7 @@ const showStretchModal = ref(false)
 const showSubsetModal = ref(false)
 const showTemperModal = ref(false)
 
-function closeModals() {
+function hideModals() {
   showApproximateByHarmonicsModal.value = false
   showApproximateByRatiosModal.value = false
   showApproximateBySubharmonicsModal.value = false
@@ -118,7 +119,42 @@ function closeModals() {
   showStretchModal.value = false
   showSubsetModal.value = false
   showTemperModal.value = false
+}
+
+function closeModals() {
+  hideModals()
   emit('done')
+}
+
+const modifierCards = {
+  showApproximateByHarmonicsModal,
+  showApproximateByRatiosModal,
+  showApproximateBySubharmonicsModal,
+  showConvertModal,
+  showCoalesceModal,
+  showEnumerateModal,
+  showEqualizeModal,
+  showExpandModal,
+  showInterpolateModal,
+  showMergeOffsetsModal,
+  showRandomModal,
+  showRepeatModal,
+  showReorderModal,
+  showRotateModal,
+  showStretchModal,
+  showSubsetModal,
+  showTemperModal
+}
+
+/**
+ * Show a card in the side panel, replacing whatever card is there. `setup` runs after that card
+ * has closed (and reverted any preview), so it sees the actual scale.
+ */
+function openModifier(card: keyof typeof modifierCards, setup?: () => void) {
+  claimDock(hideModals)
+  hideModals()
+  setup?.()
+  modifierCards[card].value = true
 }
 
 function expandAndQuit() {
@@ -144,18 +180,15 @@ function retrovert() {
 }
 
 function clickRotate() {
-  modal.initialize(scale.scale.size)
-  showRotateModal.value = true
+  openModifier('showRotateModal', () => modal.initialize(scale.scale.size))
 }
 
 function clickSubset() {
-  modal.initialize(scale.scale.size)
-  showSubsetModal.value = true
+  openModifier('showSubsetModal', () => modal.initialize(scale.scale.size))
 }
 
 function clickApproximateByRatios() {
-  approx.initialize(scale.sourceText)
-  showApproximateByRatiosModal.value = true
+  openModifier('showApproximateByRatiosModal', () => approx.initialize(scale.sourceText))
 }
 
 function blur() {
@@ -170,32 +203,32 @@ defineExpose({ blur })
 <template>
   <DropdownGroup ref="element" title="Modify scale" @mouseenter="$emit('mouseenter')">
     <ul>
-      <a href="#" @click="showExpandModal = true"><li>Expand/simplify lines</li></a>
+      <a href="#" @click="openModifier('showExpandModal')"><li>Expand/simplify lines</li></a>
       <a href="#" @click="sort"><li>Sort ascending</li></a>
       <a href="#" @click="reduce"
         ><li>{{ capitalizeFirstLetter(scale.nameOfEquave) }} reduce</li></a
       >
       <a href="#" @click="retrovert"><li>Retrovert (negative harmony)</li></a>
       <a href="#" @click="clickRotate"><li>Rotate mode</li></a>
-      <a href="#" @click.prevent="showReorderModal = true"><li>Reorder steps</li></a>
-      <a href="#" @click="showRepeatModal = true"><li>Repeat</li></a>
+      <a href="#" @click.prevent="openModifier('showReorderModal')"><li>Reorder steps</li></a>
+      <a href="#" @click="openModifier('showRepeatModal')"><li>Repeat</li></a>
       <a href="#" @click="clickSubset"><li>Subset</li></a>
-      <a href="#" @click="showStretchModal = true"><li>Stretch/compress</li></a>
-      <a href="#" @click="showRandomModal = true"><li>Random variance</li></a>
-      <a href="#" @click="showEnumerateModal = true"><li>Enumerate</li></a>
-      <a href="#" @click="showCoalesceModal = true"><li>Coalesce duplicates</li></a>
+      <a href="#" @click="openModifier('showStretchModal')"><li>Stretch/compress</li></a>
+      <a href="#" @click="openModifier('showRandomModal')"><li>Random variance</li></a>
+      <a href="#" @click="openModifier('showEnumerateModal')"><li>Enumerate</li></a>
+      <a href="#" @click="openModifier('showCoalesceModal')"><li>Coalesce duplicates</li></a>
       <a href="#" @click="clickApproximateByRatios"><li>Approximate by ratios</li></a>
-      <a href="#" @click="showApproximateByHarmonicsModal = true"
+      <a href="#" @click="openModifier('showApproximateByHarmonicsModal')"
         ><li>Approximate by harmonics</li></a
       >
-      <a href="#" @click="showApproximateBySubharmonicsModal = true"
+      <a href="#" @click="openModifier('showApproximateBySubharmonicsModal')"
         ><li>Approximate by subharmonics</li></a
       >
-      <a href="#" @click="showEqualizeModal = true"><li>Equalize</li></a>
-      <a href="#" @click="showInterpolateModal = true"><li>Interpolate</li></a>
-      <a href="#" @click="showTemperModal = true"><li>Temper</li></a>
-      <a href="#" @click="showMergeOffsetsModal = true"><li>Merge offsets</li></a>
-      <a href="#" @click="showConvertModal = true"><li>Convert interval values</li></a>
+      <a href="#" @click="openModifier('showEqualizeModal')"><li>Equalize</li></a>
+      <a href="#" @click="openModifier('showInterpolateModal')"><li>Interpolate</li></a>
+      <a href="#" @click="openModifier('showTemperModal')"><li>Temper</li></a>
+      <a href="#" @click="openModifier('showMergeOffsetsModal')"><li>Merge offsets</li></a>
+      <a href="#" @click="openModifier('showConvertModal')"><li>Convert interval values</li></a>
     </ul>
   </DropdownGroup>
 
