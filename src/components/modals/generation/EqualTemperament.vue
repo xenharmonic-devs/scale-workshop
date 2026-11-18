@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { OCTAVE } from '@/constants'
-import { ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
+import TextSlider from '@/components/TextSlider.vue'
 import { MAX_EQUAL_TEMPERAMENT_SIZE, useModalStore } from '@/stores/modal'
-import { setAndReportValidity } from '@/utils'
 import { useScaleStore } from '@/stores/scale'
 
 defineProps<{
@@ -16,18 +15,13 @@ const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 const scale = useScaleStore()
 const modal = useModalStore()
 
-const divisionsElement = ref<HTMLInputElement | null>(null)
+// Double-click on the divisions slider resets to this.
+const DEFAULT_DIVISIONS = 12
 
-watch(
-  () => modal.divisions,
-  (newValue) => {
-    if (isNaN(newValue) || newValue === 0) {
-      setAndReportValidity(divisionsElement.value, 'Step size is zero')
-    } else {
-      setAndReportValidity(divisionsElement.value, '')
-    }
-  }
-)
+function setDivisions(value: number) {
+  modal.divisions = value
+  modal.updateFromDivisions()
+}
 
 function generate(expand = true) {
   if (modal.singleStepOnly) {
@@ -66,21 +60,23 @@ function generate(expand = true) {
 </script>
 
 <template>
-  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" docked @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate equal temperament</h2>
     </template>
     <template #body>
       <div class="control-group">
         <div class="control">
-          <label for="divisions">Number of divisions</label>
-          <input
-            ref="divisionsElement"
+          <label id="divisions-label">Number of divisions</label>
+          <TextSlider
             id="divisions"
-            type="number"
-            step="any"
-            v-model="modal.divisions"
-            @input="modal.updateFromDivisions"
+            aria-labelledby="divisions-label"
+            :modelValue="modal.divisions"
+            :min="1"
+            :max="MAX_EQUAL_TEMPERAMENT_SIZE"
+            :defaultValue="DEFAULT_DIVISIONS"
+            :dragScale="0.3"
+            @update:modelValue="setDivisions"
           />
         </div>
         <div class="control">

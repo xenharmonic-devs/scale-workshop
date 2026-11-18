@@ -96,6 +96,8 @@ onMounted(() => {
 <template>
   <main>
     <div class="columns-container">
+      <!-- Docked dialogs (ModalDialog with `docked`) are teleported in here. -->
+      <div id="side-panel" class="column side-panel"></div>
       <div class="column scale-builder">
         <textarea
           id="scale-name"
@@ -163,40 +165,63 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* Content layout (small) */
+/*
+ * Content layout. The 1px grid gap shows the container background as divider lines.
+ * Small: everything stacks and the whole view scrolls.
+ * Medium: scale builder and tuning table side by side, side panel below the builder.
+ * Large: three full-height columns with the side panel on the left.
+ */
 div.columns-container {
   height: 100%;
   overflow-y: auto;
+  display: grid;
+  grid-template-columns: 100%;
+  grid-auto-rows: max-content;
+  grid-template-areas:
+    'builder'
+    'table'
+    'side';
+  gap: 1px;
   background-color: var(--color-border);
 }
 div.column {
   background-color: var(--color-background);
   overflow-x: hidden;
 }
+div.side-panel {
+  grid-area: side;
+  padding: 1rem;
+}
 div.scale-builder {
+  grid-area: builder;
   padding: 1rem;
 }
 div.tuning-table {
+  grid-area: table;
   padding: 0rem;
 }
 
 /* Content layout (medium) */
 @media screen and (min-width: 600px) {
   div.columns-container {
-    column-count: 2;
-    column-gap: 1px;
     overflow: hidden;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 2fr) minmax(0, 1fr);
+    grid-template-areas:
+      'builder table'
+      'side table';
   }
   div.column {
     overflow-y: auto;
   }
-  div.scale-builder {
-    width: 100%;
-    height: 100%;
-  }
-  div.tuning-table {
-    width: 100%;
-    height: 100%;
+}
+
+/* Content layout (large) */
+@media screen and (min-width: 1100px) {
+  div.columns-container {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-areas: 'side builder table';
   }
 }
 

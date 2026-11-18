@@ -304,11 +304,12 @@ function windowKeydownOrUp(event: KeyboardEvent | MouseEvent) {
     state.typingActive = true
     return
   }
-  // Disable typing for other types of input elements
+  // Disable typing for other types of input elements, including text sliders (TextSlider.vue)
   if (
     target instanceof HTMLTextAreaElement ||
     target instanceof HTMLInputElement ||
-    target instanceof HTMLSelectElement
+    target instanceof HTMLSelectElement ||
+    (target instanceof Element && target.closest('[role="spinbutton"]'))
   ) {
     state.typingActive = false
   } else {

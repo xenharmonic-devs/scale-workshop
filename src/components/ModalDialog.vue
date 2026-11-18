@@ -1,5 +1,14 @@
 <script setup lang="ts">
+/**
+ * Dialog shell used by the generation, modification and export modals.
+ *
+ * By default it is a centered overlay that traps focus. With `docked` it instead renders
+ * inline inside the Build Scale side panel (`DOCK_TARGET`) as a non-blocking panel: no
+ * backdrop, no focus trap, full panel width. Escape still cancels while focus is inside it.
+ */
 import { onMounted, onUnmounted, ref, watch, nextTick, useId } from 'vue'
+
+const DOCK_TARGET = '#side-panel'
 
 const props = defineProps({
   show: {
@@ -7,6 +16,10 @@ const props = defineProps({
     type: Boolean
   },
   right: {
+    default: false,
+    type: Boolean
+  },
+  docked: {
     default: false,
     type: Boolean
   }
@@ -59,6 +72,17 @@ function restoreFocus() {
 }
 
 function onKeydown(event: KeyboardEvent) {
+  // A TextSlider mid-edit uses Escape to cancel the edit, not the dialog.
+  if (event.key === 'Escape' && (event.target as HTMLElement | null)?.dataset?.editing) return
+  if (props.docked) {
+    // Docked panels don't trap focus, so only react when the user is working inside them.
+    if (props.show && event.key === 'Escape' && container.value?.contains(document.activeElement)) {
+      event.preventDefault()
+      event.stopImmediatePropagation()
+      emit('cancel')
+    }
+    return
+  }
   if (!isActive() || !container.value) return
   if (event.key === 'Escape') {
     event.preventDefault()
@@ -103,7 +127,13 @@ watch(
     if (show) {
       opener = document.activeElement instanceof HTMLElement ? document.activeElement : null
       nextTick(() => {
-        if (isActive()) focusFirst()
+        if (props.docked) {
+          // On small screens the side panel sits below the fold.
+          container.value?.scrollIntoView({ block: 'nearest' })
+          focusFirst()
+        } else if (isActive()) {
+          focusFirst()
+        }
       })
     } else {
       restoreFocus()
@@ -114,38 +144,44 @@ watch(
 </script>
 
 <template>
-  <Transition name="modal">
-    <div v-if="show" :class="{ 'modal-mask': true, right }" @mousedown.self="$emit('cancel')">
-      <div class="modal-wrapper">
-        <div
-          ref="container"
-          class="modal-container"
-          role="dialog"
-          aria-modal="true"
-          :aria-labelledby="headerId"
-          :data-modal-active="show"
-          tabindex="-1"
-        >
-          <div class="modal-header" :id="headerId">
-            <slot name="header">default header</slot>
-          </div>
+  <Teleport :to="docked ? DOCK_TARGET : 'body'" :disabled="!docked">
+    <Transition name="modal">
+      <div
+        v-if="show"
+        :class="{ 'modal-mask': !docked, 'modal-dock': docked, right }"
+        @mousedown.self="!docked && $emit('cancel')"
+      >
+        <div class="modal-wrapper">
+          <div
+            ref="container"
+            class="modal-container"
+            role="dialog"
+            :aria-modal="!docked"
+            :aria-labelledby="headerId"
+            :data-modal-active="show && !docked"
+            tabindex="-1"
+          >
+            <div class="modal-header" :id="headerId">
+              <slot name="header">default header</slot>
+            </div>
 
-          <div class="modal-body" ref="body">
-            <slot name="body">default body</slot>
-          </div>
+            <div class="modal-body" ref="body">
+              <slot name="body">default body</slot>
+            </div>
 
-          <div class="modal-footer">
-            <slot name="footer">
-              <div class="btn-group">
-                <button @click="$emit('confirm')">OK</button>
-                <button @click="$emit('cancel')">Cancel</button>
-              </div>
-            </slot>
+            <div class="modal-footer">
+              <slot name="footer">
+                <div class="btn-group">
+                  <button @click="$emit('confirm')">OK</button>
+                  <button @click="$emit('cancel')">Cancel</button>
+                </div>
+              </slot>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </Transition>
+    </Transition>
+  </Teleport>
 </template>
 
 <style>
@@ -181,6 +217,28 @@ watch(
   transition: all 0.3s ease;
   display: flex;
   flex-flow: column;
+}
+/* Docked: fill the side panel, which provides the padding and scrolling. */
+.modal-dock .modal-container {
+  padding: 0;
+  background-color: transparent;
+  box-shadow: none;
+  max-height: none;
+  max-width: none;
+  min-width: 0;
+  width: 100%;
+}
+.modal-dock .modal-body {
+  overflow-y: visible;
+  padding-right: 0;
+}
+.modal-dock.modal-enter-from .modal-container,
+.modal-dock.modal-leave-to .modal-container {
+  transform: none;
+}
+.modal-dock.modal-enter-active,
+.modal-dock.modal-leave-active {
+  transition: opacity 0.2s ease;
 }
 .modal-header h2 {
   margin-bottom: 0;
