@@ -6,6 +6,7 @@ import TextSlider from '@/components/TextSlider.vue'
 import { MAX_EQUAL_TEMPERAMENT_SIZE, useModalStore } from '@/stores/modal'
 import { useScaleStore } from '@/stores/scale'
 import { watch } from 'vue'
+import { vAutoGrow } from '@/directives/auto-grow'
 
 defineProps<{
   show: boolean
@@ -112,7 +113,8 @@ function generate(expand = true) {
       <h2>Generate equal temperament</h2>
     </template>
     <template #body>
-      <div class="control-group">
+      <!-- Two columns: divisions | interval to divide, then relative steps | absolute degrees. -->
+      <div class="control-group et-grid">
         <div class="control">
           <label id="divisions-label">Number of divisions</label>
           <TextSlider
@@ -127,9 +129,20 @@ function generate(expand = true) {
           />
         </div>
         <div class="control">
+          <label for="equave">Interval to divide</label>
+          <ScaleLineInput
+            id="equave"
+            class="equave-input"
+            @update:value="modal.equave = $event"
+            v-model="modal.equaveString"
+            :defaultValue="OCTAVE"
+          />
+        </div>
+        <div class="control">
           <label for="jumps" :class="{ disabled: modal.singleStepOnly }">Relative steps</label>
           <textarea
             id="jumps"
+            v-auto-grow
             v-model="modal.jumpsString"
             :disabled="modal.singleStepOnly"
             @input="modal.updateFromJumps"
@@ -139,19 +152,11 @@ function generate(expand = true) {
           <label for="degrees" :class="{ disabled: modal.singleStepOnly }">Absolute degrees</label>
           <textarea
             id="degrees"
+            v-auto-grow
             v-model="modal.degreesString"
             :disabled="modal.singleStepOnly"
             @input="modal.updateFromDegrees"
           ></textarea>
-        </div>
-        <div class="control">
-          <label for="equave">Interval to divide</label>
-          <ScaleLineInput
-            id="equave"
-            @update:value="modal.equave = $event"
-            v-model="modal.equaveString"
-            :defaultValue="OCTAVE"
-          />
         </div>
       </div>
       <div class="warning">
@@ -170,3 +175,27 @@ function generate(expand = true) {
     </template>
   </Modal>
 </template>
+
+<style scoped>
+.et-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.75rem;
+}
+/* Fields in a row line up even if one label wraps. */
+.et-grid > .control {
+  align-content: end;
+}
+/* One line tall like the fields above; v-auto-grow adds lines as needed, then it scrolls. */
+.et-grid textarea {
+  width: 100%;
+  min-height: 2.25rem;
+  max-height: 10rem;
+  resize: none;
+}
+/* Match the divisions slider's height so the first row lines up. */
+.equave-input {
+  height: 2.25rem;
+  min-width: 0;
+}
+</style>
