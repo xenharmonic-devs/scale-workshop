@@ -106,6 +106,31 @@ function closeGenerators() {
   hideModals()
 }
 
+const generatorCards = {
+  showConcordanceShellModal,
+  showCpsModal,
+  showEnumerateModal,
+  showEqualTemperamentModal,
+  showEulerGenusModal,
+  showFokkerBlockModal,
+  showGeneratorSequenceModal,
+  showHarmonicModal,
+  showHistoricalModal,
+  showLatticeModal,
+  showMosModal,
+  showPresetModal,
+  showRankTwoModal,
+  showStackModal,
+  showStrictVarietyThreeModal,
+  showSubharmonicModal
+}
+
+/** One call, so the formatter can't split it into two statements without a separator. */
+function openGenerator(card: keyof typeof generatorCards) {
+  closeGenerators()
+  generatorCards[card].value = true
+}
+
 function updateSourceAndHideModals(source: string) {
   // Keep the result. The computeScale() below pushes one undo step back to the pre-card scale.
   livePreview.commit()
@@ -158,140 +183,34 @@ defineExpose({ blur })
 <template>
   <DropdownGroup ref="element" title="New scale" @mouseenter="$emit('mouseenter')">
     <ul>
-      <a
-        href="#"
-        @click="
-          closeGenerators()
-          showEqualTemperamentModal = true
-        "
-        ><li>Equal temperament</li></a
-      >
-      <a
-        href="#"
-        @click="
-          closeGenerators()
-          showRankTwoModal = true
-        "
-        ><li>Rank-2 temperament</li></a
-      >
-      <a
-        href="#"
-        @click="
-          closeGenerators()
-          showHarmonicModal = true
-        "
-        ><li>Harmonic series segment</li></a
-      >
-      <a
-        href="#"
-        @click="
-          closeGenerators()
-          showSubharmonicModal = true
-        "
+      <a href="#" @click="openGenerator('showEqualTemperamentModal')"><li>Equal temperament</li></a>
+      <a href="#" @click="openGenerator('showRankTwoModal')"><li>Rank-2 temperament</li></a>
+      <a href="#" @click="openGenerator('showHarmonicModal')"><li>Harmonic series segment</li></a>
+      <a href="#" @click="openGenerator('showSubharmonicModal')"
         ><li>Subharmonic series segment</li></a
       >
-      <a
-        href="#"
-        @click="
-          closeGenerators()
-          showEnumerateModal = true
-        "
-        ><li>Enumerate chord</li></a
-      >
-      <a
-        href="#"
-        @click="
-          closeGenerators()
-          showStackModal = true
-        "
-        ><li>Stack steps</li></a
-      >
-      <a
-        href="#"
-        @click="
-          closeGenerators()
-          showCpsModal = true
-        "
-        ><li>Combination product set</li></a
-      >
-      <a
-        href="#"
-        @click="
-          closeGenerators()
-          showMosModal = true
-        "
-        ><li>Moment of symmetry scale</li></a
-      >
-      <a
-        href="#"
-        @click="
-          closeGenerators()
-          showHistoricalModal = true
-        "
-        ><li>Historical temperament</li></a
-      >
-      <a
-        href="#"
-        @click="
-          closeGenerators()
-          showEulerGenusModal = true
-        "
-        ><li>Euler-Fokker genus</li></a
-      >
-      <a
-        href="#"
-        @click="
-          closeGenerators()
-          showLatticeModal = true
-        "
-        ><li>Parallelotope / Lattice</li></a
-      >
-      <a
-        href="#"
-        @click="
-          closeGenerators()
-          showGeneratorSequenceModal = true
-        "
+      <a href="#" @click="openGenerator('showEnumerateModal')"><li>Enumerate chord</li></a>
+      <a href="#" @click="openGenerator('showStackModal')"><li>Stack steps</li></a>
+      <a href="#" @click="openGenerator('showCpsModal')"><li>Combination product set</li></a>
+      <a href="#" @click="openGenerator('showMosModal')"><li>Moment of symmetry scale</li></a>
+      <a href="#" @click="openGenerator('showHistoricalModal')"><li>Historical temperament</li></a>
+      <a href="#" @click="openGenerator('showEulerGenusModal')"><li>Euler-Fokker genus</li></a>
+      <a href="#" @click="openGenerator('showLatticeModal')"><li>Parallelotope / Lattice</li></a>
+      <a href="#" @click="openGenerator('showGeneratorSequenceModal')"
         ><li>Generator sequence</li></a
       >
-      <a
-        href="#"
-        @click="
-          closeGenerators()
-          showConcordanceShellModal = true
-        "
-        ><li>Concordance shell</li></a
-      >
-      <a
-        href="#"
-        @click="
-          closeGenerators()
-          showStrictVarietyThreeModal = true
-        "
+      <a href="#" @click="openGenerator('showConcordanceShellModal')"><li>Concordance shell</li></a>
+      <a href="#" @click="openGenerator('showStrictVarietyThreeModal')"
         ><li>Strict Variety 3</li></a
       >
-      <a
-        href="#"
-        @click="
-          closeGenerators()
-          showFokkerBlockModal = true
-        "
-        ><li>Fokker block</li></a
-      >
+      <a href="#" @click="openGenerator('showFokkerBlockModal')"><li>Fokker block</li></a>
       <li class="divider"></li>
       <a href="#" @click="scalaFile!.click()"><li>Import .scl</li></a>
       <a href="#" @click="anamarkFile!.click()"><li>Import .tun</li></a>
       <a href="#" @click="xendevsFile!.click()"><li>Import .swi</li></a>
       <li class="divider"></li>
       <a href="#" @click="clearScale"><li>Clear scale</li></a>
-      <a
-        href="#"
-        @click="
-          closeGenerators()
-          showPresetModal = true
-        "
-        ><li>Load preset scale</li></a
-      >
+      <a href="#" @click="openGenerator('showPresetModal')"><li>Load preset scale</li></a>
     </ul>
   </DropdownGroup>
 
