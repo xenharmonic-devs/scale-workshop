@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { Interval, intervalValueAs } from 'sonic-weave/interval'
-import { ref, watch } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { OCTAVE } from '@/constants'
-import { useLatticeStore } from '@/stores/tempering'
+import { useLatticeStore, type LatticeGenerator } from '@/stores/tempering'
 import { arrayToString, centString, expandCode, parseInterval, setAndReportValidity } from '@/utils'
 import { mmod } from 'xen-dev-utils/fraction'
 import { useScaleStore } from '@/stores/scale'
@@ -18,15 +18,26 @@ const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
 const lattice = useLatticeStore()
 const scale = useScaleStore()
 
-const basisElement = ref<HTMLInputElement | null>(null)
+const generatorDrafts = reactive(new WeakMap<LatticeGenerator, string>())
+const canGenerate = computed(
+  () => lattice.method === 'generators' && lattice.generators.every(({ interval }) => interval)
+)
 const valsInput = ref<HTMLInputElement | null>(null)
 const commasInput = ref<HTMLInputElement | null>(null)
 const subgroupInput = ref<HTMLInputElement | null>(null)
 
-watch(
-  () => lattice.basisError,
-  (newError) => setAndReportValidity(basisElement.value, newError)
-)
+function updateGenerator(generator: LatticeGenerator, event: Event) {
+  const input = event.target as HTMLInputElement
+  generatorDrafts.set(generator, input.value)
+  let error = ''
+  try {
+    generator.interval = input.value.trim() ? parseInterval(input.value) : null
+  } catch (cause) {
+    generator.interval = null
+    error = cause instanceof Error ? cause.message : String(cause)
+  }
+  setAndReportValidity(input, error)
+}
 
 function calculateGenerators() {
   const generators = lattice.temperament.generators
@@ -48,38 +59,43 @@ function calculateGenerators() {
   lattice.equaveString = centString(period, scale.centsFractionDigits)
   lattice.equave = parseInterval(lattice.equaveString)
 
-  lattice.basisString = generators.map((g) => centString(g, scale.centsFractionDigits)).join(' ')
+  lattice.setGenerators(
+    generators.map((g) => parseInterval(centString(g, scale.centsFractionDigits)))
+  )
   lattice.method = 'generators'
 }
 
-function updateUps(index: number, event: Event) {
-  const value = parseInt((event.target as HTMLInputElement).value)
-  lattice.ups[index] = value
+function updateCount(generator: LatticeGenerator, count: 'up' | 'down', event: Event) {
+  generator[count] = parseInt((event.target as HTMLInputElement).value)
 }
 
-function updateDowns(index: number, event: Event) {
-  const value = parseInt((event.target as HTMLInputElement).value)
-  lattice.downs[index] = value
-}
-
-function flip(index: number) {
-  const b = lattice.basis[index]
-  const domain = b.domain
-  const generator = b.value.inverse().reduce(lattice.equave.value)
-  const node = intervalValueAs(generator, b.node)
-  const newBasis = [...lattice.basis]
-  newBasis.splice(index, 1, new Interval(generator, domain, 0, node, b))
-  lattice.basisString = newBasis.map((gen) => gen.toString()).join(' ')
+function flip(generator: LatticeGenerator) {
+  const interval = generator.interval
+  if (!interval) {
+    return
+  }
+  const value = interval.value.inverse().reduce(lattice.equave.value)
+  const node = intervalValueAs(value, interval.node)
+  generator.interval = new Interval(value, interval.domain, 0, node, interval)
+  generatorDrafts.delete(generator)
 }
 
 function generate(expand = true) {
+  if (!canGenerate.value) {
+    return
+  }
+  const { generators } = lattice
+  const basis = generators.flatMap(({ interval }) => (interval ? [interval] : []))
+  const ups = generators.map(({ up }) => up)
+  const downs = generators.map(({ down }) => down)
+  const dimensions = generators.map(({ up, down }) => 1 + up + down)
   let source = ''
   if (lattice.comment.length) {
     source = `(* ${lattice.comment} *)\n`
   }
-  source += `parallelotope(${arrayToString(lattice.basis)}, ${arrayToString(lattice.ups)}, ${arrayToString(lattice.downs)}, ${lattice.equave.toString()})`
-  let name = `Parallelotope (${lattice.dimensions} of ${lattice.basisString}`
-  if (lattice.basis.length === 0) {
+  source += `parallelotope(${arrayToString(basis)}, ${arrayToString(ups)}, ${arrayToString(downs)}, ${lattice.equave.toString()})`
+  let name = `Parallelotope (${dimensions} of ${basis.map((interval) => interval.toString()).join(' ')}`
+  if (basis.length === 0) {
     name = 'Parallelotope (unison'
   }
   if (!lattice.equave.equals(OCTAVE)) {
@@ -125,36 +141,50 @@ function generate(expand = true) {
           </span>
         </div>
         <div class="control-group" v-show="lattice.method === 'generators'">
-          <div class="control">
-            <label for="basis">Generators</label>
-            <input
-              ref="basisElement"
-              id="basis"
-              type="text"
-              class="control"
-              placeholder="3 5 7"
-              v-model="lattice.basisString"
-            />
-          </div>
-          <label>Generators up/down from 1/1</label>
-          <div class="control" v-for="(_, i) of lattice.basis" :key="i">
-            <label>Generator {{ lattice.basis[i].toString() }}</label>
-            <button @click="flip(i)">Flip</button>
-            <input
-              type="number"
-              min="0"
-              max="99"
-              :value="lattice.ups[i]"
-              @input="updateUps(i, $event)"
-            />
-            <input
-              type="number"
-              min="0"
-              max="99"
-              :value="lattice.downs[i]"
-              @input="updateDowns(i, $event)"
-            />
-          </div>
+          <fieldset
+            v-for="(generator, i) of lattice.generators"
+            :key="generator.id"
+            class="generator-group"
+          >
+            <legend>Generator {{ i + 1 }}</legend>
+            <div class="control">
+              <label :for="`generator-${i}`">Interval</label>
+              <input
+                :id="`generator-${i}`"
+                type="text"
+                placeholder="3/2"
+                :value="generatorDrafts.get(generator) ?? generator.interval?.toString() ?? ''"
+                @input="updateGenerator(generator, $event)"
+              />
+              <button @click="flip(generator)" :disabled="!generator.interval">Flip</button>
+              <button @click="lattice.generators.splice(i, 1)">Remove</button>
+            </div>
+            <div class="control-group twin-controls">
+              <div class="control">
+                <label :for="`generator-up-${i}`">Up from 1/1</label>
+                <input
+                  :id="`generator-up-${i}`"
+                  type="number"
+                  min="0"
+                  max="99"
+                  :value="generator.up"
+                  @input="updateCount(generator, 'up', $event)"
+                />
+              </div>
+              <div class="control">
+                <label :for="`generator-down-${i}`">Down from 1/1</label>
+                <input
+                  :id="`generator-down-${i}`"
+                  type="number"
+                  min="0"
+                  max="99"
+                  :value="generator.down"
+                  @input="updateCount(generator, 'down', $event)"
+                />
+              </div>
+            </div>
+          </fieldset>
+          <button @click="lattice.addGenerator">Add generator</button>
           <div class="control">
             <label for="equave">Equave</label>
             <ScaleLineInput
@@ -247,15 +277,28 @@ function generate(expand = true) {
     </template>
     <template #footer>
       <div class="btn-group">
-        <button @click="generate(true)" :disabled="lattice.method !== 'generators'">OK</button>
+        <button @click="generate(true)" :disabled="!canGenerate">OK</button>
         <button @click="$emit('cancel')">Cancel</button>
-        <button @click="generate(false)" :disabled="lattice.method !== 'generators'">Raw</button>
+        <button @click="generate(false)" :disabled="!canGenerate">Raw</button>
       </div>
     </template>
   </Modal>
 </template>
 
-<style>
+<style scoped>
+.generator-group {
+  min-width: 0;
+}
+
+.generator-group input {
+  min-width: 0;
+  width: 0;
+}
+
+.generator-group .control-group {
+  margin: 0.5rem 0 0;
+}
+
 p.warning {
   height: 3em;
   overflow-y: hidden;
