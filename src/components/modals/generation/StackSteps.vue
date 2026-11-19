@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
 import { ref } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import { debounce, expandCode } from '@/utils'
@@ -8,7 +9,7 @@ defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
+const emit = defineEmits(['preview', 'update:source', 'update:scaleName', 'cancel'])
 
 const scaleData = ref('')
 const total = ref('1/1')
@@ -24,19 +25,28 @@ function computeTotal() {
 
 const updateTotal = debounce(computeTotal)
 
+function build(expand: boolean): GeneratorResult | undefined {
+  if (!scaleData.value.trim()) {
+    return undefined
+  }
+  const source = scaleData.value + '\nstack()'
+  return { source: expand ? expandCode(source) : source, name: 'Custom steps' }
+}
+
+useGeneratorPreview(
+  () => build(false),
+  (result) => emit('preview', result)
+)
+
 function generate(expand = true) {
   const source = scaleData.value + '\nstack()'
-  if (expand) {
-    emit('update:source', expandCode(source))
-  } else {
-    emit('update:source', source)
-  }
   emit('update:scaleName', 'Custom steps')
+  emit('update:source', expand ? expandCode(source) : source)
 }
 </script>
 
 <template>
-  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Stack relative scale steps</h2>
     </template>

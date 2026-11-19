@@ -2,54 +2,68 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import ModifyScale from '@/components/ModifyScale.vue'
-import NewScale from '@/components/NewScale.vue'
 import { useScaleStore } from '@/stores/scale'
 import { useModalStore } from '@/stores/modal'
 import { useSessionIdStore } from '@/stores/session-id'
+import { useRackStore } from '@/stores/rack'
+import RackPanel from '@/components/rack/RackPanel.vue'
 
 let wrapper: VueWrapper
+let panel: VueWrapper
 beforeEach(() => {
   setActivePinia(createPinia())
   useSessionIdStore().loading = true
   vi.spyOn(HTMLElement.prototype, 'getClientRects').mockReturnValue([{}] as unknown as DOMRectList)
+  vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) =>
+    setTimeout(() => callback(0), 0)
+  )
+  vi.stubGlobal('cancelAnimationFrame', (id: number) => clearTimeout(id))
 })
 afterEach(() => {
   wrapper?.unmount()
+  panel?.unmount()
   document.body.replaceChildren()
   vi.restoreAllMocks()
+  vi.unstubAllGlobals()
 })
 
+/** Lets the cards load and report, and the rack write the scale. */
+async function settle() {
+  await vi.dynamicImportSettled()
+  await flushPromises()
+  await new Promise((resolve) => setTimeout(resolve, 0))
+  await flushPromises()
+}
+
+/** The Modify scale menu next to the rack its modifiers go into. */
 function open(source = '') {
   const scale = useScaleStore()
   scale.sourceText = source
   scale.computeScale()
+  panel = mount(RackPanel, { attachTo: document.body })
   wrapper = mount(ModifyScale, { attachTo: document.body })
   return scale
 }
 async function select(label: string) {
   const link = wrapper.findAll('ul a').find((a) => a.text() === label)!
-  ;(link.element as HTMLElement).focus()
   await link.trigger('click')
-  await vi.dynamicImportSettled()
-  await flushPromises()
+  await settle()
 }
 async function button(label: string) {
-  const target = [...document.querySelectorAll<HTMLButtonElement>('.modal-footer button')].find(
-    (b) => b.textContent === label
+  const target = [...document.querySelectorAll<HTMLButtonElement>('.rack-card-body button')].find(
+    (b) => b.textContent?.trim() === label
   )!
   target.click()
-  await flushPromises()
+  await settle()
 }
 
 describe('default scale modification', () => {
-  it.each(['OK', 'Raw'])('preserves displayed colors and labels on Repeat %s', async (mode) => {
+  it('preserves displayed colors and labels on Repeat', async () => {
     const scale = open('1/1 = 440 Hz')
     useModalStore().numRepeats = 2
     const colors = [...scale.colors]
     const labels = [...scale.labels]
     await select('Repeat')
-    expect(scale.sourceText).toBe('1/1 = 440 Hz')
-    await button(mode)
     expect(scale.error).toBe('')
     expect(scale.relativeIntervals).toHaveLength(24)
     expect(scale.colors).toEqual([...colors, ...colors])
@@ -77,36 +91,34 @@ describe('default scale modification', () => {
     }
   )
 
-  it.each(['Cancel', 'Escape', 'backdrop'])(
-    'cancels through %s without changing the scale and reports cancellation',
-    async (method) => {
-      const scale = open('(* empty *)')
-      const original = JSON.stringify(scale)
-      await select('Repeat')
-      if (method === 'Cancel') await button('Cancel')
-      else if (method === 'Escape') {
-        window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
-      } else {
-        const event = new MouseEvent('mousedown', { bubbles: true, cancelable: true })
-        document.querySelector('.modal-mask')!.dispatchEvent(event)
-      }
-      await flushPromises()
-      expect(JSON.stringify(scale)).toBe(original)
-      expect(document.querySelector('[role="dialog"]')).toBeNull()
-      expect(wrapper.emitted('cancel')).toHaveLength(1)
-      expect(wrapper.emitted('done')).toBeUndefined()
-    }
-  )
-
-  it('discards staged rational replacements and materialization on cancellation', async () => {
+  // A rack card has no Cancel: removing the module takes its change back out of the chain.
+  it('restores the scale when the modifier is removed again', async () => {
     const scale = open('(* empty *)')
-    const original = JSON.stringify(scale)
+    const colors = [...scale.colors]
+    const labels = [...scale.labels]
+    await select('Repeat')
+    expect(scale.relativeIntervals).toHaveLength(24)
+    const rack = useRackStore()
+    rack.removeModule(rack.modifiers[0].id)
+    await settle()
+    expect(scale.error).toBe('')
+    expect(scale.relativeIntervals).toHaveLength(12)
+    expect(scale.colors).toEqual(colors)
+    expect(scale.labels).toEqual(labels)
+  })
+
+  it('applies rational replacements as live statements on the degrees', async () => {
+    const scale = open('(* empty *)')
     await select('Approximate by ratios')
     await button('Apply')
     await button('Apply')
-    expect(scale.sourceText).not.toBe('(* empty *)')
-    await button('Cancel')
-    expect(JSON.stringify(scale)).toBe(original)
+    expect(scale.error).toBe('')
+    expect(scale.sourceText).toContain('$[0] = ')
+    expect(scale.sourceText).toContain('$[1] = ')
+    expect(useRackStore().modifiers[0].name).toBe('2 degrees replaced')
+
+    await button('Clear replacements')
+    expect(scale.sourceText).not.toContain('$[0] = ')
   })
 
   it.each([
@@ -125,20 +137,6 @@ describe('default scale modification', () => {
     scale.computeScale()
     expect(scale.error).toBe('')
     expect(scale.labels[0]).toBe(sharp)
-  })
-
-  it('reports generation dialog cancellation separately from completion', async () => {
-    const scale = useScaleStore()
-    scale.sourceText = 'tet(7)'
-    scale.computeScale()
-    const original = JSON.stringify(scale)
-    wrapper = mount(NewScale, { attachTo: document.body })
-    await select('Equal temperament')
-    await button('Cancel')
-    expect(wrapper.emitted('cancel')).toHaveLength(1)
-    expect(wrapper.emitted('done')).toBeUndefined()
-    expect(document.querySelector('[role="dialog"]')).toBeNull()
-    expect(JSON.stringify(scale)).toBe(original)
   })
 
   it('materializes for immediate actions', async () => {

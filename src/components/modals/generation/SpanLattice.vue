@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
 import { Interval, intervalValueAs } from 'sonic-weave/interval'
 import { ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
@@ -13,7 +14,7 @@ defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
+const emit = defineEmits(['preview', 'update:source', 'update:scaleName', 'cancel'])
 
 const lattice = useLatticeStore()
 const scale = useScaleStore()
@@ -72,7 +73,7 @@ function flip(index: number) {
   lattice.basisString = newBasis.map((gen) => gen.toString()).join(' ')
 }
 
-function generate(expand = true) {
+function build(expand: boolean): GeneratorResult {
   let source = ''
   if (lattice.comment.length) {
     source = `(* ${lattice.comment} *)\n`
@@ -86,17 +87,24 @@ function generate(expand = true) {
     name += ` over ${lattice.equave.toString()}`
   }
   name += ')'
+  return { source: expand ? expandCode(source) : source, name }
+}
+
+// Wait for a basis rather than collapsing the scale to the unison.
+useGeneratorPreview(
+  () => (lattice.basisString.trim() ? build(false) : undefined),
+  (result) => emit('preview', result)
+)
+
+function generate(expand = true) {
+  const { source, name } = build(expand)
   emit('update:scaleName', name)
-  if (expand) {
-    emit('update:source', expandCode(source))
-  } else {
-    emit('update:source', source)
-  }
+  emit('update:source', source)
 }
 </script>
 
 <template>
-  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate parallelotope</h2>
     </template>

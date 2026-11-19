@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
 import { ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
@@ -10,7 +11,7 @@ defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['update:scaleName', 'update:source', 'cancel'])
+const emit = defineEmits(['preview', 'update:scaleName', 'update:source', 'cancel'])
 
 const modal = useModalStore()
 
@@ -23,20 +24,31 @@ watch(
 // It's not obvious that combination count depends on a parsed text element.
 // I think it's better that the user can try using invalid values and see red.
 
+function build(expand: boolean): GeneratorResult {
+  let source = `cps(${arrayToString(modal.factors)}, ${modal.numElements}, ${modal.equave.toString()}, ${modal.addUnity.toString()})`
+  if (expand) {
+    source = expandCode(source)
+  }
+  let name = `CPS (${modal.numElements} of ${modal.factorsString}`
+  if (modal.addUnity) {
+    name += ' with 1/1'
+  }
+  if (!modal.equave.equals(OCTAVE)) {
+    name += ` over ${modal.equave.toString()}`
+  }
+  name += ')'
+  return { source, name }
+}
+
+// Wait for factors rather than wiping the scale with an empty product set.
+useGeneratorPreview(
+  () => (modal.factorsString.trim() ? build(false) : undefined),
+  (result) => emit('preview', result)
+)
+
 function generate(expand = true) {
   try {
-    let source = `cps(${arrayToString(modal.factors)}, ${modal.numElements}, ${modal.equave.toString()}, ${modal.addUnity.toString()})`
-    if (expand) {
-      source = expandCode(source)
-    }
-    let name = `CPS (${modal.numElements} of ${modal.factorsString}`
-    if (modal.addUnity) {
-      name += ' with 1/1'
-    }
-    if (!modal.equave.equals(OCTAVE)) {
-      name += ` over ${modal.equave.toString()}`
-    }
-    name += ')'
+    const { source, name } = build(expand)
     emit('update:scaleName', name)
     emit('update:source', source)
   } catch (error) {
@@ -50,7 +62,7 @@ function generate(expand = true) {
 </script>
 
 <template>
-  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate combination product set</h2>
     </template>

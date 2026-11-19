@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
 import Modal from '@/components/ModalDialog.vue'
 import { clamp } from 'xen-dev-utils/core'
 import { useModalStore } from '@/stores/modal'
@@ -8,11 +9,11 @@ defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
+const emit = defineEmits(['preview', 'update:source', 'update:scaleName', 'cancel'])
 
 const modal = useModalStore()
 
-function generate(expand = true) {
+function build(expand: boolean): GeneratorResult {
   const clampedGuide = Math.round(clamp(1, 1000000000, modal.guideTone))
   const clampedRoot = Math.round(clamp(1, 1000000000, modal.rootTone))
   let name = `Euler-Fokker genus ${clampedGuide}`
@@ -29,17 +30,23 @@ function generate(expand = true) {
     source += `, ${modal.integerEquave}`
   }
   source += ')'
+  return { source: expand ? expandCode(source) : source, name }
+}
+
+useGeneratorPreview(
+  () => build(false),
+  (result) => emit('preview', result)
+)
+
+function generate(expand = true) {
+  const { source, name } = build(expand)
   emit('update:scaleName', name)
-  if (expand) {
-    emit('update:source', expandCode(source))
-  } else {
-    emit('update:source', source)
-  }
+  emit('update:source', source)
 }
 </script>
 
 <template>
-  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate Euler-Fokker genus</h2>
     </template>

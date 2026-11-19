@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { GeneratorResult } from '@/composables/useGeneratorPreview'
 import { computed, watchEffect } from 'vue'
 import strictVarietyThreeJustIntonation from '@/assets/strict-variety-3-ji.json'
 import {
@@ -144,18 +145,26 @@ watchEffect(() => {
   }
 })
 
-function generate(expand = true) {
+function build(expand = true): GeneratorResult | undefined {
   const intervals = selectedStepSizes.value
   if (!intervals) {
-    return
+    return undefined
   }
   const source = `realizeWord('${selectedMode.value}', #{L: ${intervals.L}, M: ${intervals.M}, s: ${intervals.s}})`
   const counts = countSteps(modal.strictVarietyThreeJustIntonationSteps)
-  emit(
-    'update:scaleName',
-    `SV3 JI ${modal.strictVarietyThreeJustIntonationEquave}: ${formatCounts(counts)}`
-  )
-  emit('update:source', expand ? expandCode(source) : source)
+  return {
+    source: expand ? expandCode(source) : source,
+    name: `SV3 JI ${modal.strictVarietyThreeJustIntonationEquave}: ${formatCounts(counts)}`
+  }
+}
+
+function generate(expand = true) {
+  const result = build(expand)
+  if (!result) {
+    return
+  }
+  emit('update:scaleName', result.name)
+  emit('update:source', result.source)
 }
 
 function toScaleOption(steps: string): ScaleOption {
@@ -168,7 +177,7 @@ function toScaleOption(steps: string): ScaleOption {
   }
 }
 
-defineExpose({ generate })
+defineExpose({ build, generate })
 </script>
 
 <template>

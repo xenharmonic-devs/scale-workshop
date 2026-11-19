@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
+import { useStageInput } from '@/rack/stage-input'
 import Modal from '@/components/ModalDialog.vue'
 import ScaleLineInput from '@/components/ScaleLineInput.vue'
 import { FIFTH, FIFTH_12TET } from '@/constants'
@@ -10,25 +12,27 @@ defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['done', 'cancel'])
+const emit = defineEmits(['preview', 'done', 'cancel'])
 
 const modal = useModalStore()
 const scale = useScaleStore()
+const input = useStageInput()
 
-function modify(expand = true) {
-  scale.materializeDefaultScale()
-  scale.sourceText += `\nstretch(${decimalString(modal.stretchAmount)})\ncents(£, ${scale.centsFractionDigits})`
-  if (expand) {
-    const { visitor, defaults } = scale.getUserScopeVisitor()
-    scale.sourceText = visitor.expand(defaults)
-  }
-  scale.computeScale()
-  emit('done')
+function build(): GeneratorResult {
+  let code = ''
+  code += `\nstretch(${decimalString(modal.stretchAmount)})\ncents(£, ${scale.centsFractionDigits})`
+  return { source: code.trim(), name: `× ${modal.stretchAmount}` }
 }
+
+useGeneratorPreview(
+  build,
+  (result) => emit('preview', result),
+  () => input.value.code
+)
 </script>
 
 <template>
-  <Modal :show="show" @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded>
     <template #header>
       <h2>Stretch/compress scale</h2>
     </template>
@@ -73,13 +77,6 @@ function modify(expand = true) {
           <label for="stretch-into">Stretch reference into target</label>
           <button @click="modal.calculateStretchAmount">Calculate</button>
         </div>
-      </div>
-    </template>
-    <template #footer>
-      <div class="btn-group">
-        <button @click="modify(true)">OK</button>
-        <button @click="$emit('cancel')">Cancel</button>
-        <button @click="modify(false)">Raw</button>
       </div>
     </template>
   </Modal>

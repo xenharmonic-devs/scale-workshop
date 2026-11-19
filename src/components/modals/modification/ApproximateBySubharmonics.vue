@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
+import { useStageInput } from '@/rack/stage-input'
 import Modal from '@/components/ModalDialog.vue'
 import { useModalStore } from '@/stores/modal'
-import { useScaleStore } from '@/stores/scale'
 import { computed } from 'vue'
 import { valueToCents } from 'xen-dev-utils/conversion'
 
@@ -9,14 +10,14 @@ defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['done', 'cancel'])
+const emit = defineEmits(['preview', 'done', 'cancel'])
 
 const modal = useModalStore()
-const scale = useScaleStore()
+const input = useStageInput()
 
 const error = computed(() => {
   let result = 0
-  for (const ratio of scale.scale.intervalRatios) {
+  for (const ratio of input.value.scale.intervalRatios) {
     const denominator = Math.round(modal.largeInteger / ratio)
     const approximation = modal.largeInteger / denominator
     result = Math.max(result, Math.abs(valueToCents(Math.abs(approximation / ratio))))
@@ -24,20 +25,21 @@ const error = computed(() => {
   return result
 })
 
-function modify(expand = true) {
-  scale.materializeDefaultScale()
-  scale.sourceText += `\ntoSubharmonics(${modal.largeInteger})`
-  if (expand) {
-    const { visitor, defaults } = scale.getUserScopeVisitor()
-    scale.sourceText = visitor.expand(defaults)
-  }
-  scale.computeScale()
-  emit('done')
+function build(): GeneratorResult {
+  let code = ''
+  code += `\ntoSubharmonics(${modal.largeInteger})`
+  return { source: code.trim(), name: `Subharmonics down to 1/${modal.largeInteger}` }
 }
+
+useGeneratorPreview(
+  build,
+  (result) => emit('preview', result),
+  () => input.value.code
+)
 </script>
 
 <template>
-  <Modal :show="show" @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded>
     <template #header>
       <h2>Approximate by subharmonics</h2>
     </template>
@@ -55,13 +57,6 @@ function modify(expand = true) {
           />
         </div>
         <p>Error: {{ error.toFixed(5) }} c</p>
-      </div>
-    </template>
-    <template #footer>
-      <div class="btn-group">
-        <button @click="modify(true)">OK</button>
-        <button @click="$emit('cancel')">Cancel</button>
-        <button @click="modify(false)">Raw</button>
       </div>
     </template>
   </Modal>

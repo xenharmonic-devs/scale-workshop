@@ -1,5 +1,16 @@
 <script setup lang="ts">
+/**
+ * Dialog shell used by the generation, modification and export modals.
+ *
+ * By default it is a centered overlay that traps focus.
+ *
+ * With `embedded` it renders only its body, in place: a rack card supplies the title and the
+ * open/close control, and every change applies live, so there is no footer and no Escape.
+ */
 import { onMounted, onUnmounted, ref, watch, nextTick, useId } from 'vue'
+
+// Either root (the embedded body or the dialog) takes the attributes, e.g. a class.
+defineOptions({ inheritAttrs: false })
 
 const props = defineProps({
   show: {
@@ -9,10 +20,20 @@ const props = defineProps({
   right: {
     default: false,
     type: Boolean
+  },
+  embedded: {
+    default: false,
+    type: Boolean
   }
 })
 
 const emit = defineEmits(['confirm', 'cancel'])
+
+// Clicking the backdrop cancels, without starting a text selection.
+function onBackdropMousedown(event: MouseEvent) {
+  event.preventDefault()
+  emit('cancel')
+}
 
 const body = ref<HTMLDivElement | null>(null)
 const container = ref<HTMLDivElement | null>(null)
@@ -59,6 +80,9 @@ function restoreFocus() {
 }
 
 function onKeydown(event: KeyboardEvent) {
+  if (props.embedded) return
+  // A TextSlider mid-edit uses Escape to cancel the edit, not the dialog.
+  if (event.key === 'Escape' && (event.target as HTMLElement | null)?.dataset?.editing) return
   if (!isActive() || !container.value) return
   if (event.key === 'Escape') {
     event.preventDefault()
@@ -100,10 +124,15 @@ onUnmounted(() => {
 watch(
   () => props.show,
   (show) => {
+    if (props.embedded) {
+      return
+    }
     if (show) {
       opener = document.activeElement instanceof HTMLElement ? document.activeElement : null
       nextTick(() => {
-        if (isActive()) focusFirst()
+        if (isActive()) {
+          focusFirst()
+        }
       })
     } else {
       restoreFocus()
@@ -114,11 +143,15 @@ watch(
 </script>
 
 <template>
-  <Transition name="modal">
+  <div v-if="embedded" v-show="show" v-bind="$attrs" class="modal-embedded">
+    <slot name="body"></slot>
+  </div>
+  <Transition v-else name="modal">
     <div
       v-if="show"
+      v-bind="$attrs"
       :class="{ 'modal-mask': true, right }"
-      @mousedown.self.prevent="$emit('cancel')"
+      @mousedown.self="onBackdropMousedown"
     >
       <div class="modal-wrapper">
         <div

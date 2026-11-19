@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
 import { Fraction, lcm } from 'xen-dev-utils/fraction'
 import { computed, defineAsyncComponent, useTemplateRef, watchEffect } from 'vue'
 import strictVarietyThreeHierarchy from '@/assets/strict-variety-3-hierarchy.json'
@@ -32,6 +33,7 @@ type ParsedCondition = {
 const hierarchy = strictVarietyThreeHierarchy as Record<string, StrictVarietyThreeEntry>
 
 type StrictVarietyThreeJustIntonationComponent = {
+  build: (expand?: boolean) => GeneratorResult | undefined
   generate: (expand?: boolean) => void
 }
 
@@ -40,7 +42,7 @@ const StrictVarietyThreeJustIntonation = defineAsyncComponent({
   loadingComponent: StrictVarietyThreeJustIntonationLoading,
   delay: 0
 })
-const emit = defineEmits(['update:source', 'update:scaleName', 'cancel'])
+const emit = defineEmits(['preview', 'update:source', 'update:scaleName', 'cancel'])
 
 defineProps<{
   show: boolean
@@ -198,15 +200,35 @@ watchEffect(() => {
   }
 })
 
+function build(expand: boolean): GeneratorResult | undefined {
+  if (modal.strictVarietyThreeType === 'justIntonation') {
+    // The JI tab loads asynchronously. Until it has, there's nothing to preview.
+    return justIntonationTab.value?.build(expand)
+  }
+  const intervals = intervalSizes.value
+  const source = `realizeWord('${selectedMode.value}', #{L: ${intervals.L}, M: ${intervals.M}, s: ${intervals.s}})`
+  return {
+    source: expand ? expandCode(source) : source,
+    name: `SV3: ${formatCounts(selectedCounts.value)}`
+  }
+}
+
+useGeneratorPreview(
+  () => build(false),
+  (result) => emit('preview', result)
+)
+
 function generate(expand = true) {
   if (modal.strictVarietyThreeType === 'justIntonation') {
     justIntonationTab.value?.generate(expand)
     return
   }
-  const intervals = intervalSizes.value
-  const source = `realizeWord('${selectedMode.value}', #{L: ${intervals.L}, M: ${intervals.M}, s: ${intervals.s}})`
-  emit('update:scaleName', `SV3: ${formatCounts(selectedCounts.value)}`)
-  emit('update:source', expand ? expandCode(source) : source)
+  const result = build(expand)
+  if (!result) {
+    return
+  }
+  emit('update:scaleName', result.name)
+  emit('update:source', result.source)
 }
 
 function toOption(entry: StrictVarietyThreeScale): ScaleOption {
@@ -298,7 +320,7 @@ function conditionWeight(counts: StepCounts) {
 </script>
 
 <template>
-  <Modal :show="show" @confirm="generate" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded @confirm="generate" @cancel="$emit('cancel')">
     <template #header>
       <h2>Generate Strict Variety 3 scale</h2>
     </template>

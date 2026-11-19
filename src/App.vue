@@ -18,6 +18,7 @@ import { useMidiStore } from './stores/midi'
 import { useScaleStore } from './stores/scale'
 import { clamp } from 'xen-dev-utils/core'
 import ScaleView from '@/views/ScaleView.vue'
+import ExportMenu from '@/components/ExportMenu.vue'
 
 // === Pinia-managed state ===
 const state = useStateStore()
@@ -303,11 +304,12 @@ function windowKeydownOrUp(event: KeyboardEvent | MouseEvent) {
     state.typingActive = true
     return
   }
-  // Disable typing for other types of input elements
+  // Disable typing for other types of input elements, including text sliders (TextSlider.vue)
   if (
     target instanceof HTMLTextAreaElement ||
     target instanceof HTMLInputElement ||
-    target instanceof HTMLSelectElement
+    target instanceof HTMLSelectElement ||
+    (target instanceof Element && target.closest('[role="spinbutton"]'))
   ) {
     state.typingActive = false
   } else {
@@ -639,8 +641,9 @@ function panic() {
       <li><RouterLink to="/midi">MIDI I/O</RouterLink></li>
       <li><RouterLink to="/prefs">Preferences</RouterLink></li>
     </ul>
-    <div id="app-tray" class="hidden-sm">
-      <ul>
+    <div id="app-tray">
+      <ExportMenu />
+      <ul class="hidden-sm">
         <template v-if="state.typingActive">
           <li title="Type on your computer keyboard to hear the synth">
             <span class="typing-info active">Key</span>
@@ -751,14 +754,16 @@ nav a:first-of-type {
 
 /* Status indicator tray */
 #app-tray {
-  width: 100%;
-  text-align: right;
+  flex: 1 0 auto;
+  display: flex;
+  justify-content: flex-end;
   cursor: default;
 }
 
 #app-tray ul {
-  display: inline-block;
+  margin: 0;
   padding: 0.75rem 1rem;
+  white-space: nowrap;
   background-color: var(--color-accent-deeper);
 }
 

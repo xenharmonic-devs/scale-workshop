@@ -3,30 +3,58 @@ import Modal from '@/components/ModalDialog.vue'
 import { useModalStore } from '@/stores/modal'
 import { useScaleStore } from '@/stores/scale'
 import { centString } from '@/utils'
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
+import { useStageInput } from '@/rack/stage-input'
 
 defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['done', 'cancel'])
+const emit = defineEmits(['preview', 'done', 'cancel'])
 
 const modal = useModalStore()
 const scale = useScaleStore()
+const input = useStageInput()
 
-function modify(expand = true) {
-  scale.materializeDefaultScale()
-  scale.sourceText += `\nrandomVariance(${centString(modal.varianceAmount)}, ${modal.varyEquave})\ncents(£, ${scale.centsFractionDigits})`
-  if (expand) {
-    const { visitor, defaults } = scale.getUserScopeVisitor()
-    scale.sourceText = visitor.expand(defaults)
-  }
-  scale.computeScale()
-  emit('done')
+/** A repeatable number in [0, 1) for a seed and a degree, so a roll survives recomputes. */
+function unitNoise(seed: number, index: number) {
+  let t = (seed + Math.imul(index + 1, 0x9e3779b9)) >>> 0
+  t = Math.imul(t ^ (t >>> 15), t | 1)
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296
 }
+
+/**
+ * SonicWeave's `randomVariance()` rolls again every time the scale is evaluated, so the rack
+ * bakes one roll instead: an offset in cents per degree of the input, from the stored seed.
+ */
+function build(): GeneratorResult {
+  const size = input.value.relativeIntervals.length
+  const offsets = [...Array(size).keys()].map((i) =>
+    !modal.varyEquave && i === size - 1
+      ? 0
+      : modal.varianceAmount * (2 * unitNoise(modal.varianceSeed, i) - 1)
+  )
+  return {
+    source: `$ ~*= [${offsets.map((o) => centString(o, scale.centsFractionDigits)).join(', ')}]\ncents(£, ${scale.centsFractionDigits})`,
+    name: `Up to ${modal.varianceAmount} ¢`,
+    bakesInput: true
+  }
+}
+
+function reroll() {
+  modal.varianceSeed = Math.floor(Math.random() * 2 ** 31)
+}
+
+useGeneratorPreview(
+  build,
+  (result) => emit('preview', result),
+  () => input.value.code
+)
 </script>
 
 <template>
-  <Modal :show="show" @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded>
     <template #header>
       <h2>Random variance</h2>
     </template>
@@ -41,13 +69,7 @@ function modify(expand = true) {
           <input id="vary-equave" type="checkbox" v-model="modal.varyEquave" />
           <label for="vary-equave">Vary the {{ scale.nameOfEquave }}</label>
         </div>
-      </div>
-    </template>
-    <template #footer>
-      <div class="btn-group">
-        <button @click="modify(true)">OK</button>
-        <button @click="$emit('cancel')">Cancel</button>
-        <button @click="modify(false)">Raw</button>
+        <button @click="reroll">Roll again</button>
       </div>
     </template>
   </Modal>

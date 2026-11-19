@@ -1,15 +1,16 @@
 <script setup lang="ts">
 /**
- * Primary scale-editing view that coordinates controls, parsing, and export panels.
+ * Primary scale-editing view that coordinates controls and parsing.
+ * Exporting lives in the top bar (`ExportMenu.vue`).
  */
 import ScaleControls from '@/components/ScaleControls.vue'
 import TuningTable from '@/components/TuningTable.vue'
+import RackPanel from '@/components/rack/RackPanel.vue'
 import { setNumberOfComponents } from 'sonic-weave/monzo'
 import { DEFAULT_NUMBER_OF_COMPONENTS } from '@/constants'
 import { useScaleStore } from '@/stores/scale'
 import { useStateStore } from '@/stores/state'
 import { debounce } from '@/utils'
-import { useScaleUpload } from '@/upload-scale'
 import { getSourceVisitor } from 'sonic-weave/parser'
 import { defineAsyncComponent, defineComponent, h, nextTick, onMounted, ref, watch } from 'vue'
 
@@ -25,10 +26,7 @@ const controls = ref<typeof ScaleControls | null>(null)
 const tuningTable = ref<typeof TuningTable | null>(null)
 const newScale = ref<{ blur?: () => void } | null>(null)
 const modifyScale = ref<{ blur?: () => void } | null>(null)
-const exporterButtons = ref<{ uploadScale?: () => void } | null>(null)
 const isAuxiliaryPanelsRequested = ref(false)
-
-const { uploadScale } = useScaleUpload()
 
 const NewScaleButtonSkeleton = defineComponent({
   setup() {
@@ -48,17 +46,6 @@ const ModifyScaleButtonSkeleton = defineComponent({
   }
 })
 
-const ExporterSkeleton = defineComponent({
-  setup() {
-    return () =>
-      h('div', { class: 'exporter-skeleton', 'aria-hidden': 'true' }, [
-        h('div', { class: 'skeleton-row' }),
-        h('div', { class: 'skeleton-row' }),
-        h('div', { class: 'skeleton-row' })
-      ])
-  }
-})
-
 const NewScaleAsync = defineAsyncComponent({
   loader: () => import('@/components/NewScale.vue'),
   loadingComponent: NewScaleButtonSkeleton,
@@ -69,13 +56,6 @@ const NewScaleAsync = defineAsyncComponent({
 const ModifyScaleAsync = defineAsyncComponent({
   loader: () => import('@/components/ModifyScale.vue'),
   loadingComponent: ModifyScaleButtonSkeleton,
-  delay: 0,
-  suspensible: false
-})
-
-const ExporterButtonsAsync = defineAsyncComponent({
-  loader: () => import('@/components/ExporterButtons.vue'),
-  loadingComponent: ExporterSkeleton,
   delay: 0,
   suspensible: false
 })
@@ -117,6 +97,9 @@ onMounted(() => {
 <template>
   <main>
     <div class="columns-container">
+      <div class="column side-panel">
+        <RackPanel />
+      </div>
       <div class="column scale-builder">
         <textarea
           id="scale-name"
@@ -152,6 +135,22 @@ onMounted(() => {
           </template>
         </ul>
         <ScaleControls ref="controls" />
+        <p class="docs">
+          Read about the SonicWeave syntax in the
+          <a
+            href="https://github.com/xenharmonic-devs/sonic-weave?tab=readme-ov-file#sonic-weave"
+            target="_blank"
+            rel="noopener noreferrer"
+            >documentation</a
+          >
+          and check out the
+          <a
+            href="https://github.com/xenharmonic-devs/sonic-weave/tree/main/examples"
+            target="_blank"
+            rel="noopener noreferrer"
+            >examples</a
+          >.
+        </p>
       </div>
       <div class="column tuning-table">
         <TuningTable
@@ -165,69 +164,68 @@ onMounted(() => {
           :labels="scale.labels"
         />
       </div>
-      <div class="column exporters" @mouseenter="() => uploadScale()">
-        <ExporterButtonsAsync ref="exporterButtons" />
-      </div>
     </div>
   </main>
 </template>
 
 <style scoped>
-/* Content layout (small) */
+/*
+ * Content layout. The 1px grid gap shows the container background as divider lines.
+ * Small: everything stacks and the whole view scrolls.
+ * Medium: scale builder and tuning table side by side, side panel below the builder.
+ * Large: three full-height columns with the side panel on the left.
+ */
 div.columns-container {
   height: 100%;
   overflow-y: auto;
+  display: grid;
+  grid-template-columns: 100%;
+  grid-auto-rows: max-content;
+  grid-template-areas:
+    'builder'
+    'table'
+    'side';
+  gap: 1px;
   background-color: var(--color-border);
 }
 div.column {
   background-color: var(--color-background);
   overflow-x: hidden;
 }
+div.side-panel {
+  grid-area: side;
+  padding: 1rem;
+}
 div.scale-builder {
+  grid-area: builder;
   padding: 1rem;
 }
 div.tuning-table {
+  grid-area: table;
   padding: 0rem;
-}
-div.exporters {
-  padding: 1rem;
 }
 
 /* Content layout (medium) */
 @media screen and (min-width: 600px) {
   div.columns-container {
-    column-count: 2;
-    column-gap: 1px;
     overflow: hidden;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 2fr) minmax(0, 1fr);
+    grid-template-areas:
+      'builder table'
+      'side table';
   }
   div.column {
     overflow-y: auto;
-  }
-  div.scale-builder {
-    width: 100%;
-    height: 100%;
-  }
-  div.tuning-table {
-    width: 100%;
-    height: 66%;
-  }
-  div.exporters {
-    width: 100%;
-    height: 34%;
-    border-top: 1px solid var(--color-border);
   }
 }
 
 /* Content layout (large) */
 @media screen and (min-width: 1100px) {
   div.columns-container {
-    column-count: 3;
-  }
-  div.column {
-    height: 100%;
-  }
-  div.exporters {
-    border: none;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-areas: 'side builder table';
   }
 }
 
@@ -265,14 +263,9 @@ select optgroup + optgroup {
   opacity: 0.8;
 }
 
-.exporter-skeleton {
-  display: grid;
-  gap: 0.5rem;
-}
-
-.skeleton-row {
-  height: 2rem;
-  border-radius: 4px;
-  background-color: var(--color-border);
+.docs {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: var(--color-text-mute);
 }
 </style>

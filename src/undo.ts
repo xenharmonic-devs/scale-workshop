@@ -17,6 +17,10 @@ export function undoHistory(serialize: Serializer, restore: Restorer, capacity =
   pushState()
 
   function pushState() {
+    // Nothing changed since the current step: keep the redo history.
+    if (pointer.value >= 0 && serialize() === states[pointer.value]) {
+      return
+    }
     while (states.length > pointer.value + 1) {
       states.pop()
     }

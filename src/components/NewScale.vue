@@ -1,120 +1,37 @@
 <script setup lang="ts">
-import { defineAsyncComponent, ref } from 'vue'
+import { ref } from 'vue'
 import { useScaleStore } from '@/stores/scale'
+import { useRackStore } from '@/stores/rack'
 import DropdownGroup from '@/components/DropdownGroup.vue'
 import { importFile, type ImporterKey } from '@/importers'
+import { GENERATORS, type CardGeneratorKind } from '@/rack/generators'
 
 const emit = defineEmits(['done', 'cancel', 'mouseenter'])
 
 const scale = useScaleStore()
-
-const ConcordanceShellModal = defineAsyncComponent(
-  () => import('@/components/modals/generation/ConcordanceShell.vue')
-)
-const CpsModal = defineAsyncComponent(
-  () => import('@/components/modals/generation/CombinationProductSet.vue')
-)
-const EnumerateModal = defineAsyncComponent(
-  () => import('@/components/modals/generation/EnumerateChord.vue')
-)
-const EqualTemperamentModal = defineAsyncComponent(
-  () => import('@/components/modals/generation/EqualTemperament.vue')
-)
-const EulerGenusModal = defineAsyncComponent(
-  () => import('@/components/modals/generation/EulerGenus.vue')
-)
-const FokkerBlockModal = defineAsyncComponent(
-  () => import('@/components/modals/generation/FokkerBlock.vue')
-)
-const GeneratorSequenceModal = defineAsyncComponent(
-  () => import('@/components/modals/generation/GeneratorSequence.vue')
-)
-const HarmonicSeriesModal = defineAsyncComponent(
-  () => import('@/components/modals/generation/HarmonicSeries.vue')
-)
-const HistoricalModal = defineAsyncComponent(
-  () => import('@/components/modals/generation/HistoricalScale.vue')
-)
-const LatticeModal = defineAsyncComponent(
-  () => import('@/components/modals/generation/SpanLattice.vue')
-)
-const MosModal = defineAsyncComponent(() => import('@/components/modals/generation/MosScale.vue'))
-const PresetModal = defineAsyncComponent(
-  () => import('@/components/modals/generation/LoadPreset.vue')
-)
-const RankTwoModal = defineAsyncComponent(
-  () => import('@/components/modals/generation/RankTwo.vue')
-)
-const StackModal = defineAsyncComponent(
-  () => import('@/components/modals/generation/StackSteps.vue')
-)
-const StrictVarietyThreeModal = defineAsyncComponent(
-  () => import('@/components/modals/generation/StrictVarietyThree.vue')
-)
-const SubharmonicSeriesModal = defineAsyncComponent(
-  () => import('@/components/modals/generation/SubharmonicSeries.vue')
-)
+const rack = useRackStore()
 
 const element = ref<typeof DropdownGroup | null>(null)
 const scalaFile = ref<HTMLInputElement | null>(null)
 const anamarkFile = ref<HTMLInputElement | null>(null)
 const xendevsFile = ref<HTMLInputElement | null>(null)
 
-const showConcordanceShellModal = ref(false)
-const showCpsModal = ref(false)
-const showEnumerateModal = ref(false)
-const showEqualTemperamentModal = ref(false)
-const showEulerGenusModal = ref(false)
-const showFokkerBlockModal = ref(false)
-const showGeneratorSequenceModal = ref(false)
-const showHarmonicModal = ref(false)
-const showHistoricalModal = ref(false)
-const showLatticeModal = ref(false)
-const showMosModal = ref(false)
-const showPresetModal = ref(false)
-const showRankTwoModal = ref(false)
-const showStackModal = ref(false)
-const showStrictVarietyThreeModal = ref(false)
-const showSubharmonicModal = ref(false)
+// Every generator but the preset loader, which sits with the other ways to load a whole scale.
+const generatorItems = (Object.keys(GENERATORS) as CardGeneratorKind[])
+  .filter((kind) => kind !== 'preset')
+  .map((kind) => ({ kind, title: GENERATORS[kind].title }))
 
-function hideModals() {
-  showConcordanceShellModal.value = false
-  showCpsModal.value = false
-  showEnumerateModal.value = false
-  showEqualTemperamentModal.value = false
-  showEulerGenusModal.value = false
-  showFokkerBlockModal.value = false
-  showGeneratorSequenceModal.value = false
-  showHarmonicModal.value = false
-  showHistoricalModal.value = false
-  showLatticeModal.value = false
-  showMosModal.value = false
-  showPresetModal.value = false
-  showRankTwoModal.value = false
-  showStackModal.value = false
-  showStrictVarietyThreeModal.value = false
-  showSubharmonicModal.value = false
-}
-
-function cancelModals() {
-  hideModals()
-  emit('cancel')
-}
-
-function updateSourceAndHideModals(source: string) {
-  scale.sourceText = source
-  hideModals()
-  scale.computeScale()
-  emit('done')
+/** Puts this generator in the rack's generator slot, replacing the current one. */
+function chooseGenerator(kind: CardGeneratorKind) {
+  rack.setGenerator(kind)
 }
 
 function clearScale() {
-  scale.name = ''
-  scale.sourceText = ''
-  scale.computeScale()
+  rack.removeGenerator()
   emit('done')
 }
 
+// An import writes finished scale data, which the rack adopts as an imported scale.
 async function doImport(importerKey: ImporterKey, event: Event) {
   const result = await importFile(importerKey, event)
   scale.sourceText = result.sourceText
@@ -139,38 +56,25 @@ function blur() {
   element.value.blur()
 }
 
-function updateBaseFrequency(value: number) {
-  scale.userBaseFrequency = value
-  scale.autoFrequency = false
-}
-
 defineExpose({ blur })
 </script>
 <template>
   <DropdownGroup ref="element" title="New scale" @mouseenter="$emit('mouseenter')">
     <ul>
-      <a href="#" @click="showEqualTemperamentModal = true"><li>Equal temperament</li></a>
-      <a href="#" @click="showRankTwoModal = true"><li>Rank-2 temperament</li></a>
-      <a href="#" @click="showHarmonicModal = true"><li>Harmonic series segment</li></a>
-      <a href="#" @click="showSubharmonicModal = true"><li>Subharmonic series segment</li></a>
-      <a href="#" @click="showEnumerateModal = true"><li>Enumerate chord</li></a>
-      <a href="#" @click="showStackModal = true"><li>Stack steps</li></a>
-      <a href="#" @click="showCpsModal = true"><li>Combination product set</li></a>
-      <a href="#" @click="showMosModal = true"><li>Moment of symmetry scale</li></a>
-      <a href="#" @click="showHistoricalModal = true"><li>Historical temperament</li></a>
-      <a href="#" @click="showEulerGenusModal = true"><li>Euler-Fokker genus</li></a>
-      <a href="#" @click="showLatticeModal = true"><li>Parallelotope / Lattice</li></a>
-      <a href="#" @click="showGeneratorSequenceModal = true"><li>Generator sequence</li></a>
-      <a href="#" @click="showConcordanceShellModal = true"><li>Concordance shell</li></a>
-      <a href="#" @click="showStrictVarietyThreeModal = true"><li>Strict Variety 3</li></a>
-      <a href="#" @click="showFokkerBlockModal = true"><li>Fokker block</li></a>
+      <a
+        v-for="item of generatorItems"
+        :key="item.kind"
+        href="#"
+        @click="chooseGenerator(item.kind)"
+        ><li>{{ item.title }}</li></a
+      >
       <li class="divider"></li>
       <a href="#" @click="scalaFile!.click()"><li>Import .scl</li></a>
       <a href="#" @click="anamarkFile!.click()"><li>Import .tun</li></a>
       <a href="#" @click="xendevsFile!.click()"><li>Import .swi</li></a>
       <li class="divider"></li>
       <a href="#" @click="clearScale"><li>Clear scale</li></a>
-      <a href="#" @click="showPresetModal = true"><li>Load preset scale</li></a>
+      <a href="#" @click="chooseGenerator('preset')"><li>Load preset scale</li></a>
     </ul>
   </DropdownGroup>
 
@@ -196,124 +100,4 @@ defineExpose({ blur })
     style="display: none"
     @change="doImport('xendevs', $event)"
   />
-
-  <Teleport to="body">
-    <!-- v-if is required to prevent premature asyncs while :show makes the focus watcher trigger -->
-    <EnumerateModal
-      v-if="showEnumerateModal"
-      :show="showEnumerateModal"
-      @update:scaleName="scale.name = $event"
-      @update:source="updateSourceAndHideModals"
-      @cancel="cancelModals"
-    />
-    <EqualTemperamentModal
-      v-if="showEqualTemperamentModal"
-      :show="showEqualTemperamentModal"
-      @update:scaleName="scale.name = $event"
-      @update:source="updateSourceAndHideModals"
-      @cancel="cancelModals"
-    />
-    <EulerGenusModal
-      v-if="showEulerGenusModal"
-      :show="showEulerGenusModal"
-      @update:scaleName="scale.name = $event"
-      @update:source="updateSourceAndHideModals"
-      @cancel="cancelModals"
-    />
-    <FokkerBlockModal
-      v-if="showFokkerBlockModal"
-      :show="showFokkerBlockModal"
-      @update:scaleName="scale.name = $event"
-      @update:source="updateSourceAndHideModals"
-      @cancel="cancelModals"
-    />
-    <GeneratorSequenceModal
-      v-if="showGeneratorSequenceModal"
-      :show="showGeneratorSequenceModal"
-      @update:scaleName="scale.name = $event"
-      @update:source="updateSourceAndHideModals"
-      @cancel="cancelModals"
-    />
-    <ConcordanceShellModal
-      v-if="showConcordanceShellModal"
-      :show="showConcordanceShellModal"
-      @update:scaleName="scale.name = $event"
-      @update:source="updateSourceAndHideModals"
-      @cancel="cancelModals"
-    />
-    <CpsModal
-      v-if="showCpsModal"
-      :show="showCpsModal"
-      @update:scaleName="scale.name = $event"
-      @update:source="updateSourceAndHideModals"
-      @cancel="cancelModals"
-    />
-    <HarmonicSeriesModal
-      v-if="showHarmonicModal"
-      :show="showHarmonicModal"
-      @update:scaleName="scale.name = $event"
-      @update:source="updateSourceAndHideModals"
-      @cancel="cancelModals"
-    />
-    <HistoricalModal
-      v-if="showHistoricalModal"
-      :show="showHistoricalModal"
-      @update:scaleName="scale.name = $event"
-      @update:source="updateSourceAndHideModals"
-      @update:baseFrequency="updateBaseFrequency"
-      @update:baseMidiNote="scale.baseMidiNote = $event"
-      @cancel="cancelModals"
-    />
-    <LatticeModal
-      v-if="showLatticeModal"
-      :show="showLatticeModal"
-      @update:scaleName="scale.name = $event"
-      @update:source="updateSourceAndHideModals"
-      @cancel="cancelModals"
-    />
-    <MosModal
-      v-if="showMosModal"
-      :show="showMosModal"
-      @update:scaleName="scale.name = $event"
-      @update:source="updateSourceAndHideModals"
-      @cancel="cancelModals"
-    />
-    <PresetModal
-      v-if="showPresetModal"
-      :show="showPresetModal"
-      @update:scaleName="scale.name = $event"
-      @update:baseFrequency="updateBaseFrequency"
-      @update:baseMidiNote="scale.baseMidiNote = $event"
-      @update:source="updateSourceAndHideModals"
-      @cancel="cancelModals"
-    />
-    <RankTwoModal
-      v-if="showRankTwoModal"
-      :show="showRankTwoModal"
-      @update:scaleName="scale.name = $event"
-      @update:source="updateSourceAndHideModals"
-      @cancel="cancelModals"
-    />
-    <StackModal
-      v-if="showStackModal"
-      :show="showStackModal"
-      @update:scaleName="scale.name = $event"
-      @update:source="updateSourceAndHideModals"
-      @cancel="cancelModals"
-    />
-    <StrictVarietyThreeModal
-      v-if="showStrictVarietyThreeModal"
-      :show="showStrictVarietyThreeModal"
-      @update:scaleName="scale.name = $event"
-      @update:source="updateSourceAndHideModals"
-      @cancel="cancelModals"
-    />
-    <SubharmonicSeriesModal
-      v-if="showSubharmonicModal"
-      :show="showSubharmonicModal"
-      @update:scaleName="scale.name = $event"
-      @update:source="updateSourceAndHideModals"
-      @cancel="cancelModals"
-    />
-  </Teleport>
 </template>

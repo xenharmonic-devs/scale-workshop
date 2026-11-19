@@ -1,22 +1,23 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
+import { useStageInput } from '@/rack/stage-input'
 import Modal from '@/components/ModalDialog.vue'
 import { useModalStore } from '@/stores/modal'
 import { computed } from 'vue'
-import { useScaleStore } from '@/stores/scale'
 import { valueToCents } from 'xen-dev-utils/conversion'
 
 defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['done', 'cancel'])
+const emit = defineEmits(['preview', 'done', 'cancel'])
 
 const modal = useModalStore()
-const scale = useScaleStore()
+const input = useStageInput()
 
 const maxDenominator = computed(() => {
   let maxRatio = 1
-  for (const ratio of scale.scale.intervalRatios) {
+  for (const ratio of input.value.scale.intervalRatios) {
     maxRatio = Math.max(maxRatio, Math.abs(ratio), 1 / Math.abs(ratio))
   }
   return Math.floor(Number.MAX_SAFE_INTEGER / maxRatio)
@@ -24,7 +25,7 @@ const maxDenominator = computed(() => {
 
 const error = computed(() => {
   let result = 0
-  for (const ratio of scale.scale.intervalRatios) {
+  for (const ratio of input.value.scale.intervalRatios) {
     const approximand = Math.abs(ratio * modal.largeInteger)
     const harmonic = Math.round(approximand)
     result = Math.max(result, Math.abs(valueToCents(approximand / harmonic)))
@@ -32,20 +33,21 @@ const error = computed(() => {
   return result
 })
 
-function modify(expand = true) {
-  scale.materializeDefaultScale()
-  scale.sourceText += `\ntoHarmonics(${modal.largeInteger})`
-  if (expand) {
-    const { visitor, defaults } = scale.getUserScopeVisitor()
-    scale.sourceText = visitor.expand(defaults)
-  }
-  scale.computeScale()
-  emit('done')
+function build(): GeneratorResult {
+  let code = ''
+  code += `\ntoHarmonics(${modal.largeInteger})`
+  return { source: code.trim(), name: `Harmonics up to ${modal.largeInteger}` }
 }
+
+useGeneratorPreview(
+  build,
+  (result) => emit('preview', result),
+  () => input.value.code
+)
 </script>
 
 <template>
-  <Modal :show="show" @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded>
     <template #header>
       <h2>Approximate by harmonics</h2>
     </template>
@@ -63,13 +65,6 @@ function modify(expand = true) {
           />
         </div>
         <p>Error: {{ error.toFixed(5) }} c</p>
-      </div>
-    </template>
-    <template #footer>
-      <div class="btn-group">
-        <button @click="modify(true)">OK</button>
-        <button @click="$emit('cancel')">Cancel</button>
-        <button @click="modify(false)">Raw</button>
       </div>
     </template>
   </Modal>
