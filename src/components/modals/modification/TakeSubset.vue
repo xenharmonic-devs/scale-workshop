@@ -1,17 +1,18 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
+import { useStageInput } from '@/rack/stage-input'
 import { computed } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import { useModalStore } from '@/stores/modal'
-import { useScaleStore } from '@/stores/scale'
 import { arrayToString } from '@/utils'
 
 defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['done', 'cancel'])
+const emit = defineEmits(['preview', 'done', 'cancel'])
 
-const scale = useScaleStore()
+const input = useStageInput()
 const modal = useModalStore()
 
 const numDeRoots = computed(() => {
@@ -22,7 +23,7 @@ const numDeRoots = computed(() => {
 })
 
 const displayedEquaveDegree = computed(() => {
-  return scale.scale.size + numDeRoots.value
+  return input.value.scale.size + numDeRoots.value
 })
 
 const mode = computed(() => {
@@ -50,22 +51,23 @@ const degrees = computed(() => {
   )
 })
 
-function modify(expand = true) {
-  scale.materializeDefaultScale()
+function build(): GeneratorResult {
+  let code = ''
   const subset = [...modal.selected.values()]
   subset.sort((a, b) => a - b)
-  scale.sourceText += `\nsubset(${arrayToString(subset)})`
-  if (expand) {
-    const { visitor, defaults } = scale.getUserScopeVisitor()
-    scale.sourceText = visitor.expand(defaults)
-  }
-  scale.computeScale()
-  emit('done')
+  code += `\nsubset(${arrayToString(subset)})`
+  return { source: code.trim(), name: `${modal.selected.size} degrees kept` }
 }
+
+useGeneratorPreview(
+  build,
+  (result) => emit('preview', result),
+  () => input.value.code
+)
 </script>
 
 <template>
-  <Modal :show="show" docked @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded>
     <template #header>
       <h2>Take subset</h2>
     </template>
@@ -75,24 +77,17 @@ function modify(expand = true) {
         <label>Selected intervals</label>
         <div class="control">
           <button
-            v-for="(_, i) of scale.scale.size"
+            v-for="(_, i) of input.scale.size"
             :key="i"
             class="degree"
             :class="{ selected: modal.selected.has(i) }"
             @click="modal.toggleSelected(i)"
           >
-            {{ i === 0 ? '(root)' : scale.labels[i - 1] }}
+            {{ i === 0 ? '(root)' : input.labels[i - 1] }}
           </button>
         </div>
         <div class="control"><label>Mode </label>{{ mode }}</div>
         <div class="control"><label>Degrees </label>{{ degrees }}</div>
-      </div>
-    </template>
-    <template #footer>
-      <div class="btn-group">
-        <button @click="modify(true)" :disabled="!modal.selected.size">OK</button>
-        <button @click="$emit('cancel')">Cancel</button>
-        <button @click="modify(false)" :disabled="!modal.selected.size">Raw</button>
       </div>
     </template>
   </Modal>

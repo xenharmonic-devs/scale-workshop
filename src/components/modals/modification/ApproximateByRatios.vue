@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
+import { useStageInput } from '@/rack/stage-input'
 import {
   approximateOddLimitWithErrors,
   approximatePrimeLimitWithErrors,
@@ -11,7 +13,6 @@ import { computed, ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import { useApproximateByRatiosStore } from '@/stores/approximate-by-ratios'
 import { setAndReportValidity } from '@/utils'
-import { useScaleStore } from '@/stores/scale'
 
 const MAX_LENGTH = 128
 
@@ -19,10 +20,10 @@ defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['done', 'cancel'])
+const emit = defineEmits(['preview', 'done', 'cancel'])
 
 const approx = useApproximateByRatiosStore()
-const scale = useScaleStore()
+const input = useStageInput()
 
 const approximationSelect = ref<HTMLSelectElement | null>(null)
 
@@ -33,7 +34,9 @@ type Approximation = {
 }
 
 const approximationsWithErrorsAndLimits = computed<Approximation[]>(() => {
-  const selected = Math.abs(scale.scale.getRatio(scale.scale.baseMidiNote + approx.degree))
+  const selected = Math.abs(
+    input.value.scale.getRatio(input.value.scale.baseMidiNote + approx.degree)
+  )
   const selectedCents = valueToCents(selected)
   if (approx.method === 'convergents') {
     const approximations = getConvergents(
@@ -105,37 +108,42 @@ watch(approximationsWithErrorsAndLimits, (newValue) => {
   approx.approximationIndex = Math.min(approx.approximationIndex, newValue.length - 1)
 })
 
-function modifyAndAdvance() {
+/** Replaces the selected degree with the chosen ratio and moves on to the next degree. */
+function applyAndAdvance() {
   if (!approximationsWithErrorsAndLimits.value.length) {
     alert('No approximation satisfying criteria found!')
   } else {
-    if (scale.sourceText === approx.originalSource) scale.materializeDefaultScale()
     const fraction = approximationsWithErrorsAndLimits.value[approx.approximationIndex].fraction
-    const i = approx.degree - 1
-    scale.sourceText += `\n$[${i}] = ${fraction.toFraction()} colorOf($[${i}]) labelOf($[${i}])`
+    approx.assignments = { ...approx.assignments, [approx.degree - 1]: fraction.toFraction() }
   }
-  approx.degree = Math.min(scale.scale.size, approx.degree + 1)
+  approx.degree = Math.min(input.value.scale.size, approx.degree + 1)
   approx.approximationIndex = 0
 }
 
-function modify(expand = true) {
-  if (scale.sourceText === approx.originalSource) scale.materializeDefaultScale()
-  if (expand) {
-    const { visitor, defaults } = scale.getUserScopeVisitor()
-    scale.sourceText = visitor.expand(defaults)
-  }
-  scale.computeScale()
-  emit('done')
+function clearReplacements() {
+  approx.assignments = {}
 }
 
-function cancel() {
-  scale.sourceText = approx.originalSource
-  emit('cancel')
+/** The applied replacements, in degree order. They act on whatever arrives at those degrees. */
+function build(): GeneratorResult {
+  const entries = Object.entries(approx.assignments).sort(([a], [b]) => Number(a) - Number(b))
+  const lines = entries.map(([i, ratio]) => `$[${i}] = ${ratio} colorOf($[${i}]) labelOf($[${i}])`)
+  const count = entries.length
+  return {
+    source: lines.join('\n'),
+    name: count ? `${count} degree${count === 1 ? '' : 's'} replaced` : 'Nothing applied yet'
+  }
 }
+
+useGeneratorPreview(
+  build,
+  (result) => emit('preview', result),
+  () => input.value.code
+)
 </script>
 
 <template>
-  <Modal :show="show" docked @confirm="modify(true)" @cancel="cancel">
+  <Modal :show="show" embedded>
     <template #header>
       <h2>Approximate by ratios</h2>
     </template>
@@ -148,13 +156,13 @@ function cancel() {
             type="number"
             id="degree"
             min="1"
-            :max="scale.scale.size"
+            :max="input.scale.size"
             v-model="approx.degree"
           />
         </div>
         <div class="control">
           <label for="interval">Interval</label>
-          <input type="text" id="interval" disabled :value="scale.labels[approx.degree - 1]" />
+          <input type="text" id="interval" disabled :value="input.labels[approx.degree - 1]" />
         </div>
         <div class="control">
           <label for="approximation">Approximation</label>
@@ -240,13 +248,11 @@ function cancel() {
           <input type="number" min="1" max="8" v-model="approx.maxExponent" />
         </div>
       </div>
-    </template>
-    <template #footer>
       <div class="btn-group">
-        <button @click="modifyAndAdvance">Apply</button>
-        <button @click="modify(true)">Done</button>
-        <button @click="modify(false)">Raw</button>
-        <button @click="cancel">Cancel</button>
+        <button @click="applyAndAdvance">Apply</button>
+        <button @click="clearReplacements" :disabled="!Object.keys(approx.assignments).length">
+          Clear replacements
+        </button>
       </div>
     </template>
   </Modal>

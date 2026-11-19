@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
+import { useStageInput } from '@/rack/stage-input'
 import { onMounted, ref } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import { useModalStore } from '@/stores/modal'
@@ -9,10 +11,11 @@ defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['done', 'cancel'])
+const emit = defineEmits(['preview', 'done', 'cancel'])
 
 const modal = useModalStore()
 const scale = useScaleStore()
+const input = useStageInput()
 
 const myCentsFractionDigits = ref(3)
 const myDecimalFractionDigits = ref(5)
@@ -22,35 +25,36 @@ onMounted(() => {
   myDecimalFractionDigits.value = scale.decimalFractionDigits
 })
 
-function modify(expand = false) {
-  scale.materializeDefaultScale()
-  scale.sourceText += '\n'
+function build(): GeneratorResult {
+  let code = ''
+  code += '\n'
   if (modal.type === 'decimal') {
-    scale.sourceText += `interval => decimal(interval, ${myDecimalFractionDigits.value}) lest interval`
+    code += `interval => decimal(interval, ${myDecimalFractionDigits.value}) lest interval`
   } else if (modal.type === 'fraction') {
     if (modal.fractionTolerance || modal.preferredNumerator || modal.preferredEtEquaveDenominator) {
-      scale.sourceText += `interval => fraction(interval, ${modal.fractionTolerance ? centString(modal.fractionTolerance) : 'niente'}, ${modal.preferredNumerator}, ${modal.preferredDenominator}) lest interval`
+      code += `interval => fraction(interval, ${modal.fractionTolerance ? centString(modal.fractionTolerance) : 'niente'}, ${modal.preferredNumerator}, ${modal.preferredDenominator}) lest interval`
     } else {
-      scale.sourceText += 'interval => fraction(interval) lest interval'
+      code += 'interval => fraction(interval) lest interval'
     }
   } else if (modal.type === 'nedji') {
-    scale.sourceText += `interval => nedji(interval, ${modal.preferredEtNumerator}, ${modal.preferredEtDenominator}, ${modal.preferredEtEquaveNumerator}, ${modal.preferredEtEquaveDenominator}) lest interval`
+    code += `interval => nedji(interval, ${modal.preferredEtNumerator}, ${modal.preferredEtDenominator}, ${modal.preferredEtEquaveNumerator}, ${modal.preferredEtEquaveDenominator}) lest interval`
   } else if (modal.type === 'cents') {
-    scale.sourceText += `interval => cents(interval, ${myCentsFractionDigits.value}) lest interval`
+    code += `interval => cents(interval, ${myCentsFractionDigits.value}) lest interval`
   } else {
-    scale.sourceText += `interval => ${modal.type}(interval) lest interval`
+    code += `interval => ${modal.type}(interval) lest interval`
   }
-  if (expand) {
-    const { visitor, defaults } = scale.getUserScopeVisitor()
-    scale.sourceText = visitor.expand(defaults)
-  }
-  scale.computeScale()
-  emit('done')
+  return { source: code.trim(), name: `To ${modal.type}` }
 }
+
+useGeneratorPreview(
+  build,
+  (result) => emit('preview', result),
+  () => input.value.code
+)
 </script>
 
 <template>
-  <Modal :show="show" docked @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded>
     <template #header>
       <h2>Convert interval values</h2>
     </template>
@@ -134,13 +138,6 @@ function modify(expand = false) {
         <i v-if="modal.type === 'fraction' || modal.type === 'nedji'"
           >*) Value of 0 means no preference.</i
         >
-      </div>
-    </template>
-    <template #footer>
-      <div class="btn-group">
-        <button @click="modify(true)">OK</button>
-        <button @click="$emit('cancel')">Cancel</button>
-        <button @click="modify(false)">Raw</button>
       </div>
     </template>
   </Modal>

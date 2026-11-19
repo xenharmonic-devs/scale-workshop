@@ -56,7 +56,7 @@ describe('Build Scale rack', () => {
   it("writes the generator's code and name into the scale", async () => {
     const { scale, rack } = setup()
     rack.setGenerator('equal-temperament')
-    rack.updateGenerator(rack.generator!.id, { source: 'tet(7)', name: '7 equal divisions' })
+    rack.updateModule(rack.generator!.id, { source: 'tet(7)', name: '7 equal divisions' })
     await settle()
 
     expect(scale.sourceText).toBe('tet(7)')
@@ -67,7 +67,7 @@ describe('Build Scale rack', () => {
   it('applies a generator base frequency and MIDI note', async () => {
     const { scale, rack } = setup()
     rack.setGenerator('preset')
-    rack.updateGenerator(rack.generator!.id, {
+    rack.updateModule(rack.generator!.id, {
       source: 'tet(5)',
       name: 'five',
       baseFrequency: 300,
@@ -85,9 +85,9 @@ describe('Build Scale rack', () => {
     rack.setGenerator('equal-temperament')
     const id = rack.generator!.id
     const computeScale = vi.spyOn(scale, 'computeScale')
-    rack.updateGenerator(id, { source: 'tet(5)', name: 'five' })
-    rack.updateGenerator(id, { source: 'tet(6)', name: 'six' })
-    rack.updateGenerator(id, { source: 'tet(7)', name: 'seven' })
+    rack.updateModule(id, { source: 'tet(5)', name: 'five' })
+    rack.updateModule(id, { source: 'tet(6)', name: 'six' })
+    rack.updateModule(id, { source: 'tet(7)', name: 'seven' })
     await settle()
 
     expect(computeScale).toHaveBeenCalledTimes(1)
@@ -99,7 +99,7 @@ describe('Build Scale rack', () => {
     rack.setGenerator('equal-temperament')
     const old = rack.generator!.id
     rack.setGenerator('harmonic-series')
-    rack.updateGenerator(old, { source: 'tet(5)', name: 'five' })
+    rack.updateModule(old, { source: 'tet(5)', name: 'five' })
     await settle()
 
     expect(scale.sourceText).toBe('')
@@ -121,7 +121,7 @@ describe('Build Scale rack', () => {
   it('clears the scale when the generator is removed', async () => {
     const { scale, rack } = setup()
     rack.setGenerator('equal-temperament')
-    rack.updateGenerator(rack.generator!.id, { source: 'tet(7)', name: 'seven' })
+    rack.updateModule(rack.generator!.id, { source: 'tet(7)', name: 'seven' })
     await settle()
     rack.removeGenerator()
     await settle()
@@ -135,15 +135,15 @@ describe('Build Scale rack', () => {
     const { scale, rack, modal } = setup()
     modal.divisions = 5
     rack.setGenerator('equal-temperament')
-    rack.updateGenerator(rack.generator!.id, { source: 'tet(5)', name: 'five' })
+    rack.updateModule(rack.generator!.id, { source: 'tet(5)', name: 'five' })
     await settle()
 
     modal.divisions = 6
-    rack.updateGenerator(rack.generator!.id, { source: 'tet(6)', name: 'six' })
+    rack.updateModule(rack.generator!.id, { source: 'tet(6)', name: 'six' })
     await settle()
 
     rack.setGenerator('harmonic-series')
-    rack.updateGenerator(rack.generator!.id, { source: '8::16', name: 'Harmonics 8-16' })
+    rack.updateModule(rack.generator!.id, { source: '8::16', name: 'Harmonics 8-16' })
     await settle()
 
     scale.history.undo()
@@ -169,14 +169,14 @@ describe('Build Scale rack', () => {
   it('does not drop the redo history when a reopened card re-reports its result', async () => {
     const { scale, rack } = setup()
     rack.setGenerator('equal-temperament')
-    rack.updateGenerator(rack.generator!.id, { source: 'tet(5)', name: 'five' })
+    rack.updateModule(rack.generator!.id, { source: 'tet(5)', name: 'five' })
     await settle()
-    rack.updateGenerator(rack.generator!.id, { source: 'tet(6)', name: 'six' })
+    rack.updateModule(rack.generator!.id, { source: 'tet(6)', name: 'six' })
     await settle()
 
     scale.history.undo()
     await settle()
-    rack.updateGenerator(rack.generator!.id, { source: 'tet(5)', name: 'five' })
+    rack.updateModule(rack.generator!.id, { source: 'tet(5)', name: 'five' })
     await settle()
 
     expect(scale.history.redoDisabled).toBe(false)
@@ -187,7 +187,7 @@ describe('Build Scale rack', () => {
     modal.divisions = 9
     rack.setGenerator('equal-temperament')
     const id = rack.generator!.id
-    rack.updateGenerator(id, { source: 'tet(9)', name: 'nine' })
+    rack.updateModule(id, { source: 'tet(9)', name: 'nine' })
     rack.toggle(id)
     expect(rack.openId).toBeNull()
 
@@ -195,5 +195,116 @@ describe('Build Scale rack', () => {
     rack.toggle(id)
     expect(rack.openId).toBe(id)
     expect(modal.divisions).toBe(9)
+  })
+})
+
+describe('Build Scale rack modifier chain', () => {
+  /** A rack with a 6-note generator and the given modifiers, each with its code. */
+  async function chain(...codes: string[]) {
+    const { scale, rack } = setup()
+    rack.setGenerator('equal-temperament')
+    rack.updateModule(rack.generator!.id, { source: 'tet(6)', name: 'six' })
+    for (const code of codes) {
+      rack.addModifier('repeat')
+      const module = rack.modifiers[rack.modifiers.length - 1]
+      rack.updateModule(module.id, { source: code, name: code })
+    }
+    await settle()
+    return { scale, rack }
+  }
+
+  it('compiles the generator and then each modifier in order', async () => {
+    const { scale } = await chain('repeat(2)', 'sort()')
+    expect(scale.sourceText).toBe('tet(6)\nrepeat(2)\nsort()')
+    expect(scale.relativeIntervals).toHaveLength(12)
+  })
+
+  it('opens a new modifier card, and adds one without settings collapsed', async () => {
+    const { rack } = await chain()
+    rack.addModifier('repeat')
+    expect(rack.openId).toBe(rack.modifiers[0].id)
+    rack.addModifier('sort')
+    expect(rack.openId).toBeNull()
+    expect(rack.modifiers[1].code).toBe('sort()')
+  })
+
+  it('leaves bypassed modifiers out of the chain', async () => {
+    const { scale, rack } = await chain('repeat(2)', 'sort()')
+    rack.toggleBypass(rack.modifiers[0].id)
+    await settle()
+    expect(scale.sourceText).toBe('tet(6)\nsort()')
+    rack.toggleBypass(rack.modifiers[0].id)
+    await settle()
+    expect(scale.sourceText).toBe('tet(6)\nrepeat(2)\nsort()')
+  })
+
+  it('moves and removes modifiers', async () => {
+    const { scale, rack } = await chain('repeat(2)', 'sort()', 'reduce()')
+    rack.moveModifier(2, 0)
+    await settle()
+    expect(scale.sourceText).toBe('tet(6)\nreduce()\nrepeat(2)\nsort()')
+    rack.removeModule(rack.modifiers[1].id)
+    await settle()
+    expect(scale.sourceText).toBe('tet(6)\nreduce()\nsort()')
+  })
+
+  it('gives each card its input: the chain above it', async () => {
+    const { rack } = await chain('repeat(2)', 'sort()')
+    expect(rack.inputCode(rack.modifiers[1].id)).toBe('tet(6)\nrepeat(2)')
+    expect(rack.stageInput(rack.modifiers[1].id)?.relativeIntervals).toHaveLength(12)
+  })
+
+  it('runs nothing without a generator', async () => {
+    const { scale, rack } = await chain('repeat(2)')
+    rack.removeGenerator()
+    await settle()
+    expect(rack.modifiers).toHaveLength(1)
+    expect(scale.sourceText).toBe('')
+  })
+
+  it('shows an error on the stage the chain fails at', async () => {
+    const { scale, rack } = await chain('repeat(2)', 'subset([0, 11])')
+    expect(scale.error).toBe('')
+    rack.toggleBypass(rack.modifiers[0].id)
+    await settle()
+    expect(scale.error).not.toBe('')
+    expect(Object.keys(rack.stageErrors)).toEqual([rack.modifiers[1].id])
+  })
+
+  it('marks a modifier stale when the input its code was baked from changes', async () => {
+    const { rack } = await chain('repeat(2)')
+    rack.addModifier('random')
+    const random = rack.modifiers[1]
+    rack.updateModule(random.id, { source: 'sort()', name: 'baked', bakesInput: true })
+    expect(rack.staleIds.has(random.id)).toBe(false)
+
+    rack.updateModule(rack.modifiers[0].id, { source: 'repeat(3)', name: 'three' })
+    expect(rack.staleIds.has(random.id)).toBe(true)
+
+    // Opening the card rebuilds it from the new input.
+    rack.updateModule(random.id, { source: 'sort()', name: 'baked', bakesInput: true })
+    expect(rack.staleIds.has(random.id)).toBe(false)
+  })
+
+  it('brings removed modifiers back with undo', async () => {
+    const { scale, rack } = await chain('repeat(2)', 'sort()')
+    rack.removeModule(rack.modifiers[0].id)
+    await settle()
+    expect(scale.sourceText).toBe('tet(6)\nsort()')
+
+    scale.history.undo()
+    await settle()
+    expect(rack.modifiers.map((module) => module.code)).toEqual(['repeat(2)', 'sort()'])
+    expect(scale.sourceText).toBe('tet(6)\nrepeat(2)\nsort()')
+  })
+
+  it('writes out the default 12-TET scale to modify on an empty rack', async () => {
+    const { scale, rack } = setup()
+    rack.addModifier('sort')
+    await settle()
+    expect(rack.generator?.kind).toBe('imported')
+    expect(rack.generator?.code.trim().split('\n')).toHaveLength(12)
+    expect(scale.sourceText.endsWith('sort()')).toBe(true)
+    expect(scale.relativeIntervals).toHaveLength(12)
   })
 })

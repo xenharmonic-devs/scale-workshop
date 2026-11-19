@@ -3,25 +3,27 @@ import { alignCents, misalignment } from '@/analysis'
 import Modal from '@/components/ModalDialog.vue'
 import { OCTAVE } from '@/constants'
 import { useModalStore } from '@/stores/modal'
-import { useScaleStore } from '@/stores/scale'
 import { computed } from 'vue'
 import { valueToCents } from 'xen-dev-utils/conversion'
 import { linear } from 'sonic-weave/stdlib'
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
+import { useStageInput } from '@/rack/stage-input'
 
 defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['done', 'cancel'])
+const emit = defineEmits(['preview', 'done', 'cancel'])
 
 const modal = useModalStore()
-const scale = useScaleStore()
+const input = useStageInput()
 
 const equalizedScaleData = computed(() => {
-  const pitches = [...Array(scale.scale.size).keys()].map((i) =>
-    valueToCents(Math.abs(scale.scale.getRatio(i + scale.scale.baseMidiNote)))
+  const scale = input.value.scale
+  const pitches = [...Array(scale.size).keys()].map((i) =>
+    valueToCents(Math.abs(scale.getRatio(i + scale.baseMidiNote)))
   )
-  const gridCents = valueToCents(scale.scale.equaveRatio) / modal.safeLargeDivisions
+  const gridCents = valueToCents(scale.equaveRatio) / modal.safeLargeDivisions
   if (modal.errorModel === 'rooted') {
     const error = misalignment(pitches, gridCents)
     return { error, degrees: [] }
@@ -29,32 +31,40 @@ const equalizedScaleData = computed(() => {
   return alignCents(pitches, gridCents)
 })
 
-function modify(expand = true) {
-  scale.materializeDefaultScale()
+/**
+ * Rooted equalization is SonicWeave's own `equalize()`, live on whatever arrives. The free model
+ * aligns the whole input to the grid here, so its degrees are baked from the input.
+ */
+function build(): GeneratorResult {
+  const divisions = modal.safeLargeDivisions
   if (modal.errorModel === 'rooted') {
-    scale.sourceText += `\nequalize(${modal.safeLargeDivisions})`
-    if (expand) {
-      const { visitor, defaults } = scale.getUserScopeVisitor()
-      scale.sourceText = visitor.expand(defaults)
-    }
-  } else {
-    const degrees = [...equalizedScaleData.value.degrees]
-    degrees.shift()
-    degrees.push(modal.safeLargeDivisions)
-    let postfix = `\\${modal.safeLargeDivisions}`
-    const equave = scale.relativeIntervals[scale.relativeIntervals.length - 1]
-    if (equave.compare(OCTAVE)) {
-      postfix += `ed ${linear(equave).toString()}`
-    }
-    scale.sourceText = degrees.map((d) => `${d}${postfix}`).join('\n')
+    return { source: `equalize(${divisions})`, name: `${divisions} equal steps, rooted` }
   }
-  scale.computeScale()
-  emit('done')
+  const degrees = [...equalizedScaleData.value.degrees]
+  degrees.shift()
+  degrees.push(divisions)
+  let postfix = `\\${divisions}`
+  const intervals = input.value.relativeIntervals
+  const equave = intervals[intervals.length - 1]
+  if (equave.compare(OCTAVE)) {
+    postfix += `ed ${linear(equave).toString()}`
+  }
+  return {
+    source: ['clear()', ...degrees.map((d) => `${d}${postfix}`)].join('\n'),
+    name: `${divisions} equal steps, free`,
+    bakesInput: true
+  }
 }
+
+useGeneratorPreview(
+  build,
+  (result) => emit('preview', result),
+  () => input.value.code
+)
 </script>
 
 <template>
-  <Modal :show="show" docked @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded>
     <template #header>
       <h2>Equalize</h2>
     </template>
@@ -86,13 +96,6 @@ function modify(expand = true) {
           </span>
         </div>
         <p>Error: {{ equalizedScaleData.error.toFixed(5) }} c</p>
-      </div>
-    </template>
-    <template #footer>
-      <div class="btn-group">
-        <button @click="modify(true)">OK</button>
-        <button @click="$emit('cancel')">Cancel</button>
-        <button @click="modify(false)" :disabled="modal.errorModel === 'free'">Raw</button>
       </div>
     </template>
   </Modal>

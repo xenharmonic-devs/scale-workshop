@@ -440,6 +440,35 @@ export const useScaleStore = defineStore('scale', () => {
   }
 
   /** Make the displayed fallback explicit only when a modification is applied. */
+  /**
+   * Evaluates SonicWeave source the way `computeScale` does, without touching the store: what a
+   * rack card sees as its input (the chain up to it). Labels are the intervals' own or their
+   * plain text, which is all the cards use them for. Throws on errors.
+   */
+  function evaluateStage(source: string) {
+    const visitor = new StatementVisitor(getGlobalScaleWorkshopVisitor())
+    visitor.isUserRoot = true
+    visitor.executeProgram(parseAST(source))
+    const ev = visitor.createExpressionVisitor()
+    const rel = relative.bind(ev.rootContext)
+    const intervals = visitor.currentScale
+    const relativeIntervals = intervals.map((i) => rel(i))
+    let stageBaseFrequency = mtof(baseMidiNote.value)
+    if (visitor.rootContext!.unisonFrequency) {
+      stageBaseFrequency = visitor.rootContext!.unisonFrequency.valueOf()
+    }
+    return {
+      relativeIntervals,
+      labels: intervals.map((i) => i.label || i.toString()),
+      scale: new Scale(
+        relativeIntervals.map((i) => i.value.valueOf()),
+        stageBaseFrequency,
+        baseMidiNote.value,
+        name.value
+      )
+    }
+  }
+
   function materializeDefaultScale() {
     // Flush pending editor changes before deciding whether the fallback is in use.
     if (computedSourceText.value !== sourceText.value) computeScale(false)
@@ -838,6 +867,7 @@ export const useScaleStore = defineStore('scale', () => {
     toJSON,
     fromJSON,
     setUndoExtension,
+    evaluateStage,
     computeRawScale,
     // Mini-stores
     history

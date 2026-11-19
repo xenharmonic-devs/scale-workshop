@@ -1,33 +1,38 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
+import { useStageInput } from '@/rack/stage-input'
 import Modal from '@/components/ModalDialog.vue'
 import { useModalStore } from '@/stores/modal'
-import { useScaleStore } from '@/stores/scale'
 
 defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['done', 'cancel'])
+const emit = defineEmits(['preview', 'done', 'cancel'])
 
 const modal = useModalStore()
-const scale = useScaleStore()
+const input = useStageInput()
 
-function modify(expand = true) {
-  scale.materializeDefaultScale()
+function build(): GeneratorResult {
+  let code = ''
   const divisions = Math.max(1, Math.round(Number(modal.interpolationDivisions) || 1))
   const method = modal.interpolateLinearly ? 'interpolateLinear' : 'interpolate'
-  scale.sourceText += `\n${method}(${divisions})`
-  if (expand) {
-    const { visitor, defaults } = scale.getUserScopeVisitor()
-    scale.sourceText = visitor.expand(defaults)
+  code += `\n${method}(${divisions})`
+  return {
+    source: code.trim(),
+    name: `${Math.max(1, Math.round(Number(modal.interpolationDivisions) || 1))} steps per step${modal.interpolateLinearly ? ', linear' : ''}`
   }
-  scale.computeScale()
-  emit('done')
 }
+
+useGeneratorPreview(
+  build,
+  (result) => emit('preview', result),
+  () => input.value.code
+)
 </script>
 
 <template>
-  <Modal :show="show" docked @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded>
     <template #header>
       <h2>Interpolate scale</h2>
     </template>
@@ -48,13 +53,6 @@ function modify(expand = true) {
           <input type="checkbox" id="interpolate-linearly" v-model="modal.interpolateLinearly" />
           <label for="interpolate-linearly">Interpolate linearly</label>
         </div>
-      </div>
-    </template>
-    <template #footer>
-      <div class="btn-group">
-        <button @click="modify(true)">OK</button>
-        <button @click="$emit('cancel')">Cancel</button>
-        <button @click="modify(false)">Raw</button>
       </div>
     </template>
   </Modal>

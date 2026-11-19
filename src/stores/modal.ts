@@ -475,6 +475,14 @@ export const useModalStore = defineStore('modal', () => {
 
   // Random variance
   const varianceAmount = ref(10)
+  // Seeds the per-degree roll, so the same settings and input always give the same variance.
+  const varianceSeed = ref(1)
+  // Enumerate's form: how the input is rewritten as one enumerated chord.
+  const enumerateForm = ref<'overtonal' | 'undertonal' | 'retroversion' | 'revposition'>(
+    'overtonal'
+  )
+  // Reorder steps' order, as the input's step indices.
+  const reorderOrder = ref<number[]>([])
   const varyEquave = ref(false)
 
   // Repeat scale
@@ -713,6 +721,9 @@ export const useModalStore = defineStore('modal', () => {
 
     // Random variance
     varianceAmount,
+    varianceSeed,
+    enumerateForm,
+    reorderOrder,
     varyEquave,
 
     // Repeat

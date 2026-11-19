@@ -99,8 +99,6 @@ onMounted(() => {
     <div class="columns-container">
       <div class="column side-panel">
         <RackPanel />
-        <!-- Docked dialogs (ModalDialog with `docked`, i.e. Modify scale's cards) go in here. -->
-        <div id="side-panel"></div>
       </div>
       <div class="column scale-builder">
         <textarea
@@ -197,9 +195,6 @@ div.column {
 div.side-panel {
   grid-area: side;
   padding: 1rem;
-}
-#side-panel:not(:empty) {
-  margin-top: 1rem;
 }
 div.scale-builder {
   grid-area: builder;

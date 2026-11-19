@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
+import { useStageInput } from '@/rack/stage-input'
 import Modal from '@/components/ModalDialog.vue'
 import { useModalStore } from '@/stores/modal'
-import { useScaleStore } from '@/stores/scale'
 import { arrayToString } from '@/utils'
 import type { Interval } from 'sonic-weave/interval'
 import { computed, ref, watch } from 'vue'
@@ -10,10 +11,10 @@ defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['done', 'cancel'])
+const emit = defineEmits(['preview', 'done', 'cancel'])
 
 const modal = useModalStore()
-const scale = useScaleStore()
+const input = useStageInput()
 
 const offsetsElement = ref<HTMLInputElement | null>(null)
 
@@ -34,20 +35,21 @@ watch(
   (newError) => offsetsElement.value!.setCustomValidity(newError)
 )
 
-function modify(expand = true) {
-  scale.materializeDefaultScale()
-  scale.sourceText += `\nmergeOffset(${arrayToString(modal.offsets as Interval[])}, '${modal.overflowType}')`
-  if (expand) {
-    const { visitor, defaults } = scale.getUserScopeVisitor()
-    scale.sourceText = visitor.expand(defaults)
-  }
-  scale.computeScale()
-  emit('done')
+function build(): GeneratorResult {
+  let code = ''
+  code += `\nmergeOffset(${arrayToString(modal.offsets as Interval[])}, '${modal.overflowType}')`
+  return { source: code.trim(), name: `Offsets ${modal.offsetsString}, ${modal.overflowType}` }
 }
+
+useGeneratorPreview(
+  build,
+  (result) => emit('preview', result),
+  () => input.value.code
+)
 </script>
 
 <template>
-  <Modal :show="show" docked @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded>
     <template #header>
       <h2>Merge offset copies of the scale</h2>
     </template>
@@ -83,13 +85,6 @@ function modify(expand = true) {
           </span>
         </div>
         <aside>{{ explanation }}</aside>
-      </div>
-    </template>
-    <template #footer>
-      <div class="btn-group">
-        <button @click="modify(true)">OK</button>
-        <button @click="$emit('cancel')">Cancel</button>
-        <button @click="modify(false)">Raw</button>
       </div>
     </template>
   </Modal>

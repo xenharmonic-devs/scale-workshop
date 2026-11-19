@@ -1,34 +1,44 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
+import { useStageInput } from '@/rack/stage-input'
 import Modal from '@/components/ModalDialog.vue'
 import { useModalStore } from '@/stores/modal'
-import { useScaleStore } from '@/stores/scale'
 
 defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['done', 'cancel'])
+const emit = defineEmits(['preview', 'done', 'cancel'])
 
-const scale = useScaleStore()
+const input = useStageInput()
 const modal = useModalStore()
 
-function modify() {
-  scale.materializeDefaultScale()
+function build(): GeneratorResult {
+  let code = ''
   if (modal.simplify) {
-    scale.sourceText += ';simplify'
+    code += '\nsimplify'
   }
   if (modal.bleach) {
-    scale.sourceText += ';bleach'
+    code += '\nbleach'
   }
-  const { visitor, defaults } = scale.getUserScopeVisitor()
-  scale.sourceText = visitor.expand(defaults)
-  scale.computeScale()
-  emit('done')
+  return {
+    source: code.trim(),
+    name:
+      [modal.simplify ? 'Simplified' : '', modal.bleach ? 'bleached' : '']
+        .filter(Boolean)
+        .join(', ') || 'Unchanged'
+  }
 }
+
+useGeneratorPreview(
+  build,
+  (result) => emit('preview', result),
+  () => input.value.code
+)
 </script>
 
 <template>
-  <Modal :show="show" docked @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded>
     <template #header>
       <h2>Expand</h2>
     </template>

@@ -7,10 +7,9 @@ import { Interval } from 'sonic-weave/interval'
 import ReorderSteps from '@/components/modals/modification/ReorderSteps.vue'
 import { useScaleStore } from '@/stores/scale'
 import { useSessionIdStore } from '@/stores/session-id'
+import type { GeneratorResult } from '@/composables/useGeneratorPreview'
 
-// The card docks into the Build Scale side panel through a Teleport. Render it in place so the
-// wrapper's queries can reach it.
-const MOUNT_OPTIONS = { props: { show: true }, global: { stubs: { teleport: true } } }
+const MOUNT_OPTIONS = { props: { show: true } }
 
 describe('Reorder steps', () => {
   let wrapper: VueWrapper
@@ -47,25 +46,37 @@ describe('Reorder steps', () => {
     return wrapper.get('.step-string code').text()
   }
 
-  it('uses the computed scale without evaluating the source when opening or reordering', async () => {
+  /**
+   * What the rack does with the card's latest result: appends its code to the scale the card
+   * received. (A rack card has no OK button; every change applies live.)
+   */
+  async function applyResult() {
+    await nextTick()
+    const previews = wrapper.emitted('preview') as [GeneratorResult][]
+    const { source } = previews[previews.length - 1][0]
+    const scale = useScaleStore()
+    scale.sourceText = `${scale.sourceText}\n${source}`
+    scale.computeScale()
+  }
+
+  it('uses the computed scale and leaves it alone when opening or reordering', async () => {
     const scale = useScaleStore()
     scale.sourceText = 'random() * 100. + 100.\n700.\n1200.'
     scale.computeScale()
     const intervals = scale.relativeIntervals.map((interval) => interval.toJSON())
     const expectedWord = word()
-    const random = vi.spyOn(Math, 'random')
+    // The steps come from the computed scale. (The card's result is checked by running it after
+    // its input, which does evaluate the source, `random()` included, but never changes the scale.)
     const getVisitor = vi.spyOn(scale, 'getUserScopeVisitor')
     wrapper = mount(ReorderSteps, MOUNT_OPTIONS)
     expect(previewWord()).toBe(expectedWord)
     await wrapper.get('[aria-label="Move step 1 down"]').trigger('click')
-    expect(random).not.toHaveBeenCalled()
     expect(getVisitor).not.toHaveBeenCalled()
     expect(scale.relativeIntervals.map((interval) => interval.toJSON())).toEqual(intervals)
-    random.mockRestore()
     getVisitor.mockRestore()
   })
 
-  it('initializes a retained modal on each opening', async () => {
+  it('starts from its input on each opening, keeping its own order while it still fits', async () => {
     const scale = open('200.\n700.\n1200.')
     await wrapper.get('[aria-label="Move step 1 down"]').trigger('click')
     await wrapper.setProps({ show: false })
@@ -81,7 +92,9 @@ describe('Reorder steps', () => {
     await wrapper.get('[aria-label="Move step 1 down"]').trigger('click')
     await wrapper.setProps({ show: false })
     await wrapper.setProps({ show: true })
-    expect(previewWord()).toBe(word())
+    // The order is the module's setting, so reopening shows it again.
+    expect(word()).toBe('sL')
+    expect(previewWord()).toBe('Ls')
   })
 
   it('refreshes all preview state when the computed scale changes while open', async () => {
@@ -104,12 +117,12 @@ describe('Reorder steps', () => {
       '1200.0'
     ])
     await wrapper.get('[aria-label="Move step 1 down"]').trigger('click')
-    await wrapper.get('.modal-footer button').trigger('click')
+    await applyResult()
     expect(scale.error).toBe('')
     expect(scale.relativeIntervals.map((interval) => interval.totalCents())).toEqual([900, 1200])
   })
 
-  it('previews reordered steps without changing the scale until OK', async () => {
+  it('previews reordered steps without changing the scale until applied', async () => {
     const scale = open('200.\n700.\n1200.')
     expect(wrapper.get('.step-string').text()).toBe('stepString: sLL')
     await wrapper.get('[aria-label="Move step 1 down"]').trigger('click')
@@ -128,13 +141,12 @@ describe('Reorder steps', () => {
     ])
     expect(rows[0].attributes('style')).toBe(rows[2].attributes('style'))
 
-    await wrapper.get('.modal-footer button').trigger('click')
+    await applyResult()
     expect(scale.error).toBe('')
     expect(scale.relativeIntervals.map((interval) => interval.totalCents())).toEqual([
       500, 700, 1200
     ])
     expect(word()).toBe('LsL')
-    expect(wrapper.emitted('done')).toHaveLength(1)
   })
 
   it('places negative spans on the other side and includes excursions below unison', async () => {
@@ -146,7 +158,7 @@ describe('Reorder steps', () => {
     expect(Number(negative.attributes('height'))).toBeGreaterThan(0)
     expect(wrapper.text()).toContain('-100.0')
     const expectedWord = wrapper.get('.step-string code').text()
-    await wrapper.get('.modal-footer button').trigger('click')
+    await applyResult()
     expect(scale.error).toBe('')
     expect(scale.relativeIntervals.map((interval) => interval.totalCents())).toEqual([
       -100, 100, 1200
@@ -250,32 +262,30 @@ describe('Reorder steps', () => {
     }
   )
 
-  it.each([0, 2])(
-    'normalizes mixed absolute and relative pitches for button %i',
-    async (button) => {
-      const scale = open('1/1 = 440 Hz\n5/4\n660 Hz\n2/1')
-      const expectedBefore = word()
-      expect(wrapper.get('.step-string code').text()).toBe(expectedBefore)
-      expect(wrapper.findAll('.before-state g text').map((tick) => Number(tick.text()))).toEqual([
-        0,
-        ...scale.relativeIntervals.map((interval) => Number(interval.totalCents().toFixed(1)))
-      ])
-      expect(wrapper.get('.equave-marker').text()).toContain('2/1')
-      await wrapper.get('[aria-label="Move step 1 down"]').trigger('click')
-      const expectedAfter = wrapper.get('.step-string code').text()
-      await wrapper.findAll('.modal-footer button')[button].trigger('click')
-      expect(scale.error).toBe('')
-      expect(
-        scale.relativeIntervals.map((interval, i) =>
-          interval.value.equals(Interval.fromFraction(['6/5', '3/2', '2/1'][i]).value)
-        )
-      ).toEqual([true, true, true])
-      expect(word()).toBe(expectedAfter)
-      expect(scale.sourceText.includes('relative(£)\nunstack()')).toBe(button === 2)
-    }
-  )
+  it('normalizes mixed absolute and relative pitches', async () => {
+    const scale = open('1/1 = 440 Hz\n5/4\n660 Hz\n2/1')
+    const expectedBefore = word()
+    expect(wrapper.get('.step-string code').text()).toBe(expectedBefore)
+    expect(wrapper.findAll('.before-state g text').map((tick) => Number(tick.text()))).toEqual([
+      0,
+      ...scale.relativeIntervals.map((interval) => Number(interval.totalCents().toFixed(1)))
+    ])
+    expect(wrapper.get('.equave-marker').text()).toContain('2/1')
+    await wrapper.get('[aria-label="Move step 1 down"]').trigger('click')
+    const expectedAfter = wrapper.get('.step-string code').text()
+    await applyResult()
+    expect(scale.error).toBe('')
+    expect(
+      scale.relativeIntervals.map((interval, i) =>
+        interval.value.equals(Interval.fromFraction(['6/5', '3/2', '2/1'][i]).value)
+      )
+    ).toEqual([true, true, true])
+    expect(word()).toBe(expectedAfter)
+    // The rack keeps the readable code (what Raw used to give).
+    expect(scale.sourceText.includes('relative(£)\nunstack()')).toBe(true)
+  })
 
-  it.each([0, 2])('keeps mixed interval domains consistent for button %i', async (button) => {
+  it('keeps mixed interval domains consistent', async () => {
     const scale = open('200.\n3/2\n1200.')
     const expectedSteps = [1, 2, 0].map((i) => wrapper.findAll('.step-details > span')[i].text())
     await wrapper.get('[aria-label="Move step 1 down"]').trigger('click')
@@ -284,7 +294,7 @@ describe('Reorder steps', () => {
       expectedSteps
     )
     const expectedWord = previewWord()
-    await wrapper.findAll('.modal-footer button')[button].trigger('click')
+    await applyResult()
     expect(scale.error).toBe('')
     expect(word()).toBe(expectedWord)
     expect(scale.relativeIntervals[scale.relativeIntervals.length - 1].totalCents()).toBeCloseTo(
@@ -312,10 +322,10 @@ describe('Reorder steps', () => {
     expect(wrapper.get('li').classes()).toContain('dragging')
   })
 
-  it('retains exact ratio steps and supports the Raw operation', async () => {
+  it('retains exact ratio steps in its readable code', async () => {
     const scale = open('9/8\n5/4\n2/1')
     await wrapper.get('[aria-label="Move step 1 down"]').trigger('click')
-    await wrapper.findAll('.modal-footer button')[2].trigger('click')
+    await applyResult()
     expect(scale.sourceText).toContain('£[[1, 0, 2]]')
     expect(scale.error).toBe('')
     expect(
@@ -325,12 +335,10 @@ describe('Reorder steps', () => {
     ).toEqual([true, true, true])
   })
 
-  it('discards changes on cancel and supports keyboard reordering', async () => {
+  it('supports keyboard reordering without touching the scale itself', async () => {
     const scale = open('200.\n700.\n1200.')
     await wrapper.get('.drag-handle').trigger('keydown', { key: 'ArrowDown' })
     expect(wrapper.get('.step-string code').text()).toBe('LsL')
-    await wrapper.findAll('.modal-footer button')[1].trigger('click')
-    expect(wrapper.emitted('cancel')).toHaveLength(1)
     expect(scale.sourceText).toBe('200.\n700.\n1200.')
   })
 
@@ -350,7 +358,7 @@ describe('Reorder steps', () => {
     expect(wrapper.get('.step-string code').text()).toBe(word)
 
     await reverse.trigger('click')
-    await wrapper.get('.modal-footer button').trigger('click')
+    await applyResult()
     expect(scale.error).toBe('')
     // 9/8, 10/9, 6/5, 4/3 reversed stack to 4/3, 8/5, 16/9, 2/1.
     expect(
@@ -380,7 +388,7 @@ describe('Reorder steps', () => {
     }
     expect(scale.sourceText).toBe('200.\n400.\n600.\n1200.')
 
-    await wrapper.get('.modal-footer button').trigger('click')
+    await applyResult()
     expect(scale.error).toBe('')
     expect(word()).toBe(previous)
   })

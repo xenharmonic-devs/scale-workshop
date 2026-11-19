@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
+import { useStageInput } from '@/rack/stage-input'
+import { useModalStore } from '@/stores/modal'
 import { computed, ref, shallowRef, toRaw, useId, watch } from 'vue'
 import { linear, logarithmic } from 'sonic-weave/stdlib'
 import type { Interval } from 'sonic-weave/interval'
@@ -7,8 +10,10 @@ import Modal from '@/components/ModalDialog.vue'
 import { useScaleStore } from '@/stores/scale'
 
 const props = defineProps<{ show: boolean }>()
-const emit = defineEmits(['done', 'cancel'])
+const emit = defineEmits(['preview', 'done', 'cancel'])
 const scale = useScaleStore()
+const input = useStageInput()
+const modal = useModalStore()
 
 type Step = {
   id: number
@@ -26,7 +31,7 @@ function initialize() {
   endDrag()
   // The store has already resolved absolute pitches against the declared unison.
   // SonicWeave's native Set operations require objects without reactive proxies.
-  const intervals = toRaw(scale.relativeIntervals)
+  const intervals = toRaw(input.value.relativeIntervals)
   const equave = intervals[intervals.length - 1]
   const equaveText = equave.domain === 'linear' ? equave.str() : ''
   equaveLabel.value = /^\d+$/.test(equaveText) ? `${equaveText}/1` : equaveText
@@ -48,7 +53,18 @@ function initialize() {
     }
   })
   before.value = makePreview(steps.value, 'before')
+  // Back to the order this module was left in, as long as it still fits the input.
+  const order = modal.reorderOrder
+  const ids = steps.value.map((step) => step.id)
+  if (order.length === ids.length && [...order].sort((a, b) => a - b).every((id, i) => id === i)) {
+    steps.value = order.map((id) => steps.value[id])
+  }
 }
+
+// The order is part of the module's settings, kept in the shared store like every card's.
+watch(steps, (newSteps) => {
+  modal.reorderOrder = newSteps.map((step) => step.id)
+})
 
 const list = ref<HTMLOListElement | null>(null)
 const dragging = ref<number | null>(null)
@@ -103,7 +119,7 @@ function makePreview(orderedSteps: typeof steps.value, state: string) {
 // Keep the opening order fixed while both rulers use the same cents range.
 const before = shallowRef(makePreview([], 'before'))
 watch(
-  [() => props.show, () => scale.relativeIntervals],
+  [() => props.show, () => input.value.relativeIntervals],
   ([show]) => {
     if (show) initialize()
   },
@@ -230,21 +246,22 @@ function endDrag() {
   pointerId = null
 }
 
-function modify(expand = true) {
-  scale.materializeDefaultScale()
+function build(): GeneratorResult {
+  let code = ''
   const permutation = steps.value.map((step) => step.id).join(', ')
-  scale.sourceText += `\nrelative(£)\nunstack()\n£[[${permutation}]]\nstack()`
-  if (expand) {
-    const { visitor, defaults } = scale.getUserScopeVisitor()
-    scale.sourceText = visitor.expand(defaults)
-  }
-  scale.computeScale()
-  emit('done')
+  code += `\nrelative(£)\nunstack()\n£[[${permutation}]]\nstack()`
+  return { source: code.trim(), name: 'Steps reordered' }
 }
+
+useGeneratorPreview(
+  build,
+  (result) => emit('preview', result),
+  () => input.value.code
+)
 </script>
 
 <template>
-  <Modal class="reorder-steps" :show="show" docked @confirm="modify" @cancel="$emit('cancel')">
+  <Modal class="reorder-steps" :show="show" embedded>
     <template #header><h2>Reorder steps</h2></template>
     <template #body>
       <p>Drag the unstacked steps into a new order, or use the arrow buttons.</p>
@@ -413,13 +430,6 @@ function modify(expand = true) {
       <p class="step-string" aria-live="polite">
         <strong>stepString: </strong><code>{{ preview.word }}</code>
       </p>
-    </template>
-    <template #footer>
-      <div class="btn-group">
-        <button @click="modify(true)">OK</button>
-        <button @click="$emit('cancel')">Cancel</button>
-        <button @click="modify(false)">Raw</button>
-      </div>
     </template>
   </Modal>
 </template>

@@ -1,93 +1,76 @@
 <script setup lang="ts">
 import Modal from '@/components/ModalDialog.vue'
-import { useScaleStore } from '@/stores/scale'
+import { useModalStore } from '@/stores/modal'
+import { evaluateCode } from '@/utils'
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
+import { useStageInput } from '@/rack/stage-input'
 
 defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['done', 'cancel'])
+const emit = defineEmits(['preview', 'done', 'cancel'])
 
-const scale = useScaleStore()
+const modal = useModalStore()
+const input = useStageInput()
 
-function overtonal() {
-  scale.materializeDefaultScale()
-  scale.sourceText += ';elevate();simplify;map(repr)'
-  const { visitor, defaults } = scale.getUserScopeVisitor()
-  const overtones = visitor.currentScale.map((i) => i.label)
-  visitor.currentScale.length = 0
-  scale.sourceText = visitor.expand(defaults)
-  if (scale.sourceText) {
-    scale.sourceText += '\n'
+const FORMS = {
+  overtonal: {
+    label: 'Overtonal',
+    steps: 'elevate();simplify;map(repr)',
+    write: (tones: string[]) => tones.join(':')
+  },
+  undertonal: {
+    label: 'Undertonal',
+    steps: 'reflect();elevate();simplify;map(repr)',
+    write: (tones: string[]) => '/' + tones.join(':')
+  },
+  retroversion: {
+    label: 'Retroversion',
+    steps: 'retrovert();elevate();simplify;map(repr)',
+    write: (tones: string[]) => `retrovert(${tones.join(':')})`
+  },
+  revposition: {
+    label: 'Reversed overtonal',
+    steps: 'revpose();elevate();simplify;map(repr)',
+    write: (tones: string[]) => `revpose(${tones.join(':')})`
   }
-  scale.sourceText += overtones.join(':')
-  scale.computeScale()
-  emit('done')
 }
 
-function undertonal() {
-  scale.materializeDefaultScale()
-  scale.sourceText += ';reflect();elevate();simplify;map(repr)'
-  const { visitor, defaults } = scale.getUserScopeVisitor()
-  const undertones = visitor.currentScale.map((i) => i.label)
-  visitor.currentScale.length = 0
-  scale.sourceText = visitor.expand(defaults)
-  if (scale.sourceText) {
-    scale.sourceText += '\n'
-  }
-  scale.sourceText += '/' + undertones.join(':')
-  scale.computeScale()
-  emit('done')
+/** Rewrites the input as one enumerated chord, which replaces it: baked from the input. */
+function build(): GeneratorResult {
+  const form = FORMS[modal.enumerateForm]
+  const tones = evaluateCode(`${input.value.code}\n${form.steps}`).map((i) => i.label)
+  return { source: `clear()\n${form.write(tones)}`, name: form.label, bakesInput: true }
 }
 
-function retroversion() {
-  scale.materializeDefaultScale()
-  scale.sourceText += ';retrovert();elevate();simplify;map(repr)'
-  const { visitor, defaults } = scale.getUserScopeVisitor()
-  const tones = visitor.currentScale.map((i) => i.label)
-  visitor.currentScale.length = 0
-  scale.sourceText = visitor.expand(defaults)
-  if (scale.sourceText) {
-    scale.sourceText += '\n'
-  }
-  scale.sourceText += 'retrovert(' + tones.join(':') + ')'
-  scale.computeScale()
-  emit('done')
-}
-
-function revposition() {
-  scale.materializeDefaultScale()
-  scale.sourceText += ';revpose();elevate();simplify;map(repr)'
-  const { visitor, defaults } = scale.getUserScopeVisitor()
-  const tones = visitor.currentScale.map((i) => i.label)
-  visitor.currentScale.length = 0
-  scale.sourceText = visitor.expand(defaults)
-  if (scale.sourceText) {
-    scale.sourceText += '\n'
-  }
-  scale.sourceText += 'revpose(' + tones.join(':') + ')'
-  scale.computeScale()
-  emit('done')
-}
+useGeneratorPreview(
+  build,
+  (result) => emit('preview', result),
+  () => input.value.code
+)
 </script>
 
 <template>
-  <Modal :show="show" docked @confirm="$emit('done')" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded>
     <template #header>
       <h2>Enumerate</h2>
     </template>
     <template #body>
       <div class="control-group">
         <p>Convert your scale to an enumeration.</p>
-        <button @click="overtonal">Overtonal</button>
-        <button @click="undertonal">Undertonal</button>
-        <button @click="retroversion">Retroversion</button>
-        <button @click="revposition">Reversed overtonal</button>
-      </div>
-    </template>
-    <template #footer>
-      <div class="btn-group">
-        <button @click="$emit('cancel')">Cancel</button>
+        <div class="control radio-group">
+          <label>Form</label>
+          <span v-for="(form, key) of FORMS" :key="key">
+            <input
+              type="radio"
+              :id="`enumerate-${key}`"
+              :value="key"
+              v-model="modal.enumerateForm"
+            />
+            <label :for="`enumerate-${key}`">{{ form.label }}</label>
+          </span>
+        </div>
       </div>
     </template>
   </Modal>

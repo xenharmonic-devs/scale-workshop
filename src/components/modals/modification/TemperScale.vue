@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useGeneratorPreview, type GeneratorResult } from '@/composables/useGeneratorPreview'
+import { useStageInput } from '@/rack/stage-input'
 import { ref, watch } from 'vue'
 import Modal from '@/components/ModalDialog.vue'
 import { useTemperStore } from '@/stores/tempering'
@@ -8,10 +10,11 @@ defineProps<{
   show: boolean
 }>()
 
-const emit = defineEmits(['done', 'cancel'])
+const emit = defineEmits(['preview', 'done', 'cancel'])
 
 const temper = useTemperStore()
 const scale = useScaleStore()
+const input = useStageInput()
 
 const valsInput = ref<HTMLInputElement | null>(null)
 const commasInput = ref<HTMLInputElement | null>(null)
@@ -26,35 +29,36 @@ watch(
   }
 )
 
-function modify(expand = true) {
-  scale.materializeDefaultScale()
+function build(): GeneratorResult {
+  let code = ''
   if (temper.method === 'vals') {
     if (temper.edoAvailable && temper.convertToEdoSteps) {
-      scale.sourceText += `\n${temper.vals[0].toString()}`
+      code += `\n${temper.vals[0].toString()}`
     } else {
-      scale.sourceText += `\n(* vals = ${temper.valsString}) *)`
-      scale.sourceText += `\n${temper.valsTemperament.toString()}`
+      code += `\n(* vals = ${temper.valsString}) *)`
+      code += `\n${temper.valsTemperament.toString()}`
     }
   } else if (temper.method === 'commas') {
-    scale.sourceText += `\n(* commas = ${temper.commasString}) *)`
-    scale.sourceText += `\n${temper.commasTemperament.toString()}`
+    code += `\n(* commas = ${temper.commasString}) *)`
+    code += `\n${temper.commasTemperament.toString()}`
   }
   if (temper.method === 'mapping') {
-    scale.sourceText += `\nPrimeMapping(${temper.mappingString})`
+    code += `\nPrimeMapping(${temper.mappingString})`
   } else if (!temper.convertToEdoSteps) {
-    scale.sourceText += `\ncents(£, ${scale.centsFractionDigits})`
+    code += `\ncents(£, ${scale.centsFractionDigits})`
   }
-  if (expand) {
-    const { visitor, defaults } = scale.getUserScopeVisitor()
-    scale.sourceText = visitor.expand(defaults)
-  }
-  scale.computeScale()
-  emit('done')
+  return { source: code.trim(), name: `By ${temper.method}` }
 }
+
+useGeneratorPreview(
+  build,
+  (result) => emit('preview', result),
+  () => input.value.code
+)
 </script>
 
 <template>
-  <Modal :show="show" docked @confirm="modify" @cancel="$emit('cancel')">
+  <Modal :show="show" embedded>
     <template #header>
       <h2>Temper scale</h2>
     </template>
@@ -182,18 +186,6 @@ function modify(expand = true) {
           ></textarea>
         </div>
         <p class="warning">{{ temper.error }}</p>
-      </div>
-    </template>
-    <template #footer>
-      <div class="btn-group">
-        <button
-          @click="modify(true)"
-          :disabled="temper.method !== 'mapping' && temper.error.length !== 0"
-        >
-          OK
-        </button>
-        <button @click="$emit('cancel')">Cancel</button>
-        <button @click="modify(false)">Raw</button>
       </div>
     </template>
   </Modal>
