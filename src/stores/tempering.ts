@@ -1,9 +1,8 @@
 import { isBright, mosPatterns as getMosPatterns } from 'moment-of-symmetry/generator-ratio'
 import { FIFTH, OCTAVE } from '@/constants'
-import { computedAndError, padEndOrTruncate, splitText } from '@/utils'
-import { Temperament, Val } from 'sonic-weave/interval'
+import { computedAndError, splitText } from '@/utils'
+import { Temperament, Val, type Interval } from 'sonic-weave/interval'
 import {
-  parseChord,
   parseVals,
   rank2FromCommas,
   temperamentFromVals,
@@ -12,7 +11,7 @@ import {
   type OptimizationScheme
 } from 'sonic-weave/parser'
 import { defineStore } from 'pinia'
-import { computed, ref, watch, reactive, type ComputedRef } from 'vue'
+import { computed, ref, watch, type ComputedRef } from 'vue'
 
 const CTE_MEANTONE = new Temperament(
   [
@@ -288,49 +287,39 @@ export const useRank2Store = defineStore('rank2', () => {
   }
 })
 
+export interface LatticeGenerator {
+  id: number
+  interval: Interval | null
+  up: number
+  down: number
+}
+
 /**
- * Tempering lattice visualization parameters and persistence state.
+ * State for generating a parallelotope from lattice generators.
  */
 export const useLatticeStore = defineStore('lattice', () => {
   const state = makeState<'generators' | 'vals' | 'commas'>('generators')
-  // method: "generators"
-  const basisString = ref('')
-  const ups = reactive<number[]>([])
-  const downs = reactive<number[]>([])
+  const generators = ref<LatticeGenerator[]>([])
+  let nextGeneratorId = 0
   const equaveString = ref('2/1')
   const equave = ref(OCTAVE)
-  // method: "vals", "commas"
   const comment = ref('vals = 12 & 19')
 
-  const [basis, basisError] = computedAndError(() => {
-    return parseChord(basisString.value)
-  }, [])
-
-  watch(basis, (newValue) => {
-    padEndOrTruncate(ups, newValue.length, 1)
-    padEndOrTruncate(downs, newValue.length, 0)
-  })
-
-  const dimensions = computed(() => {
-    const result: number[] = []
-    for (let i = 0; i < basis.value.length; ++i) {
-      result.push(1 + ups[i] + downs[i])
-    }
-    return result
-  })
-
-  return {
-    ...state,
-    basisString,
-    ups,
-    downs,
-    equaveString,
-    equave,
-    basis,
-    basisError,
-    dimensions,
-    comment
+  function addGenerator() {
+    generators.value.push({ id: nextGeneratorId++, interval: null, up: 1, down: 0 })
   }
+
+  function setGenerators(intervals: Interval[]) {
+    const previous = generators.value
+    generators.value = intervals.map((interval, i) => ({
+      id: nextGeneratorId++,
+      interval,
+      up: previous[i]?.up ?? 1,
+      down: previous[i]?.down ?? 0
+    }))
+  }
+
+  return { ...state, generators, addGenerator, setGenerators, equaveString, equave, comment }
 })
 
 /**
